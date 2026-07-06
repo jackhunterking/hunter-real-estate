@@ -158,6 +158,8 @@ export function useArcGisScene(props: SceneProps) {
 
         const pointerMove = view.on("pointer-move", (event: Record<string, any>) => {
           if (dragging) return;
+          // Hover is a pointer affordance; touch uses tap-to-select instead.
+          if (event.pointerType === "touch") return;
           const now = performance.now();
           if (hoverInFlight || now - lastHoverAt < HOVER_THROTTLE_MS) return;
           lastHoverAt = now;
@@ -204,6 +206,9 @@ export function useArcGisScene(props: SceneProps) {
         let dragMode: "rotate" | "pan" | null = null;
         let lastPoint = { x: 0, y: 0 };
         const dragHandle = view.on("drag", (event: Record<string, any>) => {
+          // On touch, defer to ArcGIS native gestures (one-finger pan,
+          // two-finger rotate/tilt, pinch zoom) — don't stopPropagation.
+          if (event.pointerType === "touch") return;
           const button = typeof event.button === "number" ? event.button : event.native?.button;
           if (event.action === "start") {
             camera.stopCinematic();

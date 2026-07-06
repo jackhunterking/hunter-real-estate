@@ -6,11 +6,14 @@ import { type GroupBy } from "./tiers";
 import { formatCurrency } from "./format";
 import type { MapTheme } from "./arcgis/types";
 import { useArcGisScene } from "./arcgis/useArcGisScene";
+import { useIsMobile } from "./useIsMobile";
 import { DataOverviewPanel } from "./components/DataOverviewPanel";
 import { HoverCard } from "./components/HoverCard";
 import { InstructionsOverlay } from "./components/InstructionsOverlay";
 import { PropertyDrawer } from "./components/PropertyDrawer";
 import { TopControls } from "./components/TopControls";
+import { MobileControls } from "./components/MobileControls";
+import { MobileSheet } from "./components/MobileSheet";
 import { MinusIcon, PlusIcon, ResetIcon } from "./components/icons";
 import styles from "./investor-map.module.css";
 
@@ -142,6 +145,22 @@ export default function InvestorMapClient() {
     setAmount(Math.min(Math.max(value, 0), 2000000));
   }
 
+  const isMobile = useIsMobile();
+
+  const zoomCluster = (
+    <div className={styles.zoomControls} aria-label="Map zoom controls">
+      <button type="button" onClick={() => controlsRef.current?.zoomIn()} aria-label="Zoom in">
+        <PlusIcon />
+      </button>
+      <button type="button" onClick={() => controlsRef.current?.zoomOut()} aria-label="Zoom out">
+        <MinusIcon />
+      </button>
+      <button type="button" onClick={() => controlsRef.current?.reset()} aria-label="Reset camera">
+        <ResetIcon />
+      </button>
+    </div>
+  );
+
   return (
     <main className={styles.shell} data-theme={theme}>
       <section className={styles.mapStage} data-mode={mode}>
@@ -164,106 +183,141 @@ export default function InvestorMapClient() {
           ) : null}
 
           {showInstructions && status === "ready" ? (
-            <InstructionsOverlay onDismiss={() => setShowInstructions(false)} />
+            <InstructionsOverlay mobile={isMobile} onDismiss={() => setShowInstructions(false)} />
           ) : null}
         </div>
 
-        <header className={styles.topBar}>
-          <a href="/hunter-x-capital" className={styles.brandLockup} aria-label="Hunter X Capital">
-            <span className={styles.brandMark}>H</span>
-            <span>
-              <strong>Investor Map</strong>
-              <small>Equiton Apartment Fund demo</small>
-            </span>
-          </a>
+        {isMobile ? (
+          <>
+            <header className={styles.topBar} data-variant="mobile">
+              <a href="/hunter-x-capital" className={styles.brandLockup} aria-label="Hunter X Capital">
+                <span className={styles.brandMark}>H</span>
+                <span>
+                  <strong>Investor Map</strong>
+                  <small>Equiton Apartment Fund demo</small>
+                </span>
+              </a>
+            </header>
 
-          <TopControls
-            cinematicActive={cinematicActive}
-            isolate={isolate}
-            touring={touring}
-            groupBy={groupBy}
-            theme={theme}
-            onShowAround={showAround}
-            onToggleIsolate={() => setIsolate((v) => !v)}
-            onToggleGrouping={toggleGrouping}
-            onToggleTour={toggleTour}
-            onToggleTheme={toggleTheme}
-          />
-
-          <div className={styles.amountCard}>
-            <label htmlFor="investmentAmount">Scenario</label>
-            <input
-              id="investmentAmount"
-              type="number"
-              value={amount}
-              min={0}
-              step={25000}
-              onChange={(event) => updateAmount(Number(event.target.value))}
+            <MobileControls
+              cinematicActive={cinematicActive}
+              isolate={isolate}
+              touring={touring}
+              theme={theme}
+              onShowAround={showAround}
+              onToggleIsolate={() => setIsolate((v) => !v)}
+              onToggleTour={toggleTour}
+              onToggleTheme={toggleTheme}
             />
-          </div>
-        </header>
 
-        <DataOverviewPanel
-          groupBy={groupBy}
-          selectedId={selectedId}
-          collapsed={panelCollapsed}
-          onToggleCollapsed={() => setPanelCollapsed((v) => !v)}
-          onSelectProperty={focusProperty}
-        />
+            {zoomCluster}
 
-        <section className={styles.summaryPanel} aria-label="Investment scenario summary">
-          <div>
-            <span className={styles.summaryLabel}>Target annual net return</span>
-            <strong>8-12%</strong>
-          </div>
-          <div>
-            <span className={styles.summaryLabel}>Annual range</span>
-            <strong>
-              {formatCurrency(scenario.annualLow)}-{formatCurrency(scenario.annualHigh)}
-            </strong>
-          </div>
-          <div>
-            <span className={styles.summaryLabel}>Monthly equivalent</span>
-            <strong>
-              {formatCurrency(scenario.monthlyLow)}-{formatCurrency(scenario.monthlyHigh)}
-            </strong>
-          </div>
-        </section>
+            <MobileSheet
+              selectedProperty={selectedProperty}
+              selectedId={selectedId}
+              amount={amount}
+              mode={mode}
+              groupBy={groupBy}
+              annualLow={scenario.annualLow}
+              annualHigh={scenario.annualHigh}
+              monthlyLow={scenario.monthlyLow}
+              monthlyHigh={scenario.monthlyHigh}
+              onSelectProperty={focusProperty}
+              onAmountChange={updateAmount}
+              onModeChange={setMode}
+              onToggleGrouping={toggleGrouping}
+            />
+          </>
+        ) : (
+          <>
+            <header className={styles.topBar}>
+              <a href="/hunter-x-capital" className={styles.brandLockup} aria-label="Hunter X Capital">
+                <span className={styles.brandMark}>H</span>
+                <span>
+                  <strong>Investor Map</strong>
+                  <small>Equiton Apartment Fund demo</small>
+                </span>
+              </a>
 
-        <div className={styles.modeSwitch} role="group" aria-label="Return lens">
-          {(["distribution", "appreciation", "total"] as InvestmentMode[]).map((item) => (
-            <button
-              key={item}
-              type="button"
-              className={mode === item ? styles.modeActive : ""}
-              onClick={() => setMode(item)}
-            >
-              {item === "distribution" ? "Distribution" : item === "appreciation" ? "Appreciation" : "Total"}
-            </button>
-          ))}
-        </div>
+              <TopControls
+                cinematicActive={cinematicActive}
+                isolate={isolate}
+                touring={touring}
+                groupBy={groupBy}
+                theme={theme}
+                onShowAround={showAround}
+                onToggleIsolate={() => setIsolate((v) => !v)}
+                onToggleGrouping={toggleGrouping}
+                onToggleTour={toggleTour}
+                onToggleTheme={toggleTheme}
+              />
 
-        <div className={styles.zoomControls} aria-label="Map zoom controls">
-          <button type="button" onClick={() => controlsRef.current?.zoomIn()} aria-label="Zoom in">
-            <PlusIcon />
-          </button>
-          <button type="button" onClick={() => controlsRef.current?.zoomOut()} aria-label="Zoom out">
-            <MinusIcon />
-          </button>
-          <button type="button" onClick={() => controlsRef.current?.reset()} aria-label="Reset camera">
-            <ResetIcon />
-          </button>
-        </div>
+              <div className={styles.amountCard}>
+                <label htmlFor="investmentAmount">Scenario</label>
+                <input
+                  id="investmentAmount"
+                  type="number"
+                  value={amount}
+                  min={0}
+                  step={25000}
+                  onChange={(event) => updateAmount(Number(event.target.value))}
+                />
+              </div>
+            </header>
 
-        <PropertyDrawer
-          selectedProperty={selectedProperty}
-          selectedId={selectedId}
-          amount={amount}
-          mode={mode}
-          monthlyLow={scenario.monthlyLow}
-          monthlyHigh={scenario.monthlyHigh}
-          onSelectProperty={focusProperty}
-        />
+            <DataOverviewPanel
+              groupBy={groupBy}
+              selectedId={selectedId}
+              collapsed={panelCollapsed}
+              onToggleCollapsed={() => setPanelCollapsed((v) => !v)}
+              onSelectProperty={focusProperty}
+            />
+
+            <section className={styles.summaryPanel} aria-label="Investment scenario summary">
+              <div>
+                <span className={styles.summaryLabel}>Target annual net return</span>
+                <strong>8-12%</strong>
+              </div>
+              <div>
+                <span className={styles.summaryLabel}>Annual range</span>
+                <strong>
+                  {formatCurrency(scenario.annualLow)}-{formatCurrency(scenario.annualHigh)}
+                </strong>
+              </div>
+              <div>
+                <span className={styles.summaryLabel}>Monthly equivalent</span>
+                <strong>
+                  {formatCurrency(scenario.monthlyLow)}-{formatCurrency(scenario.monthlyHigh)}
+                </strong>
+              </div>
+            </section>
+
+            <div className={styles.modeSwitch} role="group" aria-label="Return lens">
+              {(["distribution", "appreciation", "total"] as InvestmentMode[]).map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  className={mode === item ? styles.modeActive : ""}
+                  onClick={() => setMode(item)}
+                >
+                  {item === "distribution" ? "Distribution" : item === "appreciation" ? "Appreciation" : "Total"}
+                </button>
+              ))}
+            </div>
+
+            {zoomCluster}
+
+            <PropertyDrawer
+              selectedProperty={selectedProperty}
+              selectedId={selectedId}
+              amount={amount}
+              mode={mode}
+              monthlyLow={scenario.monthlyLow}
+              monthlyHigh={scenario.monthlyHigh}
+              onSelectProperty={focusProperty}
+            />
+          </>
+        )}
       </section>
     </main>
   );
