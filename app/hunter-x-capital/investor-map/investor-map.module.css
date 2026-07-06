@@ -1,8 +1,31 @@
+/* Investor 3D map — full-bleed ArcGIS scene with floating glass overlays,
+   styled to echo data.sael.net/city. Light + dark themes via [data-theme]. */
+
 .shell {
+  --panel-bg: rgba(7, 10, 16, 0.72);
+  --panel-border: rgba(255, 255, 255, 0.12);
+  --panel-strong: rgba(5, 8, 14, 0.82);
+  --text: #ffffff;
+  --text-soft: rgba(255, 255, 255, 0.58);
+  --text-faint: rgba(255, 255, 255, 0.42);
+  --hairline: rgba(255, 255, 255, 0.1);
+  --scene-bg: #03050a;
+
   min-height: 100vh;
-  background: #03050a;
-  color: #fff;
+  background: var(--scene-bg);
+  color: var(--text);
   font-family: var(--sans);
+}
+
+.shell[data-theme="light"] {
+  --panel-bg: rgba(248, 249, 251, 0.82);
+  --panel-border: rgba(15, 22, 34, 0.14);
+  --panel-strong: rgba(255, 255, 255, 0.9);
+  --text: #10151d;
+  --text-soft: rgba(16, 21, 29, 0.62);
+  --text-faint: rgba(16, 21, 29, 0.46);
+  --hairline: rgba(16, 22, 34, 0.12);
+  --scene-bg: #e8ecf2;
 }
 
 .mapStage {
@@ -10,82 +33,97 @@
   min-height: 100svh;
   overflow: hidden;
   isolation: isolate;
-  background:
-    radial-gradient(circle at 20% 15%, rgba(235, 199, 107, 0.12), transparent 28%),
-    linear-gradient(135deg, #050810 0%, #0b101b 54%, #05070c 100%);
+  background: var(--scene-bg);
 }
 
-.mapBackdrop {
+/* ---- Scene ---- */
+.mapViewport {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
   overflow: hidden;
+  background: var(--scene-bg);
 }
 
-.gridLayer {
+.arcgisScene {
   position: absolute;
-  inset: -18%;
-  opacity: 0.26;
-  transform: perspective(700px) rotateX(62deg) rotateZ(-16deg) translateY(18%);
-  transform-origin: center;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-  background-size: 42px 42px;
+  inset: 0;
+  z-index: 1;
+  background: var(--scene-bg);
+  cursor: grab;
+  touch-action: none;
 }
 
-.roadOne,
-.roadTwo,
-.roadThree {
+.arcgisScene:active {
+  cursor: grabbing;
+}
+
+.arcgisScene :global(.esri-view-surface) {
+  outline: none;
+}
+
+.mapViewport :global(.esri-ui) {
+  z-index: 2;
+}
+
+.mapViewport :global(.esri-attribution) {
+  max-width: min(58vw, 460px);
+  border: 1px solid var(--hairline);
+  color: var(--text-soft);
+  background: var(--panel-strong);
+  backdrop-filter: blur(12px);
+  font-family: var(--sans);
+  font-size: 9px;
+}
+
+.sceneStatus {
   position: absolute;
-  height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(235, 199, 107, 0.4), transparent);
-  transform-origin: center;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  padding: 20px;
+  color: var(--text-soft);
+  background:
+    radial-gradient(circle at center, rgba(235, 199, 107, 0.1), transparent 36%),
+    var(--panel-strong);
+  text-align: center;
 }
 
-.roadOne {
-  top: 39%;
-  left: -12%;
-  width: 92%;
-  transform: rotate(-18deg);
+.sceneStatus strong,
+.sceneStatus span {
+  display: block;
 }
 
-.roadTwo {
-  top: 56%;
-  right: -10%;
-  width: 88%;
-  transform: rotate(26deg);
-  opacity: 0.7;
+.sceneStatus strong {
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
 }
 
-.roadThree {
-  top: 48%;
-  left: 16%;
-  width: 66%;
-  transform: rotate(89deg);
-  opacity: 0.4;
+.sceneStatus span {
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-.lakeShape {
-  position: absolute;
-  right: -20%;
-  bottom: -18%;
-  width: 74%;
-  height: 40%;
-  border-radius: 55% 0 0 0;
-  background: linear-gradient(145deg, rgba(25, 58, 84, 0.6), rgba(9, 22, 34, 0.2));
-  border: 1px solid rgba(136, 177, 206, 0.12);
-}
-
+/* ---- Top bar ---- */
 .topBar {
-  position: relative;
-  z-index: 4;
+  position: absolute;
+  z-index: 6;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: max(18px, env(safe-area-inset-top)) 16px 0;
+  gap: 16px;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, var(--panel-strong), transparent);
 }
 
 .brandLockup {
@@ -93,6 +131,7 @@
   align-items: center;
   gap: 10px;
   min-width: 0;
+  flex: 0 0 auto;
 }
 
 .brandMark {
@@ -123,23 +162,24 @@
 .brandLockup small {
   max-width: 176px;
   overflow: hidden;
-  color: rgba(255, 255, 255, 0.56);
+  color: var(--text-soft);
   font-size: 11px;
   text-overflow: ellipsis;
 }
 
 .amountCard {
-  width: 124px;
+  flex: 0 0 auto;
+  width: 128px;
   padding: 8px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(7, 10, 16, 0.72);
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
   backdrop-filter: blur(16px);
 }
 
 .amountCard label {
   display: block;
   margin-bottom: 2px;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--text-soft);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -151,34 +191,266 @@
   border: 0;
   outline: 0;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   font-size: 15px;
   font-weight: 700;
 }
 
-.summaryPanel {
-  position: relative;
-  z-index: 4;
+/* ---- Top controls (Show Me Around / Isolate / Sort / Tour / theme) ---- */
+.topControls {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+}
+
+.topControls button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 11px;
+  border: 1px solid transparent;
+  color: var(--text-soft);
+  background: transparent;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.topControls button:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.topControls .controlActive {
+  color: #081018;
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.topControls .controlActive kbd {
+  color: #081018;
+  border-color: rgba(8, 16, 24, 0.35);
+}
+
+.topControls svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.topControls .controlActive svg {
+  fill: none;
+}
+
+.topControls kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  color: var(--text-faint);
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.themeToggle {
+  padding: 7px 9px !important;
+}
+
+/* ---- Data Overview panel (left) ---- */
+.dataPanel {
+  position: absolute;
+  z-index: 5;
+  top: 72px;
+  left: 16px;
+  width: 264px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100svh - 220px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.dataPanelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 14px;
+  border: 0;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--text);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.dataPanel[data-collapsed="true"] .dataPanelHead {
+  border-bottom: 0;
+}
+
+.dataPanelHead strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.dataPanelHead small {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-soft);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dataPanelHead i {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
-  margin: 14px 16px 0;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.11);
+  place-items: center;
+  flex: 0 0 auto;
+  transition: transform 0.2s ease;
+}
+
+.dataPanelHead i[data-collapsed="true"] {
+  transform: rotate(-90deg);
+}
+
+.dataPanelHead svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--text-soft);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dataPanelBody {
+  overflow-y: auto;
+  padding: 6px 8px 10px;
+}
+
+.dataGroup {
+  padding: 8px 0 4px;
+}
+
+.dataGroup header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 8px;
+}
+
+.dataGroup header strong {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.dataGroup header small {
+  margin-left: auto;
+  color: var(--text-faint);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.tierDot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+}
+
+.dataGroup ul {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dataGroup li button {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.dataGroup li button:hover {
   background: rgba(255, 255, 255, 0.08);
+}
+
+.dataGroup li .dataRowActive,
+.dataGroup li button.dataRowActive {
+  border-color: rgba(235, 199, 107, 0.6);
+  background: rgba(235, 199, 107, 0.14);
+}
+
+.dataRowName {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dataRowMeta {
+  color: var(--text-soft);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* ---- Summary + mode HUD (bottom center) ---- */
+.summaryPanel {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: 74px;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 1px;
+  width: min(520px, calc(100vw - 32px));
+  overflow: hidden;
+  border: 1px solid var(--panel-border);
+  background: var(--hairline);
+  backdrop-filter: blur(14px);
 }
 
 .summaryPanel > div {
   min-width: 0;
-  padding: 10px;
-  background: rgba(5, 8, 14, 0.76);
-  backdrop-filter: blur(14px);
+  padding: 10px 12px;
+  background: var(--panel-strong);
 }
 
 .summaryLabel {
   display: block;
   margin-bottom: 3px;
-  color: rgba(255, 255, 255, 0.48);
+  color: var(--text-soft);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -188,29 +460,33 @@
 .summaryPanel strong {
   display: block;
   overflow-wrap: anywhere;
-  color: #fff;
-  font-size: clamp(12px, 3vw, 16px);
+  color: var(--text);
+  font-size: clamp(12px, 2.4vw, 15px);
   line-height: 1.15;
 }
 
 .modeSwitch {
-  position: relative;
-  z-index: 4;
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(90px, 1fr));
   gap: 4px;
-  margin: 10px 16px 0;
+  width: min(360px, calc(100vw - 32px));
   padding: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(5, 8, 14, 0.64);
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
   backdrop-filter: blur(14px);
 }
 
 .modeSwitch button {
   min-height: 34px;
   border: 0;
-  color: rgba(255, 255, 255, 0.62);
+  color: var(--text-soft);
   background: transparent;
+  font-family: var(--sans);
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
@@ -221,31 +497,33 @@
   background: var(--gold);
 }
 
+/* ---- Zoom controls (bottom left) ---- */
 .zoomControls {
   position: absolute;
   z-index: 5;
-  top: 230px;
-  right: 16px;
+  left: 16px;
+  bottom: 18px;
   display: grid;
   gap: 8px;
 }
 
-.zoomControls button,
-.propertyTitleRow a {
+.zoomControls button {
   display: grid;
   place-items: center;
   width: 42px;
   height: 42px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: #fff;
-  background: rgba(5, 8, 14, 0.72);
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+  background: var(--panel-bg);
   backdrop-filter: blur(14px);
   cursor: pointer;
 }
 
-.zoomControls svg,
-.propertyTitleRow svg,
-.zoomReadout svg {
+.zoomControls button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.zoomControls svg {
   width: 18px;
   height: 18px;
   fill: none;
@@ -255,133 +533,64 @@
   stroke-width: 1.8;
 }
 
-.zoomReadout {
-  position: absolute;
-  z-index: 4;
-  top: 377px;
-  right: 16px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  color: rgba(255, 255, 255, 0.78);
-  background: rgba(5, 8, 14, 0.66);
-  backdrop-filter: blur(14px);
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.zoomReadout strong {
-  color: var(--gold);
-}
-
-.mapViewport {
-  position: absolute;
-  inset: 154px 0 292px;
-  z-index: 2;
-  overflow: hidden;
-  background: #03050a;
-}
-
-.mapAttribution {
-  position: absolute;
-  z-index: 4;
-  left: 16px;
-  top: 14px;
-  bottom: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.7);
-  background: rgba(5, 8, 14, 0.68);
-  backdrop-filter: blur(14px);
-  font-size: 10px;
-  font-weight: 800;
-}
-
-.mapAttribution span {
-  color: var(--gold);
-}
-
-.arcgisScene {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: #03050a;
-  cursor: grab;
-  touch-action: none;
-}
-
-.arcgisScene:active {
-  cursor: grabbing;
-}
-
-.arcgisScene :global(.esri-view-surface) {
-  outline: none;
-}
-
-.mapViewport :global(.esri-ui) {
-  z-index: 2;
-}
-
-.mapViewport :global(.esri-attribution) {
-  max-width: min(64vw, 520px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.62);
-  background: rgba(5, 8, 14, 0.72);
-  backdrop-filter: blur(12px);
-  font-family: var(--sans);
-  font-size: 9px;
-}
-
-.sceneStatus {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  display: grid;
-  place-content: center;
-  gap: 8px;
-  padding: 20px;
-  color: rgba(255, 255, 255, 0.72);
-  background:
-    radial-gradient(circle at center, rgba(235, 199, 107, 0.1), transparent 36%),
-    rgba(3, 5, 10, 0.78);
-  text-align: center;
-}
-
-.sceneStatus strong,
-.sceneStatus span {
-  display: block;
-}
-
-.sceneStatus strong {
-  color: #fff;
-  font-family: var(--serif);
-  font-size: 22px;
-  font-weight: 500;
-  letter-spacing: 0;
-}
-
-.sceneStatus span {
-  color: rgba(255, 255, 255, 0.56);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.hoverCard {
+/* ---- Instructions overlay ---- */
+.instructions {
   position: absolute;
   z-index: 5;
+  top: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 12px 10px 16px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+}
+
+.instructions ul {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.instructions li {
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.instructions li strong {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.instructions button {
+  padding: 6px 12px;
+  border: 1px solid var(--gold);
+  color: #081018;
+  background: var(--gold);
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* ---- Hover card ---- */
+.hoverCard {
+  position: absolute;
+  z-index: 7;
   width: 238px;
   pointer-events: none;
   border: 1px solid rgba(31, 239, 161, 0.52);
   border-radius: 8px;
   color: #fff;
-  background: rgba(9, 11, 16, 0.88);
+  background: rgba(9, 11, 16, 0.9);
   box-shadow: 0 18px 45px rgba(0, 0, 0, 0.34);
   backdrop-filter: blur(18px);
 }
@@ -417,6 +626,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: #fff;
 }
 
 .hoverCardHeader strong {
@@ -476,303 +686,36 @@
   line-height: 1.35;
 }
 
-.mapWorld {
-  position: absolute;
-  inset: 0;
-  transform: scale(var(--map-scale));
-  transform-origin: center;
-  transition: transform 0.35s ease;
-}
-
-.propertyBuilding,
-.propertyFootprint,
-.cityCluster {
-  position: absolute;
-  left: var(--x);
-  top: var(--y);
-  border: 0;
-  background: transparent;
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-}
-
-.cityCluster {
-  display: grid;
-  gap: 4px;
-  place-items: center;
-  min-width: 112px;
-  padding: 10px 12px;
-  border: 1px solid rgba(235, 199, 107, 0.32);
-  color: #fff;
-  background: rgba(7, 10, 16, 0.75);
-  backdrop-filter: blur(16px);
-}
-
-.cityCluster span {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  color: #0a1018;
-  background: var(--gold);
-  font-weight: 800;
-}
-
-.cityCluster strong {
-  font-size: 12px;
-}
-
-.propertyBuilding {
-  width: 118px;
-  height: 150px;
-  color: #fff;
-  perspective: 700px;
-}
-
-.propertyFootprint {
-  width: 142px;
-  height: 152px;
-  color: #fff;
-  perspective: 800px;
-}
-
-.propertySelected {
-  z-index: 4;
-}
-
-.footprintShadow {
-  position: absolute;
-  left: 50%;
-  bottom: 24px;
-  width: 98px;
-  height: 26px;
-  transform: translateX(-50%) rotate(-13deg);
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.45);
-  filter: blur(7px);
-}
-
-.footprintSvg {
-  position: absolute;
-  left: 50%;
-  bottom: 26px;
-  width: 126px;
-  height: 126px;
-  overflow: visible;
-  transform: translateX(-50%) rotateX(56deg) rotateZ(-15deg);
-  transform-origin: 50% 78%;
-  transition: transform 0.28s ease, filter 0.28s ease;
-  filter: drop-shadow(0 18px 18px rgba(0, 0, 0, 0.32));
-}
-
-.propertyFootprint:hover .footprintSvg,
-.propertySelected .footprintSvg {
-  transform: translateX(-50%) rotateX(56deg) rotateZ(-15deg) translateY(-10px) scale(1.1);
-  filter: drop-shadow(0 24px 22px rgba(0, 0, 0, 0.42)) saturate(1.1) brightness(1.08);
-}
-
-.siteParcel {
-  fill: rgba(38, 47, 55, 0.62);
-  stroke: rgba(255, 255, 255, 0.18);
-  stroke-width: 1.1;
-}
-
-.siteRoad,
-.siteRoadSecondary {
-  fill: none;
-  stroke-linecap: round;
-}
-
-.siteRoad {
-  stroke: rgba(235, 199, 107, 0.44);
-  stroke-width: 5;
-}
-
-.siteRoadSecondary {
-  stroke: rgba(159, 177, 199, 0.26);
-  stroke-width: 3;
-}
-
-.footprintBase {
-  fill: rgba(0, 0, 0, 0.24);
-}
-
-.footprintWall {
-  fill: var(--wall-color);
-  opacity: 0.82;
-  stroke: rgba(255, 255, 255, 0.1);
-  stroke-width: 0.8;
-}
-
-.footprintShape .footprintWall:nth-of-type(2n + 1) {
-  opacity: 0.68;
-}
-
-.footprintRoof {
-  fill: var(--roof-color);
-  stroke: rgba(255, 255, 255, 0.22);
-  stroke-width: 1.1;
-}
-
-.footprintRoofEdge {
-  fill: none;
-  stroke: rgba(235, 199, 107, 0.5);
-  stroke-width: 0.9;
-}
-
-.footprintText {
-  opacity: 0;
-  pointer-events: none;
-  fill: rgba(255, 255, 255, 0.92);
-  font-size: 5px;
-  font-weight: 800;
-  letter-spacing: 0;
-  text-anchor: middle;
-  paint-order: stroke;
-  stroke: rgba(5, 8, 14, 0.9);
-  stroke-width: 2px;
-  transition: opacity 0.2s ease;
-}
-
-.propertySelected .footprintText {
-  opacity: 1;
-}
-
-.buildingShadow {
-  position: absolute;
-  left: 50%;
-  bottom: 18px;
-  width: 88px;
-  height: 24px;
-  transform: translateX(-50%) rotate(-12deg);
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.42);
-  filter: blur(6px);
-}
-
-.buildingBody {
-  position: absolute;
-  left: 50%;
-  bottom: 28px;
-  width: var(--building-width);
-  height: calc(var(--floors) * 6px);
-  min-height: 44px;
-  max-height: 108px;
-  transform: translateX(-50%) rotateX(0deg) rotateY(-20deg);
-  transform-style: preserve-3d;
-  transition: transform 0.25s ease, filter 0.25s ease;
-}
-
-.buildingFacade,
-.buildingSide,
-.buildingRoof {
-  position: absolute;
-  inset: 0;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-}
-
-.buildingFacade {
-  background:
-    linear-gradient(rgba(5, 8, 14, 0.08), rgba(5, 8, 14, 0.2)),
-    var(--facade) center / cover;
-  box-shadow: inset 0 0 0 1px rgba(235, 199, 107, 0.12);
-}
-
-.buildingSide {
-  width: var(--building-depth);
-  left: 100%;
-  transform: rotateY(90deg);
-  transform-origin: left;
-  background: linear-gradient(160deg, rgba(235, 199, 107, 0.24), rgba(20, 24, 33, 0.92));
-}
-
-.buildingRoof {
-  height: var(--building-depth);
-  bottom: 100%;
-  transform: rotateX(90deg);
-  transform-origin: bottom;
-  background: linear-gradient(135deg, var(--accent), rgba(30, 35, 44, 0.9));
-}
-
-.propertyBuilding:hover .buildingBody,
-.propertySelected .buildingBody {
-  transform: translateX(-50%) rotateX(0deg) rotateY(-20deg) translateY(-8px);
-  filter: saturate(1.1) brightness(1.12);
-}
-
-.pinPulse {
-  position: absolute;
-  left: 50%;
-  bottom: 16px;
-  width: 12px;
-  height: 12px;
-  transform: translateX(-50%);
-  border-radius: 999px;
-  background: var(--accent);
-  box-shadow: 0 0 0 8px rgba(235, 199, 107, 0.12);
-}
-
-.propertyLabel {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  display: grid;
-  min-width: 112px;
-  transform: translateX(-50%);
-  padding: 6px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(5, 8, 14, 0.76);
-  backdrop-filter: blur(12px);
-  text-align: center;
-}
-
-.propertyLabel strong {
-  overflow: hidden;
-  color: #fff;
-  font-size: 10px;
-  line-height: 1.1;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.propertyLabel span {
-  color: rgba(255, 255, 255, 0.52);
-  font-size: 9px;
-}
-
+/* ---- Property drawer (right) ---- */
 .drawer {
   position: absolute;
-  z-index: 6;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  max-height: 45svh;
-  overflow: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(5, 8, 14, 0.92);
-  backdrop-filter: blur(24px);
-  box-shadow: 0 -28px 80px rgba(0, 0, 0, 0.44);
+  z-index: 5;
+  top: 72px;
+  right: 16px;
+  bottom: 18px;
+  width: 344px;
+  max-width: calc(100vw - 32px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.36);
 }
 
 .drawerHandle {
-  width: 44px;
-  height: 4px;
-  margin: 10px auto 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.28);
+  display: none;
 }
 
 .propertyMedia {
   position: relative;
-  margin: 0 16px;
+  flex: 0 0 auto;
+  height: 148px;
   overflow: hidden;
-  aspect-ratio: 16 / 7;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: #0d121b;
 }
 
 .propertyMedia img {
-  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -780,376 +723,285 @@
 
 .propertyMedia span {
   position: absolute;
+  left: 10px;
   top: 10px;
-  right: 10px;
-  padding: 6px 8px;
-  color: #092014;
-  background: #9fe8b2;
-  font-size: 10px;
+  padding: 5px 8px;
+  border: 1px solid rgba(31, 239, 161, 0.5);
+  color: #dcfff0;
+  background: rgba(6, 22, 17, 0.82);
+  font-size: 9px;
   font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .drawerBody {
-  padding: 14px 16px 18px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 14px 14px 18px;
 }
 
 .propertyTitleRow {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
 }
 
 .propertyTitleRow p {
-  margin: 0 0 4px;
-  color: var(--gold);
+  margin: 0 0 2px;
+  color: var(--text-soft);
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .propertyTitleRow h1 {
   margin: 0;
   font-family: var(--serif);
-  font-size: clamp(27px, 7vw, 42px);
+  font-size: 22px;
   font-weight: 500;
-  line-height: 1;
-  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+.propertyTitleRow a {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.propertyTitleRow svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
 }
 
 .address {
-  margin: 8px 0 14px;
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 14px;
-  line-height: 1.35;
-}
-
-.detailGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
-  margin-top: 12px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.detailGrid > div {
-  min-width: 0;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.045);
-}
-
-.detailGrid span,
-.scenarioBarHead span {
-  display: block;
-  color: rgba(255, 255, 255, 0.48);
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.detailGrid strong {
-  display: block;
-  margin-top: 4px;
-  overflow-wrap: anywhere;
-  color: #fff;
+  margin: 10px 0 14px;
+  color: var(--text-soft);
   font-size: 12px;
-  line-height: 1.25;
-}
-
-.scenarioBar {
-  margin-top: 12px;
-  padding: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.045);
-}
-
-.scenarioBarHead {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.scenarioBarHead strong {
-  color: var(--gold);
-  font-size: 12px;
-}
-
-.barTrack {
-  position: relative;
-  height: 7px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.barLow,
-.barHigh {
-  position: absolute;
-  inset: 0 auto 0 0;
-}
-
-.barLow {
-  width: 66%;
-  background: rgba(235, 199, 107, 0.55);
-}
-
-.barHigh {
-  width: 100%;
-  background: linear-gradient(90deg, transparent 60%, rgba(159, 232, 178, 0.72));
-}
-
-.barLabels {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 7px;
-  color: rgba(255, 255, 255, 0.62);
-  font-size: 11px;
-  font-weight: 700;
+  line-height: 1.4;
 }
 
 .propertyStrip {
   display: grid;
-  grid-auto-columns: minmax(124px, 1fr);
   grid-auto-flow: column;
-  gap: 8px;
-  margin-top: 12px;
+  grid-auto-columns: minmax(112px, 1fr);
+  gap: 6px;
+  margin-bottom: 14px;
   overflow-x: auto;
   padding-bottom: 4px;
 }
 
 .propertyStrip button {
-  min-height: 82px;
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  color: #fff;
-  background: rgba(255, 255, 255, 0.045);
-  text-align: left;
-  padding: 10px;
+  display: grid;
+  gap: 3px;
+  padding: 8px 9px;
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
   cursor: pointer;
+  text-align: left;
 }
 
 .propertyStrip .stripActive {
-  border-color: rgba(235, 199, 107, 0.72);
-  background: rgba(235, 199, 107, 0.12);
+  border-color: rgba(235, 199, 107, 0.6);
+  background: rgba(235, 199, 107, 0.14);
 }
 
-.propertyStrip span,
-.propertyStrip strong,
-.propertyStrip small {
-  display: block;
-}
-
-.propertyStrip span {
-  color: var(--gold);
-  font-size: 10px;
-  font-weight: 800;
+.stripTier {
+  width: 20px;
+  height: 4px;
+  border-radius: 999px;
 }
 
 .propertyStrip strong {
-  margin-top: 6px;
-  font-size: 12px;
-  line-height: 1.12;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.15;
 }
 
 .propertyStrip small {
-  margin-top: 4px;
-  color: rgba(255, 255, 255, 0.52);
+  color: var(--text-soft);
   font-size: 10px;
 }
 
-.modelStatus,
+.detailGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin-bottom: 14px;
+  border: 1px solid var(--hairline);
+  background: var(--hairline);
+}
+
+.detailGrid > div {
+  padding: 9px 10px;
+  background: var(--panel-strong);
+}
+
+.detailGrid span {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--text-soft);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.detailGrid strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* ---- Scenario bar ---- */
+.scenarioBar {
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.scenarioBarHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.scenarioBarHead span {
+  color: var(--text-soft);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.scenarioBarHead strong {
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.barTrack {
+  position: relative;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.barLow,
+.barHigh {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 999px;
+}
+
+.barLow {
+  width: 66%;
+  background: rgba(235, 199, 107, 0.4);
+}
+
+.barHigh {
+  width: 100%;
+  background: linear-gradient(90deg, rgba(235, 199, 107, 0.8), rgba(31, 239, 161, 0.7));
+  mix-blend-mode: screen;
+}
+
+.barLabels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  color: var(--text-soft);
+  font-size: 10px;
+  font-weight: 700;
+}
+
 .complianceNote,
+.modelStatus,
 .disclaimer {
-  margin: 12px 0 0;
-  color: rgba(255, 255, 255, 0.52);
-  font-size: 11px;
-  line-height: 1.45;
+  margin: 0 0 8px;
+  color: var(--text-faint);
+  font-size: 10px;
+  line-height: 1.4;
 }
 
 .complianceNote {
-  padding: 9px 10px;
-  border: 1px solid rgba(235, 199, 107, 0.22);
-  color: rgba(255, 255, 255, 0.7);
-  background: rgba(235, 199, 107, 0.08);
+  color: var(--text-soft);
+  font-weight: 700;
 }
 
-.disclaimer {
-  color: rgba(255, 255, 255, 0.44);
-}
-
-.mapStage[data-zoom-tier="city"] .propertyBuilding,
-.mapStage[data-zoom-tier="city"] .propertyFootprint {
-  height: 96px;
-}
-
-.mapStage[data-zoom-tier="city"] .buildingBody {
-  display: none;
-}
-
-.mapStage[data-zoom-tier="city"] .footprintSvg {
-  display: none;
-}
-
-.mapStage[data-zoom-tier="city"] .propertyLabel {
-  bottom: 18px;
-}
-
-.mapStage[data-zoom-tier="city"] .pinPulse {
-  bottom: 52px;
-}
-
-.mapStage[data-zoom-tier="detail"] .propertySelected {
-  z-index: 3;
-  width: 238px;
-  height: 238px;
-}
-
-.mapStage[data-zoom-tier="detail"] .propertySelected .buildingBody {
-  transform: translateX(-50%) rotateX(0deg) rotateY(-20deg) translateY(-12px) scale(1.16);
-}
-
-.mapStage[data-zoom-tier="detail"] .propertySelected .footprintSvg {
-  width: 218px;
-  height: 218px;
-  transform: translateX(-50%) rotateX(58deg) rotateZ(-15deg) translateY(-18px) scale(1.05);
-}
-
-.mapStage[data-zoom-tier="detail"] .propertySelected .footprintText {
-  font-size: 4px;
-}
-
-.mapStage[data-mode="distribution"] .propertySelected .pinPulse {
-  background: #9fe8b2;
-  box-shadow: 0 0 0 12px rgba(159, 232, 178, 0.15);
-}
-
-.mapStage[data-mode="appreciation"] .propertySelected .pinPulse {
-  background: #9fb1c7;
-  box-shadow: 0 0 0 12px rgba(159, 177, 199, 0.17);
-}
-
-@media (max-width: 520px) {
-  .hoverCard {
-    width: min(226px, calc(100% - 24px));
-  }
-}
-
-@media (min-width: 900px) {
-  .mapStage {
-    min-height: 100vh;
-  }
-
-  .topBar {
-    padding: 28px 32px 0;
-  }
-
-  .summaryPanel {
-    width: min(620px, calc(100vw - 520px));
-    margin: 18px 32px 0;
-  }
-
-  .modeSwitch {
-    width: 440px;
-    margin: 12px 32px 0;
-  }
-
-  .mapViewport {
-    inset: 160px 430px 32px 0;
-  }
-
-  .mapAttribution {
-    left: 32px;
-    top: 20px;
-    bottom: auto;
-  }
-
+/* ---- Responsive ---- */
+@media (max-width: 1024px) {
   .drawer {
-    top: 32px;
-    right: 32px;
-    bottom: 32px;
-    left: auto;
-    width: 390px;
-    max-height: none;
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    top: auto;
+    right: 12px;
+    left: 12px;
+    bottom: 12px;
+    width: auto;
+    max-height: 46svh;
   }
 
-  .drawerHandle {
+  .dataPanel {
+    top: 66px;
+    left: 12px;
+    width: 220px;
+    max-height: 42svh;
+  }
+
+  .summaryPanel,
+  .modeSwitch {
     display: none;
   }
 
-  .propertyMedia {
-    margin-top: 16px;
-    aspect-ratio: 16 / 4.8;
-  }
-
-  .propertyTitleRow h1 {
-    font-size: 38px;
-  }
-
   .zoomControls {
-    top: 224px;
-    right: 454px;
+    bottom: auto;
+    top: 66px;
+    left: auto;
+    right: 12px;
   }
 
-  .zoomReadout {
-    top: 371px;
-    right: 454px;
+  .instructions {
+    top: auto;
+    bottom: calc(46svh + 22px);
   }
 }
 
-@media (max-width: 430px) {
-  .brandLockup small {
+@media (max-width: 720px) {
+  .topBar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .topControls {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+
+  .topControls button span {
     display: none;
   }
 
-  .summaryPanel {
-    grid-template-columns: 1fr;
-  }
-
-  .mapViewport {
-    inset: 218px 0 286px;
-  }
-
-  .zoomControls {
-    top: 292px;
-  }
-
-  .zoomReadout {
-    top: 413px;
-  }
-
-  .mapWorld {
-    transform: scale(1);
-  }
-
-  .mapAttribution {
-    top: 92px;
-    bottom: auto;
-    left: 12px;
-    max-width: calc(100vw - 112px);
-    font-size: 9px;
-  }
-
-  .propertyFootprint {
-    width: 118px;
-    height: 130px;
-  }
-
-  .footprintSvg {
-    width: 108px;
-    height: 108px;
-  }
-
-  .mapStage[data-zoom-tier="detail"] .propertySelected {
-    width: 176px;
-    height: 176px;
-  }
-
-  .mapStage[data-zoom-tier="detail"] .propertySelected .footprintSvg {
-    width: 162px;
-    height: 162px;
+  .dataPanel {
+    max-height: 34svh;
   }
 }
