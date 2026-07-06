@@ -38,6 +38,30 @@ function finiteOr(value: unknown, fallback: number) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+function distanceMeters(lat1: number, lng1: number, lat2: number, lng2: number) {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return 2 * 6371000 * Math.asin(Math.sqrt(a));
+}
+
+/** Nearest Equiton property to a tapped point, within maxMeters (else null). */
+function nearestProperty(latitude: number, longitude: number, maxMeters: number) {
+  let best: EquitonProperty | null = null;
+  let bestDistance = Infinity;
+  for (const property of equitonProperties) {
+    const d = distanceMeters(latitude, longitude, property.latitude, property.longitude);
+    if (d < bestDistance) {
+      bestDistance = d;
+      best = property;
+    }
+  }
+  return bestDistance <= maxMeters ? best : null;
+}
+
 export function useArcGisScene(props: SceneProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState<SceneStatus>("loading");
@@ -188,17 +212,33 @@ export function useArcGisScene(props: SceneProps) {
         });
         cleanups.push(() => pointerMove.remove());
 
-        // ---- Click: select a property ----
-        const clickHandle = view.on("click", async (event: Record<string, unknown>) => {
+        // ---- Click: select a property (marker OR the building itself) ----
+        const clickHandle = view.on("click", async (event: Record<string, any>) => {
           camera.stopCinematic();
           const hit = await view.hitTest(event);
-          const graphic = hit.results?.find(
+          const markerGraphic = hit.results?.find(
             (r: Record<string, any>) => r.graphic?.attributes?.propertyId,
           )?.graphic;
-          const property = equitonProperties.find(
-            (p) => p.id === graphic?.attributes?.propertyId,
-          );
-          if (property) propsRef.current.onSelectProperty(property);
+
+          let property =
+            equitonProperties.find((p) => p.id === markerGraphic?.attributes?.propertyId) ?? null;
+
+          // Tapping anywhere on a building (not just the marker dot) selects the
+          // nearest property to the tapped ground point.
+          if (!property) {
+            const buildingHit = hit.results?.find(
+              (r: Record<string, any>) => r.graphic?.layer === buildingsLayer,
+            );
+            const mapPoint = hit.ground?.mapPoint ?? view.toMap?.(event) ?? null;
+            if (buildingHit && mapPoint) {
+              property = nearestProperty(mapPoint.latitude, mapPoint.longitude, 150);
+            }
+          }
+
+          if (property) {
+            propsRef.current.onSelectProperty(property);
+            camera.flyToProperty(property);
+          }
         });
         cleanups.push(() => clickHandle.remove());
 

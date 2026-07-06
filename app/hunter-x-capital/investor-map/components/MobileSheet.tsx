@@ -25,6 +25,7 @@ function snapTranslatePx(snap: Snap, vh: number) {
 export function MobileSheet({
   selectedProperty,
   selectedId,
+  focusTick,
   amount,
   mode,
   groupBy,
@@ -39,6 +40,7 @@ export function MobileSheet({
 }: {
   selectedProperty: EquitonProperty;
   selectedId: string;
+  focusTick: number;
   amount: number;
   mode: InvestmentMode;
   groupBy: GroupBy;
@@ -66,16 +68,17 @@ export function MobileSheet({
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // Raise the sheet to Details when the selection actually changes (map tap /
-  // place tap). Comparing the id (not a first-run flag) is robust against
-  // React StrictMode's double-mount in dev.
-  const prevSelected = useRef(selectedId);
+  // Raise the sheet to Details on any focus intent (map/building tap, list or
+  // drawer tap) — even when the same property is tapped again. Comparing the
+  // tick (not a first-run flag) is robust against React StrictMode's double
+  // mount in dev, and skips the initial render.
+  const prevTick = useRef(focusTick);
   useEffect(() => {
-    if (prevSelected.current === selectedId) return;
-    prevSelected.current = selectedId;
+    if (prevTick.current === focusTick) return;
+    prevTick.current = focusTick;
     setTab("details");
     setSnap((current) => (current === "peek" ? "half" : current));
-  }, [selectedId]);
+  }, [focusTick]);
 
   const onHandleDown = (event: React.PointerEvent) => {
     (event.target as HTMLElement).setPointerCapture(event.pointerId);

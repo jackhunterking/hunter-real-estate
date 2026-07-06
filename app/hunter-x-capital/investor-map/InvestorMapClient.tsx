@@ -28,6 +28,9 @@ export default function InvestorMapClient() {
   const [touring, setTouring] = useState(false);
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [showInstructions, setShowInstructions] = useState(true);
+  // Bumped on every focus intent (map tap, list/drawer tap) so the mobile sheet
+  // opens even when the same property is tapped again.
+  const [focusTick, setFocusTick] = useState(0);
 
   const selectedProperty =
     equitonProperties.find((property) => property.id === selectedId) ?? equitonProperties[0];
@@ -46,6 +49,7 @@ export default function InvestorMapClient() {
 
   const handleSelectProperty = useCallback((property: EquitonProperty) => {
     setSelectedId(property.id);
+    setFocusTick((tick) => tick + 1);
   }, []);
 
   const { containerRef, status, hoverCard, controlsRef } = useArcGisScene({
@@ -62,6 +66,7 @@ export default function InvestorMapClient() {
     (property: EquitonProperty) => {
       setSelectedId(property.id);
       controlsRef.current?.flyToProperty(property);
+      setFocusTick((tick) => tick + 1);
     },
     [controlsRef],
   );
@@ -215,6 +220,7 @@ export default function InvestorMapClient() {
             <MobileSheet
               selectedProperty={selectedProperty}
               selectedId={selectedId}
+              focusTick={focusTick}
               amount={amount}
               mode={mode}
               groupBy={groupBy}
