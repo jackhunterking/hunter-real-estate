@@ -3,6 +3,7 @@ import { formatCurrency } from "../format";
 import { getTierForProperty } from "../tiers";
 import { SourceIcon } from "./icons";
 import { ScenarioBar } from "./ScenarioBar";
+import { BuildingImage } from "./BuildingImage";
 import styles from "../investor-map.module.css";
 
 /**
@@ -31,8 +32,8 @@ export function PropertyDetail({
   return (
     <>
       <div className={styles.propertyMedia}>
-        <img src={selectedProperty.imageUrl} alt={`${selectedProperty.name} exterior`} />
-        <span>Address verified</span>
+        <BuildingImage property={selectedProperty} />
+        <span>Satellite · verified</span>
       </div>
 
       <div className={styles.drawerBody}>
