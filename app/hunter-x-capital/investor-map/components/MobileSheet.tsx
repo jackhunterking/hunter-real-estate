@@ -56,16 +56,33 @@ export function MobileSheet({
   const [snap, setSnap] = useState<Snap>("peek");
   const [tab, setTab] = useState<Tab>("details");
   const [dragPx, setDragPx] = useState<number | null>(null);
-  const [vh, setVh] = useState(800);
+  // height = the *visible* viewport; bottomInset = the browser's bottom toolbar
+  // height (not exposed via CSS env()). Anchoring the sheet above bottomInset
+  // keeps it clear of the mobile browser's URL bar in every state.
+  const [vp, setVp] = useState({ height: 800, bottomInset: 0 });
+  const vh = vp.height;
   const dragRef = useRef<{ startY: number; startPx: number; moved: number } | null>(null);
 
-  // Track viewport height so the sheet snaps in real pixels (robust on phones
-  // where svh/dvh shift as the address bar shows/hides).
   useEffect(() => {
-    const update = () => setVh(window.innerHeight);
+    const vv = window.visualViewport;
+    const update = () => {
+      const height = vv ? vv.height : window.innerHeight;
+      const bottomInset = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
+      setVp({ height, bottomInset });
+      // Shared with sibling overlays (e.g. the zoom cluster) so they clear the
+      // browser toolbar too.
+      document.documentElement.style.setProperty("--vv-bottom-inset", `${bottomInset}px`);
+    };
     update();
+    vv?.addEventListener("resize", update);
+    vv?.addEventListener("scroll", update);
     window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+    return () => {
+      vv?.removeEventListener("resize", update);
+      vv?.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      document.documentElement.style.removeProperty("--vv-bottom-inset");
+    };
   }, []);
 
   // Raise the sheet to Details on any focus intent (map/building tap, list or
@@ -84,10 +101,10 @@ export function MobileSheet({
     (event.target as HTMLElement).setPointerCapture(event.pointerId);
     dragRef.current = {
       startY: event.clientY,
-      startPx: snapTranslatePx(snap, window.innerHeight),
+      startPx: snapTranslatePx(snap, vh),
       moved: 0,
     };
-    setDragPx(snapTranslatePx(snap, window.innerHeight));
+    setDragPx(snapTranslatePx(snap, vh));
   };
 
   const onHandleMove = (event: React.PointerEvent) => {
@@ -95,7 +112,6 @@ export function MobileSheet({
     if (!drag) return;
     const delta = event.clientY - drag.startY;
     drag.moved = Math.max(drag.moved, Math.abs(delta));
-    const vh = window.innerHeight;
     const next = Math.min(Math.max(drag.startPx + delta, 0), snapTranslatePx("peek", vh));
     setDragPx(next);
   };
@@ -113,7 +129,6 @@ export function MobileSheet({
     }
 
     // Otherwise snap to the nearest state.
-    const vh = window.innerHeight;
     const current = dragPx ?? snapTranslatePx(snap, vh);
     const nearest = SNAP_ORDER.reduce((best, candidate) =>
       Math.abs(snapTranslatePx(candidate, vh) - current) <
@@ -136,6 +151,7 @@ export function MobileSheet({
       className={styles.mobileSheet}
       style={{
         height: `${Math.round(vh * SHEET_RATIO)}px`,
+        bottom: `${Math.round(vp.bottomInset)}px`,
         transform: `translateY(${Math.round(dragPx ?? snapTranslatePx(snap, vh))}px)`,
         transition: dragPx !== null ? "none" : undefined,
       }}

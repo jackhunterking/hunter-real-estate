@@ -1234,7 +1234,9 @@
     top: auto;
     left: auto;
     right: calc(env(safe-area-inset-right) + 12px);
-    bottom: calc(104px + env(safe-area-inset-bottom) + 14px);
+    /* Sit above the peeking sheet, which itself is lifted above the browser
+       toolbar (--vv-bottom-inset, published by MobileSheet). */
+    bottom: calc(var(--vv-bottom-inset, 0px) + 104px + env(safe-area-inset-bottom) + 18px);
   }
 
   .instructions {
