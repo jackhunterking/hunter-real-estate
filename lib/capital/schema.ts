@@ -13,10 +13,20 @@ const sourced = z.object({
 
 const imageSlot = z.object({ src: z.string().min(1).optional(), alt: localized.optional() });
 const mediaSet = z.object({ card: imageSlot.optional(), banner: imageSlot.optional(), logo: imageSlot.optional() });
+const manager = z.object({
+  id: z.string().min(1),
+  slug: z.string().min(1),
+  name: localized,
+  headquarters: z.object({ city: z.string().min(1), province: z.string().min(1), country: z.string().min(1) }),
+  description: localized,
+  website: z.string().url().optional(),
+  officeAddress: localized.optional(),
+});
 
 const trailingReturn = z.object({ period: localized, value: z.string().min(1), note: localized.optional() });
+const providerInfo = z.object({ name: z.string().min(1), url: z.string().url().optional() });
 const serviceProviders = z.object({
-  auditor: z.string().optional(), legalCounsel: z.string().optional(), appraiser: z.string().optional(),
+  auditor: providerInfo.optional(), legalCounsel: providerInfo.optional(), appraiser: providerInfo.optional(),
 });
 
 const offeringSchema = z.object({
@@ -31,7 +41,7 @@ const offeringSchema = z.object({
   aum: sourced.optional(), amountRaised: sourced.optional(), fundingPercent: z.number().optional(),
   managementFee: localized.optional(), valuationFrequency: localized.optional(), distributionFrequency: localized.optional(),
   riskProfile: localized.optional(), highlights: z.array(localized).optional(),
-  trailingReturns: z.array(trailingReturn).optional(), serviceProviders: serviceProviders.optional(),
+  trailingReturns: z.array(trailingReturn).optional(), trailingReturnsNote: localized.optional(), serviceProviders: serviceProviders.optional(),
   lastUpdated: z.string().optional(),
   verifiedAt: z.string().min(10),
 });
@@ -45,6 +55,7 @@ function assertUnique(records: { id: string }[], label: string) {
 }
 
 export function validateCapitalData() {
+  z.array(manager).parse(managers);
   z.array(offeringSchema).parse(offerings);
   assertUnique(sources, "source"); assertUnique(managers, "manager"); assertUnique(offerings, "offering");
   assertUnique(shareClasses, "share class"); assertUnique(properties, "property"); assertUnique(documents, "document");

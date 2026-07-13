@@ -41,6 +41,8 @@ export type Manager = {
   name: LocalizedText;
   headquarters: { city: string; province: string; country: string };
   description: LocalizedText;
+  website?: string;
+  officeAddress?: LocalizedText;
 };
 
 export type ShareClass = {
@@ -95,10 +97,15 @@ export type TrailingReturn = {
   note?: LocalizedText;
 };
 
+export type ProviderInfo = {
+  name: string;
+  url?: string;
+};
+
 export type ServiceProviders = {
-  auditor?: string;
-  legalCounsel?: string;
-  appraiser?: string;
+  auditor?: ProviderInfo;
+  legalCounsel?: ProviderInfo;
+  appraiser?: ProviderInfo;
 };
 
 export type Offering = {
@@ -135,6 +142,7 @@ export type Offering = {
   riskProfile?: LocalizedText;
   highlights?: LocalizedText[];
   trailingReturns?: TrailingReturn[];
+  trailingReturnsNote?: LocalizedText;
   serviceProviders?: ServiceProviders;
   lastUpdated?: string;
   verifiedAt: string;

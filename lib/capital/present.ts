@@ -105,8 +105,10 @@ export function formatSourceLine(value: SourcedValue | undefined, lang: Lang): s
 const RETURN_PHRASES_TR: Record<string, string> = {
   "12-15% annually": "Yıllık %12-15",
   "14-18% annualized": "Yıllıklandırılmış %14-18",
+  "10-14% annual net return": "Yıllık net getiri %10-14",
   "Quarterly; up to 8.2% annually": "Üç aylık; yıllık en fazla %8,2",
   "8% annually, paid monthly": "Yıllık %8; aylık ödenir",
+  "7-8% annually, paid monthly": "Yıllık %7-8; aylık ödenir",
   "Open-ended fund": "Açık uçlu fon",
 };
 
@@ -201,6 +203,34 @@ export type MetricTile = {
   value: string;
   source: string | null;
 };
+
+function compactPercent(value: string, lang: Lang): string | null {
+  const match = value.match(/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?%/);
+  if (!match) return null;
+  const percent = match[0].replace(".", ",");
+  return lang === "tr" ? `%${percent.replace("%", "")}` : percent;
+}
+
+function compactSummaryMetric(value: string, fallbackLabel: string, lang: Lang): Pick<MetricTile, "label" | "value"> {
+  const percent = compactPercent(value, lang);
+  if (!percent) return { label: fallbackLabel, value: formatReturnPhrase(value, lang) };
+
+  if (/net return/i.test(value)) {
+    return {
+      label: lang === "tr" ? "Yıllık net getiri" : "Annual net return",
+      value: percent,
+    };
+  }
+
+  if (/paid monthly/i.test(value)) {
+    return {
+      label: lang === "tr" ? "Aylık ödenir" : "Paid monthly",
+      value: percent,
+    };
+  }
+
+  return { label: fallbackLabel, value: percent };
+}
 
 /**
  * Metric tiles for a fund's overview/terms. `plain` returns only the headline
@@ -349,6 +379,7 @@ export function formatDate(iso: string, lang: Lang): string {
 /* ------------------------------------------------------------------ */
 
 export type LabeledRow = { key: string; value: string };
+export type ProviderRow = LabeledRow & { url?: string };
 
 export type FundDetailViewModel = {
   bannerImage: ResolvedImage;
@@ -359,7 +390,8 @@ export type FundDetailViewModel = {
   fundDetails: LabeledRow[];
   highlights: string[];
   trailingReturns: { period: string; value: string; note: string | null }[];
-  providers: LabeledRow[];
+  trailingReturnsNote: string | null;
+  providers: ProviderRow[];
   lastUpdated: string | null;
 };
 
@@ -379,32 +411,28 @@ export function buildFundDetailViewModel(bundle: OfferingBundle, lang: Lang): Fu
   // Summary tiles: target return, distribution, AUM
   const summaryTiles: MetricTile[] = [];
   const L = (en: string, tr: string) => (lang === "tr" ? tr : en);
-  if (sc?.targetReturn) summaryTiles.push({ key: "return", label: L("Target return", "Hedef getiri"), value: formatReturnPhrase(sc.targetReturn.value, lang), source: null });
-  if (sc?.targetDistribution) summaryTiles.push({ key: "distribution", label: L("Target distribution", "Hedef dağıtım"), value: formatReturnPhrase(sc.targetDistribution.value, lang), source: null });
-  if (bundle.aum) summaryTiles.push({ key: "aum", label: L("Assets under management", "Yönetilen varlıklar"), value: String(bundle.aum.value), source: null });
+  if (sc?.targetReturn) summaryTiles.push({ key: "return", ...compactSummaryMetric(sc.targetReturn.value, L("Target return", "Hedef getiri"), lang), source: null });
+  if (sc?.targetDistribution) summaryTiles.push({ key: "distribution", ...compactSummaryMetric(sc.targetDistribution.value, L("Target distribution", "Hedef dağıtım"), lang), source: null });
+  if (bundle.aum) summaryTiles.push({ key: "aum", label: L("AUM", "Yönetilen varlık"), value: String(bundle.aum.value), source: null });
 
   // Fund details rows (only those with data)
   const fundDetails: LabeledRow[] = [];
   const row = (key: string, value?: string | null) => { if (value) fundDetails.push({ key, value }); };
   row("riskProfile", bundle.riskProfile?.[lang]);
   row("projectedReturn", sc?.targetReturn ? formatReturnPhrase(sc.targetReturn.value, lang) : null);
-  row("investmentTerm", sc?.term ? formatReturnPhrase(sc.term.value, lang) : null);
-  row("minimum", sc?.minimumInvestment ? formatCurrencyCad(sc.minimumInvestment.value, lang) : null);
-  row("unitPrice", sc?.unitPrice ? formatCurrencyCad(sc.unitPrice.value, lang) : null);
   row("startDate", bundle.inceptionDate ? formatDate(bundle.inceptionDate, lang) : null);
+  row("unitPrice", sc?.unitPrice ? formatCurrencyCad(sc.unitPrice.value, lang) : null);
+  row("minimum", sc?.minimumInvestment ? formatCurrencyCad(sc.minimumInvestment.value, lang) : null);
   row("distribution", sc?.distributionPerUnit ? formatReturnPhrase(sc.distributionPerUnit.value, lang) : null);
-  row("fundType", bundle.fundType?.[lang]);
-  row("fundStatus", bundle.fundStatus?.[lang]);
-  row("managementFee", bundle.managementFee?.[lang]);
-  row("valuation", bundle.valuationFrequency?.[lang]);
-  row("distributionFrequency", bundle.distributionFrequency?.[lang]);
-  row("registered", sc && sc.registeredAccountTypes.length ? sc.registeredAccountTypes.join(", ") : null);
   row("redemption", sc?.redemptionTerms?.[lang]);
 
-  const providers: LabeledRow[] = [];
-  if (bundle.serviceProviders?.auditor) providers.push({ key: "auditor", value: bundle.serviceProviders.auditor });
-  if (bundle.serviceProviders?.legalCounsel) providers.push({ key: "legalCounsel", value: bundle.serviceProviders.legalCounsel });
-  if (bundle.serviceProviders?.appraiser) providers.push({ key: "appraiser", value: bundle.serviceProviders.appraiser });
+  const providers: ProviderRow[] = [];
+  const provider = (key: string, value?: { name: string; url?: string }) => {
+    if (value) providers.push({ key, value: value.name, url: value.url });
+  };
+  provider("auditor", bundle.serviceProviders?.auditor);
+  provider("legalCounsel", bundle.serviceProviders?.legalCounsel);
+  provider("appraiser", bundle.serviceProviders?.appraiser);
 
   return {
     bannerImage,
@@ -415,6 +443,7 @@ export function buildFundDetailViewModel(bundle: OfferingBundle, lang: Lang): Fu
     fundDetails,
     highlights: (bundle.highlights ?? []).map((h) => h[lang]),
     trailingReturns: (bundle.trailingReturns ?? []).map((t) => ({ period: t.period[lang], value: t.value, note: t.note?.[lang] ?? null })),
+    trailingReturnsNote: bundle.trailingReturnsNote?.[lang] ?? null,
     providers,
     lastUpdated: bundle.lastUpdated ? formatDate(bundle.lastUpdated, lang) : bundle.verifiedAt ? formatDate(bundle.verifiedAt, lang) : null,
   };

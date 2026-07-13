@@ -17,7 +17,7 @@ export function Dashboard({ offerings }: { offerings: OfferingBundle[] }) {
       </header>
 
       {offerings.length ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2">
           {offerings.map((o) => (
             <OfferingCard key={o.id} offering={o} />
           ))}

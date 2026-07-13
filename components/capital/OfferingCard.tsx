@@ -21,33 +21,34 @@ export function OfferingCard({ offering }: { offering: OfferingBundle }) {
       className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
     >
       <div
-        className="relative grid aspect-[16/9] place-items-center bg-cover bg-center"
+        className="relative grid aspect-[60/13] place-items-center overflow-hidden bg-cover bg-center"
         style={media.src ? undefined : { backgroundImage: media.gradient }}
       >
         {media.src && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={media.src} alt={media.alt} className="absolute inset-0 h-full w-full object-cover" />
         )}
-        <span className="absolute right-3 top-3 z-10 rounded-md bg-foreground/80 px-2.5 py-1 text-[11px] font-semibold text-white">
+        <span className="absolute right-3 top-3 z-10 bg-card/90 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-primary shadow-sm">
           {strategyLabel}
         </span>
-        <span
-          className="relative z-[1] grid size-20 place-items-center overflow-hidden rounded-full border-4 border-white bg-white font-serif text-2xl font-semibold text-primary shadow-md"
-          style={logo.src ? undefined : { backgroundImage: logo.gradient }}
-        >
-          {logo.src ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={logo.src} alt={logo.alt} className="h-full w-full object-contain p-2.5" />
-          ) : (
-            <span aria-hidden>{logo.initials}</span>
-          )}
-        </span>
+        {!media.src && (
+          <span
+            className="relative z-[1] grid size-20 place-items-center overflow-hidden rounded-full border-4 border-white bg-white font-serif text-2xl font-semibold text-primary shadow-md"
+            style={logo.src ? undefined : { backgroundImage: logo.gradient }}
+          >
+            {logo.src ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={logo.src} alt={logo.alt} className="h-full w-full object-contain p-2.5" />
+            ) : (
+              <span aria-hidden>{logo.initials}</span>
+            )}
+          </span>
+        )}
       </div>
 
       <div className="flex flex-1 flex-col p-5">
         <h3 className="text-lg font-bold leading-tight text-foreground">{offering.shortName[lang]}</h3>
         <p className="mt-1 text-sm text-muted-foreground">{offering.manager.name[lang]}</p>
-        <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{offering.summary[lang]}</p>
 
         {headline && (
           <p className="mt-3 flex items-baseline gap-2">

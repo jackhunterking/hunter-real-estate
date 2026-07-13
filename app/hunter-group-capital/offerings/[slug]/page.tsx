@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getOfferingBySlug, getOfferings } from "@/lib/capital/repository";
+import { getOfferingBySlug } from "@/lib/capital/repository";
 import { OfferingDetail } from "./OfferingDetail";
 
-export function generateStaticParams() { return getOfferings().map((item) => ({ slug: item.slug })); }
+export const dynamic = "force-dynamic";
 
 export default async function OfferingPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

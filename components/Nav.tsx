@@ -165,9 +165,6 @@ export default function Nav({ overlayHero = false }: NavProps) {
           <Link href="/#kaynaklar" className={styles.link} onClick={close}>
             {t.nav.resources}
           </Link>
-          <Link href="/hunter-group-capital" className={styles.link} onClick={close}>
-            {t.nav.capital}
-          </Link>
           <Link href="/#iletisim" className={styles.link} onClick={close}>
             {t.nav.contact}
           </Link>
