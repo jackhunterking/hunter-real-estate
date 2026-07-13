@@ -19,7 +19,7 @@ This repository is now one deployable app at the repo root. It contains the real
 - `/rehber/ogren` - education hub
 - `/mortgage` - mortgage landing
 - `/mortgage/oranlar` - manual mortgage rates
-- `/mortgage/araclar` - mortgage tools
+- `/mortgage/araclar` - redirects to `/mortgage`
 - `/hunter-group-capital` - canonical Capital experience
 - `/hunter-x-capital` - legacy redirect to `/hunter-group-capital`
 - `/gizlilik`, `/kullanim-kosullari`, `/reklam-aciklamasi` - legal pages

@@ -359,6 +359,90 @@
   color: var(--navy);
 }
 
+/* ── Hub ── */
+.hub {
+  background: linear-gradient(180deg, #f7f3e7 0%, #f3ede0 100%);
+  padding: 88px 0;
+}
+
+.hubGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 900px) {
+  .hubGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.hubCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 100%;
+  padding: 28px;
+  border: 1px solid rgba(16, 35, 63, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 40px rgba(15, 30, 49, 0.08);
+}
+
+.hubLabel {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.hubTitle {
+  font-family: var(--serif);
+  font-size: clamp(24px, 3vw, 30px);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--ink);
+  margin: 0;
+}
+
+.hubText {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+}
+
+.hubLink,
+.legalLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--navy);
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.hubLink:hover,
+.legalLink:hover {
+  color: var(--gold-deep, #9a7b1f);
+  transform: translateX(2px);
+}
+
+.legalList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: auto;
+}
+
 /* ── Personas ── */
 .personas {
   background: var(--cream);

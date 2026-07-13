@@ -9,7 +9,8 @@ import RateDisclosureModal from "@/components/RateDisclosureModal";
 import AdvisorStrip from "@/components/mortgage/AdvisorStrip";
 import MortgageDisclosure from "@/components/mortgage/MortgageDisclosure";
 import RateTiles from "@/components/mortgage/RateTiles";
-import { useT } from "@/lib/i18n/LanguageProvider";
+import { useLang, useT } from "@/lib/i18n/LanguageProvider";
+import { LEGAL_DOCS, LEGAL_SLUGS } from "@/lib/mortgage/legal";
 import { HERO_RATES, heroTile } from "@/lib/mortgage/rates";
 import { waHref } from "@/lib/mortgage/wa";
 import styles from "./mortgage.module.css";
@@ -32,12 +33,19 @@ function Arrow() {
 
 export default function MortgageClient() {
   const t = useT();
+  const { lang } = useLang();
   const f = t.mortgage;
   const [showDisclosure, setShowDisclosure] = useState(false);
+  const legalDocs = LEGAL_DOCS[lang];
 
   const tiles = [
     { label: f.rates.fixedLabel, tile: heroTile(HERO_RATES.fixed) },
     { label: f.rates.variableLabel, tile: heroTile(HERO_RATES.variable) },
+  ];
+  const legalLinks = [
+    { href: `/${LEGAL_SLUGS.privacy}`, label: legalDocs.privacy.title },
+    { href: `/${LEGAL_SLUGS.terms}`, label: legalDocs.terms.title },
+    { href: `/${LEGAL_SLUGS.advertising}`, label: legalDocs.advertising.title },
   ];
 
   const whatsapp = waHref(f.cta.whatsappText);
@@ -156,6 +164,41 @@ export default function MortgageClient() {
 
       {/* Advisor strip (real team + Equifax) */}
       <AdvisorStrip />
+
+      <section className={styles.hub}>
+        <div className="container">
+          <div className={styles.sectionHead}>
+            <span className={styles.sectionEyebrow}>{f.hub.eyebrow}</span>
+            <h2 className={styles.sectionTitle}>{f.hub.title}</h2>
+            <p className={styles.sectionSub}>{f.hub.sub}</p>
+          </div>
+          <div className={styles.hubGrid}>
+            <article className={styles.hubCard}>
+              <span className={styles.hubLabel}>{f.oranlar.label}</span>
+              <h3 className={styles.hubTitle}>{f.hub.ratesTitle}</h3>
+              <p className={styles.hubText}>{f.hub.ratesText}</p>
+              <Link href="/mortgage/oranlar" className={styles.hubLink}>
+                {f.hub.ratesCta}
+                <Arrow />
+              </Link>
+            </article>
+
+            <article className={styles.hubCard}>
+              <span className={styles.hubLabel}>{f.compliance.heading}</span>
+              <h3 className={styles.hubTitle}>{f.hub.legalTitle}</h3>
+              <p className={styles.hubText}>{f.hub.legalText}</p>
+              <div className={styles.legalList}>
+                {legalLinks.map((link) => (
+                  <Link key={link.href} href={link.href} className={styles.legalLink}>
+                    {link.label}
+                    <Arrow />
+                  </Link>
+                ))}
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
 
       {/* Persona row */}
       <section className={styles.personas}>
