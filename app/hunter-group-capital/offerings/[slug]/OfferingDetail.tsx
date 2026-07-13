@@ -1,8 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight, MessageCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  BarChart3,
+  Building2,
+  CircleDollarSign,
+  ClipboardList,
+  Download,
+  FileText,
+  Landmark,
+  ListChecks,
+  MapPin,
+  MessageCircle,
+  TrendingUp,
+  UserCheck,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { assetClasses, strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
@@ -146,8 +163,34 @@ function FundingRing({ percent, label }: { percent: number; label: string }) {
 
 const CARD = "rounded-xl border border-border bg-card p-6";
 const H2 = "font-serif text-lg font-semibold text-foreground";
+const EYEBROW = "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground";
 const CHOICE =
   "rounded-md border px-3 py-2 text-center text-sm font-semibold transition-colors hover:border-primary/60";
+
+const STAT_ICONS: Record<string, LucideIcon> = {
+  return: TrendingUp,
+  distribution: CircleDollarSign,
+  aum: Landmark,
+};
+
+/** Consistent institutional section header: gold hairline tick + muted icon + serif title. */
+function SectionHead({
+  icon: Icon,
+  children,
+  className,
+}: {
+  icon?: LucideIcon;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn("flex items-center gap-2.5", className)}>
+      <span className="h-4 w-[3px] shrink-0 rounded-full bg-gold" aria-hidden />
+      {Icon && <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />}
+      <h2 className={H2}>{children}</h2>
+    </div>
+  );
+}
 
 function OfferDetailsTab({ offering }: { offering: OfferingBundle }) {
   const { lang, t } = useLang();
@@ -159,55 +202,55 @@ function OfferDetailsTab({ offering }: { offering: OfferingBundle }) {
   return (
     <div className="flex flex-col gap-7">
       {vm.summaryTiles.length > 0 && (
-        <dl className="grid gap-4 sm:grid-cols-3">
-          {vm.summaryTiles.map((tile) => (
-            <div key={tile.key} className="grid min-h-36 place-items-center rounded-xl border border-border bg-card px-5 py-7 text-center">
-              <div className="flex min-h-20 flex-col items-center justify-center">
-                <dd className="text-4xl font-extrabold leading-none tracking-normal text-foreground tabular-nums sm:text-[2.6rem]">
+        <dl className="grid grid-cols-1 divide-y divide-border overflow-hidden rounded-xl border border-border border-t-2 border-t-gold bg-card sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          {vm.summaryTiles.map((tile) => {
+            const Icon = STAT_ICONS[tile.key] ?? BarChart3;
+            return (
+              <div key={tile.key} className="flex flex-col gap-3.5 px-6 py-6">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Icon className="size-4 shrink-0" aria-hidden />
+                  <dt className={EYEBROW}>{tile.label}</dt>
+                </div>
+                <dd className="text-[2.35rem] font-semibold leading-none tracking-tight text-foreground tabular-nums">
                   {tile.value}
                 </dd>
-                <dt className="mt-3 text-sm font-medium leading-tight text-muted-foreground">
-                  {tile.label}
-                </dt>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </dl>
       )}
 
       <section className={CARD}>
-        <h2 className={cn(H2, "mb-4")}>{d.fundDetailsHeading}</h2>
-        <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+        <SectionHead icon={ListChecks} className="mb-5">{d.fundDetailsHeading}</SectionHead>
+        <dl className="grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
           {vm.fundDetails.map((r) => (
-            <div key={r.key}>
-              <dt className="mb-0.5 text-xs text-muted-foreground">{fields[r.key] ?? r.key}</dt>
-              <dd className="border-b border-border pb-2 text-[15px] font-semibold text-foreground">{r.value}</dd>
+            <div key={r.key} className="flex items-baseline justify-between gap-4 border-b border-border py-2.5">
+              <dt className="text-[13px] leading-snug text-muted-foreground">{fields[r.key] ?? r.key}</dt>
+              <dd className="shrink-0 text-right text-[15px] font-semibold text-foreground tabular-nums">{r.value}</dd>
             </div>
           ))}
         </dl>
       </section>
 
       {vm.trailingReturns.length > 0 && (
-        <section className="rounded-xl border border-border bg-card px-5 py-4">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <h2 className={H2}>{d.trailingReturns}</h2>
-          </div>
+        <section className={CARD}>
+          <SectionHead icon={TrendingUp} className="mb-4">{d.trailingReturns}</SectionHead>
           <PerformanceTable rows={vm.trailingReturns} />
         </section>
       )}
 
       {vm.providers.length > 0 && (
         <section className={CARD}>
-          <h2 className={cn(H2, "mb-4")}>{d.providersHeading}</h2>
-          <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+          <SectionHead icon={Building2} className="mb-5">{d.providersHeading}</SectionHead>
+          <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {vm.providers.map((r) => (
-              <div key={r.key} className="rounded-lg border border-border bg-secondary/25 p-4">
-                <dt className="mb-0.5 text-xs text-muted-foreground">{fields[r.key] ?? r.key}</dt>
+              <div key={r.key} className="rounded-lg border border-border bg-secondary/30 p-4 transition-colors hover:border-gold-line">
+                <dt className={cn(EYEBROW, "mb-1.5")}>{fields[r.key] ?? r.key}</dt>
                 <dd className="text-[15px] font-semibold text-foreground">
                   {r.url ? (
                     <a href={r.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 transition-colors hover:text-primary">
                       {r.value}
-                      <ArrowUpRight className="size-3.5" aria-hidden />
+                      <ArrowUpRight className="size-3.5 text-muted-foreground" aria-hidden />
                     </a>
                   ) : (
                     r.value
@@ -224,7 +267,7 @@ function OfferDetailsTab({ offering }: { offering: OfferingBundle }) {
       )}
 
       <section className={CARD}>
-        <h2 className={cn(H2, "mb-3")}>{d.aboutManager}</h2>
+        <SectionHead icon={Building2} className="mb-4">{d.aboutManager}</SectionHead>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <div
             className="grid h-20 w-36 shrink-0 place-items-center overflow-hidden rounded-lg border border-border bg-white shadow-sm"
@@ -350,22 +393,24 @@ function InvestorQualificationGuide({ offering }: { offering: OfferingBundle }) 
           Answer a few simple questions and compare the result with this fund's minimum.
         </p>
 
-        <div data-testid="qualification-result" className="mt-5 rounded-lg border border-primary/20 bg-secondary/40 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.1em] text-muted-foreground">Your status</p>
-          <h3 className="mt-1 text-2xl font-bold leading-tight text-foreground">{result.title}</h3>
+        <div data-testid="qualification-result" className="mt-5 overflow-hidden rounded-lg border border-border border-t-2 border-t-gold bg-card">
+          <div className="px-4 pt-4 pb-3.5">
+            <p className={EYEBROW}>Your status</p>
+            <h3 className="mt-1.5 text-xl font-bold leading-tight text-foreground">{result.title}</h3>
+          </div>
 
-          <dl className="mt-5 grid gap-3 text-sm">
-            <div className="rounded-md bg-card p-3">
-              <dt className="text-xs font-semibold text-muted-foreground">Fund minimum</dt>
-              <dd className="mt-1 text-lg font-bold text-foreground">{minimumLabel}</dd>
+          <dl className="divide-y divide-border border-y border-border">
+            <div className="flex items-baseline justify-between gap-3 px-4 py-3">
+              <dt className="shrink-0 text-[13px] text-muted-foreground">Fund minimum</dt>
+              <dd className="text-right text-[15px] font-semibold text-foreground tabular-nums">{minimumLabel}</dd>
             </div>
-            <div className="rounded-md bg-card p-3">
-              <dt className="text-xs font-semibold text-muted-foreground">Estimated access</dt>
-              <dd className="mt-1 text-lg font-bold text-foreground">{estimatedLabel}</dd>
+            <div className="flex items-baseline justify-between gap-3 px-4 py-3">
+              <dt className="shrink-0 text-[13px] text-muted-foreground">Estimated access</dt>
+              <dd className="text-right text-[15px] font-semibold text-foreground tabular-nums">{estimatedLabel}</dd>
             </div>
           </dl>
 
-          <p className="mt-4 rounded-md bg-primary px-3 py-2 text-sm font-bold leading-snug text-primary-foreground">
+          <p className="m-4 rounded-md bg-primary px-3 py-2 text-[13px] font-semibold leading-snug text-primary-foreground">
             {fitMessage}
           </p>
         </div>
@@ -375,7 +420,10 @@ function InvestorQualificationGuide({ offering }: { offering: OfferingBundle }) 
         <section className="rounded-xl border border-border bg-card p-5">
           <div className="mb-5">
             <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">Step 1</p>
-            <h3 className="mt-1 font-serif text-xl font-semibold text-foreground">Tell us the basics</h3>
+            <h3 className="mt-1 flex items-center gap-2 font-serif text-xl font-semibold text-foreground">
+              <UserCheck className="size-[18px] shrink-0 text-muted-foreground" aria-hidden />
+              Tell us the basics
+            </h3>
           </div>
 
           <div className="grid gap-5">
@@ -464,7 +512,10 @@ function InvestorQualificationGuide({ offering }: { offering: OfferingBundle }) 
         <section className="rounded-xl border border-border bg-card p-5">
           <div className="mb-5">
             <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">Step 2</p>
-            <h3 className="mt-1 font-serif text-xl font-semibold text-foreground">Compare the amount</h3>
+            <h3 className="mt-1 flex items-center gap-2 font-serif text-xl font-semibold text-foreground">
+              <CircleDollarSign className="size-[18px] shrink-0 text-muted-foreground" aria-hidden />
+              Compare the amount
+            </h3>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -482,12 +533,15 @@ function InvestorQualificationGuide({ offering }: { offering: OfferingBundle }) 
         <section className="rounded-xl border border-border bg-card p-5">
           <div className="mb-4">
             <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">Reference</p>
-            <h3 className="mt-1 font-serif text-xl font-semibold text-foreground">Investor type requirements</h3>
+            <h3 className="mt-1 flex items-center gap-2 font-serif text-xl font-semibold text-foreground">
+              <ClipboardList className="size-[18px] shrink-0 text-muted-foreground" aria-hidden />
+              Investor type requirements
+            </h3>
           </div>
 
           <div className="divide-y divide-border rounded-lg border border-border">
             {CATEGORY_SUMMARIES.map((item) => (
-              <article key={item.title} className="grid gap-3 p-4 md:grid-cols-[210px_minmax(0,1fr)_190px] md:items-start">
+              <article key={item.title} className="grid gap-3 p-4 transition-colors hover:bg-secondary/20 md:grid-cols-[210px_minmax(0,1fr)_190px] md:items-start">
                 <h4 className="text-[15px] font-bold leading-tight text-foreground">{item.title}</h4>
                 <ul className="flex flex-col gap-1.5">
                   {item.requirements.map((requirement) => (
@@ -571,20 +625,20 @@ function moneyToNumber(value: string): number {
 function PerformanceTable({ rows }: { rows: { period: string; value: string; note: string | null }[] }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[520px] table-fixed rounded-lg bg-secondary/25 text-left">
+      <table className="w-full min-w-[520px] table-fixed overflow-hidden rounded-lg border border-border text-left">
         <thead>
-          <tr>
+          <tr className="divide-x divide-border border-b border-border bg-secondary/40">
             {rows.map((row) => (
-              <th key={row.period} className="px-3 py-2 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
+              <th key={row.period} className="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                 {row.period}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr className="divide-x divide-border">
             {rows.map((row) => (
-              <td key={row.period} className="px-3 pb-2.5 pt-0 text-lg font-bold leading-tight text-foreground">
+              <td key={row.period} className="px-4 py-3.5 text-xl font-semibold leading-none tracking-tight text-foreground tabular-nums">
                 {row.value}
               </td>
             ))}
@@ -600,19 +654,22 @@ function PortfolioTab({ offering }: { offering: OfferingBundle }) {
   return (
     <div className="flex flex-col gap-5">
       <FundMapEmbed offering={offering} />
-      <div className="flex flex-col gap-2.5">
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
         {offering.properties.map((property) => {
           const size = formatUnits(property, lang);
           return (
-            <article key={property.id} className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card px-5 py-3.5">
-              <div>
+            <article key={property.id} className="flex flex-wrap items-center justify-between gap-4 border-b border-border px-5 py-4 transition-colors last:border-0 hover:bg-secondary/25">
+              <div className="min-w-0">
                 <h3 className="text-[15px] font-semibold text-foreground">{property.name[lang]}</h3>
-                <small className="text-[12.5px] text-muted-foreground">{property.city}, {property.province}</small>
+                <small className="mt-0.5 flex items-center gap-1 text-[12.5px] text-muted-foreground">
+                  <MapPin className="size-3.5 shrink-0" aria-hidden />
+                  {property.city}, {property.province}
+                </small>
               </div>
-              <div className="flex flex-wrap items-center gap-2.5 text-[12.5px] text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-muted-foreground">
                 <span>{taxonomyLabel(assetClasses, property.assetClassId, lang)}</span>
-                {size && <span>{size}</span>}
-                <span>{localizeStatus(property.status, lang)}</span>
+                {size && <span className="border-l border-border pl-3 tabular-nums">{size}</span>}
+                <span className="border-l border-border pl-3">{localizeStatus(property.status, lang)}</span>
                 <span
                   className={cn(
                     "rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
@@ -636,31 +693,40 @@ function DocumentsTab({ offering }: { offering: OfferingBundle }) {
   const { lang, t } = useLang();
   const dc = t.capitalApp.documents;
   if (!offering.documents.length) return <p className="py-8 text-center text-muted-foreground">{dc.empty}</p>;
+  const headClass = "h-11 px-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground";
   return (
-    <div className="overflow-x-auto rounded-xl border border-border">
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>{dc.colName}</TableHead>
-            <TableHead>{dc.colType}</TableHead>
-            <TableHead>{dc.colDate}</TableHead>
-            <TableHead>{dc.colAccess}</TableHead>
+          <TableRow className="border-border bg-secondary/40 hover:bg-secondary/40">
+            <TableHead className={headClass}>{dc.colName}</TableHead>
+            <TableHead className={headClass}>{dc.colType}</TableHead>
+            <TableHead className={headClass}>{dc.colDate}</TableHead>
+            <TableHead className={headClass}>{dc.colAccess}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {offering.documents.map((doc) => {
             const isPublic = doc.visibility === "public";
             return (
-              <TableRow key={doc.id}>
-                <TableCell>
-                  <span className="block font-semibold text-foreground">{doc.title[lang]}</span>
-                  {doc.description && <small className="text-xs text-muted-foreground">{doc.description[lang]}</small>}
+              <TableRow key={doc.id} className="border-border hover:bg-secondary/20">
+                <TableCell className="px-4 py-3.5">
+                  <div className="flex items-start gap-2.5">
+                    <FileText className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
+                    <span className="min-w-0">
+                      <span className="block font-semibold text-foreground">{doc.title[lang]}</span>
+                      {doc.description && <small className="text-xs text-muted-foreground">{doc.description[lang]}</small>}
+                    </span>
+                  </div>
                 </TableCell>
-                <TableCell className="text-muted-foreground">{dc.types[doc.type]}</TableCell>
-                <TableCell className="text-muted-foreground">{doc.effectiveDate}</TableCell>
-                <TableCell>
+                <TableCell className="px-4 py-3.5 text-muted-foreground">{dc.types[doc.type]}</TableCell>
+                <TableCell className="px-4 py-3.5 text-muted-foreground tabular-nums">{doc.effectiveDate}</TableCell>
+                <TableCell className="px-4 py-3.5">
                   {isPublic && doc.href ? (
-                    <a href={doc.href} target="_blank" rel="noreferrer" className="font-bold text-primary hover:underline">{dc.download}</a>
+                    <a href={doc.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 font-semibold text-primary hover:underline">
+                      <Download className="size-3.5" aria-hidden />
+                      {dc.download}
+                    </a>
                   ) : (
                     <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">{isPublic ? dc.public : dc.approvedInvestor}</span>
                   )}
@@ -680,7 +746,7 @@ function ContactTab({ profileHref }: { profileHref: string }) {
   const d = t.capitalApp.detail;
   return (
     <div className="max-w-xl rounded-xl border border-border bg-card p-6">
-      <h2 className="mb-2 font-serif text-xl font-semibold text-foreground">{c.heading}</h2>
+      <SectionHead icon={MessageCircle} className="mb-3">{c.heading}</SectionHead>
       <p className="mb-5 text-[14.5px] leading-relaxed text-muted-foreground">{c.body}</p>
       <div className="flex flex-wrap gap-2.5">
         <Button asChild><Link href={profileHref}>{d.invest}</Link></Button>
