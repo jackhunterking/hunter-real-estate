@@ -51,7 +51,6 @@ export function OfferingDetail({ offering }: { offering: OfferingBundle }) {
   const vm = buildFundDetailViewModel(offering, lang);
   const share = primaryShareClass(offering);
   const profileHref = `/hunter-group-capital/investor-profile?offering=${offering.slug}${share ? `&shareClass=${share.id}` : ""}`;
-  const fundSizeLabel = offering.offeringSize ? t.capitalApp.card.offeringSize : t.capitalApp.card.aumLabel;
   const whatsappHref = `${WHATSAPP}?text=${encodeURIComponent(`Hi, I would like to learn more about ${offering.name[lang]}.`)}`;
   const whatsappLabel = lang === "tr" ? "WhatsApp'tan Yaz" : "Message on WhatsApp";
   const tabs = d.tabs as Record<(typeof TAB_LABEL)[TabKey], string>;
@@ -62,56 +61,48 @@ export function OfferingDetail({ offering }: { offering: OfferingBundle }) {
         <ArrowLeft className="size-4" /> {d.back}
       </Link>
 
-      {/* Banner */}
-      <section className="grid overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-        <div className="flex flex-col justify-center p-6 sm:p-8">
-          <div className="mb-5 flex flex-wrap items-center gap-4">
-            <div
-              className="grid h-16 w-32 place-items-center overflow-hidden rounded-xl border border-border bg-white font-serif text-xl font-semibold text-primary shadow-sm sm:h-[4.5rem] sm:w-36"
-              style={vm.logo.src ? undefined : { backgroundImage: vm.logo.gradient }}
-            >
-              {vm.logo.src ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={vm.logo.src} alt={vm.logo.alt} className="h-full w-full object-contain p-3" />
-              ) : (
-                <span aria-hidden>{vm.logo.initials}</span>
-              )}
-            </div>
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">
-              {taxonomyLabel(strategies, offering.strategyIds[0], lang)}
-            </p>
-          </div>
-
-          <div className="mt-6 grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(220px,300px)] md:items-end">
-            <div className="min-w-0">
-              <h1 className="font-serif text-3xl font-semibold leading-tight text-foreground sm:text-4xl">{offering.name[lang]}</h1>
-            </div>
-
-            <aside className="rounded-xl border border-border bg-secondary/25 p-4">
-              {vm.headline && (
-                <p>
-                  <span className="block text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{fundSizeLabel}</span>
-                  <strong className="mt-1 block text-3xl font-bold leading-none text-primary">{vm.headline}</strong>
-                </p>
-              )}
-              <Button asChild className="mt-4 w-full bg-[#25D366] font-bold text-[#062114] hover:bg-[#20bd5a]">
-                <a href={whatsappHref} target="_blank" rel="noreferrer">
-                  <MessageCircle className="size-4" aria-hidden />
-                  {whatsappLabel}
-                </a>
-              </Button>
-            </aside>
-          </div>
-        </div>
-
+      {/* Header: hero banner + identity bar */}
+      <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
         <div
-          className="order-first aspect-[60/13] bg-[#061725]"
+          className="relative aspect-[60/13] bg-[#061725]"
           style={vm.bannerImage.src ? undefined : { backgroundImage: vm.bannerImage.gradient }}
         >
           {vm.bannerImage.src && (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={vm.bannerImage.src} alt={vm.bannerImage.alt} className="h-full w-full object-cover" />
           )}
+          {/* Corner scrim so the light strategy pill stays legible over any banner artwork */}
+          <div className="pointer-events-none absolute right-0 top-0 h-20 w-40 bg-gradient-to-bl from-black/30 via-black/10 to-transparent sm:h-24 sm:w-52" aria-hidden />
+          <span className="absolute right-3 top-3 z-10 rounded-md bg-card/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-primary shadow-sm backdrop-blur-sm sm:right-4 sm:top-4 sm:text-[11px]">
+            {taxonomyLabel(strategies, offering.strategyIds[0], lang)}
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-5 border-t border-border p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-7">
+          <div className="flex min-w-0 items-center gap-4">
+            <div
+              className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-xl border border-border bg-white shadow-sm sm:size-16"
+              style={vm.logo.src ? undefined : { backgroundImage: vm.logo.gradient }}
+            >
+              {vm.logo.src ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={vm.logo.src} alt={vm.logo.alt} className="h-full w-full object-contain p-2" />
+              ) : (
+                <span className="font-serif text-lg font-semibold text-primary" aria-hidden>{vm.logo.initials}</span>
+              )}
+            </div>
+            <div className="min-w-0">
+              <h1 className="font-serif text-2xl font-semibold leading-tight text-foreground sm:text-3xl">{offering.name[lang]}</h1>
+              <p className="mt-1 truncate text-sm text-muted-foreground">{offering.manager.name[lang]}</p>
+            </div>
+          </div>
+
+          <Button asChild variant="wa" size="lg" className="w-full font-bold sm:w-auto">
+            <a href={whatsappHref} target="_blank" rel="noreferrer">
+              <MessageCircle className="size-4" aria-hidden />
+              {whatsappLabel}
+            </a>
+          </Button>
         </div>
       </section>
 
