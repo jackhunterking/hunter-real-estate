@@ -10,31 +10,29 @@ import {
   Building2,
   CircleDollarSign,
   ClipboardList,
-  Download,
+  Eye,
   FileText,
   Landmark,
   ListChecks,
   MapPin,
   MessageCircle,
   TrendingUp,
-  UserCheck,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLang } from "@/lib/i18n/LanguageProvider";
-import { assetClasses, strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
+import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
 import {
   buildFundDetailViewModel,
   formatCurrencyCad,
-  formatUnits,
-  localizeStatus,
-  localizeVerification,
   primaryShareClass,
 } from "@/lib/capital/present";
 import type { OfferingBundle } from "@/lib/capital/types";
 import { FundMapEmbed } from "@/components/capital/map/FundMapEmbed";
+import { BuildingMapThumb } from "@/components/capital/map/BuildingMapThumb";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
@@ -166,6 +164,8 @@ const H2 = "font-serif text-lg font-semibold text-foreground";
 const EYEBROW = "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground";
 const CHOICE =
   "rounded-md border px-3 py-2 text-center text-sm font-semibold transition-colors hover:border-primary/60";
+const CHOICE_LG =
+  "rounded-lg border px-4 py-4 text-center text-[15px] font-semibold transition-colors hover:border-primary/60";
 
 const STAT_ICONS: Record<string, LucideIcon> = {
   return: TrendingUp,
@@ -339,11 +339,86 @@ const CATEGORY_SUMMARIES = [
   },
 ];
 
+const GUIDE_QUESTIONS: {
+  key: Exclude<keyof GuideState, "intendedAmount" | "priorAmount">;
+  testId: string;
+  label: string;
+  options: { value: string; label: string }[];
+}[] = [
+  {
+    key: "investorType",
+    testId: "investor-type",
+    label: "How are you investing?",
+    options: [
+      { value: "personal", label: "Personally" },
+      { value: "entity", label: "Corporation / trust" },
+      { value: "institution", label: "Institution" },
+    ],
+  },
+  {
+    key: "household",
+    testId: "household",
+    label: "Are you including a spouse?",
+    options: [
+      { value: "alone", label: "No" },
+      { value: "spouse", label: "Yes" },
+    ],
+  },
+  {
+    key: "income",
+    testId: "income",
+    label: "Your annual income",
+    options: [
+      { value: "under75", label: "Under $75k" },
+      { value: "over75", label: "$75k+" },
+      { value: "over200", label: "$200k+" },
+    ],
+  },
+  {
+    key: "householdIncome",
+    testId: "household-income",
+    label: "Household income",
+    options: [
+      { value: "under125", label: "Under $125k" },
+      { value: "over125", label: "$125k+" },
+      { value: "over300", label: "$300k+" },
+    ],
+  },
+  {
+    key: "netAssets",
+    testId: "net-assets",
+    label: "Net assets",
+    options: [
+      { value: "under400", label: "Under $400k" },
+      { value: "over400", label: "$400k+" },
+      { value: "over5m", label: "$5M+" },
+    ],
+  },
+  {
+    key: "financialAssets",
+    testId: "financial-assets",
+    label: "Financial assets",
+    options: [
+      { value: "under1m", label: "Under $1M" },
+      { value: "over1m", label: "$1M+" },
+    ],
+  },
+  {
+    key: "relationship",
+    testId: "relationship",
+    label: "Close relationship with the issuer?",
+    options: [
+      { value: "no", label: "No" },
+      { value: "yes", label: "Yes" },
+    ],
+  },
+];
+
 function InvestorQualificationGuide({ offering }: { offering: OfferingBundle }) {
   const { lang } = useLang();
   const share = primaryShareClass(offering);
   const fundMinimum = share?.minimumInvestment?.value ?? null;
-  const [hasStarted, setHasStarted] = useState(false);
+  const [step, setStep] = useState(0);
   const [guide, setGuide] = useState<GuideState>({
     investorType: "personal",
     household: "alone",
@@ -356,7 +431,25 @@ function InvestorQualificationGuide({ offering }: { offering: OfferingBundle }) 
     priorAmount: "0",
   });
 
-  const result = hasStarted ? classifyGuide(guide) : { title: "Not Yet Determined", access: "Complete the guide to see where you may fit.", baseMax: null, kind: "pending" as const };
+  // Personal investors answer every question; entity/institution short-circuit to the result.
+  const isPersonal = guide.investorType === "personal";
+  const questionCount = isPersonal ? GUIDE_QUESTIONS.length : 1;
+  const amountStep = isPersonal ? questionCount : -1;
+  const resultStep = questionCount + (isPersonal ? 1 : 0);
+  const totalSteps = resultStep + 1;
+  const current = Math.min(Math.max(step, 0), totalSteps - 1);
+  const pct = Math.round(((current + 1) / totalSteps) * 100);
+
+  function update<K extends keyof GuideState>(key: K, value: GuideState[K]) {
+    setGuide((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function answer(key: keyof GuideState, value: string) {
+    setGuide((prev) => ({ ...prev, [key]: value } as GuideState));
+    setStep(current + 1);
+  }
+
+  const result = classifyGuide(guide);
   const intendedAmount = moneyToNumber(guide.intendedAmount);
   const priorAmount = moneyToNumber(guide.priorAmount);
   const availableEstimate = typeof result.baseMax === "number" ? Math.max(result.baseMax - priorAmount, 0) : null;
@@ -364,10 +457,8 @@ function InvestorQualificationGuide({ offering }: { offering: OfferingBundle }) 
   const minimumLabel = fundMinimum ? formatCurrencyCad(fundMinimum, lang) : "Review required";
   const estimatedLabel = availableEstimate !== null ? formatCurrencyCad(availableEstimate, lang) : result.access;
 
-  let fitMessage = "Complete the guide to see where you may fit.";
-  if (result.kind === "pending") {
-    fitMessage = "Not yet determined.";
-  } else if (result.kind === "manual") {
+  let fitMessage: string;
+  if (result.kind === "manual") {
     fitMessage = result.access;
   } else if (fundMinimum && availableEstimate !== null && fundMinimum > availableEstimate) {
     fitMessage = "This fund may be above your current estimated limit.";
@@ -379,219 +470,143 @@ function InvestorQualificationGuide({ offering }: { offering: OfferingBundle }) 
     fitMessage = "This fund may fit your current estimate.";
   }
 
-  function update<K extends keyof GuideState>(key: K, value: GuideState[K]) {
-    setHasStarted(true);
-    setGuide((current) => ({ ...current, [key]: value }));
-  }
+  const question = current < questionCount ? GUIDE_QUESTIONS[current] : null;
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[320px_minmax(0,1fr)]">
-      <aside className="rounded-xl border border-border bg-card p-5 lg:sticky lg:top-32">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-xl flex-col gap-6">
+      <div className="text-center">
         <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">Qualification</p>
-        <h2 className="mt-2 font-serif text-2xl font-semibold leading-tight text-foreground">Check your fit</h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Answer a few simple questions and compare the result with this fund's minimum.
+        <h2 className="mt-1 font-serif text-2xl font-semibold leading-tight text-foreground">Check your fit</h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+          Answer a few simple questions and compare the result with this fund&apos;s minimum.
         </p>
+      </div>
 
-        <div data-testid="qualification-result" className="mt-5 overflow-hidden rounded-lg border border-border border-t-2 border-t-gold bg-card">
-          <div className="px-4 pt-4 pb-3.5">
-            <p className={EYEBROW}>Your status</p>
-            <h3 className="mt-1.5 text-xl font-bold leading-tight text-foreground">{result.title}</h3>
+      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+        <header className="flex flex-col gap-2 border-b border-border px-5 py-4">
+          <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
+            <span>Step {current + 1} of {totalSteps}</span>
+            <b className="text-primary">{pct}%</b>
           </div>
+          <Progress value={pct} className="h-1.5" />
+        </header>
 
-          <dl className="divide-y divide-border border-y border-border">
-            <div className="flex items-baseline justify-between gap-3 px-4 py-3">
-              <dt className="shrink-0 text-[13px] text-muted-foreground">Fund minimum</dt>
-              <dd className="text-right text-[15px] font-semibold text-foreground tabular-nums">{minimumLabel}</dd>
+        <div className="p-5 sm:p-6">
+          {question && (
+            <div className="flex flex-col gap-5">
+              <div>
+                <p className={EYEBROW}>Question {current + 1}</p>
+                <h3 className="mt-2 font-serif text-2xl font-semibold leading-tight text-foreground">{question.label}</h3>
+              </div>
+              <div className={cn("grid gap-2.5", question.options.length >= 3 ? "sm:grid-cols-3" : "sm:grid-cols-2")}>
+                {question.options.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    data-testid={`${question.testId}-${option.value}`}
+                    className={cn(
+                      CHOICE_LG,
+                      guide[question.key] === option.value ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground",
+                    )}
+                    onClick={() => answer(question.key, option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="flex items-baseline justify-between gap-3 px-4 py-3">
-              <dt className="shrink-0 text-[13px] text-muted-foreground">Estimated access</dt>
-              <dd className="text-right text-[15px] font-semibold text-foreground tabular-nums">{estimatedLabel}</dd>
-            </div>
-          </dl>
+          )}
 
-          <p className="m-4 rounded-md bg-primary px-3 py-2 text-[13px] font-semibold leading-snug text-primary-foreground">
-            {fitMessage}
-          </p>
+          {current === amountStep && (
+            <div className="flex flex-col gap-5">
+              <div>
+                <p className={EYEBROW}>Almost done</p>
+                <h3 className="mt-2 flex items-center gap-2 font-serif text-2xl font-semibold leading-tight text-foreground">
+                  <CircleDollarSign className="size-5 shrink-0 text-muted-foreground" aria-hidden />
+                  Compare the amount
+                </h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                  Optional — this helps estimate how much you may be able to invest.
+                </p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="flex flex-col gap-1.5">
+                  <span className="text-xs font-semibold text-muted-foreground">Amount you are considering</span>
+                  <Input inputMode="numeric" placeholder="$25,000" value={guide.intendedAmount} onChange={(event) => update("intendedAmount", event.target.value)} />
+                </label>
+                <label className="flex flex-col gap-1.5">
+                  <span className="text-xs font-semibold text-muted-foreground">Similar private offerings in last 12 months</span>
+                  <Input inputMode="numeric" placeholder="$0" value={guide.priorAmount} onChange={(event) => update("priorAmount", event.target.value)} />
+                </label>
+              </div>
+            </div>
+          )}
+
+          {current === resultStep && (
+            <div className="flex flex-col gap-4">
+              <div data-testid="qualification-result" className="overflow-hidden rounded-lg border border-border border-t-2 border-t-gold bg-card">
+                <div className="px-4 pt-4 pb-3.5">
+                  <p className={EYEBROW}>Your status</p>
+                  <h3 className="mt-1.5 text-2xl font-bold leading-tight text-foreground">{result.title}</h3>
+                </div>
+
+                <dl className="divide-y divide-border border-y border-border">
+                  <div className="flex items-baseline justify-between gap-3 px-4 py-3">
+                    <dt className="shrink-0 text-[13px] text-muted-foreground">Fund minimum</dt>
+                    <dd className="text-right text-[15px] font-semibold text-foreground tabular-nums">{minimumLabel}</dd>
+                  </div>
+                  <div className="flex items-baseline justify-between gap-3 px-4 py-3">
+                    <dt className="shrink-0 text-[13px] text-muted-foreground">Estimated access</dt>
+                    <dd className="text-right text-[15px] font-semibold text-foreground tabular-nums">{estimatedLabel}</dd>
+                  </div>
+                </dl>
+
+                <p className="m-4 rounded-md bg-primary px-3 py-2 text-[13px] font-semibold leading-snug text-primary-foreground">
+                  {fitMessage}
+                </p>
+              </div>
+              <Button type="button" variant="outline" onClick={() => setStep(0)}>Edit answers</Button>
+            </div>
+          )}
         </div>
-      </aside>
 
-      <div className="flex flex-col gap-5">
-        <section className="rounded-xl border border-border bg-card p-5">
-          <div className="mb-5">
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">Step 1</p>
-            <h3 className="mt-1 flex items-center gap-2 font-serif text-xl font-semibold text-foreground">
-              <UserCheck className="size-[18px] shrink-0 text-muted-foreground" aria-hidden />
-              Tell us the basics
-            </h3>
-          </div>
-
-          <div className="grid gap-5">
-            <ChoiceGroup
-              testId="investor-type"
-              label="How are you investing?"
-              value={guide.investorType}
-              options={[
-                { value: "personal", label: "Personally" },
-                { value: "entity", label: "Corporation / trust" },
-                { value: "institution", label: "Institution" },
-              ]}
-              onChange={(value) => update("investorType", value as GuideState["investorType"])}
-            />
-
-            {guide.investorType === "personal" && (
-              <>
-                <ChoiceGroup
-                  testId="household"
-                  label="Are you including a spouse?"
-                  value={guide.household}
-                  options={[
-                    { value: "alone", label: "No" },
-                    { value: "spouse", label: "Yes" },
-                  ]}
-                  onChange={(value) => update("household", value as GuideState["household"])}
-                />
-                <ChoiceGroup
-                  testId="income"
-                  label="Your annual income"
-                  value={guide.income}
-                  options={[
-                    { value: "under75", label: "Under $75k" },
-                    { value: "over75", label: "$75k+" },
-                    { value: "over200", label: "$200k+" },
-                  ]}
-                  onChange={(value) => update("income", value as GuideState["income"])}
-                />
-                <ChoiceGroup
-                  testId="household-income"
-                  label="Household income"
-                  value={guide.householdIncome}
-                  options={[
-                    { value: "under125", label: "Under $125k" },
-                    { value: "over125", label: "$125k+" },
-                    { value: "over300", label: "$300k+" },
-                  ]}
-                  onChange={(value) => update("householdIncome", value as GuideState["householdIncome"])}
-                />
-                <ChoiceGroup
-                  testId="net-assets"
-                  label="Net assets"
-                  value={guide.netAssets}
-                  options={[
-                    { value: "under400", label: "Under $400k" },
-                    { value: "over400", label: "$400k+" },
-                    { value: "over5m", label: "$5M+" },
-                  ]}
-                  onChange={(value) => update("netAssets", value as GuideState["netAssets"])}
-                />
-                <ChoiceGroup
-                  testId="financial-assets"
-                  label="Financial assets"
-                  value={guide.financialAssets}
-                  options={[
-                    { value: "under1m", label: "Under $1M" },
-                    { value: "over1m", label: "$1M+" },
-                  ]}
-                  onChange={(value) => update("financialAssets", value as GuideState["financialAssets"])}
-                />
-                <ChoiceGroup
-                  testId="relationship"
-                  label="Close relationship with the issuer?"
-                  value={guide.relationship}
-                  options={[
-                    { value: "no", label: "No" },
-                    { value: "yes", label: "Yes" },
-                  ]}
-                  onChange={(value) => update("relationship", value as GuideState["relationship"])}
-                />
-              </>
-            )}
-          </div>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card p-5">
-          <div className="mb-5">
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">Step 2</p>
-            <h3 className="mt-1 flex items-center gap-2 font-serif text-xl font-semibold text-foreground">
-              <CircleDollarSign className="size-[18px] shrink-0 text-muted-foreground" aria-hidden />
-              Compare the amount
-            </h3>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-semibold text-muted-foreground">Amount you are considering</span>
-                <Input inputMode="numeric" placeholder="$25,000" value={guide.intendedAmount} onChange={(event) => update("intendedAmount", event.target.value)} />
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-semibold text-muted-foreground">Similar private offerings in last 12 months</span>
-                <Input inputMode="numeric" placeholder="$0" value={guide.priorAmount} onChange={(event) => update("priorAmount", event.target.value)} />
-              </label>
-          </div>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card p-5">
-          <div className="mb-4">
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">Reference</p>
-            <h3 className="mt-1 flex items-center gap-2 font-serif text-xl font-semibold text-foreground">
-              <ClipboardList className="size-[18px] shrink-0 text-muted-foreground" aria-hidden />
-              Investor type requirements
-            </h3>
-          </div>
-
-          <div className="divide-y divide-border rounded-lg border border-border">
-            {CATEGORY_SUMMARIES.map((item) => (
-              <article key={item.title} className="grid gap-3 p-4 transition-colors hover:bg-secondary/20 md:grid-cols-[210px_minmax(0,1fr)_190px] md:items-start">
-                <h4 className="text-[15px] font-bold leading-tight text-foreground">{item.title}</h4>
-                <ul className="flex flex-col gap-1.5">
-                  {item.requirements.map((requirement) => (
-                    <li key={requirement} className="text-sm leading-snug text-muted-foreground">
-                      {requirement}
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-sm font-semibold leading-snug text-primary">{item.access}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+        <footer className="flex items-center justify-between border-t border-border px-5 py-4">
+          <Button type="button" variant="outline" disabled={current === 0} onClick={() => setStep(current - 1)}>
+            ← Back
+          </Button>
+          {current === amountStep && (
+            <Button type="button" onClick={() => setStep(current + 1)}>See result →</Button>
+          )}
+        </footer>
       </div>
-    </div>
-  );
-}
-
-function ChoiceGroup({
-  testId,
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  testId: string;
-  label: string;
-  value: string;
-  options: { value: string; label: string }[];
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      <p className="text-xs font-semibold text-muted-foreground">{label}</p>
-      <div className="grid gap-2 sm:grid-cols-3">
-        {options.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            data-testid={`${testId}-${option.value}`}
-            className={cn(
-              CHOICE,
-              option.value === value ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground",
-            )}
-            onClick={() => onChange(option.value)}
-          >
-            {option.label}
-          </button>
-        ))}
       </div>
+
+      <section className="rounded-xl border border-border bg-card p-5">
+        <div className="mb-4">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">Reference</p>
+          <h3 className="mt-1 flex items-center gap-2 font-serif text-xl font-semibold text-foreground">
+            <ClipboardList className="size-[18px] shrink-0 text-muted-foreground" aria-hidden />
+            Investor type requirements
+          </h3>
+        </div>
+
+        <div className="divide-y divide-border rounded-lg border border-border">
+          {CATEGORY_SUMMARIES.map((item) => (
+            <article key={item.title} className="grid gap-3 p-4 transition-colors hover:bg-secondary/20 md:grid-cols-[210px_minmax(0,1fr)_190px] md:items-start">
+              <h4 className="text-[15px] font-bold leading-tight text-foreground">{item.title}</h4>
+              <ul className="flex flex-col gap-1.5">
+                {item.requirements.map((requirement) => (
+                  <li key={requirement} className="text-sm leading-snug text-muted-foreground">
+                    {requirement}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-sm font-semibold leading-snug text-primary">{item.access}</p>
+            </article>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
@@ -651,39 +666,43 @@ function PerformanceTable({ rows }: { rows: { period: string; value: string; not
 
 function PortfolioTab({ offering }: { offering: OfferingBundle }) {
   const { lang, t } = useLang();
+  const p = t.capitalApp.portfolio;
   return (
     <div className="flex flex-col gap-5">
       <FundMapEmbed offering={offering} />
-      <div className="overflow-hidden rounded-xl border border-border bg-card">
-        {offering.properties.map((property) => {
-          const size = formatUnits(property, lang);
-          return (
-            <article key={property.id} className="flex flex-wrap items-center justify-between gap-4 border-b border-border px-5 py-4 transition-colors last:border-0 hover:bg-secondary/25">
-              <div className="min-w-0">
-                <h3 className="text-[15px] font-semibold text-foreground">{property.name[lang]}</h3>
-                <small className="mt-0.5 flex items-center gap-1 text-[12.5px] text-muted-foreground">
-                  <MapPin className="size-3.5 shrink-0" aria-hidden />
-                  {property.city}, {property.province}
-                </small>
-              </div>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-muted-foreground">
-                <span>{taxonomyLabel(assetClasses, property.assetClassId, lang)}</span>
-                {size && <span className="border-l border-border pl-3 tabular-nums">{size}</span>}
-                <span className="border-l border-border pl-3">{localizeStatus(property.status, lang)}</span>
-                <span
-                  className={cn(
-                    "rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
-                    property.verificationStatus === "verified" && "bg-ok-bg text-ok",
-                    property.verificationStatus === "partial" && "bg-warn-bg text-warn",
-                    property.verificationStatus === "pending" && "bg-muted text-muted-foreground",
-                  )}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {offering.properties.map((property) => (
+          <article
+            key={property.id}
+            className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/50"
+          >
+            <BuildingMapThumb
+              latitude={property.latitude}
+              longitude={property.longitude}
+              label={property.name[lang]}
+            />
+            <div className="flex flex-1 flex-col p-4">
+              <h3 className="font-serif text-[15px] font-semibold leading-snug text-foreground">
+                {property.name[lang]}
+              </h3>
+              <small className="mt-1 flex items-center gap-1 text-[12.5px] text-muted-foreground">
+                <MapPin className="size-3.5 shrink-0" aria-hidden />
+                {property.city}, {property.province}
+              </small>
+              {property.listingUrl && (
+                <a
+                  href={property.listingUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-flex items-center gap-1 self-start text-[13px] font-semibold text-primary hover:underline"
                 >
-                  {localizeVerification(property.verificationStatus, lang)}
-                </span>
-              </div>
-            </article>
-          );
-        })}
+                  {p.viewListing}
+                  <ArrowUpRight className="size-3.5" aria-hidden />
+                </a>
+              )}
+            </div>
+          </article>
+        ))}
       </div>
     </div>
   );
@@ -724,7 +743,7 @@ function DocumentsTab({ offering }: { offering: OfferingBundle }) {
                 <TableCell className="px-4 py-3.5">
                   {isPublic && doc.href ? (
                     <a href={doc.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 font-semibold text-primary hover:underline">
-                      <Download className="size-3.5" aria-hidden />
+                      <Eye className="size-3.5" aria-hidden />
                       {dc.download}
                     </a>
                   ) : (

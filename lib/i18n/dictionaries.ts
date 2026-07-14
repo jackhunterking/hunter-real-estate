@@ -623,6 +623,8 @@ export const tr = {
       status: "Durum",
       verification: "Doğrulama",
       openMap: "Haritada aç",
+      viewListing: "Kiralık ilanını gör",
+      openInMaps: "Google Haritalar'da aç",
     },
     terms: {
       heading: "Koşullar ve rakamlar",
@@ -640,7 +642,7 @@ export const tr = {
     },
     documents: {
       heading: "Belgeler",
-      intro: "Kamuya açık belgeler burada indirilebilir.",
+      intro: "Kamuya açık belgeler burada görüntülenebilir.",
       colName: "Belge",
       colType: "Tür",
       colDate: "Geçerlilik",
@@ -648,7 +650,7 @@ export const tr = {
       colAccess: "Erişim",
       public: "Kamuya açık",
       approvedInvestor: "Onaylı yatırımcı",
-      download: "İndir",
+      download: "Görüntüle",
       notPublic: "Talep üzerine",
       empty: "Kamuya açık belge yok.",
       types: {
@@ -662,7 +664,7 @@ export const tr = {
     },
     map: {
       title: "Portföy haritası",
-      intro: "Bu fonun gerçek binaları haritada.",
+      intro: "Bu fonun sahip olduğu gerçek, kiralık binalar — haritada ve aşağıda.",
       selectFund: "Fon seç",
       portfolioBuildings: "Portföy binaları",
       loading: "Harita yükleniyor…",
@@ -1416,6 +1418,8 @@ export const en: Dictionary = {
       status: "Status",
       verification: "Verification",
       openMap: "Open on map",
+      viewListing: "View rental listing",
+      openInMaps: "Open in Google Maps",
     },
     terms: {
       heading: "Terms and numbers",
@@ -1433,7 +1437,7 @@ export const en: Dictionary = {
     },
     documents: {
       heading: "Documents",
-      intro: "Public documents can be downloaded here.",
+      intro: "Public documents can be viewed here.",
       colName: "Document",
       colType: "Type",
       colDate: "Effective",
@@ -1441,7 +1445,7 @@ export const en: Dictionary = {
       colAccess: "Access",
       public: "Public",
       approvedInvestor: "Approved investor",
-      download: "Download",
+      download: "View",
       notPublic: "On request",
       empty: "No public documents.",
       types: {
@@ -1455,7 +1459,7 @@ export const en: Dictionary = {
     },
     map: {
       title: "Portfolio map",
-      intro: "This fund's real buildings on the map.",
+      intro: "The real, rentable buildings this fund owns — on the map and below.",
       selectFund: "Select fund",
       portfolioBuildings: "Portfolio buildings",
       loading: "Loading map…",

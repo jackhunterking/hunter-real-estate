@@ -77,6 +77,7 @@ export type Property = {
   image?: string;
   media?: MediaSet;
   verificationStatus: "verified" | "partial" | "pending";
+  listingUrl?: string; // external rental listing page for this building
 };
 
 export type OfferingDocument = {
