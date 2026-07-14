@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import type { MapProperty } from "@/lib/capital/present";
 import { cn } from "@/lib/utils";
+import { BuildingMapThumb } from "./BuildingMapThumb";
 import { loadLeaflet } from "./leaflet-loader";
 
 type Status = "loading" | "ready" | "error";
@@ -120,20 +122,20 @@ export function FundMap({
   const selected = properties.find((p) => p.id === selectedId) ?? null;
 
   return (
-    <div className={cn("grid gap-3.5 md:grid-cols-[minmax(0,1fr)_280px]", variant === "full" ? "md:h-[min(72vh,680px)]" : "md:h-[440px]")}>
-      <div className="relative overflow-hidden rounded-xl border border-border bg-muted">
-        <div ref={containerRef} className="absolute inset-0 max-md:relative max-md:h-80" />
+    <div className={cn("relative z-0 grid gap-3.5 md:grid-cols-[minmax(0,1fr)_360px]", variant === "full" ? "md:h-[min(72vh,680px)]" : "md:h-[440px]")}>
+      <div className="isolate relative z-0 overflow-hidden rounded-xl border border-border bg-muted">
+        <div ref={containerRef} className="absolute inset-0 z-0 max-md:relative max-md:h-80" />
         {status === "loading" && (
-          <div className="absolute inset-0 z-[1] grid place-items-center text-sm text-muted-foreground">{m.loading}</div>
+          <div className="absolute inset-0 z-10 grid place-items-center text-sm text-muted-foreground">{m.loading}</div>
         )}
         {status === "error" && (
-          <div className="absolute inset-0 z-[1] grid place-items-center gap-1 p-6 text-center text-sm text-muted-foreground">
+          <div className="absolute inset-0 z-10 grid place-items-center gap-1 p-6 text-center text-sm text-muted-foreground">
             <strong className="text-foreground">{m.error}</strong>
             <span>{m.errorHint}</span>
           </div>
         )}
         {status === "ready" && (
-          <div className="absolute left-3 top-3 z-[500] flex items-center gap-2">
+          <div className="absolute left-3 top-3 z-10 flex items-center gap-2">
             <span className="rounded-full bg-card/90 px-2.5 py-1 text-xs font-bold text-foreground shadow-sm">
               {properties.length} {t.capitalApp.common.buildings}
             </span>
@@ -146,22 +148,45 @@ export function FundMap({
 
       <aside className="flex min-h-0 flex-col gap-2.5 overflow-y-auto rounded-xl border border-border bg-card p-3.5 max-md:max-h-80">
         <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">{m.portfolioBuildings}</p>
-        <ul className="flex flex-col gap-1.5">
+        <ul className="m-0 flex list-none flex-col gap-2 p-0">
           {properties.map((p) => (
             <li key={p.id}>
-              <button
-                type="button"
-                onClick={() => onSelect(p.id === selectedId ? null : p.id)}
-                aria-pressed={p.id === selectedId}
+              <article
                 className={cn(
-                  "grid w-full grid-cols-[auto_1fr] items-center gap-x-2.5 gap-y-1 rounded-lg border px-2.5 py-2.5 text-left transition-colors",
+                  "grid grid-cols-[96px_minmax(0,1fr)] gap-3 rounded-lg border p-2.5 transition-colors",
                   p.id === selectedId ? "border-primary bg-secondary/50" : "border-transparent bg-muted/50 hover:border-border",
                 )}
               >
-                <span className="size-2.5 rounded-full" style={{ background: p.accent }} aria-hidden />
-                <span className="text-[13px] font-semibold text-foreground">{p.name}</span>
-                <span className="col-start-2 text-xs text-muted-foreground">{p.city}, {p.province}</span>
-              </button>
+                <BuildingMapThumb
+                  latitude={p.latitude}
+                  longitude={p.longitude}
+                  query={`${p.name}, ${p.city}, ${p.province}`}
+                  label={p.name}
+                  className="w-full rounded-md border border-border"
+                />
+                <div className="flex min-w-0 flex-col gap-1">
+                  <button
+                    type="button"
+                    onClick={() => onSelect(p.id === selectedId ? null : p.id)}
+                    aria-pressed={p.id === selectedId}
+                    className="min-w-0 text-left"
+                  >
+                    <span className="block text-[13px] font-semibold leading-snug text-foreground">{p.name}</span>
+                    <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">{p.city}, {p.province}</span>
+                  </button>
+                  {p.listingUrl && (
+                    <a
+                      href={p.listingUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex min-w-0 items-center gap-1 self-start text-xs font-semibold leading-snug text-primary hover:underline"
+                    >
+                      <span className="truncate">{t.capitalApp.portfolio.viewListing}</span>
+                      <ArrowUpRight className="size-3" aria-hidden />
+                    </a>
+                  )}
+                </div>
+              </article>
             </li>
           ))}
         </ul>

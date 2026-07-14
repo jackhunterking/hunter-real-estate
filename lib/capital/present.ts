@@ -316,6 +316,7 @@ export type MapProperty = {
   province: string;
   latitude: number;
   longitude: number;
+  listingUrl?: string;
   accent: string;
   status: string;
   detail: string;
@@ -332,6 +333,7 @@ export function buildMapProperties(bundle: OfferingBundle, lang: Lang): MapPrope
     province: p.province,
     latitude: p.latitude,
     longitude: p.longitude,
+    listingUrl: p.listingUrl,
     accent: assetClasses.find((a) => a.id === p.assetClassId)?.color ?? "#2f6f4f",
     status: STATUS[p.status][lang],
     detail: formatUnits(p, lang) ?? "",

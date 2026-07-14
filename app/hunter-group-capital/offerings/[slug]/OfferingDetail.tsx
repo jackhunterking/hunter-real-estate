@@ -14,7 +14,6 @@ import {
   FileText,
   Landmark,
   ListChecks,
-  MapPin,
   MessageCircle,
   TrendingUp,
 } from "lucide-react";
@@ -29,7 +28,6 @@ import {
 } from "@/lib/capital/present";
 import type { OfferingBundle } from "@/lib/capital/types";
 import { FundMapEmbed } from "@/components/capital/map/FundMapEmbed";
-import { BuildingMapThumb } from "@/components/capital/map/BuildingMapThumb";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
@@ -575,47 +573,9 @@ function PerformanceTable({ rows }: { rows: { period: string; value: string; not
 }
 
 function PortfolioTab({ offering }: { offering: OfferingBundle }) {
-  const { lang, t } = useLang();
-  const p = t.capitalApp.portfolio;
   return (
     <div className="flex flex-col gap-5">
       <FundMapEmbed offering={offering} />
-      <ul className="overflow-hidden rounded-xl border border-border bg-card">
-        {offering.properties.map((property) => (
-          <li
-            key={property.id}
-            className="flex flex-col gap-4 border-b border-border p-4 transition-colors last:border-0 hover:bg-secondary/20 sm:flex-row sm:items-center sm:gap-5"
-          >
-            <BuildingMapThumb
-              latitude={property.latitude}
-              longitude={property.longitude}
-              query={`${property.name[lang]}, ${property.city}, ${property.province}, ${property.country}`}
-              label={property.name[lang]}
-              className="h-28 w-full shrink-0 rounded-lg sm:h-[68px] sm:w-40"
-            />
-            <div className="min-w-0 flex-1">
-              <h3 className="font-serif text-[15px] font-semibold leading-snug text-foreground">
-                {property.name[lang]}
-              </h3>
-              <small className="mt-1 flex items-center gap-1 text-[12.5px] text-muted-foreground">
-                <MapPin className="size-3.5 shrink-0" aria-hidden />
-                {property.city}, {property.province}
-              </small>
-            </div>
-            {property.listingUrl && (
-              <a
-                href={property.listingUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex shrink-0 items-center gap-1 self-start text-[13px] font-semibold text-primary hover:underline sm:self-center"
-              >
-                {p.viewListing}
-                <ArrowUpRight className="size-3.5" aria-hidden />
-              </a>
-            )}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
