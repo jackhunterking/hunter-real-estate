@@ -613,6 +613,85 @@ export const tr = {
         body: "Hedefleri, uygunluğu ve bir sonraki lisanslı adımı konuşmak için ekibimizle iletişime geçin. Bu bir yatırım talimatı değildir.",
         cta: "Görüşme Ayarla",
       },
+      guide: {
+        eyebrow: "Uygunluk",
+        title: "Uygunluğunuzu kontrol edin",
+        intro: "Birkaç basit soruyu yanıtlayın ve sonucu bu fonun minimumuyla karşılaştırın.",
+        stepLabel: "Adım",
+        questionLabel: "Soru",
+        back: "Geri",
+        seeResult: "Sonucu gör",
+        almostDone: "Neredeyse bitti",
+        questions: {
+          investorType: {
+            label: "Nasıl yatırım yapıyorsunuz?",
+            options: { personal: "Bireysel olarak", entity: "Şirket / tröst", institution: "Kurum" },
+          },
+          household: {
+            label: "Eşinizi dahil ediyor musunuz?",
+            options: { alone: "Hayır", spouse: "Evet" },
+          },
+          income: {
+            label: "Yıllık geliriniz",
+            options: { under75: "75 bin $ altı", over75: "75 bin $+", over200: "200 bin $+" },
+          },
+          householdIncome: {
+            label: "Hane geliri",
+            options: { under125: "125 bin $ altı", over125: "125 bin $+", over300: "300 bin $+" },
+          },
+          netAssets: {
+            label: "Net varlıklar",
+            options: { under400: "400 bin $ altı", over400: "400 bin $+", over5m: "5 milyon $+" },
+          },
+          financialAssets: {
+            label: "Finansal varlıklar",
+            options: { under1m: "1 milyon $ altı", over1m: "1 milyon $+" },
+          },
+          relationship: {
+            label: "İhraççıyla yakın ilişki?",
+            options: { no: "Hayır", yes: "Evet" },
+          },
+        },
+        amount: {
+          title: "Tutarı karşılaştırın",
+          hint: "İsteğe bağlı — ne kadar yatırım yapabileceğinizi tahmin etmeye yardımcı olur.",
+          intendedLabel: "Düşündüğünüz tutar",
+          intendedPlaceholder: "25.000 $",
+          priorLabel: "Son 12 ayda benzer özel teklifler",
+          priorPlaceholder: "0 $",
+        },
+        result: {
+          statusEyebrow: "Durumunuz",
+          fundMinimum: "Fon minimumu",
+          estimatedAccess: "Tahmini erişim",
+          reviewRequired: "İnceleme gerekir",
+          editAnswers: "Cevapları düzenle",
+        },
+        results: {
+          entity: { title: "Şirket, tröst veya kurum", access: "Kuruluş incelemesi gerekir" },
+          accredited: { title: "Akredite yatırımcı", access: "Daha yüksek yatırım tutarları mümkün olabilir" },
+          relationship: { title: "Aile, arkadaş veya iş ortağı", access: "Erişim ilişki türüne bağlıdır" },
+          eligible: { title: "Uygun yatırımcı", access: "Yaklaşık 30 bin $, incelemeye bağlı olarak 100 bin $'a kadar" },
+          nonEligible: { title: "Uygun olmayan yatırımcı", access: "Yaklaşık 10 bin $" },
+        },
+        fit: {
+          aboveFundMin: "Bu fon mevcut tahmini limitinizin üzerinde olabilir.",
+          aboveAmountLimit: "Tutarınız mevcut tahmini limitinizin üzerinde olabilir.",
+          belowMinimum: "Tutarınız bu fonun minimumunun altında.",
+          fits: "Bu fon mevcut tahmininize uygun olabilir.",
+        },
+        reference: {
+          eyebrow: "Referans",
+          title: "Yatırımcı türü gereksinimleri",
+          categories: [
+            { title: "Akredite yatırımcı", requirements: ["1 milyon $ üzeri finansal varlık", "5 milyon $+ net varlık", "200 bin $ üzeri gelir, eşle 300 bin $"], access: "Daha yüksek yatırım tutarları mümkün olabilir" },
+            { title: "Uygun yatırımcı", requirements: ["400 bin $ üzeri net varlık", "75 bin $ üzeri yıllık gelir", "125 bin $ üzeri hane geliri"], access: "Yaklaşık 30 bin $, incelemeye bağlı olarak 100 bin $'a kadar" },
+            { title: "Uygun olmayan yatırımcı", requirements: ["Akredite veya uygun eşiklerini karşılamıyor"], access: "Yaklaşık 10 bin $" },
+            { title: "Aile, arkadaş veya iş ortağı", requirements: ["İhraççı veya ona bağlı kilit kişilerle nitelikli ilişki"], access: "İlişki türüne bağlıdır" },
+            { title: "Şirket, tröst veya kurum", requirements: ["Bireysel yerine bir kuruluş aracılığıyla yatırım"], access: "Kuruluş incelemesi gerekir" },
+          ],
+        },
+      },
     },
     portfolio: {
       heading: "Portföydeki binalar",
@@ -1407,6 +1486,85 @@ export const en: Dictionary = {
         heading: "Talk to us about this fund",
         body: "Reach our team to discuss objectives, eligibility, and the next licensed step. This is not an investment instruction.",
         cta: "Book a Call",
+      },
+      guide: {
+        eyebrow: "Qualification",
+        title: "Check your fit",
+        intro: "Answer a few simple questions and compare the result with this fund's minimum.",
+        stepLabel: "Step",
+        questionLabel: "Question",
+        back: "Back",
+        seeResult: "See result",
+        almostDone: "Almost done",
+        questions: {
+          investorType: {
+            label: "How are you investing?",
+            options: { personal: "Personally", entity: "Corporation / trust", institution: "Institution" },
+          },
+          household: {
+            label: "Are you including a spouse?",
+            options: { alone: "No", spouse: "Yes" },
+          },
+          income: {
+            label: "Your annual income",
+            options: { under75: "Under $75k", over75: "$75k+", over200: "$200k+" },
+          },
+          householdIncome: {
+            label: "Household income",
+            options: { under125: "Under $125k", over125: "$125k+", over300: "$300k+" },
+          },
+          netAssets: {
+            label: "Net assets",
+            options: { under400: "Under $400k", over400: "$400k+", over5m: "$5M+" },
+          },
+          financialAssets: {
+            label: "Financial assets",
+            options: { under1m: "Under $1M", over1m: "$1M+" },
+          },
+          relationship: {
+            label: "Close relationship with the issuer?",
+            options: { no: "No", yes: "Yes" },
+          },
+        },
+        amount: {
+          title: "Compare the amount",
+          hint: "Optional — this helps estimate how much you may be able to invest.",
+          intendedLabel: "Amount you are considering",
+          intendedPlaceholder: "$25,000",
+          priorLabel: "Similar private offerings in last 12 months",
+          priorPlaceholder: "$0",
+        },
+        result: {
+          statusEyebrow: "Your status",
+          fundMinimum: "Fund minimum",
+          estimatedAccess: "Estimated access",
+          reviewRequired: "Review required",
+          editAnswers: "Edit answers",
+        },
+        results: {
+          entity: { title: "Corporation, Trust, or Institution", access: "Entity review required" },
+          accredited: { title: "Accredited Investor", access: "Higher investment amounts may be available" },
+          relationship: { title: "Family, Friend, or Business Associate", access: "Access depends on the relationship type" },
+          eligible: { title: "Eligible Investor", access: "Around $30k, or up to $100k depending on review" },
+          nonEligible: { title: "Non-Eligible Investor", access: "Around $10k" },
+        },
+        fit: {
+          aboveFundMin: "This fund may be above your current estimated limit.",
+          aboveAmountLimit: "Your amount may be above your current estimated limit.",
+          belowMinimum: "Your amount is below this fund's minimum.",
+          fits: "This fund may fit your current estimate.",
+        },
+        reference: {
+          eyebrow: "Reference",
+          title: "Investor type requirements",
+          categories: [
+            { title: "Accredited Investor", requirements: ["Financial assets over $1M", "Net assets of $5M+", "Income over $200k, or $300k with spouse"], access: "Higher investment amounts may be available" },
+            { title: "Eligible Investor", requirements: ["Net assets over $400k", "Annual income over $75k", "Household income over $125k"], access: "Around $30k, or up to $100k depending on review" },
+            { title: "Non-Eligible Investor", requirements: ["Does not meet the accredited or eligible thresholds"], access: "Around $10k" },
+            { title: "Family, Friend, or Business Associate", requirements: ["Qualifying relationship with the issuer or key people connected to it"], access: "Depends on the relationship type" },
+            { title: "Corporation, Trust, or Institution", requirements: ["Investing through an entity instead of personally"], access: "Entity review required" },
+          ],
+        },
       },
     },
     portfolio: {

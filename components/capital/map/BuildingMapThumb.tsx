@@ -12,16 +12,19 @@ const tileUrl = (z: number, x: number, y: number) =>
  * Keyless static map thumbnail centered on a building's coordinates, built from
  * CARTO map tiles. A 3×3 tile mosaic is positioned so the address sits at the
  * frame center (guaranteeing full coverage without seams), with a pin overlay.
- * Clicking the image opens the real location in Google Maps.
+ * Clicking the image opens the building's address in Google Maps (search by
+ * address text, `query`, rather than raw coordinates).
  */
 export function BuildingMapThumb({
   latitude,
   longitude,
+  query,
   label,
   className,
 }: {
   latitude: number;
   longitude: number;
+  query: string;
   label: string;
   className?: string;
 }) {
@@ -50,13 +53,13 @@ export function BuildingMapThumb({
 
   return (
     <a
-      href={`https://www.google.com/maps?q=${latitude},${longitude}`}
+      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`}
       target="_blank"
       rel="noreferrer"
       title={t.capitalApp.portfolio.openInMaps}
       aria-label={`${label} — ${t.capitalApp.portfolio.openInMaps}`}
       className={cn(
-        "relative block aspect-[16/9] overflow-hidden bg-muted",
+        "relative block overflow-hidden bg-muted",
         className,
       )}
     >
