@@ -132,7 +132,7 @@ export async function upsertCapitalInvestor(
     phone: input.phone ?? "",
     city: input.city,
     country: input.country,
-    lead_source: "Hunter Group Capital",
+    lead_source: "Hunter North Capital",
     lead_type: "capital_investor",
     guide_requested: "Capital investor intake",
     hs_lead_status: "NEW",

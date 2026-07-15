@@ -66,10 +66,10 @@ export const tr = {
         cta: "Mortgage seçenekleri",
       },
       invest: {
-        tag: "Hunter Group Capital",
+        tag: "Hunter North Capital",
         title: "Yatırım",
         desc: "GYO yapısıyla çoklu konut fırsatlarını inceleyin.",
-        cta: "Hunter Group Capital'ı Keşfedin",
+        cta: "Hunter North Capital'ı Keşfedin",
       },
     },
     guides: {
@@ -90,7 +90,7 @@ export const tr = {
   },
 
   capital: {
-    metaTitle: "Hunter Group Capital, Exempt-Market Multifamily",
+    metaTitle: "Hunter North Capital, Kanada Özel Piyasa Erişimi",
     metaDesc:
       "Ontario'da çoklu konut projeleri için operasyon ve geliştirme ortağı. Sermaye sizin, proje sizin, biz yürütme ekibinizyiz.",
     hero: {
@@ -177,7 +177,7 @@ export const tr = {
       cta: "WhatsApp ile Yazın",
     },
     compliance:
-      "Hunter Group Capital, exempt-market ürünler ve Canadian multifamily yatırım seçenekleri hakkında eğitim, uygunluk değerlendirmesi ve lisanslı süreç koordinasyonu sağlar. Hedeflenen getiriler garanti değildir; resmi offering dokümanları, uygunluk ve suitability süreci esastır.",
+      "Hunter North Capital, exempt-market ürünler ve Kanada çok konutlu yatırım seçenekleri hakkında eğitim, ön hazırlık ve lisanslı süreç koordinasyonu sağlar. Hedeflenen getiriler garanti değildir; resmi offering dokümanları, uygunluk ve suitability süreci esastır.",
   },
 
   alici: {
@@ -236,7 +236,7 @@ export const tr = {
   },
 
   capitalTeaser: {
-    eyebrow: "Hunter Group Capital",
+    eyebrow: "Hunter North Capital",
     title: "Kanada apartman portföylerini",
     titleEm: "Türkçe anlayın.",
     sub: "Toronto ve Istanbul arasında, exempt-market ürünleri, private REIT'ler ve gelir odaklı multifamily yatırım fırsatları için lisanslı süreç desteği.",
@@ -244,7 +244,7 @@ export const tr = {
     path1Min: "Western Canada REIT",
     path2Label: "Lankin Apartment REIT",
     path2Min: "Canadian multifamily",
-    cta: "Hunter Group Capital'ı Keşfedin",
+    cta: "Hunter North Capital'ı Keşfedin",
   },
 
   mortgage: {
@@ -504,7 +504,7 @@ export const tr = {
   },
 
   capitalApp: {
-    brand: { name: "Hunter Group Capital", tagline: "Gerçek gayrimenkul, sade ortaklık" },
+    brand: { name: "Hunter North Capital", tagline: "Kanada özel piyasalarına kurumsal erişim" },
     nav: {
       dashboard: "Fırsatlar",
       offerings: "Tüm Fonlar",
@@ -787,7 +787,7 @@ export const tr = {
         { title: "Strateji ve mülkleri inceleyin", text: "Fon düzeyindeki tezden altındaki binaların ve pazarların doğrulanmış örneklerine geçin." },
         { title: "Pay sınıflarını karşılaştırın", text: "Minimumları, hesap uygunluğunu, dağıtımları, likiditeyi ve her koşulun kaynak tarihini anlayın." },
         { title: "Yatırımcı hazırlığını tamamlayın", text: "Kısa bir Ontario veya Türkiye yolunu yanıtlayın. Sonuç ön niteliktedir, asla onay değildir." },
-        { title: "Hunter Group Capital ile görüşün", text: "Hedefleri, soruları, dil tercihini ve bir sonraki lisanslı adımı konuşun." },
+        { title: "Hunter North Capital ile görüşün", text: "Hedefleri, soruları, dil tercihini ve bir sonraki lisanslı adımı konuşun." },
         { title: "Lisanslı incelemeyi tamamlayın", text: "Denetleyen süreç kimliği, muafiyet uygunluğunu, KYC, KYP ve uygunluğu doğrular." },
         { title: "Resmi belgeleri inceleyin", text: "Belirleyici teklif belgelerini, risk beyanlarını ve bağımsız tavsiyeyi okuyun." },
         { title: "Onaylı süreçle abone olun", text: "Yalnızca inceleme sonrası, ilgili aracı veya ihraççı akışıyla belgeleri imzalayın ve fonlayın." },
@@ -815,7 +815,7 @@ export const tr = {
       submit: "Profili incelemeye gönder",
       submitting: "Gönderiliyor…",
       error: "Gönderilemedi. Lütfen formu kontrol edip tekrar deneyin.",
-      contactConsent: "Hunter Group Capital'ın bu profil hakkında benimle iletişime geçmesini kabul ediyorum.",
+      contactConsent: "Hunter North Capital'ın bu profil hakkında benimle iletişime geçmesini kabul ediyorum.",
       accuracyConsent: "Bunun ön değerlendirme olduğunu, onay veya yatırım talimatı olmadığını anlıyorum.",
       labels: {
         shareClass: "Pay sınıfı",
@@ -940,10 +940,10 @@ export const en: Dictionary = {
         cta: "Mortgage options",
       },
       invest: {
-        tag: "Hunter Group Capital",
+        tag: "Hunter North Capital",
         title: "Investment",
         desc: "Explore multifamily opportunities through a REIT structure.",
-        cta: "Explore Hunter Group Capital",
+        cta: "Explore Hunter North Capital",
       },
     },
     guides: {
@@ -964,7 +964,7 @@ export const en: Dictionary = {
   },
 
   capital: {
-    metaTitle: "Hunter Group Capital, Exempt-Market Multifamily",
+    metaTitle: "Hunter North Capital, Canadian Private Markets Access",
     metaDesc:
       "Operations and development partner for multifamily projects in Ontario. The capital is yours, the project is yours, we're your execution team.",
     hero: {
@@ -1051,7 +1051,7 @@ export const en: Dictionary = {
       cta: "Message on WhatsApp",
     },
     compliance:
-      "Hunter Group Capital provides education, eligibility review, and licensed-process coordination for exempt-market products and Canadian multifamily investment opportunities. Targeted returns are not guaranteed; official offering documents, eligibility, and suitability review control the process.",
+      "Hunter North Capital provides education, preliminary readiness, and licensed-process coordination for exempt-market products and Canadian multifamily investment opportunities. Targeted returns are not guaranteed; official offering documents, eligibility, and suitability review control the process.",
   },
 
   alici: {
@@ -1110,7 +1110,7 @@ export const en: Dictionary = {
   },
 
   capitalTeaser: {
-    eyebrow: "Hunter Group Capital",
+    eyebrow: "Hunter North Capital",
     title: "Understand Canadian apartment portfolios",
     titleEm: "in Turkish.",
     sub: "Toronto and Istanbul connected for licensed-process support around exempt-market products, private REITs, and income-focused multifamily opportunities.",
@@ -1118,7 +1118,7 @@ export const en: Dictionary = {
     path1Min: "Western Canada REIT",
     path2Label: "Lankin Apartment REIT",
     path2Min: "Canadian multifamily",
-    cta: "Explore Hunter Group Capital",
+    cta: "Explore Hunter North Capital",
   },
 
   mortgage: {
@@ -1378,7 +1378,7 @@ export const en: Dictionary = {
   },
 
   capitalApp: {
-    brand: { name: "Hunter Group Capital", tagline: "Real real estate, simple ownership" },
+    brand: { name: "Hunter North Capital", tagline: "Institutional access to Canadian private markets" },
     nav: {
       dashboard: "Opportunities",
       offerings: "All Funds",
@@ -1661,7 +1661,7 @@ export const en: Dictionary = {
         { title: "Review strategy and properties", text: "Move from the fund-level thesis to verified examples of the buildings and markets underneath it." },
         { title: "Compare share classes", text: "Understand minimums, account eligibility, distributions, liquidity, and the source date for every material term." },
         { title: "Complete investor readiness", text: "Answer a short Ontario or Turkey path. The result is preliminary and never an approval." },
-        { title: "Speak with Hunter Group Capital", text: "Discuss objectives, questions, language preference, and the next licensed step." },
+        { title: "Speak with Hunter North Capital", text: "Discuss objectives, questions, language preference, and the next licensed step." },
         { title: "Complete licensed review", text: "The supervising process verifies identity, exemption eligibility, KYC, KYP, and suitability." },
         { title: "Review official documents", text: "Read the controlling offering documents, risk acknowledgements, and independent advice." },
         { title: "Subscribe through the approved process", text: "Only after review, execute documents and fund through the applicable dealer or issuer workflow." },
@@ -1689,7 +1689,7 @@ export const en: Dictionary = {
       submit: "Submit for review",
       submitting: "Submitting…",
       error: "Unable to submit. Please review the form and try again.",
-      contactConsent: "I consent to Hunter Group Capital contacting me about this profile.",
+      contactConsent: "I consent to Hunter North Capital contacting me about this profile.",
       accuracyConsent: "I understand this is preliminary, not an approval or investment instruction.",
       labels: {
         shareClass: "Share class",

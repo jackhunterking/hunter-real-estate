@@ -106,7 +106,7 @@ export async function sendCapitalIntakeNotification(params: {
       from,
       to,
       replyTo,
-      subject: `Hunter Group Capital intake: ${params.firstName} ${params.lastName}`,
+      subject: `Hunter North Capital intake: ${params.firstName} ${params.lastName}`,
       html: buildCapitalIntakeHtml(params),
     });
 
@@ -159,7 +159,7 @@ function buildCapitalIntakeHtml(params: {
   return `<!DOCTYPE html>
 <html lang="en">
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#111827;">
-  <h1 style="font-size:24px;">Hunter Group Capital Intake</h1>
+  <h1 style="font-size:24px;">Hunter North Capital Intake</h1>
   <table cellpadding="8" cellspacing="0" border="0" style="border-collapse:collapse;width:100%;max-width:720px;">
     ${rows
       .map(

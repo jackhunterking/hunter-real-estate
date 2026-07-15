@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useT } from "@/lib/i18n/LanguageProvider";
 import styles from "./CapitalTeaser.module.css";
 
-/* Small JV diagram (matches the Hunter Group Capital page) */
+/* Small JV diagram (matches the Hunter North Capital experience) */
 function JVMark() {
   return (
     <svg width="48" height="32" viewBox="0 0 84 56" fill="none" aria-hidden="true">
