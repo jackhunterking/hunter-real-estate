@@ -155,3 +155,107 @@ export type OfferingBundle = Offering & {
   properties: Property[];
   documents: OfferingDocument[];
 };
+
+export type PartnerTier = "associate" | "principal" | "managingPartner";
+
+export type ReferralStatus =
+  | "introduced"
+  | "contacted"
+  | "compliance-review"
+  | "accepted"
+  | "funded";
+
+export type PartnerSummary = {
+  partnerName: string;
+  annualClearedCapital: number;
+  tier: PartnerTier;
+  nextTier: PartnerTier;
+  nextTierThreshold: number;
+  activeProducts: number;
+  referralCount: number;
+};
+
+export type ClientAccountType = "individual" | "entity";
+export type ClientJurisdiction = "ontario" | "turkey-cross-border";
+export type ClientDocumentStatus =
+  | "missing"
+  | "received"
+  | "under-review"
+  | "approved"
+  | "action-required";
+export type ClientDocumentCategory =
+  | "identity-address"
+  | "eligibility"
+  | "source-of-funds"
+  | "fund-specific";
+
+export type ClientFundInterest = {
+  id: string;
+  offeringId: string;
+  shareClassId?: string;
+  amount: number;
+  timeline: string;
+  accountPreference: string;
+  primary: boolean;
+  createdAt: string;
+};
+
+export type ClientReadiness = {
+  objective: string;
+  horizon: string;
+  riskTolerance: string;
+  lossCapacity: string;
+  liquidityNeed: string;
+  experience: string;
+  preliminaryCategory: string;
+  accreditedIncome: boolean;
+  accreditedFinancialAssets: boolean;
+  accreditedNetAssets: boolean;
+  eligibleIncome: boolean;
+  eligibleNetAssets: boolean;
+  priorOmAmount: string;
+};
+
+export type ClientDocument = {
+  id: string;
+  label: LocalizedText;
+  category: ClientDocumentCategory;
+  status: ClientDocumentStatus;
+  filename?: string;
+  size?: number;
+  mimeType?: string;
+  uploadedAt?: string;
+  objectUrl?: string;
+};
+
+export type ClientActivity = {
+  id: string;
+  kind: "created" | "status" | "document" | "fund" | "note";
+  description: LocalizedText;
+  occurredAt: string;
+};
+
+export type ClientRecord = {
+  id: string;
+  accountType: ClientAccountType;
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  organization?: string;
+  email: string;
+  phone?: string;
+  preferredLanguage: Lang | "both";
+  city: string;
+  country: string;
+  jurisdiction: ClientJurisdiction;
+  status: ReferralStatus;
+  introducedAt: string;
+  updatedAt: string;
+  nextAction: LocalizedText;
+  fundInterests: ClientFundInterest[];
+  readiness: ClientReadiness;
+  documents: ClientDocument[];
+  activity: ClientActivity[];
+  contactConsentAt: string;
+  accuracyConsentAt: string;
+};
