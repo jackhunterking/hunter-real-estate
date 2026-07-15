@@ -1,3 +1,5 @@
+import type { ClientQualificationCriterion } from "./types";
+
 export const READINESS_RULESET = {
   id: "ontario-ni-45-106-2026-07",
   effectiveDate: "2026-07-12",
@@ -11,13 +13,15 @@ export const READINESS_RULESET = {
 export type PreliminaryCategory = "potentially-accredited" | "potentially-eligible" | "potentially-non-eligible" | "manual-review";
 
 export function classifyOntario(input: {
-  accreditedIncome: boolean;
-  accreditedFinancialAssets: boolean;
-  accreditedNetAssets: boolean;
-  eligibleIncome: boolean;
-  eligibleNetAssets: boolean;
+  qualificationCriteria: ClientQualificationCriterion[];
 }): PreliminaryCategory {
-  if (input.accreditedIncome || input.accreditedFinancialAssets || input.accreditedNetAssets) return "potentially-accredited";
-  if (input.eligibleIncome || input.eligibleNetAssets) return "potentially-eligible";
+  if (input.qualificationCriteria.some((criterion) => criterion.startsWith("ai-"))) return "potentially-accredited";
+  if (input.qualificationCriteria.some((criterion) => criterion.startsWith("eligible-"))) return "potentially-eligible";
   return "potentially-non-eligible";
+}
+
+export function preliminaryOmLimit(category: PreliminaryCategory, registeredAdvice: boolean) {
+  if (category === "potentially-accredited" || category === "manual-review") return undefined;
+  if (category === "potentially-eligible") return registeredAdvice ? READINESS_RULESET.omLimits.eligibleWithAdvice : READINESS_RULESET.omLimits.eligible;
+  return READINESS_RULESET.omLimits.nonEligible;
 }

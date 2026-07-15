@@ -15,12 +15,12 @@ import { StageIndicator } from "@/components/capital/north/StageIndicator";
 const COPY = {
   tr: {
     eyebrow: "Partner iş akışı", title: "Müşteriler", desc: "Her müşterinin ilerlemesini, yatırım ilgilerini ve istenen belgelerini tek profilden yönetin.", add: "Yeni müşteri",
-    search: "Ad, kurum veya e-posta ara", allStatuses: "Tüm durumlar", allFunds: "Tüm fonlar", client: "Müşteri", fund: "Birincil fon", amount: "Gösterge tutarı", stage: "Aşama", next: "Sonraki adım", updated: "Güncellendi", empty: "Bu filtrelerle eşleşen müşteri yok.",
+    search: "Ad, kurum veya e-posta ara", allStatuses: "Tüm durumlar", allFunds: "Tüm fonlar", client: "Müşteri", fund: "Birincil fon", amount: "Gösterge tutarı", stage: "Aşama", next: "Sonraki adım", updated: "Son güncelleme", empty: "Bu filtrelerle eşleşen müşteri yok.",
     statuses: { introduced: "Tanıştırıldı", contacted: "İletişime geçildi", "compliance-review": "Uyum incelemesi", accepted: "Kabul edildi", funded: "Fonlandı" } as Record<ReferralStatus, string>,
   },
   en: {
     eyebrow: "Partner workflow", title: "Clients", desc: "Manage each client’s progress, investment interests, and requested documents from one profile.", add: "New client",
-    search: "Search name, organization, or email", allStatuses: "All statuses", allFunds: "All funds", client: "Client", fund: "Primary fund", amount: "Illustrative amount", stage: "Stage", next: "Next action", updated: "Updated", empty: "No clients match these filters.",
+    search: "Search name, organization, or email", allStatuses: "All statuses", allFunds: "All funds", client: "Client", fund: "Primary fund", amount: "Illustrative amount", stage: "Stage", next: "Next action", updated: "Last update", empty: "No clients match these filters.",
     statuses: { introduced: "Introduced", contacted: "Contacted", "compliance-review": "Compliance review", accepted: "Accepted", funded: "Funded" } as Record<ReferralStatus, string>,
   },
 } as const;
@@ -46,7 +46,7 @@ export function ClientDirectory({ offerings }: { offerings: OfferingBundle[] }) 
     const text = `${client.displayName} ${client.organization ?? ""} ${client.email} ${offering?.shortName[lang] ?? ""}`.toLocaleLowerCase(lang === "tr" ? "tr" : "en");
     const needle = query.trim().toLocaleLowerCase(lang === "tr" ? "tr" : "en");
     return (!needle || text.includes(needle)) && (status === "all" || client.status === status) && (fund === "all" || client.fundInterests.some((item) => item.offeringId === fund));
-  }), [clients, fund, lang, offerings, query, status]);
+  }).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt)), [clients, fund, lang, offerings, query, status]);
 
   return <div>
     <PageHeader eyebrow={c.eyebrow} title={c.title} description={c.desc} action={<Link href={`${NORTH_BASE}/clients/new`} className="inline-flex h-10 items-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white hover:bg-[#123f5e]"><Plus className="size-4" />{c.add}</Link>} />

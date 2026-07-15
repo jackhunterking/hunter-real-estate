@@ -220,11 +220,11 @@ function OfferDetailsTab({ offering }: { offering: OfferingBundle }) {
       )}
 
       <section className={CARD}>
-        <SectionHead icon={ListChecks} className="mb-5">{d.fundDetailsHeading}</SectionHead>
-        <dl className="grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
+          <SectionHead icon={ListChecks} className="mb-5">{d.fundDetailsHeading}</SectionHead>
+          <dl className="grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
           {vm.fundDetails.map((r) => (
-            <div key={r.key} className="flex items-baseline justify-between gap-4 border-b border-border py-2.5">
-              <dt className="text-[13px] leading-snug text-muted-foreground">{fields[r.key] ?? r.key}</dt>
+            <div key={r.key} className={cn("flex items-baseline justify-between gap-4 border-b border-border py-2.5", r.key === "redemption" && "sm:col-span-2 lg:col-span-3")}>
+              <dt className="whitespace-nowrap text-[13px] leading-snug text-muted-foreground">{fields[r.key] ?? r.key}</dt>
               <dd className="shrink-0 text-right text-[15px] font-semibold text-foreground tabular-nums">{r.value}</dd>
             </div>
           ))}

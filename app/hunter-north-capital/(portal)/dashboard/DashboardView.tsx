@@ -35,7 +35,7 @@ const COPY = {
     product: "Fon",
     amount: "Gösterge tutarı",
     status: "Durum",
-    date: "Tarih",
+    lastUpdate: "Son güncelleme",
     availableProducts: "Kullanılabilir fonlar",
     productMeta: "Partner incelemesine açık Kanada gayrimenkul fonları",
     available: "Kullanılabilir",
@@ -76,7 +76,7 @@ const COPY = {
     product: "Fund",
     amount: "Illustrative amount",
     status: "Status",
-    date: "Date",
+    lastUpdate: "Last update",
     availableProducts: "Available funds",
     productMeta: "Canadian real-estate funds available for partner review",
     available: "Available",
@@ -170,10 +170,10 @@ export function DashboardView({ offerings }: { offerings: OfferingBundle[] }) {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[690px] border-collapse text-left">
               <thead className="bg-[#f6f8f9] text-[10px] font-bold uppercase tracking-[0.08em] text-[#73808a]">
-                <tr>{[c.investor, c.product, c.amount, c.status, c.date].map((item) => <th key={item} className="border-b border-[#e2e6e9] px-4 py-3">{item}</th>)}</tr>
+                <tr>{[c.investor, c.product, c.amount, c.status, c.lastUpdate].map((item) => <th key={item} className="border-b border-[#e2e6e9] px-4 py-3">{item}</th>)}</tr>
               </thead>
               <tbody className="text-sm">
-                {clients.slice(0, 4).map((client) => {
+                {[...clients].sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt)).slice(0, 4).map((client) => {
                   const interest = client.fundInterests.find((item) => item.primary) ?? client.fundInterests[0];
                   const offering = offerings.find((item) => item.id === interest?.offeringId);
                   return (
@@ -182,7 +182,7 @@ export function DashboardView({ offerings }: { offerings: OfferingBundle[] }) {
                       <td className="max-w-52 truncate px-4 py-3.5 text-[#5e6a74]">{offering?.shortName[lang]}</td>
                       <td className="px-4 py-3.5 tabular-nums text-[#3f4e5a]">{interest ? money(interest.amount, lang) : "—"}</td>
                       <td className="px-4 py-3.5"><StageIndicator status={client.status} label={<span className={`rounded px-2 py-1 text-[10px] font-bold ${statusClass(client.status)}`}>{c.statusMap[client.status]}</span>} labels={c.statusMap} /></td>
-                      <td className="px-4 py-3.5 text-xs text-[#78838c]">{shortDate(client.introducedAt, lang)}</td>
+                      <td className="px-4 py-3.5 text-xs text-[#78838c]">{shortDate(client.updatedAt.slice(0, 10), lang)}</td>
                     </tr>
                   );
                 })}

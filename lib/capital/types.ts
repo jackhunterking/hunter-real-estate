@@ -173,10 +173,45 @@ export type PartnerSummary = {
   nextTierThreshold: number;
   activeProducts: number;
   referralCount: number;
+  partnerId?: string;
+  accountStatus?: "active" | "under-review" | "inactive";
+  relationshipSince?: string;
+  primaryMarket?: LocalizedText;
+  relationshipManager?: string;
+  profileReviewedAt?: string;
 };
 
 export type ClientAccountType = "individual" | "entity";
-export type ClientJurisdiction = "ontario" | "turkey-cross-border";
+export type ClientJurisdiction = "ontario" | "manual-review";
+export type ClientInvestorCategory =
+  | "accredited-investor"
+  | "eligible-investor"
+  | "non-eligible-investor"
+  | "entity-review"
+  | "cross-border-review"
+  | "undetermined";
+export type ClientExemptionRoute =
+  | "accredited-investor"
+  | "offering-memorandum"
+  | "family-friends-business-associates"
+  | "private-issuer"
+  | "minimum-amount"
+  | "licensed-review";
+export type ClientQualificationCriterion =
+  | "ai-financial-assets"
+  | "ai-income-individual"
+  | "ai-income-with-spouse"
+  | "ai-net-assets"
+  | "eligible-net-assets"
+  | "eligible-income-individual"
+  | "eligible-income-with-spouse"
+  | "entity-ai-net-assets"
+  | "entity-ai-other";
+export type ClientInvestmentLimitStatus =
+  | "not-applicable"
+  | "within-preliminary-limit"
+  | "exceeds-preliminary-limit"
+  | "review-required";
 export type ClientDocumentStatus =
   | "missing"
   | "received"
@@ -193,6 +228,7 @@ export type ClientFundInterest = {
   id: string;
   offeringId: string;
   shareClassId?: string;
+  shareQuantity?: number;
   amount: number;
   timeline: string;
   accountPreference: string;
@@ -208,12 +244,17 @@ export type ClientReadiness = {
   liquidityNeed: string;
   experience: string;
   preliminaryCategory: string;
-  accreditedIncome: boolean;
-  accreditedFinancialAssets: boolean;
-  accreditedNetAssets: boolean;
-  eligibleIncome: boolean;
-  eligibleNetAssets: boolean;
-  priorOmAmount: string;
+  investorCategory: ClientInvestorCategory;
+  potentialExemptionRoutes: ClientExemptionRoute[];
+  qualificationCriteria: ClientQualificationCriterion[];
+  omInvestmentsLast12Months: number;
+  registeredAdviceForHigherOmLimit: boolean;
+  preliminaryInvestmentLimit?: number;
+  investmentLimitStatus: ClientInvestmentLimitStatus;
+  relationshipType?: string;
+  relationshipPerson?: string;
+  entityBuysAsPrincipal: boolean;
+  entityCanPayAtTrade: boolean;
 };
 
 export type ClientDocument = {
@@ -244,9 +285,10 @@ export type ClientRecord = {
   organization?: string;
   email: string;
   phone?: string;
-  preferredLanguage: Lang | "both";
+  nationality: string;
   city: string;
   country: string;
+  region?: string;
   jurisdiction: ClientJurisdiction;
   status: ReferralStatus;
   introducedAt: string;

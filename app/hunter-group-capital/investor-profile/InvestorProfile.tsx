@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
-import type { OfferingBundle } from "@/lib/capital/types";
+import type { ClientQualificationCriterion, OfferingBundle } from "@/lib/capital/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,7 @@ type Form = {
   offeringId: string; shareClassId: string; jurisdiction: "ontario" | "turkey-cross-border";
   firstName: string; lastName: string; email: string; phone: string; city: string;
   objective: string; horizon: string; riskTolerance: string; lossCapacity: string; liquidityNeed: string; experience: string; intendedAmount: string; accountPreference: string;
-  accreditedIncome: boolean; accreditedFinancialAssets: boolean; accreditedNetAssets: boolean; eligibleIncome: boolean; eligibleNetAssets: boolean; priorOmAmount: string;
+  qualificationCriteria: ClientQualificationCriterion[]; priorOmAmount: string; registeredAdviceForHigherOmLimit: boolean;
   contactConsent: boolean; accuracyConsent: boolean;
 };
 
@@ -31,13 +31,46 @@ const GOAL_FIELDS: { key: keyof Form; options: string[] }[] = [
   { key: "accountPreference", options: ["Non-registered", "Registered account", "Corporate/entity", "Unsure"] },
 ];
 
-const CHECK_FIELDS: (keyof Form)[] = [
-  "accreditedIncome",
-  "accreditedFinancialAssets",
-  "accreditedNetAssets",
-  "eligibleIncome",
-  "eligibleNetAssets",
-];
+const INDIVIDUAL_CRITERIA = [
+  "ai-financial-assets",
+  "ai-income-individual",
+  "ai-income-with-spouse",
+  "ai-net-assets",
+  "eligible-net-assets",
+  "eligible-income-individual",
+  "eligible-income-with-spouse",
+] as const satisfies readonly ClientQualificationCriterion[];
+
+const QUALIFICATION_COPY = {
+  en: {
+    intro: "Select every statement the client confirms. These facts produce a preliminary category only; the licensed team must verify them.",
+    prior: "Total invested under the offering-memorandum exemption in the last 12 months (CAD)",
+    advice: "A registered portfolio manager, investment dealer, or exempt market dealer gave a positive suitability assessment for this investment.",
+    criteria: {
+      "ai-financial-assets": "Net financial assets exceed $1,000,000, alone or with a spouse, after related liabilities.",
+      "ai-income-individual": "Net income before tax exceeded $200,000 in each of the last two years and is reasonably expected to exceed it this year.",
+      "ai-income-with-spouse": "Combined spousal net income exceeded $300,000 in each of the last two years and is reasonably expected to exceed it this year.",
+      "ai-net-assets": "Net assets are at least $5,000,000, alone or with a spouse.",
+      "eligible-net-assets": "Net assets exceed $400,000, alone or with a spouse.",
+      "eligible-income-individual": "Net income before tax exceeded $75,000 in each of the last two years and is reasonably expected to exceed it this year.",
+      "eligible-income-with-spouse": "Combined spousal net income exceeded $125,000 in each of the last two years and is reasonably expected to exceed it this year.",
+    },
+  },
+  tr: {
+    intro: "Müşterinin doğruladığı tüm ifadeleri seçin. Bu bilgiler yalnızca ön kategori oluşturur; lisanslı ekip tarafından doğrulanmalıdır.",
+    prior: "Son 12 ayda offering memorandum muafiyeti kapsamında yatırılan toplam (CAD)",
+    advice: "Kayıtlı bir portföy yöneticisi, yatırım satıcısı veya muaf piyasa satıcısı bu yatırım için olumlu uygunluk değerlendirmesi verdi.",
+    criteria: {
+      "ai-financial-assets": "Müşteri tek başına veya eşiyle birlikte, ilgili borçlar düşüldükten sonra 1.000.000 CAD üzerinde net finansal varlığa sahiptir.",
+      "ai-income-individual": "Vergi öncesi net gelir son iki yılın her birinde 200.000 CAD üzerindeydi ve bu yıl da aşması makul olarak bekleniyor.",
+      "ai-income-with-spouse": "Eşle birleşik net gelir son iki yılın her birinde 300.000 CAD üzerindeydi ve bu yıl da aşması makul olarak bekleniyor.",
+      "ai-net-assets": "Müşteri tek başına veya eşiyle birlikte en az 5.000.000 CAD net varlığa sahiptir.",
+      "eligible-net-assets": "Müşteri tek başına veya eşiyle birlikte 400.000 CAD üzerinde net varlığa sahiptir.",
+      "eligible-income-individual": "Vergi öncesi net gelir son iki yılın her birinde 75.000 CAD üzerindeydi ve bu yıl da aşması makul olarak bekleniyor.",
+      "eligible-income-with-spouse": "Eşle birleşik net gelir son iki yılın her birinde 125.000 CAD üzerindeydi ve bu yıl da aşması makul olarak bekleniyor.",
+    },
+  },
+} as const;
 
 const selectCls =
   "h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50";
@@ -54,13 +87,14 @@ export function InvestorProfile({ offerings }: { offerings: OfferingBundle[] }) 
   const [step, setStep] = useState(0);
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [result, setResult] = useState<{ preliminaryCategory: string; warnings: string[] }>();
-  const [form, setForm] = useState<Form>({ offeringId: initialOffering.id, shareClassId: params.get("shareClass") ?? initialOffering.shareClasses[0]?.id ?? "", jurisdiction: "ontario", firstName: "", lastName: "", email: "", phone: "", city: "", objective: "Balanced income and growth", horizon: "5+ years", riskTolerance: "Moderate", lossCapacity: "Some loss", liquidityNeed: "Low", experience: "Some private market experience", intendedAmount: "$25k-$100k", accountPreference: "Non-registered", accreditedIncome: false, accreditedFinancialAssets: false, accreditedNetAssets: false, eligibleIncome: false, eligibleNetAssets: false, priorOmAmount: "$0", contactConsent: false, accuracyConsent: false });
+  const [form, setForm] = useState<Form>({ offeringId: initialOffering.id, shareClassId: params.get("shareClass") ?? initialOffering.shareClasses[0]?.id ?? "", jurisdiction: "ontario", firstName: "", lastName: "", email: "", phone: "", city: "", objective: "Balanced income and growth", horizon: "5+ years", riskTolerance: "Moderate", lossCapacity: "Some loss", liquidityNeed: "Low", experience: "Some private market experience", intendedAmount: "$25k-$100k", accountPreference: "Non-registered", qualificationCriteria: [], priorOmAmount: "0", registeredAdviceForHigherOmLimit: false, contactConsent: false, accuracyConsent: false });
   const offering = offerings.find((o) => o.id === form.offeringId) ?? offerings[0];
 
   useEffect(() => { try { const saved = localStorage.getItem("hunter-capital-readiness"); if (saved) setForm((current) => ({ ...current, ...JSON.parse(saved) })); } catch {} }, []);
   useEffect(() => { try { localStorage.setItem("hunter-capital-readiness", JSON.stringify(form)); } catch {} }, [form]);
 
   function update<K extends keyof Form>(key: K, value: Form[K]) { setForm((current) => ({ ...current, [key]: value })); }
+  function toggleCriterion(criterion: ClientQualificationCriterion) { setForm((current) => ({ ...current, qualificationCriteria: current.qualificationCriteria.includes(criterion) ? current.qualificationCriteria.filter((item) => item !== criterion) : [...current.qualificationCriteria, criterion] })); }
   function chooseOffering(id: string) { const next = offerings.find((o) => o.id === id)!; setForm((current) => ({ ...current, offeringId: id, shareClassId: next.shareClasses[0]?.id ?? "" })); }
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -171,21 +205,23 @@ export function InvestorProfile({ offerings }: { offerings: OfferingBundle[] }) 
 
           {step === 3 && (
             <section className="flex flex-col gap-4">
-              <p className="text-[15px] leading-relaxed text-muted-foreground">{form.jurisdiction === "ontario" ? p.ontarioIntro : p.crossBorderIntro}</p>
+              <p className="text-[15px] leading-relaxed text-muted-foreground">{form.jurisdiction === "ontario" ? QUALIFICATION_COPY[lang].intro : p.crossBorderIntro}</p>
               {form.jurisdiction === "ontario" ? (
                 <div className="flex flex-col gap-2.5">
-                  {CHECK_FIELDS.map((key) => (
-                    <label key={key} className="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-muted/40 p-3.5">
-                      <Checkbox checked={form[key] as boolean} onCheckedChange={(v) => update(key, (v === true) as never)} className="mt-0.5" />
-                      <span className="text-sm leading-snug text-foreground">{p.checks[key as keyof typeof p.checks]}</span>
+                  {INDIVIDUAL_CRITERIA.map((criterion) => (
+                    <label key={criterion} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3.5", form.qualificationCriteria.includes(criterion) ? "border-primary bg-secondary/60" : "border-border bg-muted/40")}>
+                      <Checkbox checked={form.qualificationCriteria.includes(criterion)} onCheckedChange={() => toggleCriterion(criterion)} className="mt-0.5" />
+                      <span className="text-sm leading-snug text-foreground">{QUALIFICATION_COPY[lang].criteria[criterion]}</span>
                     </label>
                   ))}
-                  <div className="flex max-w-xs flex-col gap-1.5">
-                    <Label>{p.labels.priorOm}</Label>
-                    <select className={selectCls} value={form.priorOmAmount} onChange={(e) => update("priorOmAmount", e.target.value)}>
-                      {["$0", "Under $10k", "$10k-$30k", "Over $30k"].map((o) => <option key={o} value={o}>{opt(o)}</option>)}
-                    </select>
+                  <div className="flex max-w-md flex-col gap-1.5 pt-2">
+                    <Label>{QUALIFICATION_COPY[lang].prior}</Label>
+                    <Input type="number" inputMode="decimal" min="0" step="1" value={form.priorOmAmount} onChange={(e) => update("priorOmAmount", e.target.value.replace(/[^0-9.]/g, ""))} />
                   </div>
+                  <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-muted/40 p-3.5">
+                    <Checkbox checked={form.registeredAdviceForHigherOmLimit} onCheckedChange={(value) => update("registeredAdviceForHigherOmLimit", value === true)} className="mt-0.5" />
+                    <span className="text-sm leading-snug text-foreground">{QUALIFICATION_COPY[lang].advice}</span>
+                  </label>
                 </div>
               ) : (
                 <div className="rounded-xl border border-border bg-secondary/50 p-5">
