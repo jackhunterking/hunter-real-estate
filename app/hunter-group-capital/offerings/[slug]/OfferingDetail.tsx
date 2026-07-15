@@ -167,8 +167,9 @@ const CHOICE_LG =
 
 const STAT_ICONS: Record<string, LucideIcon> = {
   return: TrendingUp,
-  distribution: CircleDollarSign,
   aum: Landmark,
+  buildings: Building2,
+  units: CircleDollarSign,
 };
 
 /** Consistent institutional section header: gold hairline tick + muted icon + serif title. */
@@ -200,7 +201,7 @@ function OfferDetailsTab({ offering }: { offering: OfferingBundle }) {
   return (
     <div className="flex flex-col gap-7">
       {vm.summaryTiles.length > 0 && (
-        <dl className="grid grid-cols-1 divide-y divide-border overflow-hidden rounded-xl border border-border border-t-2 border-t-gold bg-card sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        <dl className="grid grid-cols-1 divide-y divide-border overflow-hidden rounded-xl border border-border border-t-2 border-t-gold bg-card sm:grid-cols-2 sm:divide-x sm:divide-y-0 xl:grid-cols-4">
           {vm.summaryTiles.map((tile) => {
             const Icon = STAT_ICONS[tile.key] ?? BarChart3;
             return (

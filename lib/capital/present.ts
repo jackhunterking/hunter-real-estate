@@ -245,7 +245,7 @@ export function offeringMetrics(bundle: OfferingBundle, lang: Lang, variant: "pl
   if (sc.targetReturn) {
     tiles.push({
       key: "return",
-      label: L("Target return", "Hedef getiri"),
+      label: L("Target return", "Hedeflenen yıllık net getiri"),
       value: formatReturnPhrase(sc.targetReturn.value, lang),
       source: formatSourceLine(sc.targetReturn, lang),
     });
@@ -410,18 +410,42 @@ export function buildFundDetailViewModel(bundle: OfferingBundle, lang: Lang): Fu
   const bannerImage = resolveImage(bundle.media?.banner, `${bundle.slug}-banner`, bundle.shortName[lang], lang);
   const logo = resolveImage(bundle.media?.logo, `${bundle.slug}-logo`, bundle.shortName[lang], lang);
 
-  // Summary tiles: target return, distribution, AUM
+  // Overview highlights: target return, AUM, buildings, and units.
   const summaryTiles: MetricTile[] = [];
   const L = (en: string, tr: string) => (lang === "tr" ? tr : en);
-  if (sc?.targetReturn) summaryTiles.push({ key: "return", ...compactSummaryMetric(sc.targetReturn.value, L("Target return", "Hedef getiri"), lang), source: null });
-  if (sc?.targetDistribution) summaryTiles.push({ key: "distribution", ...compactSummaryMetric(sc.targetDistribution.value, L("Target distribution", "Hedef dağıtım"), lang), source: null });
-  if (bundle.aum) summaryTiles.push({ key: "aum", label: L("AUM", "Yönetilen varlık"), value: String(bundle.aum.value), source: null });
+  const portfolioFactNumber = (pattern: RegExp) => {
+    const fact = bundle.portfolioFacts.find(({ value }) => pattern.test(value));
+    return fact?.value.match(/[\d,.]+/)?.[0] ?? null;
+  };
+
+  if (sc?.targetReturn) {
+    summaryTiles.push({
+      key: "return",
+      label: L("Target return", "Hedeflenen yıllık net getiri"),
+      value: compactPercent(sc.targetReturn.value, lang) ?? formatReturnPhrase(sc.targetReturn.value, lang),
+      source: null,
+    });
+  }
+  if (bundle.aum) summaryTiles.push({ key: "aum", label: L("Total assets under management", "Toplam yönetilen varlıklar"), value: String(bundle.aum.value), source: null });
+
+  const buildings = portfolioFactNumber(/\b(properties|buildings)\b/i) ?? (bundle.properties.length ? String(bundle.properties.length) : null);
+  if (buildings) summaryTiles.push({ key: "buildings", label: L("Number of buildings", "Bina sayısı"), value: buildings, source: null });
+
+  const units = bundle.unitsTotal ? String(bundle.unitsTotal.value) : portfolioFactNumber(/\bunits\b/i);
+  if (units) summaryTiles.push({ key: "units", label: L("Number of units", "Daire"), value: units, source: null });
 
   // Fund details rows (only those with data)
   const fundDetails: LabeledRow[] = [];
   const row = (key: string, value?: string | null) => { if (value) fundDetails.push({ key, value }); };
   row("riskProfile", bundle.riskProfile?.[lang]);
-  row("projectedReturn", sc?.targetReturn ? formatReturnPhrase(sc.targetReturn.value, lang) : null);
+  row(
+    "projectedReturn",
+    sc?.targetReturn
+      ? lang === "tr"
+        ? `${compactPercent(sc.targetReturn.value, lang) ?? formatReturnPhrase(sc.targetReturn.value, lang)} Yıllık net getiri`
+        : formatReturnPhrase(sc.targetReturn.value, lang)
+      : null,
+  );
   row("startDate", bundle.inceptionDate ? formatDate(bundle.inceptionDate, lang) : null);
   row("unitPrice", sc?.unitPrice ? formatCurrencyCad(sc.unitPrice.value, lang) : null);
   row("minimum", sc?.minimumInvestment ? formatCurrencyCad(sc.minimumInvestment.value, lang) : null);
