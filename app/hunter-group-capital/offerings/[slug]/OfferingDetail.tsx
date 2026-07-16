@@ -20,6 +20,8 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { assessOntarioInvestor } from "@/lib/capital/ontario-investor-assessment";
+import { READINESS_RULESET } from "@/lib/capital/readiness-rules";
 import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
 import {
   buildFundDetailViewModel,
@@ -29,7 +31,15 @@ import {
 import type { OfferingBundle } from "@/lib/capital/types";
 import { FundMapEmbed } from "@/components/capital/map/FundMapEmbed";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -223,9 +233,15 @@ function OfferDetailsTab({ offering }: { offering: OfferingBundle }) {
           <SectionHead icon={ListChecks} className="mb-5">{d.fundDetailsHeading}</SectionHead>
           <dl className="grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
           {vm.fundDetails.map((r) => (
-            <div key={r.key} className={cn("flex items-baseline justify-between gap-4 border-b border-border py-2.5", r.key === "redemption" && "sm:col-span-2 lg:col-span-3")}>
+            <div key={r.key} className={cn("flex items-baseline justify-between gap-4 border-b border-border py-2.5", r.key === "redemption" && "items-start sm:col-span-2 lg:col-span-3")}>
               <dt className="whitespace-nowrap text-[13px] leading-snug text-muted-foreground">{fields[r.key] ?? r.key}</dt>
-              <dd className="shrink-0 text-right text-[15px] font-semibold text-foreground tabular-nums">{r.value}</dd>
+              <dd className="shrink-0 text-right text-[15px] font-semibold text-foreground tabular-nums">
+                {r.key === "redemption" ? (
+                  <span className="grid gap-1">
+                    {r.value.split(";").map((term) => <span key={term}>{term.trim()}</span>)}
+                  </span>
+                ) : r.value}
+              </dd>
             </div>
           ))}
         </dl>
@@ -306,11 +322,9 @@ type GuideState = {
   netAssets: "under400" | "over400" | "over5m";
   financialAssets: "under1m" | "over1m";
   relationship: "no" | "yes";
-  intendedAmount: string;
-  priorAmount: string;
 };
 
-type GuideQuestionKey = Exclude<keyof GuideState, "intendedAmount" | "priorAmount">;
+type GuideQuestionKey = keyof GuideState;
 
 // Question order + option value keys; all display copy comes from the i18n dictionary (detail.guide).
 const GUIDE_QUESTIONS: { key: GuideQuestionKey; testId: string; options: string[] }[] = [
@@ -322,6 +336,10 @@ const GUIDE_QUESTIONS: { key: GuideQuestionKey; testId: string; options: string[
   { key: "financialAssets", testId: "financial-assets", options: ["under1m", "over1m"] },
   { key: "relationship", testId: "relationship", options: ["no", "yes"] },
 ];
+
+const REFERENCE_CATEGORY_KEYS = ["accredited", "eligible", "nonEligible", "relationship", "entity"] as const;
+type ReferenceCategoryKey = (typeof REFERENCE_CATEGORY_KEYS)[number];
+type InvestorReferenceCopy = ReturnType<typeof useLang>["t"]["capitalApp"]["detail"]["guide"]["reference"];
 
 function InvestorQualificationGuide({ offering }: { offering: OfferingBundle }) {
   const { lang, t } = useLang();
@@ -337,49 +355,29 @@ function InvestorQualificationGuide({ offering }: { offering: OfferingBundle }) 
     netAssets: "under400",
     financialAssets: "under1m",
     relationship: "no",
-    intendedAmount: "",
-    priorAmount: "0",
   });
 
   // Personal investors answer every question; entity/institution short-circuit to the result.
   const isPersonal = guide.investorType === "personal";
   const questionCount = isPersonal ? GUIDE_QUESTIONS.length : 1;
-  const amountStep = isPersonal ? questionCount : -1;
-  const resultStep = questionCount + (isPersonal ? 1 : 0);
+  // Public pages explain a possible Ontario classification only. Exact OM
+  // capacity belongs to the licensed workflow, where the product and rolling
+  // acquisition-cost history can be verified.
+  const resultStep = questionCount;
   const totalSteps = resultStep + 1;
   const current = Math.min(Math.max(step, 0), totalSteps - 1);
   const pct = Math.round(((current + 1) / totalSteps) * 100);
-
-  function update<K extends keyof GuideState>(key: K, value: GuideState[K]) {
-    setGuide((prev) => ({ ...prev, [key]: value }));
-  }
 
   function answer(key: keyof GuideState, value: string) {
     setGuide((prev) => ({ ...prev, [key]: value } as GuideState));
     setStep(current + 1);
   }
 
-  const classification = classifyGuide(guide);
+  const classification = classifyGuide(guide, offering);
   const resultCopy = g.results[classification.category];
-  const intendedAmount = moneyToNumber(guide.intendedAmount);
-  const priorAmount = moneyToNumber(guide.priorAmount);
-  const availableEstimate = typeof classification.baseMax === "number" ? Math.max(classification.baseMax - priorAmount, 0) : null;
-  const amountForComparison = intendedAmount || fundMinimum || 0;
   const minimumLabel = fundMinimum ? formatCurrencyCad(fundMinimum, lang) : g.result.reviewRequired;
-  const estimatedLabel = availableEstimate !== null ? formatCurrencyCad(availableEstimate, lang) : resultCopy.access;
-
-  let fitMessage: string;
-  if (classification.kind === "manual") {
-    fitMessage = resultCopy.access;
-  } else if (fundMinimum && availableEstimate !== null && fundMinimum > availableEstimate) {
-    fitMessage = g.fit.aboveFundMin;
-  } else if (availableEstimate !== null && intendedAmount > availableEstimate) {
-    fitMessage = g.fit.aboveAmountLimit;
-  } else if (fundMinimum && amountForComparison < fundMinimum) {
-    fitMessage = g.fit.belowMinimum;
-  } else {
-    fitMessage = g.fit.fits;
-  }
+  const estimatedLabel = resultCopy.access;
+  const fitMessage = resultCopy.access;
 
   const question = current < questionCount ? GUIDE_QUESTIONS[current] : null;
   const questionCopy = question ? g.questions[question.key] : null;
@@ -428,29 +426,6 @@ function InvestorQualificationGuide({ offering }: { offering: OfferingBundle }) 
             </div>
           )}
 
-          {current === amountStep && (
-            <div className="flex flex-col gap-5">
-              <div>
-                <p className={EYEBROW}>{g.almostDone}</p>
-                <h3 className="mt-2 flex items-center gap-2 font-serif text-2xl font-semibold leading-tight text-foreground">
-                  <CircleDollarSign className="size-5 shrink-0 text-muted-foreground" aria-hidden />
-                  {g.amount.title}
-                </h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{g.amount.hint}</p>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="flex flex-col gap-1.5">
-                  <span className="text-xs font-semibold text-muted-foreground">{g.amount.intendedLabel}</span>
-                  <Input inputMode="numeric" placeholder={g.amount.intendedPlaceholder} value={guide.intendedAmount} onChange={(event) => update("intendedAmount", event.target.value)} />
-                </label>
-                <label className="flex flex-col gap-1.5">
-                  <span className="text-xs font-semibold text-muted-foreground">{g.amount.priorLabel}</span>
-                  <Input inputMode="numeric" placeholder={g.amount.priorPlaceholder} value={guide.priorAmount} onChange={(event) => update("priorAmount", event.target.value)} />
-                </label>
-              </div>
-            </div>
-          )}
-
           {current === resultStep && (
             <div className="flex flex-col gap-4">
               <div data-testid="qualification-result" className="overflow-hidden rounded-lg border border-border border-t-2 border-t-gold bg-card">
@@ -483,67 +458,208 @@ function InvestorQualificationGuide({ offering }: { offering: OfferingBundle }) 
           <Button type="button" variant="outline" disabled={current === 0} onClick={() => setStep(current - 1)}>
             ← {g.back}
           </Button>
-          {current === amountStep && (
-            <Button type="button" onClick={() => setStep(current + 1)}>{g.seeResult} →</Button>
-          )}
         </footer>
       </div>
       </div>
 
-      <section className="rounded-xl border border-border bg-card p-5">
-        <div className="mb-4">
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">{g.reference.eyebrow}</p>
-          <h3 className="mt-1 flex items-center gap-2 font-serif text-xl font-semibold text-foreground">
-            <ClipboardList className="size-[18px] shrink-0 text-muted-foreground" aria-hidden />
-            {g.reference.title}
-          </h3>
-        </div>
+      <InvestorReferenceDialog offering={offering} lang={lang} copy={g.reference} />
+    </div>
+  );
+}
 
-        <div className="divide-y divide-border rounded-lg border border-border">
-          {g.reference.categories.map((item) => (
-            <article key={item.title} className="grid gap-3 p-4 transition-colors hover:bg-secondary/20 md:grid-cols-[210px_minmax(0,1fr)_190px] md:items-start">
-              <h4 className="text-[15px] font-bold leading-tight text-foreground">{item.title}</h4>
-              <ul className="flex flex-col gap-1.5">
-                {item.requirements.map((requirement) => (
-                  <li key={requirement} className="text-sm leading-snug text-muted-foreground">
-                    {requirement}
-                  </li>
-                ))}
-              </ul>
-              <p className="text-sm font-semibold leading-snug text-primary">{item.access}</p>
-            </article>
-          ))}
+function InvestorReferenceDialog({
+  offering,
+  lang,
+  copy,
+}: {
+  offering: OfferingBundle;
+  lang: "en" | "tr";
+  copy: InvestorReferenceCopy;
+}) {
+  const formatAmount = (value: number) => formatCurrencyCad(value, lang);
+  const limits: Record<ReferenceCategoryKey, string> = {
+    accredited: copy.limits.accredited,
+    eligible: copy.limits.eligible
+      .replace("{base}", formatAmount(READINESS_RULESET.omLimits.eligible))
+      .replace("{advised}", formatAmount(READINESS_RULESET.omLimits.eligibleWithAdvice)),
+    nonEligible: copy.limits.nonEligible.replace(
+      "{base}",
+      formatAmount(READINESS_RULESET.omLimits.nonEligible),
+    ),
+    relationship: copy.limits.relationship,
+    entity: copy.limits.entity,
+  };
+  const rows = REFERENCE_CATEGORY_KEYS.map((key) => ({
+    key,
+    ...copy.categories[key],
+    limit: limits[key],
+  }));
+  const offeringWarning = offering.complianceProfile.isInvestmentFund
+    ? copy.investmentFundWarning
+    : !offering.complianceProfile.reviewedAt
+      || !offering.complianceProfile.approvedOntarioExemptions.includes("offering-memorandum")
+      ? copy.unapprovedWarning
+      : null;
+
+  return (
+    <Dialog>
+      <section className="mx-auto w-full max-w-xl rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 gap-3">
+            <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-secondary text-primary">
+              <ClipboardList className="size-[18px]" aria-hidden />
+            </span>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">{copy.eyebrow}</p>
+              <h3 className="mt-1 font-serif text-lg font-semibold leading-tight text-foreground">{copy.triggerTitle}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{copy.triggerBody}</p>
+            </div>
+          </div>
+          <DialogTrigger asChild>
+            <Button type="button" variant="outline" className="w-full shrink-0 sm:w-auto">
+              {copy.open}
+            </Button>
+          </DialogTrigger>
         </div>
       </section>
+
+      <DialogContent className="max-h-[88vh] gap-0 overflow-y-auto p-0 sm:max-w-5xl">
+        <DialogHeader className="border-b border-border px-5 py-5 pr-12 sm:px-7 sm:py-6">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">{copy.eyebrow}</p>
+          <DialogTitle className="font-serif text-2xl leading-tight">{copy.modalTitle}</DialogTitle>
+          <DialogDescription className="max-w-3xl leading-relaxed">{copy.modalDescription}</DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-5 px-5 py-5 sm:px-7 sm:py-6">
+          {offeringWarning && (
+            <div className="rounded-lg border border-amber-300/70 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
+              {offeringWarning}
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <article className="rounded-lg border border-border bg-secondary/30 p-4">
+              <h4 className="font-semibold text-foreground">{copy.omTitle}</h4>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">{copy.omDefinition}</p>
+            </article>
+            <article className="rounded-lg border border-border bg-secondary/30 p-4">
+              <h4 className="font-semibold text-foreground">{copy.emdTitle}</h4>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">{copy.emdDefinition}</p>
+            </article>
+          </div>
+
+          <div className="hidden overflow-hidden rounded-lg border border-border md:block">
+            <table className="w-full table-fixed text-left">
+              <thead className="border-b border-border bg-secondary/40 text-xs font-semibold text-muted-foreground">
+                <tr>
+                  <th className="w-[18%] px-4 py-3">{copy.categoryHeading}</th>
+                  <th className="w-[31%] px-4 py-3">{copy.qualificationHeading}</th>
+                  <th className="w-[23%] px-4 py-3">{copy.limitHeading}</th>
+                  <th className="w-[28%] px-4 py-3">{copy.reviewHeading}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {rows.map((row) => (
+                  <tr key={row.key} className="align-top">
+                    <th className="px-4 py-4 text-sm font-bold leading-5 text-foreground">{row.title}</th>
+                    <td className="px-4 py-4">
+                      <ul className="space-y-1.5">
+                        {row.requirements.map((requirement) => (
+                          <li key={requirement} className="text-sm leading-5 text-muted-foreground">• {requirement}</li>
+                        ))}
+                      </ul>
+                    </td>
+                    <td className="px-4 py-4 text-sm font-semibold leading-6 text-primary">{row.limit}</td>
+                    <td className="px-4 py-4 text-sm leading-6 text-muted-foreground">{row.access}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="space-y-3 md:hidden">
+            {rows.map((row) => (
+              <article key={row.key} className="rounded-lg border border-border p-4">
+                <h4 className="font-bold text-foreground">{row.title}</h4>
+                <div className="mt-4 space-y-4">
+                  <ReferenceField label={copy.qualificationHeading}>
+                    <ul className="space-y-1.5">
+                      {row.requirements.map((requirement) => (
+                        <li key={requirement} className="text-sm leading-5 text-muted-foreground">• {requirement}</li>
+                      ))}
+                    </ul>
+                  </ReferenceField>
+                  <ReferenceField label={copy.limitHeading}>
+                    <p className="text-sm font-semibold leading-6 text-primary">{row.limit}</p>
+                  </ReferenceField>
+                  <ReferenceField label={copy.reviewHeading}>
+                    <p className="text-sm leading-6 text-muted-foreground">{row.access}</p>
+                  </ReferenceField>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <p className="rounded-lg bg-primary px-4 py-3 text-sm font-medium leading-6 text-primary-foreground">
+            {copy.rollingNote}
+          </p>
+        </div>
+
+        <footer className="flex flex-col gap-3 border-t border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-7">
+          <p className="text-xs leading-5 text-muted-foreground">
+            {copy.sourceIntro}{" "}
+            <a href="https://www.parvisinvest.com/insights/what-is-a-non-accredited-investor" target="_blank" rel="noreferrer" className="font-semibold text-primary hover:underline">{copy.parvisSource}</a>
+            {" · "}
+            <a href={READINESS_RULESET.sources[0]} target="_blank" rel="noreferrer" className="font-semibold text-primary hover:underline">{copy.oscSource}</a>
+          </p>
+          <DialogClose asChild>
+            <Button type="button" variant="outline" className="shrink-0">{copy.close}</Button>
+          </DialogClose>
+        </footer>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ReferenceField({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div>
+      <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">{label}</p>
+      <div className="mt-1.5">{children}</div>
     </div>
   );
 }
 
 type GuideCategory = "entity" | "accredited" | "relationship" | "eligible" | "nonEligible";
 
-// Returns the eligibility category (display copy is resolved from detail.guide.results) plus the
-// estimated base limit and whether the outcome is a limited amount or a manual review.
-function classifyGuide(guide: GuideState): { category: GuideCategory; baseMax: number | null; kind: "limited" | "manual" } {
+// Returns a public, possible-category indicator. Product routes and investment
+// amounts are deliberately kept out of this educational guide.
+function classifyGuide(guide: GuideState, offering: OfferingBundle): { category: GuideCategory; baseMax: number | null; kind: "manual" } {
   if (guide.investorType === "institution" || guide.investorType === "entity") {
     return { category: "entity", baseMax: null, kind: "manual" };
   }
-  if (guide.financialAssets === "over1m" || guide.netAssets === "over5m" || guide.income === "over200" || guide.householdIncome === "over300") {
-    return { category: "accredited", baseMax: null, kind: "manual" };
-  }
-  if (guide.relationship === "yes") {
-    return { category: "relationship", baseMax: null, kind: "manual" };
-  }
-  if (guide.netAssets === "over400" || guide.income === "over75" || guide.householdIncome === "over125") {
-    return { category: "eligible", baseMax: 30000, kind: "limited" };
-  }
-  return { category: "nonEligible", baseMax: 10000, kind: "limited" };
-}
-
-function moneyToNumber(value: string): number {
-  const clean = value.replace(/[^0-9.]/g, "");
-  if (!clean) return 0;
-  const amount = Number(clean);
-  return Number.isFinite(amount) ? amount : 0;
+  const answered = (value: boolean) => value ? "yes" as const : "no" as const;
+  const assessment = assessOntarioInvestor({
+    jurisdiction: "ontario",
+    accountType: "individual",
+    answers: {
+      "individual-registration": "no",
+      "individual-financial-assets": answered(guide.financialAssets === "over1m"),
+      "individual-income": answered(guide.income === "over200"),
+      "individual-spousal-income": answered(guide.household === "spouse" && guide.householdIncome === "over300"),
+      "individual-net-assets": answered(guide.netAssets === "over5m"),
+      "eligible-net-assets": answered(guide.netAssets === "over400" || guide.netAssets === "over5m"),
+      "eligible-income": answered(guide.income === "over75" || guide.income === "over200"),
+      "eligible-spousal-income": answered(guide.household === "spouse" && (guide.householdIncome === "over125" || guide.householdIncome === "over300")),
+    },
+    offeringCompliance: offering.complianceProfile,
+    relationshipClaimed: guide.relationship === "yes",
+    relationshipVerified: false,
+  });
+  if (assessment.result === "potentially-accredited") return { category: "accredited", baseMax: null, kind: "manual" };
+  if (assessment.result === "potentially-eligible") return { category: "eligible", baseMax: null, kind: "manual" };
+  if (assessment.result === "potentially-non-eligible") return { category: "nonEligible", baseMax: null, kind: "manual" };
+  return { category: "relationship", baseMax: null, kind: "manual" };
 }
 
 function PerformanceTable({ rows }: { rows: { period: string; value: string; note: string | null }[] }) {

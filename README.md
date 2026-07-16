@@ -8,8 +8,8 @@ This repository is now one deployable app at the repo root. It contains the real
 
 - Next.js 15 App Router, React 19, TypeScript
 - CSS Modules plus the existing design tokens in `app/globals.css`
-- HubSpot lead capture in `lib/hubspot.ts`
-- Resend email delivery in `lib/email.ts`
+- Supabase Postgres, Auth, Storage, RLS, and an internal lead workflow
+- Resend-only transactional email delivery with durable retry jobs
 - Vercel hosting
 
 ## Core Routes
@@ -18,7 +18,7 @@ This repository is now one deployable app at the repo root. It contains the real
 - `/rehber/alici` and `/rehber/satici` - buyer/seller guide funnels
 - `/rehber/ogren` - education hub
 - `/mortgage` - mortgage landing
-- `/mortgage/oranlar` - manual mortgage rates
+- `/mortgage/oranlar` - permanent redirect to `/mortgage` (legacy route)
 - `/mortgage/araclar` - redirects to `/mortgage`
 - `/hunter-group-capital` - canonical Capital experience
 - `/hunter-x-capital` - legacy redirect to `/hunter-group-capital`
@@ -37,14 +37,13 @@ Open `http://localhost:3000`.
 
 Copy `.env.example` to `.env.local` and fill in the production/service values.
 
-Required integrations:
+Required integrations are documented in `.env.example`. Browser requests use
+the Supabase publishable key; public form ingestion, email jobs, and webhook
+processing use the server-only `SUPABASE_WEB_SECRET_KEY`.
 
-- `HUBSPOT_ACCESS_TOKEN`
-- `RESEND_API_KEY`
-- `RESEND_FROM_EMAIL`
-- `RESEND_REPLY_TO`
-- `NEXT_PUBLIC_SITE_URL`
-- PostHog values if analytics/session replay should be enabled
+The database exposes only the `api` schema. Domain tables live in `app`, while
+email jobs, webhook events, and operational audit records live in `private`.
+Resend Contacts, Audiences, Broadcasts, and marketing campaigns are not used.
 
 ## Guide PDFs
 
@@ -53,7 +52,10 @@ The guide email and thank-you pages expect:
 - `public/guides/ev-alma-rehberi.pdf`
 - `public/guides/ev-satma-rehberi.pdf`
 
-Both are present from the approved HUNTER guide Pages PDFs.
+The current local copies remain available during development. Production guide
+assets are registered in `app.guide_assets` and served from the
+`guides-public` Supabase Storage bucket only while their publication version is
+active.
 
 ## Notes
 

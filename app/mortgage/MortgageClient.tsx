@@ -1,17 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import RateDisclosureModal from "@/components/RateDisclosureModal";
 import AdvisorStrip from "@/components/mortgage/AdvisorStrip";
 import MortgageDisclosure from "@/components/mortgage/MortgageDisclosure";
-import RateTiles from "@/components/mortgage/RateTiles";
 import { useLang, useT } from "@/lib/i18n/LanguageProvider";
 import { LEGAL_DOCS, LEGAL_SLUGS } from "@/lib/mortgage/legal";
-import { HERO_RATES, heroTile } from "@/lib/mortgage/rates";
 import { waHref } from "@/lib/mortgage/wa";
 import styles from "./mortgage.module.css";
 
@@ -35,13 +31,7 @@ export default function MortgageClient() {
   const t = useT();
   const { lang } = useLang();
   const f = t.mortgage;
-  const [showDisclosure, setShowDisclosure] = useState(false);
   const legalDocs = LEGAL_DOCS[lang];
-
-  const tiles = [
-    { label: f.rates.fixedLabel, tile: heroTile(HERO_RATES.fixed) },
-    { label: f.rates.variableLabel, tile: heroTile(HERO_RATES.variable) },
-  ];
   const legalLinks = [
     { href: `/${LEGAL_SLUGS.privacy}`, label: legalDocs.privacy.title },
     { href: `/${LEGAL_SLUGS.terms}`, label: legalDocs.terms.title },
@@ -108,29 +98,13 @@ export default function MortgageClient() {
 
             <div className={styles.rateCard}>
               <div className={styles.rateCardHead}>
-                <span className={styles.rateCardLabel}>{f.rates.eyebrow}</span>
-                <Link href="/mortgage/oranlar" className={styles.rateCardLink}>
-                  {f.oranlar.label} <Arrow />
-                </Link>
+                <span className={styles.rateCardLabel}>{f.options.eyebrow}</span>
               </div>
-              <RateTiles
-                tiles={tiles.map(({ label, tile }) => ({
-                  term: tile.term,
-                  kind: label,
-                  rate: tile.rate,
-                  detail: tile.detail,
-                }))}
-                updatingLabel={f.rates.updating}
-              />
-              <div className={styles.rateFoot}>
-                <button
-                  type="button"
-                  className={styles.disclosureBtn}
-                  onClick={() => setShowDisclosure(true)}
-                >
-                  {f.rates.disclosureLabel}
-                </button>
-              </div>
+              <h2 className={styles.hubTitle}>{f.options.title}</h2>
+              <p className={styles.hubText}>{f.options.intro}</p>
+              <ul className={styles.trust}>
+                {f.options.items.map((item) => <li key={item}>{item}</li>)}
+              </ul>
             </div>
           </div>
         </div>
@@ -174,13 +148,13 @@ export default function MortgageClient() {
           </div>
           <div className={styles.hubGrid}>
             <article className={styles.hubCard}>
-              <span className={styles.hubLabel}>{f.oranlar.label}</span>
-              <h3 className={styles.hubTitle}>{f.hub.ratesTitle}</h3>
-              <p className={styles.hubText}>{f.hub.ratesText}</p>
-              <Link href="/mortgage/oranlar" className={styles.hubLink}>
-                {f.hub.ratesCta}
+              <span className={styles.hubLabel}>{f.options.eyebrow}</span>
+              <h3 className={styles.hubTitle}>{f.hub.optionsTitle}</h3>
+              <p className={styles.hubText}>{f.hub.optionsText}</p>
+              <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.hubLink}>
+                {f.hub.optionsCta}
                 <Arrow />
-              </Link>
+              </a>
             </article>
 
             <article className={styles.hubCard}>
@@ -248,9 +222,6 @@ export default function MortgageClient() {
       <MortgageDisclosure />
       <Footer />
 
-      {showDisclosure ? (
-        <RateDisclosureModal onClose={() => setShowDisclosure(false)} />
-      ) : null}
     </main>
   );
 }

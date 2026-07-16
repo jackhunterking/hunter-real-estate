@@ -2,9 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, FileUp, ShieldCheck, UserRound } from "lucide-react";
-import type { ClientAccountType, ClientDocument, ClientJurisdiction, ClientQualificationCriterion, Lang, OfferingBundle } from "@/lib/capital/types";
-import { assessInvestor } from "@/lib/capital/eligibility";
+import { ArrowLeft, ArrowRight, Check, FileUp, UserRound } from "lucide-react";
+import type { ClientAccountType, ClientDocument, ClientJurisdiction, Lang, OfferingBundle } from "@/lib/capital/types";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { useClients } from "@/components/capital/north/ClientProvider";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
@@ -16,15 +15,13 @@ type FormState = {
   nationality: string; city: string; country: string; region: string;
   offeringId: string; shareClassId: string; shareQuantity: string; accountPreference: string;
   objective: string; horizon: string; riskTolerance: string; lossCapacity: string; liquidityNeed: string; experience: string;
-  qualificationCriteria: ClientQualificationCriterion[]; omInvestmentsLast12Months: string; registeredAdviceForHigherOmLimit: boolean;
-  relationshipType: string; relationshipPerson: string; entityBuysAsPrincipal: boolean; entityCanPayAtTrade: boolean;
   contactConsent: boolean; accuracyConsent: boolean;
 };
 
 const COPY = {
   tr: {
     eyebrow: "Yeni müşteri", title: "Müşteri tanıştırması oluştur", desc: "Temel bilgileri, yatırım ilgisini ve ön uygunluk yanıtlarını tek akışta tamamlayın.", step: "Adım", back: "Geri", continue: "Devam", cancel: "İptal", create: "Müşteri profilini oluştur", required: "Devam etmek için bu adımdaki gerekli alanları tamamlayın.", fileError: "Yalnızca 10 MB’a kadar PDF, JPG veya PNG dosyaları seçilebilir.", cancelConfirm: "Girilen bilgileri silip müşteri listesine dönmek istiyor musunuz?",
-    steps: ["Müşteri bilgileri", "Yatırım ilgisi", "Hedefler ve deneyim", "Ön uygunluk", "Belgeler ve onay"],
+    steps: ["Müşteri bilgileri", "Yatırım ilgisi", "Hedefler ve deneyim", "Belgeler ve onay"],
     identityIntro: "Müşterinin kimlik, iletişim, uyruk ve ikamet bilgilerini kaydedin.", individual: "Bireysel", entity: "Şirket / kuruluş", firstName: "Ad", lastName: "Soyad", organization: "Kurum", organizationRequired: "Kuruluş adı", email: "E-posta", phone: "Telefon (isteğe bağlı)", nationalityResidence: "Uyruk ve ikamet", nationality: "Uyruk", incorporationCountry: "Kuruluş ülkesi", residenceCountry: "İkamet ülkesi", region: "İl / eyalet (isteğe bağlı)", city: "Şehir",
     investmentIntro: "Birincil fonu seçin ve satın alınacak pay adedini girin. Tahmini yatırım tutarı, pay başına güncel fiyat kullanılarak otomatik hesaplanır.", fund: "Birincil fon", shareClass: "Pay sınıfı", shareQuantity: "Satın alınacak pay adedi", unitPrice: "Pay başına fiyat", amount: "Tahmini yatırım tutarı", minimum: "Asgari yatırım", shares: "pay", account: "Yatırım hesabı türü", accountHelp: "Yatırımın nerede tutulacağını belirtir: kayıtsız kişisel hesap, kayıtlı plan veya şirket hesabı. Henüz belli değilse ‘Emin değilim’i seçin.",
     goalsIntro: "Yanıtlar yalnızca lisanslı incelemeye hazırlanmak için bir ön özet oluşturur.", objective: "Amaç", horizon: "Yatırım ufku", risk: "Risk toleransı", loss: "Zarar karşılama kapasitesi", liquidity: "Likidite ihtiyacı", experience: "Özel piyasa deneyimi",
@@ -34,7 +31,7 @@ const COPY = {
   },
   en: {
     eyebrow: "New client", title: "Create a client introduction", desc: "Complete core details, investment interest, and preliminary readiness in one guided flow.", step: "Step", back: "Back", continue: "Continue", cancel: "Cancel", create: "Create client profile", required: "Complete the required fields in this step to continue.", fileError: "Choose a PDF, JPG, or PNG file no larger than 10 MB.", cancelConfirm: "Discard the entered information and return to the client list?",
-    steps: ["Client information", "Investment interest", "Goals & experience", "Preliminary eligibility", "Documents & consent"],
+    steps: ["Client information", "Investment interest", "Goals & experience", "Documents & consent"],
     identityIntro: "Record the client’s identity, contact, nationality, and residence details.", individual: "Individual", entity: "Company / entity", firstName: "First name", lastName: "Last name", organization: "Organization", organizationRequired: "Entity name", email: "Email", phone: "Phone (optional)", nationalityResidence: "Nationality & residence", nationality: "Nationality", incorporationCountry: "Country of incorporation", residenceCountry: "Country of residence", region: "Province / state (optional)", city: "City",
     investmentIntro: "Choose a primary fund and enter the number of shares to purchase. The estimated investment total is calculated automatically using the current price per share.", fund: "Primary fund", shareClass: "Share class", shareQuantity: "Number of shares to purchase", unitPrice: "Price per share", amount: "Estimated investment total", minimum: "Minimum investment", shares: "shares", account: "Investment account type", accountHelp: "Where the investment would be held: a personal non-registered account, a registered plan, or a company account. Choose ‘Unsure’ if it has not been decided yet.",
     goalsIntro: "Answers create a preliminary summary to prepare for licensed review only.", objective: "Objective", horizon: "Investment horizon", risk: "Risk tolerance", loss: "Loss capacity", liquidity: "Liquidity need", experience: "Private-market experience",
@@ -54,13 +51,6 @@ const options = {
   experience: ["New to private markets", "Some private market experience", "Experienced private market investor"],
 };
 
-const individualCriteria: ClientQualificationCriterion[] = [
-  "ai-financial-assets", "ai-income-individual", "ai-income-with-spouse", "ai-net-assets",
-  "eligible-net-assets", "eligible-income-individual", "eligible-income-with-spouse",
-];
-const entityCriteria: ClientQualificationCriterion[] = ["entity-ai-net-assets", "entity-ai-other"];
-const relationshipTypes = ["none", "ffba:issuer", "ffba:family", "ffba:friend", "ffba:business", "private:employee", "private:family"] as const;
-
 const docDefinitions: Array<{ id: string; category: ClientDocument["category"] }> = [
   { id: "identity", category: "identity-address" }, { id: "address", category: "identity-address" }, { id: "eligibility", category: "eligibility" }, { id: "funds", category: "source-of-funds" }, { id: "subscription", category: "fund-specific" },
 ];
@@ -70,14 +60,11 @@ const fieldClass = "h-10 w-full rounded-md border border-[#d5dce1] bg-white px-3
 export function ClientOnboarding({ offerings }: { offerings: OfferingBundle[] }) {
   const { lang, t } = useLang();
   const c = COPY[lang];
-  const manualReviewCopy = lang === "tr"
-    ? { title: "Lisanslı manuel inceleme", body: "Müşterinin ikamet ülkesi, vergi ikameti, AML ve transfer gereklilikleri Hunter North’un lisanslı sürecinde incelenir." }
-    : { title: "Licensed manual review", body: "Requirements for the client’s country of residence, tax residence, AML, and transfers are reviewed through Hunter North’s licensed process." };
   const optionLabels = t.capitalApp.profile.options as Record<string,string>;
   const opt = (value: string) => optionLabels[value] ?? value;
   const router = useRouter();
   const params = useSearchParams();
-  const { createClient } = useClients();
+  const { createClient, uploadDocument } = useClients();
   const requestedOffering = offerings.find((item) => item.id === params.get("offering") || item.slug === params.get("offering")) ?? offerings[0];
   const [step, setStep] = useState(0);
   const [error, setError] = useState("");
@@ -86,8 +73,6 @@ export function ClientOnboarding({ offerings }: { offerings: OfferingBundle[] })
     accountType: "individual", firstName: "", lastName: "", organization: "", email: "", phone: "",
     nationality: "", city: "", country: "", region: "", offeringId: requestedOffering.id, shareClassId: requestedOffering.shareClasses[0]?.id ?? "", shareQuantity: "", accountPreference: options.account[3],
     objective: options.objective[2], horizon: options.horizon[2], riskTolerance: options.risk[1], lossCapacity: options.loss[1], liquidityNeed: options.liquidity[2], experience: options.experience[1],
-    qualificationCriteria: [], omInvestmentsLast12Months: "0", registeredAdviceForHigherOmLimit: false,
-    relationshipType: "none", relationshipPerson: "", entityBuysAsPrincipal: false, entityCanPayAtTrade: false,
     contactConsent: false, accuracyConsent: false,
   });
   const offering = offerings.find((item) => item.id === form.offeringId) ?? offerings[0];
@@ -97,32 +82,18 @@ export function ClientOnboarding({ offerings }: { offerings: OfferingBundle[] })
   const investmentAmount = Number((shareQuantity * unitPrice).toFixed(2));
   const minimumInvestment = shareClass?.minimumInvestment?.value ?? 0;
   const minimumShares = unitPrice > 0 && minimumInvestment > 0 ? Math.ceil(minimumInvestment / unitPrice) : 0;
-  const omInvestmentsLast12Months = Number(form.omInvestmentsLast12Months || 0);
   const normalizedCountry = form.country.trim().toLocaleLowerCase("en-CA");
   const normalizedRegion = form.region.trim().toLocaleLowerCase("en-CA");
   const jurisdiction: ClientJurisdiction = ["canada", "kanada"].includes(normalizedCountry) && ["ontario", "on"].includes(normalizedRegion) ? "ontario" : "manual-review";
-  const assessment = assessInvestor({
-    accountType: form.accountType,
-    jurisdiction,
-    qualificationCriteria: form.qualificationCriteria,
-    investmentAmount,
-    omInvestmentsLast12Months,
-    registeredAdviceForHigherOmLimit: form.registeredAdviceForHigherOmLimit,
-    relationshipType: form.relationshipType === "none" ? undefined : form.relationshipType,
-    entityBuysAsPrincipal: form.entityBuysAsPrincipal,
-    entityCanPayAtTrade: form.entityCanPayAtTrade,
-  });
   const progress = Math.round(((step + 1) / c.steps.length) * 100);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) { setForm((current) => ({ ...current, [key]: value })); setError(""); }
-  function chooseAccountType(accountType: ClientAccountType) { setForm((current) => ({ ...current, accountType, qualificationCriteria: [], entityBuysAsPrincipal: false, entityCanPayAtTrade: false })); setError(""); }
-  function toggleCriterion(criterion: ClientQualificationCriterion) { setForm((current) => ({ ...current, qualificationCriteria: current.qualificationCriteria.includes(criterion) ? current.qualificationCriteria.filter((item) => item !== criterion) : [...current.qualificationCriteria, criterion] })); setError(""); }
+  function chooseAccountType(accountType: ClientAccountType) { setForm((current) => ({ ...current, accountType })); setError(""); }
   function chooseOffering(id: string) { const next = offerings.find((item) => item.id === id)!; setForm((current) => ({ ...current, offeringId: id, shareClassId: next.shareClasses[0]?.id ?? "" })); }
   function validStep() {
     if (step === 0) return Boolean(form.firstName.trim() && form.lastName.trim() && /^\S+@\S+\.\S+$/.test(form.email) && form.nationality.trim() && form.city.trim() && form.country.trim() && (form.accountType !== "entity" || form.organization.trim()));
     if (step === 1) return Boolean(form.offeringId && form.shareClassId && Number.isInteger(shareQuantity) && shareQuantity > 0 && unitPrice > 0 && investmentAmount >= minimumInvestment && form.accountPreference);
-    if (step === 3) return Number.isFinite(omInvestmentsLast12Months) && omInvestmentsLast12Months >= 0 && (form.relationshipType === "none" || form.relationshipPerson.trim());
-    if (step === 4) return form.contactConsent && form.accuracyConsent;
+    if (step === 3) return form.contactConsent && form.accuracyConsent;
     return true;
   }
   function next() { if (!validStep()) { setError(c.required); return; } setError(""); setStep((current) => Math.min(current + 1, c.steps.length - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }
@@ -135,21 +106,30 @@ export function ClientOnboarding({ offerings }: { offerings: OfferingBundle[] })
     setFiles((current) => ({ ...current, [id]: file })); setError("");
   }
 
-  function submit() {
+  async function submit() {
     if (!validStep()) { setError(c.required); return; }
     const timestamp = new Date().toISOString();
     const documents: ClientDocument[] = docDefinitions.map((definition) => {
       const file = files[definition.id];
       return { id: definition.id, category: definition.category, label: { en: COPY.en.docLabels[definition.id as keyof typeof COPY.en.docLabels], tr: COPY.tr.docLabels[definition.id as keyof typeof COPY.tr.docLabels] }, status: file ? "received" : "missing", filename: file?.name, size: file?.size, mimeType: file?.type, uploadedAt: file ? timestamp : undefined, objectUrl: file ? URL.createObjectURL(file) : undefined };
     });
-    const id = createClient({
-      accountType: form.accountType, firstName: form.firstName.trim(), lastName: form.lastName.trim(), organization: form.organization.trim() || undefined, email: form.email.trim(), phone: form.phone.trim() || undefined,
-      nationality: form.nationality.trim(), city: form.city.trim(), country: form.country.trim(), region: form.region.trim() || undefined, jurisdiction,
-      fundInterests: [{ id: `new-interest-${Date.now()}`, offeringId: form.offeringId, shareClassId: form.shareClassId, shareQuantity, amount: investmentAmount, timeline: "Now", accountPreference: form.accountPreference, primary: true, createdAt: timestamp }],
-      readiness: { objective: form.objective, horizon: form.horizon, riskTolerance: form.riskTolerance, lossCapacity: form.lossCapacity, liquidityNeed: form.liquidityNeed, experience: form.experience, ...assessment, qualificationCriteria: form.qualificationCriteria, omInvestmentsLast12Months, registeredAdviceForHigherOmLimit: form.registeredAdviceForHigherOmLimit, relationshipType: form.relationshipType === "none" ? undefined : form.relationshipType, relationshipPerson: form.relationshipPerson.trim() || undefined, entityBuysAsPrincipal: form.entityBuysAsPrincipal, entityCanPayAtTrade: form.entityCanPayAtTrade },
-      documents, contactConsentAt: timestamp, accuracyConsentAt: timestamp,
-    });
-    router.push(`${NORTH_BASE}/clients/${id}`);
+    try {
+      const id = await createClient({
+        accountType: form.accountType, firstName: form.firstName.trim(), lastName: form.lastName.trim(), organization: form.organization.trim() || undefined, email: form.email.trim(), phone: form.phone.trim() || undefined,
+        nationality: form.nationality.trim(), city: form.city.trim(), country: form.country.trim(), region: form.region.trim() || undefined, jurisdiction,
+        fundInterests: [{ id: `new-interest-${Date.now()}`, offeringId: form.offeringId, shareClassId: form.shareClassId, shareQuantity, amount: investmentAmount, timeline: "Now", accountPreference: form.accountPreference, primary: true, createdAt: timestamp }],
+        suitabilityProfile: { objective: form.objective, horizon: form.horizon, riskTolerance: form.riskTolerance, lossCapacity: form.lossCapacity, liquidityNeed: form.liquidityNeed, experience: form.experience },
+        documents, contactConsentAt: timestamp, accuracyConsentAt: timestamp,
+      });
+      await Promise.all(
+        Object.entries(files).map(([documentId, file]) =>
+          uploadDocument(id, documentId, file),
+        ),
+      );
+      router.push(`${NORTH_BASE}/clients/${id}`);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : c.required);
+    }
   }
 
   const inputPairs = useMemo(() => [
@@ -166,38 +146,7 @@ export function ClientOnboarding({ offerings }: { offerings: OfferingBundle[] })
         {step === 0 && <section className="space-y-5"><p className="text-sm leading-6 text-[#65727c]">{c.identityIntro}</p><div className="grid grid-cols-2 gap-3">{(["individual","entity"] as const).map((value) => <button key={value} type="button" onClick={() => chooseAccountType(value)} className={cn("flex items-center gap-3 rounded-md border p-4 text-left", form.accountType === value ? "border-[#0a4b72] bg-[#eef4f7]" : "border-[#d8dfe4]")}><UserRound className="size-5 text-[#0a4b72]" /><span className="text-sm font-semibold">{value === "individual" ? c.individual : c.entity}</span></button>)}</div><div className="grid gap-4 sm:grid-cols-2"><Field label={c.firstName}><input autoComplete="given-name" value={form.firstName} onChange={(event) => update("firstName",event.target.value)} className={fieldClass} /></Field><Field label={c.lastName}><input autoComplete="family-name" value={form.lastName} onChange={(event) => update("lastName",event.target.value)} className={fieldClass} /></Field><Field label={form.accountType === "entity" ? c.organizationRequired : c.organization} className="sm:col-span-2"><input autoComplete="organization" value={form.organization} onChange={(event) => update("organization",event.target.value)} className={fieldClass} /></Field><Field label={c.email}><input type="email" autoComplete="email" value={form.email} onChange={(event) => update("email",event.target.value)} className={fieldClass} /></Field><Field label={c.phone}><input type="tel" autoComplete="tel" value={form.phone} onChange={(event) => update("phone",event.target.value)} className={fieldClass} /></Field><div className="border-t border-[#e5e9ec] pt-4 sm:col-span-2"><p className="text-xs font-semibold text-[#40515e]">{c.nationalityResidence}</p></div><Field label={form.accountType === "entity" ? c.incorporationCountry : c.nationality}><input value={form.nationality} onChange={(event) => update("nationality",event.target.value)} className={fieldClass} /></Field><Field label={c.residenceCountry}><input autoComplete="country-name" value={form.country} onChange={(event) => update("country",event.target.value)} className={fieldClass} /></Field><Field label={c.region}><input autoComplete="address-level1" value={form.region} onChange={(event) => update("region",event.target.value)} className={fieldClass} /></Field><Field label={c.city}><input autoComplete="address-level2" value={form.city} onChange={(event) => update("city",event.target.value)} className={fieldClass} /></Field></div></section>}
         {step === 1 && <section className="space-y-5"><p className="text-sm leading-6 text-[#65727c]">{c.investmentIntro}</p><div className="grid gap-4 sm:grid-cols-2"><Field label={c.fund}><select value={form.offeringId} onChange={(event) => chooseOffering(event.target.value)} className={fieldClass}>{offerings.map((item) => <option key={item.id} value={item.id}>{item.shortName[lang]}</option>)}</select></Field><Field label={c.shareClass}><select value={form.shareClassId} onChange={(event) => update("shareClassId",event.target.value)} className={fieldClass}>{offering.shareClasses.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></Field><Field label={c.shareQuantity} description={minimumShares ? `${c.minimum}: ${minimumShares.toLocaleString(lang === "tr" ? "tr-TR" : "en-CA")} ${c.shares} (${formatCad(minimumInvestment,lang)})` : undefined}><input type="number" inputMode="numeric" min={minimumShares || 1} step="1" value={form.shareQuantity} onChange={(event) => update("shareQuantity",event.target.value.replace(/[^0-9]/g,""))} className={fieldClass} /></Field><div className="rounded-md border border-[#dfe4e9] bg-[#f7f9fa] px-4 py-3"><p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#74808a]">{c.unitPrice}</p><p className="mt-1 text-lg font-semibold tabular-nums text-[#203744]">{unitPrice ? formatCad(unitPrice,lang) : "—"}</p></div><div className="rounded-md border border-[#cbdbe5] bg-[#eef4f7] px-4 py-3 sm:col-span-2"><p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#547080]">{c.amount}</p><p className="mt-1 text-2xl font-semibold tabular-nums text-[#0a2d46]">{shareQuantity > 0 && unitPrice ? formatCad(investmentAmount,lang) : "—"}</p><p className="mt-1 text-xs text-[#647681]">{shareQuantity > 0 ? `${shareQuantity.toLocaleString(lang === "tr" ? "tr-TR" : "en-CA")} ${c.shares} × ${formatCad(unitPrice,lang)}` : "—"}</p></div><Field label={c.account} description={c.accountHelp}><select value={form.accountPreference} onChange={(event) => update("accountPreference",event.target.value)} className={fieldClass}>{options.account.map((item) => <option key={item}>{opt(item)}</option>)}</select></Field></div></section>}
         {step === 2 && <section className="space-y-5"><p className="text-sm leading-6 text-[#65727c]">{c.goalsIntro}</p><div className="grid gap-4 sm:grid-cols-2">{inputPairs.map(([key,label,values]) => <Field key={key} label={label}><select value={form[key]} onChange={(event) => update(key,event.target.value)} className={fieldClass}>{values.map((item) => <option key={item}>{opt(item)}</option>)}</select></Field>)}</div></section>}
-        {step === 3 && <section className="space-y-5">
-          <p className="text-sm leading-6 text-[#65727c]">{c.eligibilityIntro}</p>
-          {jurisdiction === "manual-review" ? <div className="rounded-md border border-[#d9e2e8] bg-[#eef4f7] p-5"><ShieldCheck className="size-6 text-[#0a4b72]" /><h3 className="mt-3 font-semibold text-[#203744]">{manualReviewCopy.title}</h3><p className="mt-2 text-sm leading-6 text-[#65727c]">{manualReviewCopy.body}</p></div> : <>
-            <div>
-              <h3 className="text-sm font-semibold text-[#203744]">{c.financialTitle}</h3>
-              <p className="mt-1 text-xs leading-5 text-[#71808a]">{c.financialHelp}</p>
-              <div className="mt-3 space-y-2">{(form.accountType === "individual" ? individualCriteria : entityCriteria).map((criterion) => <label key={criterion} className={cn("flex cursor-pointer items-start gap-3 rounded-md border p-3.5", form.qualificationCriteria.includes(criterion) ? "border-[#9cb8c9] bg-[#eef4f7]" : "border-[#dfe4e9] bg-[#fafbfc]")}><input type="checkbox" checked={form.qualificationCriteria.includes(criterion)} onChange={() => toggleCriterion(criterion)} className="mt-0.5 size-4 accent-[#0a2d46]" /><span className="text-sm leading-5 text-[#40515e]">{c.criteria[criterion]}</span></label>)}</div>
-            </div>
-
-            {form.accountType === "individual" ? <div className="rounded-md border border-[#dfe4e9] bg-[#fafbfc] p-4">
-              <h3 className="text-sm font-semibold text-[#203744]">{c.omTitle}</h3>
-              <div className="mt-4"><Field label={c.prior} description={c.priorHelp}><input type="number" inputMode="decimal" min="0" step="1" value={form.omInvestmentsLast12Months} onChange={(event) => update("omInvestmentsLast12Months",event.target.value.replace(/[^0-9.]/g,""))} className={fieldClass} /></Field></div>
-              <label className="mt-4 flex cursor-pointer items-start gap-3"><input type="checkbox" checked={form.registeredAdviceForHigherOmLimit} onChange={(event) => update("registeredAdviceForHigherOmLimit",event.target.checked)} className="mt-0.5 size-4 accent-[#0a2d46]" /><span className="text-xs leading-5 text-[#52636f]">{c.advice}</span></label>
-            </div> : <div className="rounded-md border border-[#dfe4e9] bg-[#fafbfc] p-4">
-              <h3 className="text-sm font-semibold text-[#203744]">{c.entityTitle}</h3>
-              <div className="mt-3 space-y-2"><Consent checked={form.entityBuysAsPrincipal} onChange={(value) => update("entityBuysAsPrincipal",value)} label={c.principal} /><Consent checked={form.entityCanPayAtTrade} onChange={(value) => update("entityCanPayAtTrade",value)} label={c.payAtTrade} /></div>
-            </div>}
-
-            <div className="rounded-md border border-[#dfe4e9] p-4">
-              <h3 className="text-sm font-semibold text-[#203744]">{c.relationshipTitle}</h3>
-              <div className="mt-3 grid gap-4 sm:grid-cols-2"><Field label={c.relationship}><select value={form.relationshipType} onChange={(event) => update("relationshipType",event.target.value)} className={fieldClass}>{relationshipTypes.map((value) => <option key={value} value={value}>{c.relationshipOptions[value]}</option>)}</select></Field>{form.relationshipType !== "none" && <Field label={c.relationshipPerson}><input value={form.relationshipPerson} onChange={(event) => update("relationshipPerson",event.target.value)} className={fieldClass} /></Field>}</div>
-            </div>
-
-            <div className="rounded-md border border-[#b9ccd8] bg-[#edf4f7] p-4">
-              <div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 size-5 shrink-0 text-[#0a4b72]" /><div><p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#5d7685]">{c.classification}</p><p className="mt-1 font-semibold text-[#17384d]">{c.categories[assessment.investorCategory]}</p></div></div>
-              <div className="mt-4"><p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#6d7f8a]">{c.potentialRoutes}</p><div className="mt-2 flex flex-wrap gap-2">{assessment.potentialExemptionRoutes.map((route) => <span key={route} className="rounded bg-white px-2.5 py-1 text-[10px] font-semibold text-[#35566a] ring-1 ring-[#cfdae1]">{c.routes[route]}</span>)}</div></div>
-              {assessment.preliminaryInvestmentLimit ? <dl className="mt-4 grid gap-3 text-xs sm:grid-cols-2"><div><dt className="text-[#71808a]">{c.omLimit}</dt><dd className="mt-1 font-semibold text-[#29495d]">{formatCad(assessment.preliminaryInvestmentLimit,lang)}</dd></div><div><dt className="text-[#71808a]">{c.omTotal}</dt><dd className="mt-1 font-semibold text-[#29495d]">{formatCad(omInvestmentsLast12Months + investmentAmount,lang)}</dd></div><div className="sm:col-span-2"><dd className={cn("rounded px-3 py-2 font-semibold", assessment.investmentLimitStatus === "exceeds-preliminary-limit" ? "bg-[#fae9e6] text-[#8e463e]" : "bg-[#e4f0e8] text-[#346449]")}>{assessment.investmentLimitStatus === "exceeds-preliminary-limit" ? c.limitExceeded : c.limitWithin}</dd></div></dl> : <p className="mt-4 text-xs text-[#526b7a]">{c.noLimit}</p>}
-              <p className="mt-4 border-t border-[#d2dfe6] pt-3 text-[11px] leading-5 text-[#617682]">{c.verify}</p>
-            </div>
-          </>}
-        </section>}
-        {step === 4 && <section className="space-y-5"><p className="text-sm leading-6 text-[#65727c]">{c.documentsIntro}</p><div className="space-y-2">{docDefinitions.map((definition) => { const file = files[definition.id]; return <label key={definition.id} className="flex cursor-pointer items-center justify-between gap-4 rounded-md border border-[#dfe4e9] p-3.5"><span className="min-w-0"><span className="block text-sm font-semibold text-[#334a58]">{c.docLabels[definition.id as keyof typeof c.docLabels]}</span><span className="mt-1 block truncate text-xs text-[#7a858e]">{file ? `${file.name} · ${c.selected}` : c.optional}</span></span><span className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-[#ccd5db] px-3 text-xs font-semibold text-[#4b5f6d]"><FileUp className="size-3.5" />{file ? c.replace : c.chooseFile}</span><input type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" className="sr-only" onChange={(event) => chooseFile(definition.id,event.target.files?.[0])} /></label>; })}</div><div className="rounded-md border border-[#dfe4e9] bg-[#fafbfc] p-4"><h3 className="text-sm font-semibold text-[#203744]">{c.reviewTitle}</h3><dl className="mt-3 grid gap-3 text-xs sm:grid-cols-2 lg:grid-cols-5"><div><dt className="text-[#7a858e]">{c.firstName}</dt><dd className="mt-1 font-semibold text-[#40515e]">{form.firstName} {form.lastName}</dd></div><div><dt className="text-[#7a858e]">{c.fund}</dt><dd className="mt-1 font-semibold text-[#40515e]">{offering.shortName[lang]}</dd></div><div><dt className="text-[#7a858e]">{c.shareQuantity}</dt><dd className="mt-1 font-semibold text-[#40515e]">{shareQuantity ? shareQuantity.toLocaleString(lang === "tr" ? "tr-TR" : "en-CA") : "—"}</dd></div><div><dt className="text-[#7a858e]">{c.amount}</dt><dd className="mt-1 font-semibold text-[#40515e]">{investmentAmount ? formatCad(investmentAmount,lang) : "—"}</dd></div><div><dt className="text-[#7a858e]">{c.classification}</dt><dd className="mt-1 font-semibold text-[#40515e]">{c.categories[assessment.investorCategory]}</dd></div></dl></div><div className="space-y-2"><Consent checked={form.contactConsent} onChange={(value) => update("contactConsent",value)} label={c.consentContact} /><Consent checked={form.accuracyConsent} onChange={(value) => update("accuracyConsent",value)} label={c.consentAccuracy} /></div></section>}
+        {step === 3 && <section className="space-y-5"><p className="text-sm leading-6 text-[#65727c]">{c.documentsIntro}</p><div className="space-y-2">{docDefinitions.map((definition) => { const file = files[definition.id]; return <label key={definition.id} className="flex cursor-pointer items-center justify-between gap-4 rounded-md border border-[#dfe4e9] p-3.5"><span className="min-w-0"><span className="block text-sm font-semibold text-[#334a58]">{c.docLabels[definition.id as keyof typeof c.docLabels]}</span><span className="mt-1 block truncate text-xs text-[#7a858e]">{file ? `${file.name} · ${c.selected}` : c.optional}</span></span><span className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-[#ccd5db] px-3 text-xs font-semibold text-[#4b5f6d]"><FileUp className="size-3.5" />{file ? c.replace : c.chooseFile}</span><input type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" className="sr-only" onChange={(event) => chooseFile(definition.id,event.target.files?.[0])} /></label>; })}</div><div className="rounded-md border border-[#dfe4e9] bg-[#fafbfc] p-4"><h3 className="text-sm font-semibold text-[#203744]">{c.reviewTitle}</h3><dl className="mt-3 grid gap-3 text-xs sm:grid-cols-2 lg:grid-cols-4"><div><dt className="text-[#7a858e]">{c.firstName}</dt><dd className="mt-1 font-semibold text-[#40515e]">{form.firstName} {form.lastName}</dd></div><div><dt className="text-[#7a858e]">{c.fund}</dt><dd className="mt-1 font-semibold text-[#40515e]">{offering.shortName[lang]}</dd></div><div><dt className="text-[#7a858e]">{c.shareQuantity}</dt><dd className="mt-1 font-semibold text-[#40515e]">{shareQuantity ? shareQuantity.toLocaleString(lang === "tr" ? "tr-TR" : "en-CA") : "—"}</dd></div><div><dt className="text-[#7a858e]">{c.amount}</dt><dd className="mt-1 font-semibold text-[#40515e]">{investmentAmount ? formatCad(investmentAmount,lang) : "—"}</dd></div></dl></div><div className="space-y-2"><Consent checked={form.contactConsent} onChange={(value) => update("contactConsent",value)} label={c.consentContact} /><Consent checked={form.accuracyConsent} onChange={(value) => update("accuracyConsent",value)} label={c.consentAccuracy} /></div></section>}
       </div><footer className="flex items-center justify-between gap-3 border-t border-[#e4e8eb] px-5 py-4 sm:px-6"><button type="button" onClick={previous} disabled={step === 0} className="inline-flex h-10 items-center gap-2 rounded-md border border-[#d2d9de] px-4 text-sm font-semibold text-[#53636f] disabled:cursor-not-allowed disabled:opacity-40"><ArrowLeft className="size-4" />{c.back}</button>{step < c.steps.length - 1 ? <button type="button" onClick={next} className="inline-flex h-10 items-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white hover:bg-[#123f5e]">{c.continue}<ArrowRight className="size-4" /></button> : <button type="button" onClick={submit} className="inline-flex h-10 items-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white hover:bg-[#123f5e]"><Check className="size-4" />{c.create}</button>}</footer></Panel>
     </div>
   </div>;

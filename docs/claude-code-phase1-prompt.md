@@ -9,7 +9,7 @@ Read `CLAUDE.md` and `hunter-merged-site-build-spec.md` first, then implement **
 Scope for this phase:
 
 1. Create a new route `app/mortgage/page.tsx` — a Turkish-first landing page with:
-   - a rate-first hero (headline + two compact rate tiles from a `HERO_RATES` constant, with a `Güncelleniyor` fallback and a disclosure modal),
+   - a service-first hero explaining what shapes a borrower's mortgage options,
    - journey cards linking to the six intents below,
    - a persona row (İlk ev alıcıları, Ev sahipleri, yatırımcılar, şirket sahibi/serbest meslek, Kanada'ya yeni gelenler),
    - a primary WhatsApp / lead-capture CTA wired to the existing `app/api/lead-capture` route.

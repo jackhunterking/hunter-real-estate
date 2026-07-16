@@ -145,8 +145,22 @@ export type Offering = {
   trailingReturns?: TrailingReturn[];
   trailingReturnsNote?: LocalizedText;
   serviceProviders?: ServiceProviders;
+  complianceProfile: OfferingComplianceProfile;
   lastUpdated?: string;
   verifiedAt: string;
+};
+
+/**
+ * Product-specific facts that must be approved by compliance before an
+ * investor assessment may surface a possible prospectus-exemption route.
+ * This intentionally describes distribution availability, not investor status.
+ */
+export type OfferingComplianceProfile = {
+  issuerLegalType: "corporation" | "trust" | "partnership" | "other";
+  isInvestmentFund: boolean;
+  approvedOntarioExemptions: ClientExemptionRoute[];
+  reviewOwner: string;
+  reviewedAt?: string;
 };
 
 export type OfferingBundle = Offering & {
@@ -157,6 +171,7 @@ export type OfferingBundle = Offering & {
 };
 
 export type PartnerTier = "associate" | "principal" | "managingPartner";
+export type PartnerCommissionAllocationPercentage = 30 | 40 | 50;
 
 export type ReferralStatus =
   | "introduced"
@@ -164,6 +179,22 @@ export type ReferralStatus =
   | "compliance-review"
   | "accepted"
   | "funded";
+
+export type PartnerAddress = {
+  line1?: string;
+  line2?: string;
+  city?: string;
+  region?: string;
+  postalCode?: string;
+  country?: string;
+};
+
+export type PartnerContact = {
+  fullName?: string;
+  role?: string;
+  email?: string;
+  phone?: string;
+};
 
 export type PartnerSummary = {
   partnerName: string;
@@ -176,7 +207,8 @@ export type PartnerSummary = {
   partnerId?: string;
   accountStatus?: "active" | "under-review" | "inactive";
   relationshipSince?: string;
-  primaryMarket?: LocalizedText;
+  organizationAddress?: PartnerAddress;
+  primaryContact?: PartnerContact;
   relationshipManager?: string;
   profileReviewedAt?: string;
 };
@@ -236,25 +268,97 @@ export type ClientFundInterest = {
   createdAt: string;
 };
 
-export type ClientReadiness = {
+export type ClientSuitabilityProfile = {
   objective: string;
   horizon: string;
   riskTolerance: string;
   lossCapacity: string;
   liquidityNeed: string;
   experience: string;
-  preliminaryCategory: string;
-  investorCategory: ClientInvestorCategory;
-  potentialExemptionRoutes: ClientExemptionRoute[];
-  qualificationCriteria: ClientQualificationCriterion[];
-  omInvestmentsLast12Months: number;
-  registeredAdviceForHigherOmLimit: boolean;
-  preliminaryInvestmentLimit?: number;
-  investmentLimitStatus: ClientInvestmentLimitStatus;
-  relationshipType?: string;
-  relationshipPerson?: string;
-  entityBuysAsPrincipal: boolean;
-  entityCanPayAtTrade: boolean;
+};
+
+export type InvestorReadinessAnswer = "yes" | "no" | "unsure";
+
+export type InvestorReadinessCriterion =
+  | "individual-registration"
+  | "individual-financial-assets"
+  | "individual-income"
+  | "individual-spousal-income"
+  | "individual-net-assets"
+  | "eligible-net-assets"
+  | "eligible-income"
+  | "eligible-spousal-income"
+  | "entity-net-assets"
+  | "entity-regulated-category"
+  | "entity-not-created-solely-for-accredited-exemption";
+
+export type InvestorReadinessResult =
+  | "potentially-accredited"
+  | "potentially-eligible"
+  | "potentially-non-eligible"
+  | "manual-review";
+
+export type InvestorReadinessOmContext = {
+  kind: "accredited" | "eligible" | "non-eligible" | "manual-review";
+  baseLimitCad?: number;
+  higherLimitCad?: number;
+  periodMonths?: number;
+};
+
+export type InvestorReadinessReviewReason =
+  | "outside-ontario"
+  | "incomplete-or-uncertain-financial-facts"
+  | "entity-category-requires-verification"
+  | "entity-anti-syndication-not-confirmed"
+  | "offering-compliance-not-confirmed"
+  | "offering-does-not-support-om"
+  | "relationship-claim-requires-verification"
+  | "minimum-amount-conditions-not-confirmed"
+  | "registered-advice-not-recorded";
+
+export type InvestorReadinessOmCalculation = {
+  status: "not-requested" | "not-available" | "manual-review" | "calculated" | "not-applicable";
+  limitCad?: number;
+  priorAcquisitionCostCad?: number;
+  proposedAcquisitionCostCad?: number;
+  requiredFuturePaymentsCad?: number;
+  totalAfterProposedCad?: number;
+  remainingCapacityCad?: number;
+  withinPreliminaryLimit?: boolean;
+};
+
+export type InvestorReadinessReassessmentTrigger =
+  | "jurisdiction"
+  | "purchaser-type"
+  | "offering"
+  | "proposed-acquisition-cost"
+  | "prior-om-acquisition-cost"
+  | "required-future-payments"
+  | "registered-suitability-advice"
+  | "relationship-facts"
+  | "entity-facts"
+  | "offering-compliance-metadata"
+  | "financial-facts";
+
+export type InvestorReadinessAssessment = {
+  id: string;
+  clientId: string;
+  jurisdiction: ClientJurisdiction;
+  accountType: ClientAccountType;
+  answers: Partial<Record<InvestorReadinessCriterion, InvestorReadinessAnswer>>;
+  result: InvestorReadinessResult;
+  qualifyingCriteria: InvestorReadinessCriterion[];
+  omContext: InvestorReadinessOmContext;
+  candidateRoutes?: ClientExemptionRoute[];
+  reviewReasons?: InvestorReadinessReviewReason[];
+  omCalculation?: InvestorReadinessOmCalculation;
+  assessmentInput?: Record<string, unknown>;
+  rulesetId: string;
+  sourceUrls?: string[];
+  reassessmentTriggers?: InvestorReadinessReassessmentTrigger[];
+  assessor: string;
+  acknowledgementAt: string;
+  assessedAt: string;
 };
 
 export type ClientDocument = {
@@ -278,6 +382,8 @@ export type ClientActivity = {
 
 export type ClientRecord = {
   id: string;
+  ownerUserId?: string;
+  firmId?: string;
   accountType: ClientAccountType;
   firstName: string;
   lastName: string;
@@ -285,8 +391,8 @@ export type ClientRecord = {
   organization?: string;
   email: string;
   phone?: string;
-  nationality: string;
-  city: string;
+  nationality?: string;
+  city?: string;
   country: string;
   region?: string;
   jurisdiction: ClientJurisdiction;
@@ -295,7 +401,8 @@ export type ClientRecord = {
   updatedAt: string;
   nextAction: LocalizedText;
   fundInterests: ClientFundInterest[];
-  readiness: ClientReadiness;
+  suitabilityProfile?: ClientSuitabilityProfile;
+  investorReadinessAssessments: InvestorReadinessAssessment[];
   documents: ClientDocument[];
   activity: ClientActivity[];
   contactConsentAt: string;

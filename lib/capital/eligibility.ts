@@ -1,115 +1,68 @@
+import { assessOntarioInvestor, type OntarioInvestorAssessment } from "./ontario-investor-assessment.ts";
 import type {
   ClientAccountType,
-  ClientExemptionRoute,
-  ClientInvestmentLimitStatus,
-  ClientInvestorCategory,
   ClientJurisdiction,
   ClientQualificationCriterion,
+  InvestorReadinessAnswer,
+  InvestorReadinessCriterion,
+  OfferingComplianceProfile,
 } from "./types";
 
-const INDIVIDUAL_ACCREDITED = new Set<ClientQualificationCriterion>([
-  "ai-financial-assets",
-  "ai-income-individual",
-  "ai-income-with-spouse",
-  "ai-net-assets",
-]);
-
-const INDIVIDUAL_ELIGIBLE = new Set<ClientQualificationCriterion>([
-  "eligible-net-assets",
-  "eligible-income-individual",
-  "eligible-income-with-spouse",
-]);
-
-const ENTITY_ACCREDITED = new Set<ClientQualificationCriterion>([
-  "entity-ai-net-assets",
-  "entity-ai-other",
-]);
+const criterionMap: Partial<Record<ClientQualificationCriterion, InvestorReadinessCriterion>> = {
+  "ai-financial-assets": "individual-financial-assets",
+  "ai-income-individual": "individual-income",
+  "ai-income-with-spouse": "individual-spousal-income",
+  "ai-net-assets": "individual-net-assets",
+  "eligible-net-assets": "eligible-net-assets",
+  "eligible-income-individual": "eligible-income",
+  "eligible-income-with-spouse": "eligible-spousal-income",
+  "entity-ai-net-assets": "entity-net-assets",
+  "entity-ai-other": "entity-regulated-category",
+};
 
 export type InvestorAssessmentInput = {
   accountType: ClientAccountType;
   jurisdiction: ClientJurisdiction;
   qualificationCriteria: ClientQualificationCriterion[];
-  investmentAmount: number;
-  omInvestmentsLast12Months: number;
-  registeredAdviceForHigherOmLimit: boolean;
+  investmentAmount?: number;
+  omInvestmentsLast12Months?: number;
+  requiredFuturePayments?: number;
+  registeredAdviceForHigherOmLimit?: boolean;
   relationshipType?: string;
-  entityBuysAsPrincipal: boolean;
-  entityCanPayAtTrade: boolean;
+  relationshipVerified?: boolean;
+  entityBuysAsPrincipal?: boolean;
+  entityCanPayAtTrade?: boolean;
+  entitySingleIssuer?: boolean;
+  entityNotCreatedSolelyForExemption?: boolean;
+  offeringCompliance?: OfferingComplianceProfile;
 };
 
-export type InvestorAssessment = {
-  investorCategory: ClientInvestorCategory;
-  preliminaryCategory: string;
-  potentialExemptionRoutes: ClientExemptionRoute[];
-  preliminaryInvestmentLimit?: number;
-  investmentLimitStatus: ClientInvestmentLimitStatus;
-};
+export type InvestorAssessment = OntarioInvestorAssessment;
 
+/** @deprecated Pass the canonical statement answers directly to assessOntarioInvestor. */
 export function assessInvestor(input: InvestorAssessmentInput): InvestorAssessment {
-  if (input.jurisdiction === "manual-review") {
-    return {
-      investorCategory: "cross-border-review",
-      preliminaryCategory: "Cross-border investor - licensed review required",
-      potentialExemptionRoutes: ["licensed-review"],
-      investmentLimitStatus: "review-required",
-    };
+  const answers: Partial<Record<InvestorReadinessCriterion, InvestorReadinessAnswer>> = {};
+  for (const criterion of input.qualificationCriteria) {
+    const mapped = criterionMap[criterion];
+    if (mapped) answers[mapped] = "yes";
   }
-
-  const selected = new Set(input.qualificationCriteria);
-  const meetsIndividualAccredited = [...INDIVIDUAL_ACCREDITED].some((criterion) => selected.has(criterion));
-  const meetsIndividualEligible = [...INDIVIDUAL_ELIGIBLE].some((criterion) => selected.has(criterion));
-  const meetsEntityAccredited = [...ENTITY_ACCREDITED].some((criterion) => selected.has(criterion));
-
-  let investorCategory: ClientInvestorCategory;
-  if (input.accountType === "entity") {
-    investorCategory = meetsEntityAccredited ? "accredited-investor" : "entity-review";
-  } else if (meetsIndividualAccredited) {
-    investorCategory = "accredited-investor";
-  } else if (meetsIndividualEligible) {
-    investorCategory = "eligible-investor";
-  } else {
-    investorCategory = "non-eligible-investor";
+  if (input.accountType === "entity" && input.entityNotCreatedSolelyForExemption) {
+    answers["entity-not-created-solely-for-accredited-exemption"] = "yes";
   }
-
-  const routes: ClientExemptionRoute[] = [];
-  if (investorCategory === "accredited-investor") routes.push("accredited-investor");
-  if (input.accountType === "individual") routes.push("offering-memorandum");
-  if (input.relationshipType?.startsWith("ffba:")) routes.push("family-friends-business-associates");
-  if (input.relationshipType?.startsWith("private:")) routes.push("private-issuer");
-  if (
-    input.accountType === "entity" &&
-    input.investmentAmount >= 150_000 &&
-    input.entityBuysAsPrincipal &&
-    input.entityCanPayAtTrade
-  ) routes.push("minimum-amount");
-  if (!routes.length) routes.push("licensed-review");
-
-  let preliminaryInvestmentLimit: number | undefined;
-  let investmentLimitStatus: ClientInvestmentLimitStatus = "not-applicable";
-  if (input.accountType === "individual" && investorCategory !== "accredited-investor") {
-    preliminaryInvestmentLimit = investorCategory === "eligible-investor"
-      ? input.registeredAdviceForHigherOmLimit ? 100_000 : 30_000
-      : 10_000;
-    investmentLimitStatus = input.omInvestmentsLast12Months + input.investmentAmount <= preliminaryInvestmentLimit
-      ? "within-preliminary-limit"
-      : "exceeds-preliminary-limit";
-  } else if (investorCategory === "entity-review") {
-    investmentLimitStatus = "review-required";
-  }
-
-  const preliminaryCategory = investorCategory === "accredited-investor"
-    ? "Accredited investor indicator - licensed verification required"
-    : investorCategory === "eligible-investor"
-      ? "Eligible investor indicator - licensed verification required"
-      : investorCategory === "non-eligible-investor"
-        ? "Non-eligible investor - OM route and limits require licensed review"
-        : "Entity classification - licensed review required";
-
-  return {
-    investorCategory,
-    preliminaryCategory,
-    potentialExemptionRoutes: routes,
-    preliminaryInvestmentLimit,
-    investmentLimitStatus,
-  };
+  return assessOntarioInvestor({
+    jurisdiction: input.jurisdiction,
+    accountType: input.accountType,
+    answers,
+    offeringCompliance: input.offeringCompliance,
+    proposedAcquisitionCostCad: input.investmentAmount,
+    priorOmAcquisitionCostCad: input.omInvestmentsLast12Months,
+    requiredFuturePaymentsCad: input.requiredFuturePayments,
+    registeredSuitabilityAdvice: input.registeredAdviceForHigherOmLimit ? "recorded" : "not-recorded",
+    relationshipClaimed: Boolean(input.relationshipType),
+    relationshipVerified: input.relationshipVerified,
+    entityBuysAsPrincipal: input.entityBuysAsPrincipal,
+    entityPaysCashAtDistribution: input.entityCanPayAtTrade,
+    entityPurchasesSingleIssuer: input.entitySingleIssuer,
+    entityNotCreatedSolelyForMinimumAmount: input.entityNotCreatedSolelyForExemption,
+  });
 }

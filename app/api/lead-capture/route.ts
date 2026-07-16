@@ -1,94 +1,67 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { upsertContact } from "@/lib/hubspot";
-import { sendGuideEmail } from "@/lib/email";
-
-/**
- * POST /api/lead-capture
- *
- * Body: { email: string, guide: "alici" | "satici", source?: string }
- *
- * Behavior:
- * 1. Validate input
- * 2. Create or update contact in HubSpot
- * 3. Send the appropriate guide via Resend
- * 4. Return success or partial-success
- *
- * Note: this route returns 200 even if email send fails, as long as the lead
- * was captured in HubSpot, Jack can manually follow up. Adjust if stricter.
- */
+import { deliverEmailJob } from "@/lib/email";
+import { persistPublicSubmission } from "@/lib/public-submissions";
+import { verifyTurnstile } from "@/lib/security/turnstile";
 
 const Body = z.object({
-  email: z.string().email("Geçerli bir e-posta adresi girin"),
+  email: z.string().trim().email("Geçerli bir e-posta adresi girin"),
   guide: z.enum(["alici", "satici"]),
-  source: z.string().optional(),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
+  source: z.string().trim().max(120).optional(),
+  firstName: z.string().trim().max(100).optional(),
+  lastName: z.string().trim().max(100).optional(),
+  language: z.enum(["tr", "en"]).default("tr"),
+  turnstileToken: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json(
-      { ok: false, error: "Invalid JSON" },
-      { status: 400 }
-    );
-  }
-
-  const parsed = Body.safeParse(body);
+  const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) {
     return NextResponse.json(
       { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
-  const { email, guide, source, firstName, lastName } = parsed.data;
-
-  // Capture lead in HubSpot
-  const hubspot = await upsertContact({
-    email,
-    guide,
-    source: source ?? "Instagram - ManyChat",
-    firstName,
-    lastName,
+  const challenge = await verifyTurnstile({
+    token: parsed.data.turnstileToken,
+    remoteIp: req.headers.get("cf-connecting-ip") ?? req.headers.get("x-forwarded-for"),
   });
-
-  if (!hubspot.ok) {
-    console.error("HubSpot capture failed:", hubspot.error);
-    // Continue with email send, lead is more important than CRM in the moment
+  if (!challenge.ok) {
+    return NextResponse.json(
+      { ok: false, error: "Security verification failed. Please try again." },
+      { status: 403 },
+    );
   }
 
-  // Send the guide
-  const emailResult = await sendGuideEmail({ email, guide });
-
-  if (!emailResult.ok) {
-    console.error("Email send failed:", emailResult.error);
+  try {
+    const submission = await persistPublicSubmission("submit_guide_request", {
+      email: parsed.data.email,
+      guide: parsed.data.guide,
+      source: parsed.data.source ?? "website-guide",
+      first_name: parsed.data.firstName,
+      last_name: parsed.data.lastName,
+      language: parsed.data.language,
+      consent_purpose: "requested-guide-delivery",
+      submitted_at: new Date().toISOString(),
+    });
+    const emailStatus = await deliverEmailJob(submission.email_job_id);
+    return NextResponse.json({
+      ok: true,
+      submissionId: submission.submission_id,
+      emailStatus,
+    });
+  } catch {
     return NextResponse.json(
       {
         ok: false,
-        captured: hubspot.ok,
-        error: "E-posta gönderilemedi. Lütfen tekrar deneyin veya bizimle iletişime geçin.",
+        error: "Your request could not be saved. Please try again.",
       },
-      { status: 500 }
+      { status: 503 },
     );
   }
-
-  return NextResponse.json({
-    ok: true,
-    captured: hubspot.ok,
-    contactId: hubspot.contactId,
-  });
 }
 
-// Health check
 export async function GET() {
-  return NextResponse.json({
-    ok: true,
-    service: "lead-capture",
-    hubspotConfigured: Boolean(process.env.HUBSPOT_ACCESS_TOKEN),
-    resendConfigured: Boolean(process.env.RESEND_API_KEY),
-  });
+  return NextResponse.json({ ok: true, service: "lead-capture" });
 }

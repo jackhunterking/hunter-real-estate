@@ -1,6 +1,6 @@
 import { getOfferings } from "@/lib/capital/repository";
-import { DashboardView } from "./DashboardView";
+import { InvestorDashboard } from "@/components/capital/north/InvestorWorkspace";
 
 export default function HunterNorthDashboardPage() {
-  return <DashboardView offerings={getOfferings()} />;
+  return <InvestorDashboard offerings={getOfferings()} />;
 }

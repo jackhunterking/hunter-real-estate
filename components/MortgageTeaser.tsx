@@ -1,25 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useT } from "@/lib/i18n/LanguageProvider";
-import { HERO_RATES, heroTile } from "@/lib/mortgage/rates";
-import RateTiles from "./mortgage/RateTiles";
-import RateDisclosureModal from "./RateDisclosureModal";
 import styles from "./MortgageTeaser.module.css";
 
 export default function MortgageTeaser() {
   const t = useT();
   const f = t.mortgage;
-  const [showDisclosure, setShowDisclosure] = useState(false);
-
-  const fixed = heroTile(HERO_RATES.fixed);
-  const variable = heroTile(HERO_RATES.variable);
-
-  const tiles = [
-    { label: f.rates.fixedLabel, tile: fixed },
-    { label: f.rates.variableLabel, tile: variable },
-  ];
 
   return (
     <section className={styles.section} id="mortgage-teaser">
@@ -37,25 +24,14 @@ export default function MortgageTeaser() {
 
           <p className={styles.sub}>{f.teaser.sub}</p>
 
-          <div className={styles.ratesWrap}>
-            <RateTiles
-              tiles={tiles.map(({ label, tile }) => ({
-                term: tile.term,
-                kind: label,
-                rate: tile.rate,
-                detail: tile.detail,
-              }))}
-              updatingLabel={f.rates.updating}
-            />
+          <div className={styles.services}>
+            {f.teaser.services.map((service) => (
+              <article key={service.title} className={styles.service}>
+                <h3>{service.title}</h3>
+                <p>{service.text}</p>
+              </article>
+            ))}
           </div>
-
-          <button
-            type="button"
-            className={styles.disclosure}
-            onClick={() => setShowDisclosure(true)}
-          >
-            {f.rates.disclosureLabel}
-          </button>
 
           <Link href="/mortgage" className={styles.cta}>
             {f.teaser.cta}
@@ -72,9 +48,6 @@ export default function MortgageTeaser() {
         </div>
       </div>
 
-      {showDisclosure ? (
-        <RateDisclosureModal onClose={() => setShowDisclosure(false)} />
-      ) : null}
     </section>
   );
 }

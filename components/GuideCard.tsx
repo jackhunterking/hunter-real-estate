@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { TurnstileField } from "./TurnstileField";
 import styles from "./GuideCard.module.css";
 
 type GuideType = "alici" | "satici";
@@ -30,6 +31,7 @@ export default function GuideCard({
   const [state, setState] = useState<CardState>("default");
   const [email, setEmail] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string>();
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -79,6 +81,7 @@ export default function GuideCard({
           email: trimmed,
           guide,
           source: "Instagram - ManyChat",
+          turnstileToken,
         }),
       });
 
@@ -171,6 +174,7 @@ export default function GuideCard({
               style={errorMsg ? { borderBottomColor: "#c0392b" } : undefined}
             />
             {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+            <TurnstileField onToken={setTurnstileToken} />
             <div className={styles.formActions}>
               <button
                 type="button"
@@ -180,7 +184,13 @@ export default function GuideCard({
               >
                 İptal
               </button>
-              <button type="submit" disabled={state === "loading"}>
+              <button
+                type="submit"
+                disabled={
+                  state === "loading" ||
+                  (Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) && !turnstileToken)
+                }
+              >
                 {state === "loading" ? "Gönderiliyor…" : "Gönder"}
               </button>
             </div>

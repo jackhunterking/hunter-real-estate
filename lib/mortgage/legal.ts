@@ -219,7 +219,7 @@ const tr: Record<LegalKey, LegalDoc> = {
       {
         heading: "Sitenin Bilgilendirme Amaçlı Niteliği",
         blocks: [
-          p("Bu web sitesindeki içerik, oranlar, hesaplayıcılar, makaleler ve rehberler dahil, yalnızca genel bilgilendirme ve eğitim amaçlıdır. Şunları oluşturmaz:"),
+          p("Bu web sitesindeki içerik, mortgage açıklamaları, araçlar, makaleler ve rehberler dahil, yalnızca genel bilgilendirme ve eğitim amaçlıdır. Şunları oluşturmaz:"),
           ul([
             "Kredi onayı veya ön onay garantisi.",
             "Oran kilidi veya lender taahhüdü.",
@@ -229,10 +229,10 @@ const tr: Record<LegalKey, LegalDoc> = {
         ],
       },
       {
-        heading: "Mortgage Oranları",
+        heading: "Mortgage Seçenekleri ve Nihai Fiyatlama",
         blocks: [
-          p("Bu sitede gösterilen oranlar yalnızca örnek göstergedir. Bir lender yazılı taahhüt verene kadar herhangi bir zamanda haber verilmeksizin değişebilir. Gösterilen oranlar, durumunuza uymayabilecek belirli borçlu ve mülk kriterlerini varsayabilir."),
-          p("Gösterilen herhangi bir oranın size sunulacağını garanti etmeyiz. Gerçek oranınız; gelir, kredi skoru, mülk ayrıntıları, peşinat, lender koşulları ve geçerli mortgage sigortası gerekliliklerine bağlıdır."),
+          p("Bu site güncel, örnek veya garanti edilmiş mortgage fiyatlaması yayımlamaz. Ürün seçenekleri ve nihai fiyatlama, lender'ın dosyanızı tam olarak incelemesinden ve yazılı taahhüt vermesinden sonra netleşir."),
+          p("Nihai sonuç; gelir, kredi geçmişi, mevcut borçlar, mülk ayrıntıları, peşinat, kullanım amacı, lender koşulları ve geçerli mortgage sigortası gerekliliklerine bağlıdır."),
         ],
       },
       {
@@ -277,7 +277,7 @@ const tr: Record<LegalKey, LegalDoc> = {
       {
         heading: "Sorumluluğun Sınırlandırılması",
         blocks: [
-          p("Geçerli yasaların izin verdiği azami ölçüde, Real Mortgage Associates bu web sitesini veya hizmetlerimizi kullanmanızdan (veya kullanamamanızdan) kaynaklanan dolaylı, arızi, özel veya sonuçsal zararlardan, burada sağlanan oranlara, araçlara veya bilgilere güvenmek dahil, sorumlu olmayacaktır."),
+          p("Geçerli yasaların izin verdiği azami ölçüde, Real Mortgage Associates bu web sitesini veya hizmetlerimizi kullanmanızdan (veya kullanamamanızdan) kaynaklanan dolaylı, arızi, özel veya sonuçsal zararlardan, burada sağlanan araçlara veya genel bilgilere güvenmek dahil, sorumlu olmayacaktır."),
           p("Hizmetlerimiz “olduğu gibi” ve “mevcut olduğu şekliyle” sağlanır. Bu sitedeki herhangi bir içeriğin doğruluğu, eksiksizliği veya amaca uygunluğu konusunda açık veya zımni hiçbir garanti vermeyiz."),
         ],
       },
@@ -332,14 +332,14 @@ const tr: Record<LegalKey, LegalDoc> = {
         ],
       },
       {
-        heading: "Mortgage Oran Sorumluluk Reddi",
+        heading: "Mortgage Seçenekleri Sorumluluk Reddi",
         blocks: [
-          p("Bu sitede gösterilen oranlar sınırlı bir kriter kümesine dayanır ve yalnızca bilgilendirme ve örnekleme amaçlıdır. Bir oran garantisi, kredi onayı veya lender taahhüdü oluşturmaz."),
+          p("Bu site güncel, örnek, tarihi veya kişiye özel mortgage oranları yayımlamaz. Eğitim içeriği bir oran garantisi, kredi onayı veya lender taahhüdü oluşturmaz."),
           ul([
-            "Gerçek oranlar, başvuru aşamasında toplanan ek bilgilere veya lender'ların tekliflerini güncellemesine bağlı olarak farklılık gösterebilir.",
-            "Gösterilen varsayılan oranlar, lender uygunluk kriterlerini karşılayan, Ontario'da konut satın alan, güçlü krediye sahip bir başvuru sahibini varsayabilir.",
-            "Oranlar ve tahmini ödeme tutarları yalnızca örnektir ve konut sigortası, emlak vergisi veya diğer maliyetleri içermez.",
-            "Piyasada mevcut her lender ürünü veya teklifi gösterilmez.",
+            "Nihai fiyatlama, başvuru aşamasında toplanan ek bilgiler ve lender'ın geçerli ürün koşullarına bağlıdır.",
+            "Gelir, mevcut borçlar, kredi geçmişi, peşinat ve mülk ayrıntıları değerlendirmenin parçasıdır.",
+            "Konut sigortası, emlak vergisi, yasal masraflar ve diğer maliyetler ayrıca değerlendirilir.",
+            "Piyasadaki her lender ürünü veya teklif bu sitede temsil edilmez.",
             "Tüm mortgage ürünlerinin gelir, borç servis oranları, kredi skoru, mülk değeri ve mülk türü dahil belirli uygunluk kriterleri vardır.",
           ]),
           p("Nihai oranlar ve onay; gelir, kredi geçmişi, mülk ayrıntıları, peşinat ve lender koşullarına göre belirlenir ve yazılı bir taahhütte belgelenir."),
@@ -527,7 +527,7 @@ const en: Record<LegalKey, LegalDoc> = {
       {
         heading: "Informational Nature of This Site",
         blocks: [
-          p("The content on this website, including rates, calculators, articles, and guides, is provided for general informational and educational purposes only. It does not constitute:"),
+          p("The content on this website, including mortgage explanations, tools, articles, and guides, is provided for general informational and educational purposes only. It does not constitute:"),
           ul([
             "A credit approval or pre-approval guarantee.",
             "A rate lock or lender commitment.",
@@ -537,10 +537,10 @@ const en: Record<LegalKey, LegalDoc> = {
         ],
       },
       {
-        heading: "Mortgage Rates",
+        heading: "Mortgage Options and Final Pricing",
         blocks: [
-          p("Rates displayed on this site are indicative examples only. They are subject to change at any time without notice until a lender issues a written commitment. Displayed rates may assume specific borrower and property criteria that may not apply to your situation."),
-          p("We do not guarantee that any rate shown is available to you. Your actual rate will depend on income, credit score, property details, down payment, lender conditions, and applicable mortgage insurance requirements."),
+          p("This site does not publish current, sample, or guaranteed mortgage pricing. Product options and final pricing are determined after a lender reviews your complete file and issues a written commitment."),
+          p("The final result depends on income, credit history, existing debt, property details, down payment, intended use, lender conditions, and applicable mortgage insurance requirements."),
         ],
       },
       {
@@ -585,7 +585,7 @@ const en: Record<LegalKey, LegalDoc> = {
       {
         heading: "Limitation of Liability",
         blocks: [
-          p("To the maximum extent permitted by applicable law, Real Mortgage Associates shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of (or inability to use) this website or our services, including reliance on any rates, tools, or information provided here."),
+          p("To the maximum extent permitted by applicable law, Real Mortgage Associates shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of (or inability to use) this website or our services, including reliance on any tools or general information provided here."),
           p("Our services are provided “as is” and “as available.” We make no warranties, express or implied, as to the accuracy, completeness, or fitness for purpose of any content on this site."),
         ],
       },
@@ -640,14 +640,14 @@ const en: Record<LegalKey, LegalDoc> = {
         ],
       },
       {
-        heading: "Mortgage Rate Disclaimer",
+        heading: "Mortgage Options Disclaimer",
         blocks: [
-          p("Rates shown on this site are based on a limited set of criteria and are provided for informational and illustrative purposes only. They do not constitute a rate guarantee, credit approval, or lender commitment."),
+          p("This site does not publish current, sample, historical, or personalized mortgage rates. Educational content does not constitute a rate guarantee, credit approval, or lender commitment."),
           ul([
-            "Actual rates may differ depending on additional information collected during the application stage or as lenders update their offers.",
-            "Default rates shown may assume an applicant with strong credit purchasing a residential property in Ontario that meets lender qualification criteria.",
-            "Rates and estimated payment amounts are examples only and do not include homeowners insurance, property taxes, or other costs.",
-            "Not every lender product or offer available in the market is displayed.",
+            "Final pricing depends on the information collected during the application stage and the lender's current product terms.",
+            "Income, existing debt, credit history, down payment, and property details form part of the assessment.",
+            "Homeowners insurance, property taxes, legal costs, and other expenses are considered separately.",
+            "Not every lender product or offer available in the market is represented on this site.",
             "All mortgage products have specific qualification criteria, including income, debt servicing ratios, credit score, property value, and property type.",
           ]),
           p("Final rates and approval are confirmed based on your income, credit history, property details, down payment, and lender conditions, and are documented in a written commitment."),

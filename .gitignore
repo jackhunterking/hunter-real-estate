@@ -45,3 +45,4 @@ work/
 
 # Retired Kredibaba source, if restored locally for reference only.
 /_kredibaba-source
+.supabase-cli-home/

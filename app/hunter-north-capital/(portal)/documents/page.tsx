@@ -1,5 +1,6 @@
-import { redirect } from "next/navigation";
+import { getOfferings } from "@/lib/capital/repository";
+import { DocumentsLibrary } from "./DocumentsLibrary";
 
 export default function HunterNorthDocumentsPage() {
-  redirect("/hunter-north-capital/funds");
+  return <DocumentsLibrary offerings={getOfferings()} />;
 }

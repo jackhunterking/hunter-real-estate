@@ -1,23 +1,37 @@
-import type { ClientQualificationCriterion } from "./types";
-
-export const READINESS_RULESET = {
-  id: "ontario-ni-45-106-2026-07",
-  effectiveDate: "2026-07-12",
-  sources: [
-    "National Instrument 45-106 Prospectus Exemptions",
-    "OSC Companion Policy 45-106CP",
-  ],
-  omLimits: { nonEligible: 10000, eligible: 30000, eligibleWithAdvice: 100000 },
-};
+import { assessOntarioInvestor } from "./ontario-investor-assessment.ts";
+import type { ClientQualificationCriterion, InvestorReadinessAnswer, InvestorReadinessCriterion } from "./types";
+export { READINESS_RULESET } from "./readiness-rules.ts";
+import { READINESS_RULESET } from "./readiness-rules.ts";
 
 export type PreliminaryCategory = "potentially-accredited" | "potentially-eligible" | "potentially-non-eligible" | "manual-review";
 
 export function classifyOntario(input: {
   qualificationCriteria: ClientQualificationCriterion[];
 }): PreliminaryCategory {
-  if (input.qualificationCriteria.some((criterion) => criterion.startsWith("ai-"))) return "potentially-accredited";
-  if (input.qualificationCriteria.some((criterion) => criterion.startsWith("eligible-"))) return "potentially-eligible";
-  return "potentially-non-eligible";
+  const map: Partial<Record<ClientQualificationCriterion, InvestorReadinessCriterion>> = {
+    "ai-financial-assets": "individual-financial-assets",
+    "ai-income-individual": "individual-income",
+    "ai-income-with-spouse": "individual-spousal-income",
+    "ai-net-assets": "individual-net-assets",
+    "eligible-net-assets": "eligible-net-assets",
+    "eligible-income-individual": "eligible-income",
+    "eligible-income-with-spouse": "eligible-spousal-income",
+  };
+  const answers: Partial<Record<InvestorReadinessCriterion, InvestorReadinessAnswer>> = {
+    "individual-registration": "no",
+    "individual-financial-assets": "no",
+    "individual-income": "no",
+    "individual-spousal-income": "no",
+    "individual-net-assets": "no",
+    "eligible-net-assets": "no",
+    "eligible-income": "no",
+    "eligible-spousal-income": "no",
+  };
+  for (const criterion of input.qualificationCriteria) {
+    const mapped = map[criterion];
+    if (mapped) answers[mapped] = "yes";
+  }
+  return assessOntarioInvestor({ jurisdiction: "ontario", accountType: "individual", answers }).result;
 }
 
 export function preliminaryOmLimit(category: PreliminaryCategory, registeredAdvice: boolean) {

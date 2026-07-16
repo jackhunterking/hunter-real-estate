@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -27,12 +26,11 @@ import {
   localizeVerification,
   primaryShareClass,
 } from "@/lib/capital/present";
-import { classifyOntario } from "@/lib/capital/readiness";
 import { FundMapEmbed } from "@/components/capital/map/FundMapEmbed";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { Panel } from "@/components/capital/north/PortalUI";
 
-const TAB_IDS = ["overview", "terms", "portfolio", "documents", "readiness", "contact"] as const;
+const TAB_IDS = ["overview", "terms", "portfolio", "documents", "contact"] as const;
 type TabId = (typeof TAB_IDS)[number];
 
 const COPY = {
@@ -87,7 +85,6 @@ const COPY = {
     contactBody: "Müşteri tanıştırmasını kaydedin veya fonla ilgili soruları Hunter North ekibiyle görüşün. KYC, suitability ve fon izni lisanslı süreçte tamamlanır.",
     referral: "Müşteri ekle",
     whatsapp: "WhatsApp desteği",
-    targetNote: "Hedefler garanti değildir. Resmi teklif belgeleri belirleyicidir.",
   },
   en: {
     back: "Back to funds",
@@ -140,7 +137,6 @@ const COPY = {
     contactBody: "Record a client introduction or speak with Hunter North about the fund. KYC, suitability, and fund permission remain within the licensed process.",
     referral: "Add client",
     whatsapp: "WhatsApp support",
-    targetNote: "Targets are not guaranteed. Official offering documents control.",
   },
 } as const;
 
@@ -171,7 +167,7 @@ export function ProductDetailView({ offering }: { offering: OfferingBundle }) {
 
   const tabs: [TabId, string][] = [
     ["overview", c.overview], ["terms", c.terms], ["portfolio", c.portfolio],
-    ["documents", c.documents], ["readiness", c.readiness], ["contact", c.contact],
+    ["documents", c.documents], ["contact", c.contact],
   ];
 
   return (
@@ -201,7 +197,7 @@ export function ProductDetailView({ offering }: { offering: OfferingBundle }) {
         </div>
       </section>
 
-      <div className="sticky top-16 z-20 mt-4 overflow-x-auto rounded-md border border-[#dbe1e5] bg-white p-1 shadow-sm">
+      <div className="sticky top-0 z-20 mt-4 overflow-x-auto rounded-md border border-[#dbe1e5] bg-white p-1 shadow-sm">
         <div className="flex min-w-max gap-1">
           {tabs.map(([id, label]) => (
             <button key={id} type="button" onClick={() => setTab(id)} className={`h-9 rounded px-3 text-xs font-semibold transition-colors ${activeTab === id ? "bg-[#0a2d46] text-white" : "text-[#5e6d78] hover:bg-[#f0f3f5]"}`} aria-pressed={activeTab === id}>{label}</button>
@@ -214,11 +210,9 @@ export function ProductDetailView({ offering }: { offering: OfferingBundle }) {
         {activeTab === "terms" && <Terms offering={offering} c={c} />}
         {activeTab === "portfolio" && <Portfolio offering={offering} c={c} />}
         {activeTab === "documents" && <Documents offering={offering} c={c} typeLabels={t.capitalApp.documents.types} />}
-        {activeTab === "readiness" && <Readiness offering={offering} c={c} />}
         {activeTab === "contact" && <Contact offering={offering} c={c} />}
       </div>
 
-      <p className="mt-5 text-[10px] leading-5 text-[#828d96]">{c.targetNote} · {offering.verifiedAt}</p>
     </div>
   );
 }
@@ -253,7 +247,7 @@ function Terms({ offering, c }: { offering: OfferingBundle; c: Copy }) {
   const { lang, t } = useLang();
   const vm = buildFundDetailViewModel(offering, lang);
   const fields = t.capitalApp.detail.fields as Record<string, string>;
-  return <div className="space-y-5"><Panel className="p-5 sm:p-6"><h2 className="text-base font-semibold text-[#172e40]">{c.keyTerms}</h2><dl className="mt-4 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3">{vm.fundDetails.map((row) => <div key={row.key} className="flex items-baseline justify-between gap-4 border-b border-[#e8ecef] py-3"><dt className="text-xs text-[#71808b]">{fields[row.key] ?? row.key}</dt><dd className="text-right text-sm font-semibold text-[#2a3b47]">{row.value}</dd></div>)}</dl></Panel>{vm.trailingReturns.length > 0 && <Panel className="overflow-hidden"><div className="border-b border-[#e3e7ea] px-5 py-4"><h2 className="text-base font-semibold text-[#172e40]">{c.performance}</h2></div><table className="w-full text-left text-sm"><thead className="bg-[#f6f8f9] text-[10px] uppercase tracking-[0.08em] text-[#75808a]"><tr><th className="px-5 py-3">{c.period}</th><th className="px-5 py-3 text-right">{c.result}</th></tr></thead><tbody>{vm.trailingReturns.map((row) => <tr key={row.period} className="border-t border-[#edf0f2]"><td className="px-5 py-3 text-[#52616d]">{row.period}</td><td className="px-5 py-3 text-right font-semibold tabular-nums text-[#213542]">{row.value}</td></tr>)}</tbody></table>{vm.trailingReturnsNote && <p className="border-t border-[#edf0f2] p-4 text-[10px] leading-5 text-[#7d8891]">{vm.trailingReturnsNote}</p>}</Panel>}<Panel className="p-5 sm:p-6"><h2 className="text-base font-semibold text-[#172e40]">{c.risks}</h2><ul className="mt-4 space-y-3">{offering.risks.map((risk) => <li key={risk[lang]} className="flex gap-2.5 text-sm leading-6 text-[#5f6e79]"><CircleAlert className="mt-1 size-4 shrink-0 text-[#996f1e]" />{risk[lang]}</li>)}</ul></Panel></div>;
+  return <div className="space-y-5"><Panel className="p-5 sm:p-6"><h2 className="text-base font-semibold text-[#172e40]">{c.keyTerms}</h2><dl className="mt-4 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3">{vm.fundDetails.map((row) => <div key={row.key} className={`flex justify-between gap-4 border-b border-[#e8ecef] py-3 ${row.key === "redemption" ? "items-start sm:col-span-2 lg:col-span-3" : "items-baseline"}`}><dt className="text-xs text-[#71808b]">{fields[row.key] ?? row.key}</dt><dd className="text-right text-sm font-semibold text-[#2a3b47]">{row.key === "redemption" ? <span className="grid gap-1">{row.value.split(";").map((term) => <span key={term}>{term.trim()}</span>)}</span> : row.value}</dd></div>)}</dl></Panel>{vm.trailingReturns.length > 0 && <Panel className="overflow-hidden"><div className="border-b border-[#e3e7ea] px-5 py-4"><h2 className="text-base font-semibold text-[#172e40]">{c.performance}</h2></div><table className="w-full text-left text-sm"><thead className="bg-[#f6f8f9] text-[10px] uppercase tracking-[0.08em] text-[#75808a]"><tr><th className="px-5 py-3">{c.period}</th><th className="px-5 py-3 text-right">{c.result}</th></tr></thead><tbody>{vm.trailingReturns.map((row) => <tr key={row.period} className="border-t border-[#edf0f2]"><td className="px-5 py-3 text-[#52616d]">{row.period}</td><td className="px-5 py-3 text-right font-semibold tabular-nums text-[#213542]">{row.value}</td></tr>)}</tbody></table>{vm.trailingReturnsNote && <p className="border-t border-[#edf0f2] p-4 text-[10px] leading-5 text-[#7d8891]">{vm.trailingReturnsNote}</p>}</Panel>}<Panel className="p-5 sm:p-6"><h2 className="text-base font-semibold text-[#172e40]">{c.risks}</h2><ul className="mt-4 space-y-3">{offering.risks.map((risk) => <li key={risk[lang]} className="flex gap-2.5 text-sm leading-6 text-[#5f6e79]"><CircleAlert className="mt-1 size-4 shrink-0 text-[#996f1e]" />{risk[lang]}</li>)}</ul></Panel></div>;
 }
 
 function Portfolio({ offering, c }: { offering: OfferingBundle; c: Copy }) {
@@ -264,16 +258,6 @@ function Portfolio({ offering, c }: { offering: OfferingBundle; c: Copy }) {
 function Documents({ offering, c, typeLabels }: { offering: OfferingBundle; c: Copy; typeLabels: Record<string, string> }) {
   const { lang } = useLang();
   return <Panel className="overflow-hidden"><div className="overflow-x-auto"><table className="w-full min-w-[720px] text-left text-sm"><thead className="bg-[#f6f8f9] text-[10px] uppercase tracking-[0.08em] text-[#75808a]"><tr>{[c.doc,c.type,c.effective,c.access,""].map((label,index) => <th key={`${label}-${index}`} className="border-b border-[#e2e6e9] px-5 py-3">{label}</th>)}</tr></thead><tbody>{offering.documents.map((document) => <tr key={document.id} className="border-b border-[#edf0f2] last:border-0"><td className="px-5 py-4"><div className="flex items-center gap-3"><span className="grid size-9 place-items-center rounded-md bg-[#eef2f5] text-[#0a2d46]"><FileText className="size-4" /></span><div><p className="font-semibold text-[#2a3d49]">{document.title[lang]}</p><p className="mt-1 text-[10px] text-[#7b858e]">{document.version}</p></div></div></td><td className="px-5 py-4 text-[#63727d]">{typeLabels[document.type] ?? document.type}</td><td className="px-5 py-4 text-[#63727d]">{document.effectiveDate}</td><td className="px-5 py-4"><span className={`rounded px-2 py-1 text-[10px] font-bold ${document.visibility === "public" ? "bg-[#e8f2ec] text-[#2f694a]" : "bg-[#f1f2f4] text-[#66717a]"}`}>{document.visibility === "public" ? c.public : c.request}</span></td><td className="px-5 py-4 text-right">{document.href ? <a href={document.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs font-semibold text-[#0a4b72] hover:underline">{c.view}<ArrowUpRight className="size-3.5" /></a> : <span className="text-xs text-[#8a939a]">{c.request}</span>}</td></tr>)}</tbody></table></div></Panel>;
-}
-
-function Readiness({ offering, c }: { offering: OfferingBundle; c: Copy }) {
-  const { lang } = useLang();
-  const [jurisdiction, setJurisdiction] = useState<"ontario" | "turkey">("turkey");
-  const [checks, setChecks] = useState([false, false, false, false, false]);
-  const [shown, setShown] = useState(false);
-  const category = useMemo(() => classifyOntario({ qualificationCriteria: [checks[0] && "ai-income-individual", checks[1] && "ai-financial-assets", checks[2] && "ai-net-assets", checks[3] && "eligible-income-individual", checks[4] && "eligible-net-assets"].filter((criterion): criterion is "ai-income-individual" | "ai-financial-assets" | "ai-net-assets" | "eligible-income-individual" | "eligible-net-assets" => Boolean(criterion)) }), [checks]);
-  const result = jurisdiction === "turkey" ? c.manual : category === "potentially-accredited" ? c.accredited : category === "potentially-eligible" ? c.eligible : c.nonEligible;
-  return <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]"><Panel className="p-5 sm:p-6"><h2 className="text-base font-semibold text-[#172e40]">{c.readinessTitle}</h2><p className="mt-2 text-sm leading-6 text-[#64727d]">{c.readinessBody}</p><div className="mt-5 grid grid-cols-2 gap-2"><button type="button" onClick={() => {setJurisdiction("ontario");setShown(false);}} className={`h-11 rounded-md border text-sm font-semibold ${jurisdiction === "ontario" ? "border-[#0a2d46] bg-[#0a2d46] text-white" : "border-[#d6dde2] text-[#51616d]"}`}>{c.canada}</button><button type="button" onClick={() => {setJurisdiction("turkey");setShown(false);}} className={`h-11 rounded-md border text-sm font-semibold ${jurisdiction === "turkey" ? "border-[#0a2d46] bg-[#0a2d46] text-white" : "border-[#d6dde2] text-[#51616d]"}`}>{c.turkey}</button></div>{jurisdiction === "ontario" ? <div className="mt-5 space-y-2">{c.checks.map((label,index) => <label key={label} className="flex cursor-pointer items-start gap-3 rounded-md border border-[#e0e5e8] p-3 text-sm text-[#52616c]"><input type="checkbox" checked={checks[index]} onChange={(event) => setChecks((current) => current.map((item,i) => i === index ? event.target.checked : item))} className="mt-0.5 size-4 accent-[#0a2d46]" />{label}</label>)}</div> : <div className="mt-5 rounded-md border border-[#eadcb8] bg-[#fbf7eb] p-4 text-sm leading-6 text-[#6f5a28]">{c.manual}</div>}<button type="button" onClick={() => setShown(true)} className="mt-5 h-11 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white hover:bg-[#123f5e]">{c.calculate}</button></Panel><Panel className="p-5 sm:p-6"><p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#7a858e]">{c.preliminary}</p>{shown ? <><CheckCircle2 className="mt-6 size-8 text-[#3d7257]" /><h3 className="mt-4 text-lg font-semibold text-[#173044]">{result}</h3><p className="mt-3 text-sm leading-6 text-[#66747e]">{c.warning}</p><p className="mt-5 border-t border-[#e7ebee] pt-4 text-xs text-[#7b858e]">{offering.shortName[lang]}</p></> : <p className="mt-5 text-sm leading-6 text-[#7a858e]">{c.readinessBody}</p>}</Panel></div>;
 }
 
 function Contact({ offering, c }: { offering: OfferingBundle; c: Copy }) {

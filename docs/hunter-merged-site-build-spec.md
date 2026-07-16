@@ -30,7 +30,7 @@ app/
 │   ├── [intent]/page.tsx           ← one page per borrowing journey:
 │   │                                  ev-almak · yenileme · tadilat ·
 │   │                                  borc-toparlama · ev-degeri · heloc
-│   ├── oranlar/page.tsx            ← rate display (Fixed / Variable)
+│   ├── oranlar/page.tsx            ← permanent redirect to `/mortgage`
 │   └── araclar/page.tsx            ← calculator hub (6 tools, anchored)
 │
 ├── hunter-x-capital/
@@ -70,7 +70,7 @@ HomeHero → AboutSection → ServicesSection → [NEW] MortgageTeaser
 → CapitalTeaser (shrunk) → GuidesSection → PromiseSection → LogoStrip → ContactSection → Footer
 ```
 
-`MortgageTeaser` is a new homepage block (rate hero + "see your options" CTA) that points into `/mortgage`.
+`MortgageTeaser` is a new homepage block (service guidance + "see your options" CTA) that points into `/mortgage`.
 
 ---
 
@@ -93,7 +93,7 @@ Mirrors the IA already defined in `KREDIBABA_EXPERIENCE_PLAN.md`, kept as three 
 - Ön onay (kept as a tool/step, never a standalone solution)
 - Mortgage hesaplayıcı · Uygunluk hesaplayıcı · Kapanış masrafı · Tapu devir vergisi · Ödeme farkı
 
-**Rates** → `/mortgage/oranlar` (Fixed / Variable, `HERO_RATES` discipline — see §7)
+**Mortgage options** → `/mortgage` (file-specific educational guidance; no displayed rates)
 
 ---
 
@@ -101,8 +101,8 @@ Mirrors the IA already defined in `KREDIBABA_EXPERIENCE_PLAN.md`, kept as three 
 
 | Piece | Kredibaba source | Target in Hunter | Action |
 |---|---|---|---|
-| Rate hero | `pages/Home.jsx` | `MortgageTeaser` + `/mortgage` | **Port** (re-implement in Next) |
-| Rate cards | `components/rates/*` | `/mortgage/oranlar` | **Port** (Fixed/Variable, disclosure modal) |
+| Mortgage service teaser | `pages/Home.jsx` | `MortgageTeaser` + `/mortgage` | **Port** (re-implement in Next without rate data) |
+| Mortgage option guidance | Mortgage landing and intent pages | `/mortgage` | **Keep** (no rate table) |
 | Journeys | `pages/Solutions.jsx`, `SolutionDetail.jsx` | `/mortgage/[intent]` | **Port** |
 | Calculators | `pages/Tools.jsx` | `/mortgage/araclar` | **Port** (see §6) |
 | Bilingual copy | `i18n/tr.js`, `i18n/en.js` | Hunter i18n layer | **Migrate as data** |
@@ -131,7 +131,7 @@ Port note: these are pure client-side React in kredibaba; in Next they should be
 
 ## 7. Rate system port (FSRA discipline)
 
-- Keep the `HERO_RATES` pattern: only show rates that have been manually approved.
+- Do not publish current, sample, historical, or illustrative mortgage rates.
 - Keep the `Güncelleniyor` ("updating") fallback — **never invent or interpolate a rate**.
 - Keep the disclosure modal logic: rates are examples only, not guaranteed; approval depends on file/lender; borrower fees disclosed before commitment; mortgage activity is conducted through **Real Mortgage Associates** and Jack Hunter FSRA Licence **M26001258**.
 
@@ -146,7 +146,7 @@ The site now hosts **two separately regulated businesses**. Real estate brokerag
 Practical rules for the build:
 - **Per-service brokerage identity.** Real-estate sections carry the RE/MAX Hallmark identity; Mortgage carries the Real Mortgage Associates identity + FSRA licence. Don't let one brand label appear on the other's content.
 - **Separate disclosure blocks.** Footer (and relevant pages) show both, clearly attributed to the right service — not merged into one generic statement.
-- **No bleed in CTAs.** A mortgage rate CTA shouldn't sit inside a RE/MAX-branded block, and vice versa.
+- **No bleed in CTAs.** A mortgage-service CTA shouldn't sit inside a RE/MAX-branded block, and vice versa.
 - **Investor content stays on its own page.** Hunter X Capital "raise/partner" language lives only on its section, away from the consumer mortgage funnel (different regime again).
 
 Action: a single review pass with **both** your RE/MAX brokerage and your RMA principal broker before public launch. (This is structural guidance, not legal advice.)
@@ -169,7 +169,7 @@ These form a client portal — a separate product. If/when you want it, it ships
 
 Ordered so the highest-volume, revenue-driving piece ships first and your Meta → WhatsApp funnel has a landing target early.
 
-1. **Phase 1 — Mortgage core.** Scaffold `/mortgage`, port the rate hero + `/mortgage/oranlar`, build the journey pages `[intent]`, wire the WhatsApp/lead-capture CTA. Add the MortgageTeaser to the homepage and the nav item. *This alone makes the funnel live.*
+1. **Phase 1 — Mortgage core.** Scaffold `/mortgage`, build service-oriented guidance and the journey pages `[intent]`, wire the WhatsApp/lead-capture CTA, and permanently redirect `/mortgage/oranlar` to `/mortgage`. Add the MortgageTeaser to the homepage and the nav item.
 2. **Phase 2 — Tools.** Port the six calculators to `/mortgage/araclar`. These are lead magnets and SEO surface.
 3. **Phase 3 — Fold + legalize.** Migrate Learn into `rehber/`, port the three legal pages, lock the FSRA disclosures and RMA licence fields.
 4. **Phase 4 — Capital consolidation.** Keep `/hunter-group-capital` canonical and redirect legacy `/hunter-x-capital` URLs.

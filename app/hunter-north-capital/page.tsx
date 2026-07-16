@@ -11,7 +11,9 @@ const COPY = {
     eyebrow: "Kurumsal partner platformu",
     title: "Kanada özel piyasalarına daha düzenli bir erişim.",
     body: "Hunter North Capital, lisanslı firmaların Kanada gayrimenkul fonlarını incelemesi, belgeleri karşılaştırması ve müşteri tanıştırmalarını koordine etmesi için tasarlanmıştır.",
-    enter: "Platforma gir",
+    enter: "Giriş yap",
+    create: "Yatırımcı hesabı oluştur",
+    preview: "Portal önizlemesi",
     features: [
       ["Fon inceleme", "Koşullar, performans, varlıklar ve resmi belgeler."],
       ["Müşteri takibi", "Müşteri kayıtları, yıllık sermaye ve seviye ilerlemesi."],
@@ -23,7 +25,9 @@ const COPY = {
     eyebrow: "Institutional partner platform",
     title: "A more structured path to Canadian private markets.",
     body: "Hunter North Capital is designed for licensed firms to review Canadian real-estate funds, compare materials, and coordinate client introductions.",
-    enter: "Enter platform",
+    enter: "Sign in",
+    create: "Create investor account",
+    preview: "Portal preview",
     features: [
       ["Fund review", "Terms, performance, assets, and official documents."],
       ["Client tracking", "Client records, annual capital, and tier progress."],
@@ -94,10 +98,19 @@ export default function HunterNorthAccessPage() {
             <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#79838c]">Hunter North Capital</p>
             <h2 className="mt-3 font-serif text-2xl font-semibold text-[#0a2d46]">{c.enter}</h2>
             <Link
-              href={`${NORTH_BASE}/dashboard`}
+              href={`${NORTH_BASE}/sign-in`}
               className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#123f5e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8bf7a] focus-visible:ring-offset-2"
             >
               {c.enter} <ArrowRight className="size-4" />
+            </Link>
+            <Link
+              href={`${NORTH_BASE}/sign-up`}
+              className="mt-3 flex h-11 w-full items-center justify-center rounded-md border border-[#cfd7dc] px-4 text-sm font-semibold text-[#334550] hover:border-[#0a2d46]"
+            >
+              {c.create}
+            </Link>
+            <Link href={`${NORTH_BASE}/dashboard`} className="mt-4 block text-center text-xs font-semibold text-[#0a4b72] hover:underline">
+              {c.preview}
             </Link>
             <p className="mt-7 border-t border-[#e6e9ec] pt-5 text-[11px] leading-5 text-[#7a838b]">{c.legal}</p>
           </aside>

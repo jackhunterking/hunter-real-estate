@@ -39,10 +39,10 @@ export function Panel({ children, className = "" }: { children: ReactNode; class
   return <section className={`rounded-md border border-[#dfe4e9] bg-white ${className}`}>{children}</section>;
 }
 
-export function money(value: number, lang: "tr" | "en") {
+export function money(value: number, lang: "tr" | "en", currency = "CAD") {
   return new Intl.NumberFormat(lang === "tr" ? "tr-TR" : "en-CA", {
     style: "currency",
-    currency: "CAD",
+    currency,
     maximumFractionDigits: 0,
   }).format(value);
 }

@@ -3,7 +3,13 @@ import Link from "next/link";
 
 export const NORTH_BASE = "/hunter-north-capital";
 
-export function NorthBrand({ compact = false }: { compact?: boolean }) {
+export function NorthBrand({
+  compact = false,
+  markOnlyOnDesktop = false,
+}: {
+  compact?: boolean;
+  markOnlyOnDesktop?: boolean;
+}) {
   return (
     <Link
       href={NORTH_BASE}
@@ -18,7 +24,9 @@ export function NorthBrand({ compact = false }: { compact?: boolean }) {
         className="size-9 shrink-0 object-contain"
         priority
       />
-      <span className="min-w-0 leading-none">
+      <span
+        className={markOnlyOnDesktop ? "min-w-0 leading-none lg:hidden" : "min-w-0 leading-none"}
+      >
         <span className="block truncate text-[15px] font-semibold text-white">
           Hunter North
         </span>

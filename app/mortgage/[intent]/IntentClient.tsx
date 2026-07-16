@@ -1,16 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import RateDisclosureModal from "@/components/RateDisclosureModal";
 import AdvisorStrip from "@/components/mortgage/AdvisorStrip";
 import MortgageDisclosure from "@/components/mortgage/MortgageDisclosure";
-import RateTiles from "@/components/mortgage/RateTiles";
 import { useT } from "@/lib/i18n/LanguageProvider";
-import { HERO_RATES, heroTile } from "@/lib/mortgage/rates";
 import { waHref } from "@/lib/mortgage/wa";
 import styles from "./intent.module.css";
 
@@ -36,12 +32,6 @@ export default function IntentClient({ intent }: Props) {
   const t = useT();
   const f = t.mortgage;
   const page = t.mortgageIntents[intent];
-  const [showDisclosure, setShowDisclosure] = useState(false);
-
-  const tiles = [
-    { label: f.rates.fixedLabel, tile: heroTile(HERO_RATES.fixed) },
-    { label: f.rates.variableLabel, tile: heroTile(HERO_RATES.variable) },
-  ];
 
   const whatsapp = waHref(`${page.navLabel}, ${f.cta.whatsappText}`);
 
@@ -95,27 +85,14 @@ export default function IntentClient({ intent }: Props) {
             ))}
           </div>
 
-          {/* Rate strip with disclosure */}
+          {/* File-specific mortgage guidance */}
           <div className={styles.rateStrip}>
-            <span className={styles.rateStripLabel}>{f.rates.eyebrow}</span>
-            <RateTiles
-              tiles={tiles.map(({ label, tile }) => ({
-                term: tile.term,
-                kind: label,
-                rate: tile.rate,
-                detail: tile.detail,
-              }))}
-              updatingLabel={f.rates.updating}
-            />
-            <div className={styles.rateFoot}>
-              <button
-                type="button"
-                className={styles.disclosureBtn}
-                onClick={() => setShowDisclosure(true)}
-              >
-                {f.rates.disclosureLabel}
-              </button>
-            </div>
+            <span className={styles.rateStripLabel}>{f.options.eyebrow}</span>
+            <h2 className={styles.cardTitle}>{f.options.title}</h2>
+            <p className={styles.cardText}>{f.options.intro}</p>
+            <ul>
+              {f.options.items.map((item) => <li key={item}>{item}</li>)}
+            </ul>
           </div>
         </div>
       </section>
@@ -145,9 +122,6 @@ export default function IntentClient({ intent }: Props) {
       <MortgageDisclosure />
       <Footer />
 
-      {showDisclosure ? (
-        <RateDisclosureModal onClose={() => setShowDisclosure(false)} />
-      ) : null}
     </main>
   );
 }

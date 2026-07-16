@@ -11,12 +11,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
+import { TurnstileField } from "@/components/TurnstileField";
 
 type Form = {
   offeringId: string; shareClassId: string; jurisdiction: "ontario" | "turkey-cross-border";
   firstName: string; lastName: string; email: string; phone: string; city: string;
   objective: string; horizon: string; riskTolerance: string; lossCapacity: string; liquidityNeed: string; experience: string; intendedAmount: string; accountPreference: string;
-  qualificationCriteria: ClientQualificationCriterion[]; priorOmAmount: string; registeredAdviceForHigherOmLimit: boolean;
+  qualificationCriteria: ClientQualificationCriterion[];
   contactConsent: boolean; accuracyConsent: boolean;
 };
 
@@ -44,8 +45,7 @@ const INDIVIDUAL_CRITERIA = [
 const QUALIFICATION_COPY = {
   en: {
     intro: "Select every statement the client confirms. These facts produce a preliminary category only; the licensed team must verify them.",
-    prior: "Total invested under the offering-memorandum exemption in the last 12 months (CAD)",
-    advice: "A registered portfolio manager, investment dealer, or exempt market dealer gave a positive suitability assessment for this investment.",
+    reviewNote: "A licensed review will collect the exact rolling 12-month OM acquisition cost and any documented registered suitability advice. This public form never calculates an amount you can invest.",
     criteria: {
       "ai-financial-assets": "Net financial assets exceed $1,000,000, alone or with a spouse, after related liabilities.",
       "ai-income-individual": "Net income before tax exceeded $200,000 in each of the last two years and is reasonably expected to exceed it this year.",
@@ -58,8 +58,7 @@ const QUALIFICATION_COPY = {
   },
   tr: {
     intro: "Müşterinin doğruladığı tüm ifadeleri seçin. Bu bilgiler yalnızca ön kategori oluşturur; lisanslı ekip tarafından doğrulanmalıdır.",
-    prior: "Son 12 ayda offering memorandum muafiyeti kapsamında yatırılan toplam (CAD)",
-    advice: "Kayıtlı bir portföy yöneticisi, yatırım satıcısı veya muaf piyasa satıcısı bu yatırım için olumlu uygunluk değerlendirmesi verdi.",
+    reviewNote: "Lisanslı inceleme, son 12 aya ait kesin OM edinim maliyetini ve kayıtlı suitability tavsiyesini toplar. Bu genel form yatırım yapabileceğiniz tutarı hesaplamaz.",
     criteria: {
       "ai-financial-assets": "Müşteri tek başına veya eşiyle birlikte, ilgili borçlar düşüldükten sonra 1.000.000 CAD üzerinde net finansal varlığa sahiptir.",
       "ai-income-individual": "Vergi öncesi net gelir son iki yılın her birinde 200.000 CAD üzerindeydi ve bu yıl da aşması makul olarak bekleniyor.",
@@ -72,6 +71,29 @@ const QUALIFICATION_COPY = {
   },
 } as const;
 
+const PUBLIC_RESULT_COPY = {
+  en: {
+    "potentially-accredited": "Possible accredited-investor indicator — licensed review required",
+    "potentially-eligible": "Possible eligible-investor indicator — licensed review required",
+    "potentially-non-eligible": "Possible non-eligible investor indicator — licensed review required",
+    "manual-review": "Licensed review required",
+    review: [
+      "This is educational only. It is not an eligibility approval or a determination of a prospectus exemption.",
+      "The licensed workflow verifies the purchaser facts, offering availability, suitability, evidence and any applicable acknowledgement.",
+    ],
+  },
+  tr: {
+    "potentially-accredited": "Olası akredite yatırımcı göstergesi — lisanslı inceleme gerekli",
+    "potentially-eligible": "Olası uygun yatırımcı göstergesi — lisanslı inceleme gerekli",
+    "potentially-non-eligible": "Olası uygun olmayan yatırımcı göstergesi — lisanslı inceleme gerekli",
+    "manual-review": "Lisanslı inceleme gerekli",
+    review: [
+      "Bu yalnızca eğitim amaçlıdır. Uygunluk onayı veya izahname muafiyeti kararı değildir.",
+      "Lisanslı süreç; satın alan kişi bilgilerini, teklifin kullanılabilirliğini, suitability incelemesini, kanıtları ve uygulanacak teyit belgelerini doğrular.",
+    ],
+  },
+} as const;
+
 const selectCls =
   "h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50";
 const choiceCls =
@@ -81,13 +103,15 @@ export function InvestorProfile({ offerings }: { offerings: OfferingBundle[] }) 
   const params = useSearchParams();
   const { lang, t } = useLang();
   const p = t.capitalApp.profile;
+  const resultCopy = PUBLIC_RESULT_COPY[lang];
   const opt = (value: string) => p.options[value] ?? value;
 
   const initialOffering = offerings.find((o) => o.slug === params.get("offering")) ?? offerings[0];
   const [step, setStep] = useState(0);
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [result, setResult] = useState<{ preliminaryCategory: string; warnings: string[] }>();
-  const [form, setForm] = useState<Form>({ offeringId: initialOffering.id, shareClassId: params.get("shareClass") ?? initialOffering.shareClasses[0]?.id ?? "", jurisdiction: "ontario", firstName: "", lastName: "", email: "", phone: "", city: "", objective: "Balanced income and growth", horizon: "5+ years", riskTolerance: "Moderate", lossCapacity: "Some loss", liquidityNeed: "Low", experience: "Some private market experience", intendedAmount: "$25k-$100k", accountPreference: "Non-registered", qualificationCriteria: [], priorOmAmount: "0", registeredAdviceForHigherOmLimit: false, contactConsent: false, accuracyConsent: false });
+  const [turnstileToken, setTurnstileToken] = useState<string>();
+  const [form, setForm] = useState<Form>({ offeringId: initialOffering.id, shareClassId: params.get("shareClass") ?? initialOffering.shareClasses[0]?.id ?? "", jurisdiction: "ontario", firstName: "", lastName: "", email: "", phone: "", city: "", objective: "Balanced income and growth", horizon: "5+ years", riskTolerance: "Moderate", lossCapacity: "Some loss", liquidityNeed: "Low", experience: "Some private market experience", intendedAmount: "$25k-$100k", accountPreference: "Non-registered", qualificationCriteria: [], contactConsent: false, accuracyConsent: false });
   const offering = offerings.find((o) => o.id === form.offeringId) ?? offerings[0];
 
   useEffect(() => { try { const saved = localStorage.getItem("hunter-capital-readiness"); if (saved) setForm((current) => ({ ...current, ...JSON.parse(saved) })); } catch {} }, []);
@@ -99,7 +123,7 @@ export function InvestorProfile({ offerings }: { offerings: OfferingBundle[] }) 
   async function submit(event: FormEvent) {
     event.preventDefault();
     setStatus("sending");
-    const response = await fetch("/api/investor-readiness", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+    const response = await fetch("/api/investor-readiness", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, turnstileToken }) });
     if (response.ok) { const data = await response.json(); setResult(data); setStatus("success"); try { localStorage.removeItem("hunter-capital-readiness"); } catch {} } else setStatus("error");
   }
 
@@ -214,14 +238,7 @@ export function InvestorProfile({ offerings }: { offerings: OfferingBundle[] }) 
                       <span className="text-sm leading-snug text-foreground">{QUALIFICATION_COPY[lang].criteria[criterion]}</span>
                     </label>
                   ))}
-                  <div className="flex max-w-md flex-col gap-1.5 pt-2">
-                    <Label>{QUALIFICATION_COPY[lang].prior}</Label>
-                    <Input type="number" inputMode="decimal" min="0" step="1" value={form.priorOmAmount} onChange={(e) => update("priorOmAmount", e.target.value.replace(/[^0-9.]/g, ""))} />
-                  </div>
-                  <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-muted/40 p-3.5">
-                    <Checkbox checked={form.registeredAdviceForHigherOmLimit} onCheckedChange={(value) => update("registeredAdviceForHigherOmLimit", value === true)} className="mt-0.5" />
-                    <span className="text-sm leading-snug text-foreground">{QUALIFICATION_COPY[lang].advice}</span>
-                  </label>
+                  <p className="rounded-lg border border-border bg-muted/40 p-3.5 text-sm leading-relaxed text-muted-foreground">{QUALIFICATION_COPY[lang].reviewNote}</p>
                 </div>
               ) : (
                 <div className="rounded-xl border border-border bg-secondary/50 p-5">
@@ -253,11 +270,23 @@ export function InvestorProfile({ offerings }: { offerings: OfferingBundle[] }) 
               </div>
               {status === "success" && result ? (
                 <div className="rounded-xl border border-border bg-secondary/50 p-5">
-                  <strong className="font-serif text-lg capitalize text-foreground">{result.preliminaryCategory.replaceAll("-", " ")}</strong>
-                  {result.warnings.map((w) => <p key={w} className="mt-2 text-sm leading-relaxed text-muted-foreground">{w}</p>)}
+                  <strong className="font-serif text-lg text-foreground">{resultCopy[result.preliminaryCategory as "potentially-accredited" | "potentially-eligible" | "potentially-non-eligible" | "manual-review"] ?? resultCopy["manual-review"]}</strong>
+                  {resultCopy.review.map((notice) => <p key={notice} className="mt-2 text-sm leading-relaxed text-muted-foreground">{notice}</p>)}
                 </div>
               ) : (
-                <Button type="submit" disabled={status === "sending"} className="w-full">{status === "sending" ? p.submitting : p.submit}</Button>
+                <>
+                  <TurnstileField onToken={setTurnstileToken} />
+                  <Button
+                    type="submit"
+                    disabled={
+                      status === "sending" ||
+                      (Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) && !turnstileToken)
+                    }
+                    className="w-full"
+                  >
+                    {status === "sending" ? p.submitting : p.submit}
+                  </Button>
+                </>
               )}
               {status === "error" && <p className="text-sm text-destructive">{p.error}</p>}
             </section>

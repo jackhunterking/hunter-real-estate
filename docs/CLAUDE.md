@@ -23,7 +23,7 @@ Folding the old Kredibaba mortgage site into this one as a new **Mortgage** tab 
 
 1. **Do not import or port the Kredibaba logged-in app** (Dashboard, Documents, Properties, Realtors, Referrals, Toolkit, Supabase auth). It is parked. Marketing/content pages only.
 2. **Keep the two regulated identities separate.** RE/MAX Hallmark (real estate) and Real Mortgage Associates (mortgage) never share a disclosure block or brokerage label. Mortgage pages carry Real Mortgage Associates + Jack Hunter FSRA identity; real-estate pages carry RE/MAX.
-3. **Rates are manual only.** Use a `HERO_RATES` constant; if a rate is unavailable show `Güncelleniyor` — never invent, interpolate, or fetch a live rate. Always render the disclosure modal (rates are examples, not guaranteed, approval depends on file/lender).
+3. **Do not publish mortgage rates.** The product may explain that final pricing depends on the borrower, property, and lender, but it must not render current, sample, historical, or illustrative rate numbers.
 4. **Turkish-first.** All new UI copy is Turkish first, English second, through the i18n layer.
 5. **Reuse existing components and styling tokens.** Match the current design system; don't introduce a new color palette.
 
