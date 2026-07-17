@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import { getOfferings } from "@/lib/capital/repository";
+import { getPublishedOfferings } from "@/lib/capital/repository-server";
 import { ClientOnboarding } from "./ClientOnboarding";
 
-export default function NewClientPage() {
-  return <Suspense><ClientOnboarding offerings={getOfferings()} /></Suspense>;
+export default async function NewClientPage() {
+  return <Suspense><ClientOnboarding offerings={await getPublishedOfferings()} /></Suspense>;
 }

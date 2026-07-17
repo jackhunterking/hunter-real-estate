@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useT } from "@/lib/i18n/LanguageProvider";
+import { RMA } from "@/lib/mortgage/identity";
 import styles from "./ServicesSection.module.css";
 
 export default function ServicesSection() {
@@ -23,25 +25,27 @@ export default function ServicesSection() {
         </div>
 
         <div className={styles.grid}>
-          <article className={styles.card}>
+          <Link href="/rehber/alici" className={styles.card}>
+            <span className={styles.cardTag}>{s.buy.tag}</span>
             <h3 className={styles.cardTitle}>{s.buy.title}</h3>
             <p className={styles.cardDesc}>{s.buy.desc}</p>
-          </article>
+            <span className={styles.cardCta}>{s.buy.homeLabel} →</span>
+          </Link>
 
-          <article className={styles.card}>
-            <h3 className={styles.cardTitle}>{s.sell.title}</h3>
-            <p className={styles.cardDesc}>{s.sell.desc}</p>
-          </article>
-
-          <article className={styles.card}>
+          <Link href="/mortgage" className={styles.card}>
+            <span className={styles.cardTag}>{s.mortgage.tag}</span>
             <h3 className={styles.cardTitle}>{s.mortgage.title}</h3>
             <p className={styles.cardDesc}>{s.mortgage.desc}</p>
-          </article>
+            <p className={styles.cardDisclosure}>{RMA.licenceLine}</p>
+            <span className={styles.cardCta}>{s.mortgage.cta} →</span>
+          </Link>
 
-          <article className={styles.card}>
+          <Link href="/investing" className={styles.card}>
+            <span className={styles.cardTag}>{s.invest.tag}</span>
             <h3 className={styles.cardTitle}>{s.invest.title}</h3>
             <p className={styles.cardDesc}>{s.invest.desc}</p>
-          </article>
+            <span className={styles.cardCta}>{s.invest.cta} →</span>
+          </Link>
         </div>
       </div>
     </section>

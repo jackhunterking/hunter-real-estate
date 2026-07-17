@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getOfferings } from "@/lib/capital/repository";
+import { getPublishedOfferings } from "@/lib/capital/repository-server";
 import { assessOntarioInvestor } from "@/lib/capital/ontario-investor-assessment";
 import { READINESS_RULESET } from "@/lib/capital/readiness";
 import type { InvestorReadinessAnswer, InvestorReadinessCriterion } from "@/lib/capital/types";
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
   const { turnstileToken: _turnstileToken, ...input } = parsed.data;
   void _turnstileToken;
-  const offering = getOfferings().find((item) => item.id === input.offeringId);
+  const offering = (await getPublishedOfferings()).find((item) => item.id === input.offeringId);
   if (!offering || (input.shareClassId && !offering.shareClassIds.includes(input.shareClassId))) {
     return NextResponse.json({ error: "Unknown offering or share class" }, { status: 400 });
   }

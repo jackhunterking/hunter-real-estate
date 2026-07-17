@@ -29,6 +29,8 @@ import {
 import { FundMapEmbed } from "@/components/capital/map/FundMapEmbed";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { Panel } from "@/components/capital/north/PortalUI";
+import { InterestRequestButton } from "@/components/capital/north/InterestRequestButton";
+import { buildHncWhatsAppUrl } from "@/lib/capital/support";
 
 const TAB_IDS = ["overview", "terms", "portfolio", "documents", "contact"] as const;
 type TabId = (typeof TAB_IDS)[number];
@@ -81,8 +83,8 @@ const COPY = {
     nonEligible: "Potansiyel uygun olmayan yatırımcı",
     manual: "Manuel sınır ötesi inceleme gerekir",
     warning: "Bu sonuç onay, yatırım tavsiyesi veya yatırım limiti değildir.",
-    contactTitle: "Partner tarafından yönetilen bir sonraki adım",
-    contactBody: "Müşteri tanıştırmasını kaydedin veya fonla ilgili soruları Hunter North ekibiyle görüşün. KYC, suitability ve fon izni lisanslı süreçte tamamlanır.",
+    contactTitle: "İnsan destekli bir sonraki adım",
+    contactBody: "İlginizi kaydedin veya fonla ilgili soruları Hunter North ekibiyle görüşün. Uygunluk, yerindelik ve fon izni lisanslı süreçte tamamlanır; bu bir çevrimiçi satın alma değildir.",
     referral: "Müşteri ekle",
     whatsapp: "WhatsApp desteği",
   },
@@ -133,8 +135,8 @@ const COPY = {
     nonEligible: "Potentially non-eligible investor",
     manual: "Manual cross-border review required",
     warning: "This result is not approval, investment advice, or an investment limit.",
-    contactTitle: "A partner-led next step",
-    contactBody: "Record a client introduction or speak with Hunter North about the fund. KYC, suitability, and fund permission remain within the licensed process.",
+    contactTitle: "A human-assisted next step",
+    contactBody: "Record your interest or speak with Hunter North about the fund. Eligibility, suitability, and fund permission remain within the licensed process; this is not an online purchase.",
     referral: "Add client",
     whatsapp: "WhatsApp support",
   },
@@ -156,8 +158,6 @@ export function ProductDetailView({ offering }: { offering: OfferingBundle }) {
   const router = useRouter();
   const params = useSearchParams();
   const activeTab = (TAB_IDS.includes(params.get("tab") as TabId) ? params.get("tab") : "overview") as TabId;
-  const share = primaryShareClass(offering);
-  const vm = buildFundDetailViewModel(offering, lang);
 
   function setTab(tab: TabId) {
     const next = new URLSearchParams(params.toString());
@@ -261,7 +261,6 @@ function Documents({ offering, c, typeLabels }: { offering: OfferingBundle; c: C
 }
 
 function Contact({ offering, c }: { offering: OfferingBundle; c: Copy }) {
-  const { lang } = useLang();
-  const whatsapp = `https://wa.me/16473913311?text=${encodeURIComponent(`Hunter North Capital: ${offering.shortName[lang]}`)}`;
-  return <Panel className="p-6 sm:p-8"><div className="max-w-2xl"><p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#7b858e]">Hunter North Capital</p><h2 className="mt-3 font-serif text-2xl font-semibold text-[#142d40]">{c.contactTitle}</h2><p className="mt-3 text-sm leading-7 text-[#63727d]">{c.contactBody}</p><div className="mt-6 flex flex-wrap gap-3"><Link href={`${NORTH_BASE}/clients/new?offering=${offering.id}`} className="inline-flex h-10 items-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white hover:bg-[#123f5e]">{c.referral}<ArrowRight className="size-4" /></Link><a href={whatsapp} target="_blank" rel="noreferrer" className="inline-flex h-10 items-center gap-2 rounded-md border border-[#cfd7dc] px-4 text-sm font-semibold text-[#435561] hover:border-[#0a2d46]"><MessageCircle className="size-4" />{c.whatsapp}</a></div></div></Panel>;
+  const whatsapp = buildHncWhatsAppUrl(offering.slug);
+  return <Panel className="p-6 sm:p-8"><div className="max-w-2xl"><p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#7b858e]">Hunter North Capital</p><h2 className="mt-3 font-serif text-2xl font-semibold text-[#142d40]">{c.contactTitle}</h2><p className="mt-3 text-sm leading-7 text-[#63727d]">{c.contactBody}</p><div className="mt-6 flex flex-wrap gap-3"><InterestRequestButton offeringId={offering.id} /><Link href={`${NORTH_BASE}/clients/new?offering=${offering.id}`} className="inline-flex h-10 items-center gap-2 rounded-md border border-[#cfd7dc] px-4 text-sm font-semibold text-[#435561] hover:border-[#0a2d46]">{c.referral}<ArrowRight className="size-4" /></Link><a href={whatsapp} target="_blank" rel="noreferrer" className="inline-flex h-10 items-center gap-2 rounded-md border border-[#cfd7dc] px-4 text-sm font-semibold text-[#435561] hover:border-[#0a2d46]"><MessageCircle className="size-4" />{c.whatsapp}</a></div></div></Panel>;
 }

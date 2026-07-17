@@ -15,6 +15,7 @@ import { useLang } from "@/lib/i18n/LanguageProvider";
 import { usePortalAccess } from "./PortalAccessProvider";
 import { NORTH_BASE } from "./NorthBrand";
 import { PageHeader, Panel, SectionHeader, money, shortDate } from "./PortalUI";
+import { InterestRequestsPanel } from "./InterestRequestsPanel";
 
 const COPY = {
   tr: {
@@ -209,9 +210,9 @@ export function InvestmentsView({ offerings }: { offerings: OfferingBundle[] }) 
   );
 }
 
-export function ProfileView() {
+export function ProfileView({ offerings = [] }: { offerings?: OfferingBundle[] }) {
   const { lang } = useLang();
-  const { currentUser, currentOrganization, currentMembership } = usePortalAccess();
+  const { currentUser, currentOrganization, currentMembership, backendConfigured } = usePortalAccess();
   const c = COPY[lang];
 
   return (
@@ -232,6 +233,7 @@ export function ProfileView() {
           <p className="mt-2 text-sm text-[#65717e]">{currentOrganization?.legalName ?? (lang === "tr" ? "Aktif firma bağlantısı yok" : "No active firm association")}</p>
           {currentMembership && <p className="mt-3 text-xs text-[#75818b]">{currentMembership.workEmail}</p>}
         </Panel>
+        <InterestRequestsPanel offerings={offerings} enabled={backendConfigured} />
       </div>
     </div>
   );

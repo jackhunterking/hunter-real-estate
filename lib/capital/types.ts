@@ -180,6 +180,14 @@ export type ReferralStatus =
   | "accepted"
   | "funded";
 
+export const REFERRAL_STATUS_ORDER: ReferralStatus[] = [
+  "introduced",
+  "contacted",
+  "compliance-review",
+  "accepted",
+  "funded",
+];
+
 export type PartnerAddress = {
   line1?: string;
   line2?: string;

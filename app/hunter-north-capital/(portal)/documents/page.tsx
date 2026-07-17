@@ -1,6 +1,6 @@
-import { getOfferings } from "@/lib/capital/repository";
+import { getPublishedOfferings } from "@/lib/capital/repository-server";
 import { DocumentsLibrary } from "./DocumentsLibrary";
 
-export default function HunterNorthDocumentsPage() {
-  return <DocumentsLibrary offerings={getOfferings()} />;
+export default async function HunterNorthDocumentsPage() {
+  return <DocumentsLibrary offerings={await getPublishedOfferings()} />;
 }

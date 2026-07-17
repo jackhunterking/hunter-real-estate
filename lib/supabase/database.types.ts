@@ -31,6 +31,7 @@ export type Database = {
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };
     Enums: {
+      account_intent: "investor" | "turkiye_licensed_professional_or_firm";
       commission_beneficiary_type: "representative" | "organization";
       commission_status: "draft" | "approved" | "paid" | "void";
       document_access:
@@ -82,6 +83,10 @@ export type Database = {
         | "declined"
         | "withdrawn"
         | "closed";
+      investment_interest_status: "new" | "contacted" | "qualified" | "closed";
+      investor_account_type: "individual" | "entity";
+      onboarding_status: "pending" | "completed";
+      contact_channel: "email" | "phone" | "whatsapp";
       lead_status:
         | "new"
         | "reviewing"
@@ -242,6 +247,17 @@ export type Database = {
         account_preference: string | null;
         consent_snapshot: Json;
       }>;
+      investment_interest_requests: ApiView<{
+        id: string;
+        user_id: string;
+        offering_id: string;
+        message: string | null;
+        preferred_channel: Database["app"]["Enums"]["contact_channel"];
+        contact_consent_at: string;
+        status: Database["app"]["Enums"]["investment_interest_status"];
+        created_at: string;
+        updated_at: string;
+      }>;
       license_verification_events: ApiView<{
         id: string;
         application_id: string;
@@ -339,6 +355,14 @@ export type Database = {
         email: string;
         locale: string;
         account_status: string;
+        account_intent: Database["app"]["Enums"]["account_intent"] | null;
+        investor_account_type: Database["app"]["Enums"]["investor_account_type"] | null;
+        onboarding_status: Database["app"]["Enums"]["onboarding_status"];
+        residence_jurisdiction: string | null;
+        investment_objective: string | null;
+        time_horizon: string | null;
+        risk_acknowledged_at: string | null;
+        contact_consent_at: string | null;
         created_at: string;
         updated_at: string;
       }>;
@@ -391,6 +415,41 @@ export type Database = {
       add_lead_note: {
         Args: { p_lead_id: string; p_note: string };
         Returns: string;
+      };
+      complete_hnc_onboarding: {
+        Args: {
+          p_account_intent: Database["app"]["Enums"]["account_intent"];
+          p_investor_account_type: Database["app"]["Enums"]["investor_account_type"] | null;
+          p_residence_jurisdiction: string;
+          p_investment_objective: string;
+          p_time_horizon: string;
+          p_risk_acknowledged: boolean;
+          p_contact_consent: boolean;
+        };
+        Returns: undefined;
+      };
+      create_investment_interest: {
+        Args: {
+          p_offering_id: string;
+          p_message: string;
+          p_preferred_channel: Database["app"]["Enums"]["contact_channel"];
+          p_contact_consent: boolean;
+        };
+        Returns: string;
+      };
+      list_investment_interest_admin: {
+        Args: Record<PropertyKey, never>;
+        Returns: Array<{
+          id: string;
+          user_id: string;
+          offering_id: string;
+          message: string | null;
+          preferred_channel: Database["app"]["Enums"]["contact_channel"];
+          status: Database["app"]["Enums"]["investment_interest_status"];
+          reviewer_notes: string | null;
+          created_at: string;
+          updated_at: string;
+        }>;
       };
       assign_firm_membership_roles: {
         Args: {
@@ -521,6 +580,14 @@ export type Database = {
           p_user_id: string;
           p_role: Database["app"]["Enums"]["platform_role"];
           p_enabled: boolean;
+        };
+        Returns: undefined;
+      };
+      set_investment_interest_status: {
+        Args: {
+          p_interest_id: string;
+          p_status: Database["app"]["Enums"]["investment_interest_status"];
+          p_reviewer_notes: string;
         };
         Returns: undefined;
       };

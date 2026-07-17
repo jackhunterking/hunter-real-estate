@@ -1,6 +1,6 @@
-import { getOfferings } from "@/lib/capital/repository";
+import { getPublishedOfferings } from "@/lib/capital/repository-server";
 import { InvestorDashboard } from "@/components/capital/north/InvestorWorkspace";
 
-export default function HunterNorthDashboardPage() {
-  return <InvestorDashboard offerings={getOfferings()} />;
+export default async function HunterNorthDashboardPage() {
+  return <InvestorDashboard offerings={await getPublishedOfferings()} />;
 }

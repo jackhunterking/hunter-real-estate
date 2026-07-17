@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { ArrowRight, Building2, FileText, HandCoins, Plus, TrendingUp, UsersRound } from "lucide-react";
 import type { OfferingBundle, PartnerTier, ReferralStatus } from "@/lib/capital/types";
-import { partnerSummary } from "@/lib/capital/partner-data";
-import { PARTNER_COMMISSION_ALLOCATIONS } from "@/lib/capital/commissions";
+import { PARTNER_COMMISSION_ALLOCATIONS, PARTNER_TIER_THRESHOLDS, nextPartnerTier } from "@/lib/capital/commissions";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { fundHeadline, formatReturnPhrase, primaryShareClass } from "@/lib/capital/present";
 import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
@@ -12,6 +11,7 @@ import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { PageHeader, Panel, SectionHeader, money } from "@/components/capital/north/PortalUI";
 import { useClients } from "@/components/capital/north/ClientProvider";
 import { StageIndicator } from "@/components/capital/north/StageIndicator";
+import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider";
 
 const COPY = {
   tr: {
@@ -97,11 +97,20 @@ function statusClass(status: ReferralStatus) {
 export function DashboardView({ offerings }: { offerings: OfferingBundle[] }) {
   const { lang } = useLang();
   const { clients } = useClients();
+  const { currentUser, currentOrganization, dataset } = usePortalAccess();
   const c = COPY[lang];
-  const currentTierLabel = c.tierLabels[partnerSummary.tier];
-  const nextTierLabel = c.tierLabels[partnerSummary.nextTier];
-  const progress = (partnerSummary.annualClearedCapital / partnerSummary.nextTierThreshold) * 100;
-  const remaining = partnerSummary.nextTierThreshold - partnerSummary.annualClearedCapital;
+  const account = dataset.partnerAccounts.find((item) => item.userId === currentUser.id);
+  const tier = account?.tier ?? "associate";
+  const annualClearedCapital = account?.annualClearedCapital ?? 0;
+  const nextTier = nextPartnerTier(tier);
+  const nextThreshold = nextTier ? PARTNER_TIER_THRESHOLDS[nextTier] : PARTNER_TIER_THRESHOLDS.managingPartner;
+  const currentTierLabel = c.tierLabels[tier];
+  const nextTierLabel = nextTier ? c.tierLabels[nextTier] : currentTierLabel;
+  const progress = nextTier ? (annualClearedCapital / nextThreshold) * 100 : 100;
+  const remaining = Math.max(nextThreshold - annualClearedCapital, 0);
+  const activeProducts = currentOrganization
+    ? dataset.offeringAccess.filter((item) => item.organizationId === currentOrganization.id && ["approved", "on_shelf"].includes(item.status)).length
+    : 0;
 
   return (
     <div>
@@ -118,11 +127,11 @@ export function DashboardView({ offerings }: { offerings: OfferingBundle[] }) {
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {[
-          [c.cleared, money(partnerSummary.annualClearedCapital, lang), TrendingUp],
+          [c.cleared, money(annualClearedCapital, lang), TrendingUp],
           [c.tier, currentTierLabel, Building2],
-          [c.commission, `${PARTNER_COMMISSION_ALLOCATIONS[partnerSummary.tier]}%`, HandCoins],
+          [c.commission, `${PARTNER_COMMISSION_ALLOCATIONS[tier]}%`, HandCoins],
           [c.referrals, String(clients.length), UsersRound],
-          [c.products, String(partnerSummary.activeProducts), FileText],
+          [c.products, String(activeProducts), FileText],
         ].map(([label, value, Icon]) => (
           <Panel key={String(label)} className="p-5">
             <div className="flex items-start justify-between gap-3">
@@ -145,7 +154,7 @@ export function DashboardView({ offerings }: { offerings: OfferingBundle[] }) {
             <p className="mt-1 text-xs text-[#73808a]">{money(remaining, lang)} {c.remaining}</p>
           </div>
           <p className="text-sm font-semibold tabular-nums text-[#0a2d46]">
-            {money(partnerSummary.annualClearedCapital, lang)} / {money(partnerSummary.nextTierThreshold, lang)}
+            {money(annualClearedCapital, lang)} / {money(nextThreshold, lang)}
           </p>
         </div>
         <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#e7ebef]">

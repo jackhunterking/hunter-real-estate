@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
@@ -11,11 +11,11 @@ import { NORTH_BASE, NorthBrand } from "./NorthBrand";
 const COPY = {
   tr: {
     signIn: "Giriş yap",
-    signUp: "Yatırımcı hesabı oluştur",
+    signUp: "Hesap oluştur",
     signInTitle: "Hunter North hesabınıza giriş yapın",
-    signUpTitle: "Yatırımcı olarak başlayın",
+    signUpTitle: "Hunter North hesabınızı oluşturun",
     signInBody: "Yatırımlarınızı ve onaylanmış çalışma alanlarınızı güvenli şekilde görüntüleyin.",
-    signUpBody: "Her yeni hesap yatırımcı olarak başlar. Lisanslı partner başvurusu hesap içinden ayrıca yapılır.",
+    signUpBody: "E-posta doğrulamasından sonra Yatırımcı veya Türkiye lisanslı profesyonel/firma yolunu seçin.",
     firstName: "Ad",
     lastName: "Soyad",
     email: "E-posta",
@@ -28,14 +28,15 @@ const COPY = {
     preview: "Yerel portal önizlemesini aç",
     notConfigured: "Supabase bilgileri henüz bağlanmadığı için yerel önizleme kullanılabilir.",
     error: "İşlem tamamlanamadı.",
+    benefits: ["Önce yatırımcı erişimi", "Ayrı firma bağlantılı partner onayı", "Gizlilik açısından ayrılmış müşteri kayıtları"],
   },
   en: {
     signIn: "Sign in",
-    signUp: "Create investor account",
+    signUp: "Create account",
     signInTitle: "Sign in to Hunter North",
-    signUpTitle: "Start as an investor",
+    signUpTitle: "Create your Hunter North account",
     signInBody: "Securely access your investments and approved workspaces.",
-    signUpBody: "Every account starts as an investor. Licensed-partner access is requested separately inside the portal.",
+    signUpBody: "After verifying your email, choose the Investor or Türkiye-licensed professional/firm path.",
     firstName: "First name",
     lastName: "Last name",
     email: "Email",
@@ -48,6 +49,7 @@ const COPY = {
     preview: "Open local portal preview",
     notConfigured: "Supabase credentials are not connected yet, so the local preview remains available.",
     error: "The request could not be completed.",
+    benefits: ["Investor-first access", "Separate firm-affiliated partner approval", "Privacy-isolated client records"],
   },
 } as const;
 
@@ -58,6 +60,11 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [continuationSearch, setContinuationSearch] = useState("");
+
+  useEffect(() => {
+    setContinuationSearch(window.location.search);
+  }, []);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -77,18 +84,31 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
       if (mode === "sign-in") {
         const result = await client.auth.signInWithPassword({ email, password });
         if (result.error) throw result.error;
-        window.location.assign(`${NORTH_BASE}/dashboard`);
+        const query = new URLSearchParams(window.location.search);
+        const continuation = new URLSearchParams();
+        const offering = query.get("offering");
+        const path = query.get("path");
+        if (offering) continuation.set("offering", offering);
+        if (path === "professional" || path === "investor") continuation.set("path", path);
+        window.location.assign(continuation.size ? `${NORTH_BASE}/onboarding?${continuation.toString()}` : `${NORTH_BASE}/dashboard`);
         return;
       }
 
       const firstName = String(form.get("firstName") ?? "").trim();
       const lastName = String(form.get("lastName") ?? "").trim();
+      const query = new URLSearchParams(window.location.search);
+      const onboardingQuery = new URLSearchParams();
+      const offering = query.get("offering");
+      const path = query.get("path");
+      if (offering) onboardingQuery.set("offering", offering);
+      if (path === "professional" || path === "investor") onboardingQuery.set("path", path);
+      const onboarding = `${NORTH_BASE}/onboarding${onboardingQuery.size ? `?${onboardingQuery.toString()}` : ""}`;
       const result = await client.auth.signUp({
         email,
         password,
         options: {
           data: { first_name: firstName, last_name: lastName, locale: lang },
-          emailRedirectTo: `${window.location.origin}${NORTH_BASE}/auth/confirm?next=${encodeURIComponent(`${NORTH_BASE}/dashboard`)}`,
+          emailRedirectTo: `${window.location.origin}${NORTH_BASE}/auth/confirm?next=${encodeURIComponent(onboarding)}`,
         },
       });
       if (result.error) throw result.error;
@@ -123,11 +143,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
               {mode === "sign-in" ? c.signInBody : c.signUpBody}
             </p>
             <ul className="mt-8 space-y-3 text-sm text-white/70">
-              {[
-                "Investor-first account",
-                "Firm-affiliated partner approval",
-                "Privacy-isolated client books",
-              ].map((item) => (
+              {c.benefits.map((item) => (
                 <li key={item} className="flex items-center gap-2">
                   <CheckCircle2 className="size-4 text-[#d8bf7a]" />
                   {item}
@@ -167,7 +183,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
             </form>
 
             <div className="mt-7 border-t border-[#e4e8eb] pt-5">
-              <Link href={`${NORTH_BASE}/${mode === "sign-in" ? "sign-up" : "sign-in"}`} className="text-sm font-semibold text-[#0a4b72] hover:underline">
+              <Link href={`${NORTH_BASE}/${mode === "sign-in" ? "sign-up" : "sign-in"}${continuationSearch}`} className="text-sm font-semibold text-[#0a4b72] hover:underline">
                 {mode === "sign-in" ? c.switchToSignUp : c.switchToSignIn}
               </Link>
               {!configured && (

@@ -5,6 +5,12 @@ const HUNTER_NORTH_HOSTS = new Set([
   "hunternorthcapital.com",
   "www.hunternorthcapital.com",
 ]);
+const JACK_HOSTS = new Set([
+  "jackhunter.com",
+  "www.jackhunter.com",
+  "jackvetara.com",
+  "www.jackvetara.com",
+]);
 const INTERNAL_PREFIX = "/hunter-north-capital";
 
 export async function middleware(request: NextRequest) {
@@ -13,6 +19,20 @@ export async function middleware(request: NextRequest) {
   const internalPortalRequest =
     request.nextUrl.pathname === INTERNAL_PREFIX ||
     request.nextUrl.pathname.startsWith(`${INTERNAL_PREFIX}/`);
+
+  const legacyCapitalRequest =
+    request.nextUrl.pathname === "/hunter-group-capital" ||
+    request.nextUrl.pathname.startsWith("/hunter-group-capital/") ||
+    request.nextUrl.pathname === "/hunter-x-capital" ||
+    request.nextUrl.pathname.startsWith("/hunter-x-capital/") ||
+    request.nextUrl.pathname === INTERNAL_PREFIX ||
+    request.nextUrl.pathname.startsWith(`${INTERNAL_PREFIX}/`);
+  if (!dedicatedHost && JACK_HOSTS.has(host) && legacyCapitalRequest) {
+    const destination = request.nextUrl.clone();
+    destination.pathname = "/investing";
+    destination.search = "";
+    return NextResponse.redirect(destination, 301);
+  }
 
   if (!dedicatedHost && !internalPortalRequest) return NextResponse.next();
 

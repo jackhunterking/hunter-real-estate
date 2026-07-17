@@ -22,6 +22,8 @@ const COPY = {
     size: "Fon büyüklüğü",
     updated: "Raporlama tarihi",
     noResults: "Şu anda görüntülenecek fon bulunmuyor.",
+    availability: { available: "İncelemeye açık", information: "Daha fazla bilgi gerekli", review: "Lisanslı inceleme gerekli" },
+    preliminary: "Ön erişim göstergesidir; onay, suitability veya doğrulanmış uygunluk değildir.",
   },
   en: {
     eyebrow: "Investment solutions",
@@ -35,6 +37,8 @@ const COPY = {
     size: "Fund size",
     updated: "Reporting date",
     noResults: "There are no funds to show right now.",
+    availability: { available: "Available to review", information: "More information needed", review: "Licensed review required" },
+    preliminary: "A preliminary access indicator—not approval, suitability, or confirmed eligibility.",
   },
 } as const;
 
@@ -67,6 +71,11 @@ export function ProductsExplorer({ offerings }: { offerings: OfferingBundle[] })
         <div className="grid gap-5 xl:grid-cols-2">
           {offerings.map((offering) => {
             const share = primaryShareClass(offering);
+            const availability = offering.status !== "available"
+              ? "information"
+              : offering.complianceProfile.approvedOntarioExemptions.length
+                ? "available"
+                : "review";
             return (
               <article key={offering.id} className="overflow-hidden rounded-md border border-[#dbe1e5] bg-white shadow-[0_1px_2px_rgba(10,28,43,0.04)]">
                 <ProductVisual offering={offering} lang={lang} />
@@ -80,6 +89,7 @@ export function ProductsExplorer({ offerings }: { offerings: OfferingBundle[] })
                       {c.strategy} · {taxonomyLabel(strategies, offering.strategyIds[0], lang)}
                     </span>
                   </div>
+                  <div className="mt-4"><span className={`inline-flex rounded px-2.5 py-1 text-[10px] font-bold ${availability === "available" ? "bg-[#e8f2ec] text-[#2d6849]" : availability === "review" ? "bg-[#f7efd9] text-[#7b5c19]" : "bg-[#eaf0f5] text-[#3c5d75]"}`}>{c.availability[availability]}</span><p className="mt-2 text-[10px] leading-5 text-[#7b858e]">{c.preliminary}</p></div>
                   <p className="mt-4 min-h-12 text-sm leading-6 text-[#5f6d78]">{offering.summary[lang]}</p>
                   <dl className="mt-5 grid grid-cols-2 gap-x-5 gap-y-4 border-y border-[#e6eaed] py-4 sm:grid-cols-4">
                     <div><dt className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#7b858e]">{c.minimum}</dt><dd className="mt-1 text-sm font-semibold text-[#243845]">{share?.minimumInvestment ? formatCurrencyCad(share.minimumInvestment.value, lang) : "—"}</dd></div>

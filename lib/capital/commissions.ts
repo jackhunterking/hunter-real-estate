@@ -12,6 +12,18 @@ export const PARTNER_COMMISSION_ALLOCATIONS: Record<
   managingPartner: 50,
 };
 
+export const PARTNER_TIER_THRESHOLDS: Record<PartnerTier, number> = {
+  associate: 50_000,
+  principal: 1_000_000,
+  managingPartner: 5_000_000,
+};
+
+export function nextPartnerTier(tier: PartnerTier): PartnerTier | null {
+  if (tier === "associate") return "principal";
+  if (tier === "principal") return "managingPartner";
+  return null;
+}
+
 export function commissionAllocationForTier(
   tier: PartnerTier,
 ): PartnerCommissionAllocationPercentage {

@@ -2,7 +2,7 @@
 
 import { CircleDollarSign, LockKeyhole } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
-import { getOfferings } from "@/lib/capital/repository";
+import type { OfferingBundle } from "@/lib/capital/types";
 import { PageHeader, Panel, money, shortDate } from "./PortalUI";
 import { usePortalAccess } from "./PortalAccessProvider";
 
@@ -43,11 +43,10 @@ const COPY = {
   },
 } as const;
 
-export function RepresentativeCommissions() {
+export function RepresentativeCommissions({ offerings }: { offerings: OfferingBundle[] }) {
   const { lang } = useLang();
   const { currentUser, commissions } = usePortalAccess();
   const c = COPY[lang];
-  const offerings = getOfferings();
   const entries = commissions.filter(
     (entry) =>
       entry.beneficiaryType === "representative" &&

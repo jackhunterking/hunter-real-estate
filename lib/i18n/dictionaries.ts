@@ -45,13 +45,13 @@ export const tr = {
     services: {
       eyebrow: "Hizmetlerimiz",
       title: "Tek çatı altında,",
-      titleEm: "dört hizmet.",
-      sub: "Alım, satım, mortgage ve yatırım, her aşamada yanınızdayız.",
+      titleEm: "üç uzmanlık.",
+      sub: "Gayrimenkul, mortgage finansmanı ve özel piyasalar için birbirinden ayrılmış, profesyonel süreçler.",
       buy: {
         tag: "RE/MAX Hallmark",
-        title: "Alım",
-        desc: "Doğru mülkü doğru fiyata buluruz.",
-        homeLabel: "Ev Alım Rehberi",
+        title: "Gayrimenkul",
+        desc: "RE/MAX Hallmark altyapısıyla alım, satım ve stratejik mülk danışmanlığı.",
+        homeLabel: "Gayrimenkul rehberi",
       },
       sell: {
         tag: "RE/MAX Hallmark",
@@ -61,15 +61,15 @@ export const tr = {
       },
       mortgage: {
         tag: "Real Mortgage Associates · FSRA",
-        title: "Mortgage",
-        desc: "Mortgage, yenileme ve ev değerinden yararlanma.",
+        title: "Mortgage Finansmanı",
+        desc: "Mortgage Agent lisansı kapsamında mortgage, yenileme, yeniden finansman ve ev değerinden yararlanma eğitimi.",
         cta: "Mortgage seçenekleri",
       },
       invest: {
         tag: "Hunter North Capital",
-        title: "Yatırım",
-        desc: "GYO yapısıyla çoklu konut fırsatlarını inceleyin.",
-        cta: "Hunter North Capital'ı Keşfedin",
+        title: "Özel Piyasalar",
+        desc: "Yayımlanmış fonları ayrı Hunter North Capital platformunda inceleyin; süreç insan destekli ve lisanslı incelemeye tabidir.",
+        cta: "Hunter North Capital'a geçiş",
       },
     },
     guides: {
@@ -926,13 +926,13 @@ export const en: Dictionary = {
     services: {
       eyebrow: "Our Services",
       title: "One group,",
-      titleEm: "four services.",
-      sub: "Buying, selling, mortgages, and investment, by your side at every step.",
+      titleEm: "three practices.",
+      sub: "Distinct, professional processes for real estate, mortgage financing, and private markets.",
       buy: {
         tag: "RE/MAX Hallmark",
-        title: "Buying",
-        desc: "The right property at the right price.",
-        homeLabel: "Buyer's Guide",
+        title: "Real Estate",
+        desc: "Buying, selling, and strategic property advice backed by RE/MAX Hallmark.",
+        homeLabel: "Real estate guide",
       },
       sell: {
         tag: "RE/MAX Hallmark",
@@ -942,15 +942,15 @@ export const en: Dictionary = {
       },
       mortgage: {
         tag: "Real Mortgage Associates · FSRA",
-        title: "Mortgage",
-        desc: "Mortgages, renewal, and home-equity options.",
+        title: "Mortgage Financing",
+        desc: "Education on mortgages, renewals, refinancing, and home-equity options within the Mortgage Agent licence scope.",
         cta: "Mortgage options",
       },
       invest: {
         tag: "Hunter North Capital",
-        title: "Investment",
-        desc: "Explore multifamily opportunities through a REIT structure.",
-        cta: "Explore Hunter North Capital",
+        title: "Private Markets",
+        desc: "Review published funds on the separate Hunter North Capital platform; the process is human-assisted and subject to licensed review.",
+        cta: "Continue to Hunter North Capital",
       },
     },
     guides: {

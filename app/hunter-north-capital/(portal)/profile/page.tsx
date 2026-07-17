@@ -1,5 +1,6 @@
 import { ProfileView } from "@/components/capital/north/InvestorWorkspace";
+import { getPublishedOfferings } from "@/lib/capital/repository-server";
 
-export default function HunterNorthProfilePage() {
-  return <ProfileView />;
+export default async function HunterNorthProfilePage() {
+  return <ProfileView offerings={await getPublishedOfferings()} />;
 }

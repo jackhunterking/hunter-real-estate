@@ -61,6 +61,9 @@ export type PortalUser = {
   locale: "en" | "tr";
   emailVerified: boolean;
   accountStatus: "active" | "suspended";
+  accountIntent?: "investor" | "turkiye_licensed_professional_or_firm";
+  investorAccountType?: "individual" | "entity";
+  onboardingStatus?: "pending" | "completed";
   platformRoles: PlatformRole[];
 };
 

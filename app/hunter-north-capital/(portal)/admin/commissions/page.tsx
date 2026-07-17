@@ -1,6 +1,6 @@
 import { AdminWorkspace } from "@/components/capital/north/AdminWorkspace";
-import { getOfferings } from "@/lib/capital/repository";
+import { getPublishedOfferings } from "@/lib/capital/repository-server";
 
-export default function CommissionsAdminPage() {
-  return <AdminWorkspace section="commissions" offerings={getOfferings()} />;
+export default async function CommissionsAdminPage() {
+  return <AdminWorkspace section="commissions" offerings={await getPublishedOfferings()} />;
 }

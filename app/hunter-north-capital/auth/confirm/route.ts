@@ -5,7 +5,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function safeNext(value: string | null) {
   if (!value || !value.startsWith(NORTH_BASE) || value.startsWith("//")) {
-    return `${NORTH_BASE}/dashboard`;
+    return `${NORTH_BASE}/onboarding`;
   }
   return value;
 }

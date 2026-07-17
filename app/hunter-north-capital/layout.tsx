@@ -4,11 +4,11 @@ import "./north.css";
 export const metadata: Metadata = {
   title: { absolute: "Hunter North Capital" },
   description:
-    "A partner platform for Canadian private-market real estate funds, institutional materials, and client coordination.",
+    "Review published Canadian private real-estate funds, understand their terms and risks, and create an account to speak with Hunter North Capital.",
   alternates: { canonical: "https://hunternorthcapital.com" },
   openGraph: {
     title: "Hunter North Capital",
-    description: "Canadian Private Markets Access for institutional distribution partners.",
+    description: "Published Canadian private real-estate funds with a human-supported account and review process.",
     siteName: "Hunter North Capital",
     type: "website",
     locale: "tr_TR",

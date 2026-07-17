@@ -15,7 +15,7 @@ import {
   INDIVIDUAL_ACCREDITED_CRITERIA,
   INDIVIDUAL_ELIGIBLE_CRITERIA,
 } from "@/lib/capital/ontario-investor-assessment";
-import { getOfferings } from "@/lib/capital/repository";
+import type { OfferingBundle } from "@/lib/capital/types";
 import { READINESS_RULESET } from "@/lib/capital/readiness";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { useClients } from "@/components/capital/north/ClientProvider";
@@ -98,11 +98,10 @@ const COPY = {
 
 const fieldClass = "h-10 w-full rounded-md border border-[#d5dce1] bg-white px-3 text-sm outline-none focus:border-[#0a4b72]";
 
-export function InvestorReadinessTool() {
+export function InvestorReadinessTool({ offerings }: { offerings: OfferingBundle[] }) {
   const { lang } = useLang();
   const c = COPY[lang];
   const { clients, createProspect, saveInvestorAssessment } = useClients();
-  const offerings = useMemo(() => getOfferings(), []);
   const [step, setStep] = useState(0);
   const [mode, setMode] = useState<ClientMode>("existing");
   const [selectedClientId, setSelectedClientId] = useState("");
@@ -339,7 +338,7 @@ function OfferingPurchaseFacts({
   accountType: ClientAccountType;
   copy: Copy;
   lang: "en" | "tr";
-  offerings: ReturnType<typeof getOfferings>;
+  offerings: OfferingBundle[];
   offeringId: string;
   onOfferingChange: (value: string) => void;
   proposedAcquisitionCost: string;

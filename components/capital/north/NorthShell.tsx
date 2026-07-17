@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  MessageSquareText,
   PackageCheck,
   PanelLeftClose,
   PanelLeftOpen,
@@ -127,6 +128,7 @@ const NAVIGATION: Record<"tr" | "en", Record<PortalWorkspace, NavigationItem[]>>
     ],
     admin: [
       { href: "/admin/leads", label: "Lead gelen kutusu", icon: ClipboardCheck },
+      { href: "/admin/interests", label: "Fon ilgi talepleri", icon: MessageSquareText },
       { href: "/admin/partner-applications", label: "Partner başvuruları", icon: ClipboardCheck },
       { href: "/admin/license-verifications", label: "SPL doğrulamaları", icon: BadgeCheck },
       { href: "/admin/firms", label: "Firmalar", icon: Building2 },
@@ -159,6 +161,7 @@ const NAVIGATION: Record<"tr" | "en", Record<PortalWorkspace, NavigationItem[]>>
     ],
     admin: [
       { href: "/admin/leads", label: "Lead inbox", icon: ClipboardCheck },
+      { href: "/admin/interests", label: "Fund interest requests", icon: MessageSquareText },
       { href: "/admin/partner-applications", label: "Partner applications", icon: ClipboardCheck },
       { href: "/admin/license-verifications", label: "SPL verifications", icon: BadgeCheck },
       { href: "/admin/firms", label: "Firms", icon: Building2 },

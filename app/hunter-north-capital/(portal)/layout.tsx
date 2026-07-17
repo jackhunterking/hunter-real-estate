@@ -5,6 +5,10 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { loadPortalSnapshot } from "@/lib/capital/portal-server";
 import { redirect } from "next/navigation";
 
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 export default async function HunterNorthPortalLayout({ children }: { children: React.ReactNode }) {
   const configured = isSupabaseConfigured();
   const snapshot = configured ? await loadPortalSnapshot() : null;
@@ -13,6 +17,9 @@ export default async function HunterNorthPortalLayout({ children }: { children: 
     process.env.HNC_REQUIRE_AUTH === "true";
   if (requireAuth && (!configured || !snapshot)) {
     redirect("/hunter-north-capital/sign-in");
+  }
+  if (snapshot?.user.onboardingStatus === "pending") {
+    redirect("/hunter-north-capital/onboarding");
   }
 
   return (

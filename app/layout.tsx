@@ -30,6 +30,9 @@ export const metadata: Metadata = {
   },
   description:
     "Toronto Merkezli Türk Emlak Grubu. Jack & Tara Hunter, RE/MAX Hallmark ile Toronto ve GTA'da alım, satım ve yatırım.",
+  alternates: {
+    canonical: "https://jackhunter.com",
+  },
   icons: {
     icon: [
       { url: "/logos/HUNTER_Brandmark_Gold.png", type: "image/png" },

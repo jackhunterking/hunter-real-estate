@@ -46,7 +46,7 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
     supabase.auth.getUser(),
     supabase
       .from("profiles")
-      .select("user_id,first_name,middle_names,last_name,display_name,email,locale,account_status"),
+      .select("user_id,first_name,middle_names,last_name,display_name,email,locale,account_status,account_intent,investor_account_type,onboarding_status"),
     supabase
       .from("platform_role_assignments")
       .select("user_id,role"),
@@ -103,6 +103,9 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
     locale: profile.locale === "en" ? "en" : "tr",
     emailVerified: Boolean(authUserResult.data.user?.email_confirmed_at) || profile.user_id !== userId,
     accountStatus: profile.account_status === "suspended" ? "suspended" : "active",
+    accountIntent: profile.account_intent ?? undefined,
+    investorAccountType: profile.investor_account_type ?? undefined,
+    onboardingStatus: profile.onboarding_status,
     platformRoles: roleRows
       .filter((role) => role.user_id === profile.user_id)
       .map((role) => role.role),

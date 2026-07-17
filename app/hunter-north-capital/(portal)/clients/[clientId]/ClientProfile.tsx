@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, CheckCircle2, Clock3, Download, Eye, FileCheck2, FileText, FolderLock, LockKeyhole, Mail, MapPin, Phone, Plus, ShieldCheck, Trash2, Upload, UserRound, X } from "lucide-react";
 import type { ClientDocument, ClientDocumentCategory, ClientDocumentStatus, ClientRecord, OfferingBundle, ReferralStatus } from "@/lib/capital/types";
-import { REFERRAL_STATUS_ORDER } from "@/lib/capital/partner-data";
+import { REFERRAL_STATUS_ORDER } from "@/lib/capital/types";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { useClients } from "@/components/capital/north/ClientProvider";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
