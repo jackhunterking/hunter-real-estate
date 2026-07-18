@@ -4,6 +4,7 @@ import { PortalAccessProvider } from "@/components/capital/north/PortalAccessPro
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { loadPortalSnapshot } from "@/lib/capital/portal-server";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 
 export const metadata = {
   robots: { index: false, follow: false },
@@ -16,7 +17,9 @@ export default async function HunterNorthPortalLayout({ children }: { children: 
     process.env.NODE_ENV === "production" ||
     process.env.HNC_REQUIRE_AUTH === "true";
   if (requireAuth && (!configured || !snapshot)) {
-    redirect("/hunter-north-capital/sign-in");
+    const requestedPath = (await headers()).get("x-hnc-path");
+    const next = requestedPath?.startsWith("/hunter-north-capital/") ? `?next=${encodeURIComponent(requestedPath)}` : "";
+    redirect(`/hunter-north-capital/sign-in${next}`);
   }
   if (snapshot?.user.onboardingStatus === "pending") {
     redirect("/hunter-north-capital/onboarding");

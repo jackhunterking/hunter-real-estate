@@ -8,9 +8,7 @@ import {
   useState,
 } from "react";
 import {
-  availableWorkspaces,
   canAccessPath,
-  canUseWorkspace,
   latestLicenseVerification,
   latestPartnerApplication,
   maskLicenceNumber,
@@ -29,7 +27,6 @@ import {
   type PortalAccessContext as AccessContext,
   type PortalDataset,
   type PortalUser,
-  type PortalWorkspace,
   type PreviewPersona,
 } from "@/lib/capital/portal-access";
 import {
@@ -39,30 +36,14 @@ import {
 import { calculateFundDistributionCommission } from "@/lib/capital/commissions";
 import { portalRequest } from "@/lib/capital/portal-client";
 
-type NewOrganizationInput = Pick<
-  Organization,
-  | "legalName"
-  | "tradingName"
-  | "firmType"
-  | "website"
-  | "businessDomain"
-  | "spkRegistration"
-  | "registeredAddress"
-  | "authorizedContact"
-  | "complianceContact"
-  | "authorizationEvidenceFilename"
->;
-
 export type PartnerApplicationInput = {
-  organizationId?: string;
-  newOrganization?: NewOrganizationInput;
+  firmName: string;
   registeredFirstNames: string;
   registryLastName: string;
   licenceDocumentNumber: string;
   licenceType: string;
   professionalTitle: string;
   firmWorkEmail: string;
-  evidenceFilename?: string;
   lookupConsent: boolean;
   accuracyConsent: boolean;
 };
@@ -96,8 +77,6 @@ type PortalAccessValue = {
   dataset: PortalDataset;
   currentUser: PortalUser;
   context: AccessContext;
-  workspace: PortalWorkspace;
-  workspaces: PortalWorkspace[];
   previewPersona: PreviewPersona;
   previewEnabled: boolean;
   backendConfigured: boolean;
@@ -108,7 +87,6 @@ type PortalAccessValue = {
   activationIssues: string[];
   commissions: CommissionEntry[];
   memberDirectory: ReturnType<typeof visibleMemberDirectory>;
-  setWorkspace: (workspace: PortalWorkspace) => void;
   setPreviewPersona: (persona: PreviewPersona) => void;
   canAccess: (pathname: string) => boolean;
   submitPartnerApplication: (input: PartnerApplicationInput) => Promise<string>;
@@ -180,15 +158,12 @@ export function PortalAccessProvider({
 }) {
   const [dataset, setDataset] = useState<PortalDataset>(() => copyDataset(initialDataset));
   const [previewPersona, setPreviewPersonaState] = useState<PreviewPersona>("partner");
-  const [workspace, setWorkspaceState] = useState<PortalWorkspace>("partner");
 
   useEffect(() => {
     if (!previewEnabled) return;
     try {
       const savedPersona = window.localStorage.getItem("hnc-preview-persona") as PreviewPersona | null;
-      const savedWorkspace = window.localStorage.getItem("hnc-workspace") as PortalWorkspace | null;
       if (savedPersona) setPreviewPersonaState(savedPersona);
-      if (savedWorkspace) setWorkspaceState(savedWorkspace);
     } catch {
       // Preview state remains deterministic when local storage is unavailable.
     }
@@ -196,23 +171,6 @@ export function PortalAccessProvider({
 
   const currentUser = initialUser ?? demoUserForPersona(previewPersona);
   const context = useMemo(() => ({ user: currentUser, dataset }), [currentUser, dataset]);
-  const workspaces = useMemo(() => availableWorkspaces(context), [context]);
-
-  useEffect(() => {
-    if (!workspaces.includes(workspace)) {
-      setWorkspaceState(workspaces[0] ?? "investor");
-    }
-  }, [workspace, workspaces]);
-
-  function setWorkspace(next: PortalWorkspace) {
-    if (!canUseWorkspace(context, next)) return;
-    setWorkspaceState(next);
-    try {
-      window.localStorage.setItem("hnc-workspace", next);
-    } catch {
-      // Workspace still changes for the active visit.
-    }
-  }
 
   function setPreviewPersona(persona: PreviewPersona) {
     if (!previewEnabled) return;
@@ -237,8 +195,9 @@ export function PortalAccessProvider({
       !input.registryLastName.trim() ||
       !input.licenceDocumentNumber.trim() ||
       !input.licenceType.trim() ||
+      !input.professionalTitle.trim() ||
+      !input.firmName.trim() ||
       !input.firmWorkEmail.trim() ||
-      (!input.organizationId && !input.newOrganization) ||
       !input.lookupConsent ||
       !input.accuracyConsent
     ) {
@@ -246,7 +205,7 @@ export function PortalAccessProvider({
     }
     if (backendConfigured) {
       const data = await persistPortalAction("submitPartnerApplication", {
-        organizationId: input.organizationId || null,
+        firmName: input.firmName.trim(),
         registeredFirstNames: input.registeredFirstNames.trim(),
         registryLastName: input.registryLastName.trim(),
         normalizedRegistryLastName: normalizeRegistrySurname(input.registryLastName),
@@ -254,32 +213,26 @@ export function PortalAccessProvider({
         licenceType: input.licenceType.trim(),
         professionalTitle: input.professionalTitle.trim(),
         firmWorkEmail: input.firmWorkEmail.trim().toLocaleLowerCase("en"),
-        evidenceStoragePath: input.evidenceFilename || null,
-        newFirmLegalName: input.newOrganization?.legalName || null,
-        newFirmTradingName: input.newOrganization?.tradingName || null,
-        newFirmType: input.newOrganization?.firmType || null,
-        newFirmWebsite: input.newOrganization?.website || null,
-        newFirmBusinessDomain: input.newOrganization?.businessDomain || null,
-        newFirmSpkRegistration: input.newOrganization?.spkRegistration || null,
-        newFirmRegisteredAddress: input.newOrganization?.registeredAddress || null,
-        newFirmAuthorizedContact: input.newOrganization?.authorizedContact || null,
-        newFirmComplianceContact: input.newOrganization?.complianceContact || null,
-        newFirmEvidenceStoragePath:
-          input.newOrganization?.authorizationEvidenceFilename || null,
       });
       window.location.reload();
       return String(data);
     }
     const now = timestamp();
     const applicationId = `application-${Date.now()}`;
-    let organizationId = input.organizationId;
+    let organizationId: string | undefined;
     setDataset((current) => {
       const next = copyDataset(current);
-      if (!organizationId && input.newOrganization) {
+      const normalizedFirmName = input.firmName.trim().toLocaleLowerCase("en");
+      organizationId = next.organizations.find(
+        (organization) =>
+          organization.legalName.trim().toLocaleLowerCase("en") === normalizedFirmName,
+      )?.id;
+      if (!organizationId) {
         organizationId = `org-${Date.now()}`;
         next.organizations.unshift({
           id: organizationId,
-          ...input.newOrganization,
+          legalName: input.firmName.trim(),
+          firmType: "pending_review",
           status: "pending",
         });
       }
@@ -296,7 +249,6 @@ export function PortalAccessProvider({
         licenceType: input.licenceType,
         professionalTitle: input.professionalTitle.trim(),
         firmWorkEmail: input.firmWorkEmail.trim().toLocaleLowerCase("en"),
-        evidenceFilename: input.evidenceFilename,
         lookupConsent: input.lookupConsent,
         accuracyConsent: input.accuracyConsent,
         status: "submitted",
@@ -717,8 +669,6 @@ export function PortalAccessProvider({
       dataset,
       currentUser,
       context,
-      workspace,
-      workspaces,
       previewPersona,
       previewEnabled,
       backendConfigured,
@@ -729,7 +679,6 @@ export function PortalAccessProvider({
       activationIssues: partnerActivationIssues(context),
       commissions: visibleCommissions(context),
       memberDirectory: visibleMemberDirectory(context),
-      setWorkspace,
       setPreviewPersona,
       canAccess: (pathname) => canAccessPath(context, pathname),
       submitPartnerApplication,
@@ -750,8 +699,6 @@ export function PortalAccessProvider({
       dataset,
       previewEnabled,
       previewPersona,
-      workspace,
-      workspaces,
     ],
   );
 

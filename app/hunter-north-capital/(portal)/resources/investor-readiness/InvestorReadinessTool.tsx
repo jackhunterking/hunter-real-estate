@@ -1,398 +1,956 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, ExternalLink, RotateCcw, ShieldCheck, UserPlus, UsersRound } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  Building2,
+  Check,
+  CheckCircle2,
+  CircleDollarSign,
+  ExternalLink,
+  Globe2,
+  MapPin,
+  RotateCcw,
+  ShieldCheck,
+  UserPlus,
+  UserRound,
+} from "lucide-react";
 import type {
   ClientAccountType,
   ClientJurisdiction,
+  InvestorFinancialResult,
+  InvestorJurisdictionReview,
   InvestorReadinessAnswer,
   InvestorReadinessCriterion,
+  InvestorReadinessReviewReason,
 } from "@/lib/capital/types";
 import {
-  assessOntarioInvestor,
-  ENTITY_ACCREDITED_CRITERIA,
-  INDIVIDUAL_ACCREDITED_CRITERIA,
-  INDIVIDUAL_ELIGIBLE_CRITERIA,
-} from "@/lib/capital/ontario-investor-assessment";
-import type { OfferingBundle } from "@/lib/capital/types";
+  assessCanadianFinancialProfile,
+  preliminaryMaximumInvestment,
+  qualificationBandsToReadinessAnswers,
+  resolveInvestorJurisdiction,
+  type InvestorQualificationBands,
+  type RegisteredSuitabilityAdvice,
+} from "@/lib/capital/investor-readiness";
+import { canUseWorkspace } from "@/lib/capital/portal-access";
+import { omContextForResult } from "@/lib/capital/ontario-investor-assessment";
 import { READINESS_RULESET } from "@/lib/capital/readiness";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { useClients } from "@/components/capital/north/ClientProvider";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
+import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider";
 import { PageHeader, Panel } from "@/components/capital/north/PortalUI";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
-type ClientMode = "existing" | "new";
-type RelationshipStatus = "none" | "claimed" | "verified";
-type EntityMinimumCondition = "yes" | "no" | "unknown";
+type Stage = "intro" | "questions" | "result";
+type ProfileAnswers = InvestorQualificationBands;
 
 type ProspectDraft = {
-  accountType: ClientAccountType;
   firstName: string;
   lastName: string;
-  organization: string;
   email: string;
-  country: string;
-  region: string;
-  city: string;
 };
 
-const CRITERIA_COPY = {
-  en: {
-    "individual-registration": { label: "The client is currently registered as a representative of a Canadian dealer or adviser, or has qualifying former registration.", help: "Former limited-market-dealer-only registration does not satisfy this statement. Select Unsure when registration history needs verification." },
-    "individual-financial-assets": { label: "The client, alone or with a spouse, beneficially owns net financial assets exceeding CAD $1,000,000.", help: "Financial assets include cash, securities, insurance contracts and deposits, net of related liabilities. A home or other real estate is not a financial asset." },
-    "individual-income": { label: "The client’s net income before tax exceeded CAD $200,000 in each of the two prior calendar years and is reasonably expected to exceed it this year.", help: "All parts of the statement must be true." },
-    "individual-spousal-income": { label: "The client’s combined net income with a spouse exceeded CAD $300,000 in each of the two prior calendar years and is reasonably expected to exceed it this year.", help: "All parts of the statement must be true." },
-    "individual-net-assets": { label: "The client, alone or with a spouse, has net assets of at least CAD $5,000,000.", help: "Net assets are total assets minus total liabilities and may include real estate, including the related mortgage or other liability." },
-    "eligible-net-assets": { label: "The client, alone or with a spouse, has net assets exceeding CAD $400,000.", help: "This is an eligible-investor indicator under the Ontario offering-memorandum exemption." },
-    "eligible-income": { label: "The client’s net income before tax exceeded CAD $75,000 in each of the two prior calendar years and is reasonably expected to exceed it this year.", help: "All parts of the statement must be true." },
-    "eligible-spousal-income": { label: "The client’s combined net income with a spouse exceeded CAD $125,000 in each of the two prior calendar years and is reasonably expected to exceed it this year.", help: "All parts of the statement must be true." },
-    "entity-net-assets": { label: "The entity has net assets of at least CAD $5,000,000 according to its most recent financial statements.", help: "The licensed review must verify the financial statements and ownership of the purchasing entity." },
-    "entity-regulated-category": { label: "The entity is a recognized regulated or institutional accredited-investor category.", help: "Examples include certain financial institutions, governments, registered dealers or advisers, pension funds and investment funds. Select Unsure unless the exact statutory category is known." },
-    "entity-not-created-solely-for-accredited-exemption": { label: "The entity was not created or used solely to purchase or hold securities under the accredited-investor exemption.", help: "This anti-syndication condition must be supported by the licensed review." },
-  },
-  tr: {
-    "individual-registration": { label: "Müşteri, Kanada’da bir dealer veya adviser temsilcisi olarak halen kayıtlıdır ya da uygun bir eski kayıt statüsüne sahiptir.", help: "Yalnızca eski limited market dealer kaydı bu ifadeyi karşılamaz. Kayıt geçmişi doğrulanacaksa Emin değilim seçin." },
-    "individual-financial-assets": { label: "Müşteri, tek başına veya eşiyle birlikte, 1.000.000 CAD üzerinde net finansal varlığa hak sahibidir.", help: "Finansal varlıklar; ilgili borçlar düşüldükten sonra nakit, menkul kıymet, sigorta sözleşmesi ve mevduatı içerir. Konut ve diğer gayrimenkuller finansal varlık değildir." },
-    "individual-income": { label: "Müşterinin vergi öncesi net geliri önceki iki takvim yılının her birinde 200.000 CAD’ı aştı ve bu yıl da aşması makul olarak bekleniyor.", help: "İfadenin tüm bölümleri doğru olmalıdır." },
-    "individual-spousal-income": { label: "Müşterinin eşiyle birleşik net geliri önceki iki takvim yılının her birinde 300.000 CAD’ı aştı ve bu yıl da aşması makul olarak bekleniyor.", help: "İfadenin tüm bölümleri doğru olmalıdır." },
-    "individual-net-assets": { label: "Müşteri, tek başına veya eşiyle birlikte, en az 5.000.000 CAD net varlığa sahiptir.", help: "Net varlık, toplam varlıklardan toplam borçların çıkarılmasıdır; ilgili mortgage veya diğer borçlarla birlikte gayrimenkulü içerebilir." },
-    "eligible-net-assets": { label: "Müşteri, tek başına veya eşiyle birlikte, 400.000 CAD üzerinde net varlığa sahiptir.", help: "Bu, Ontario offering memorandum muafiyeti kapsamındaki bir uygun yatırımcı göstergesidir." },
-    "eligible-income": { label: "Müşterinin vergi öncesi net geliri önceki iki takvim yılının her birinde 75.000 CAD’ı aştı ve bu yıl da aşması makul olarak bekleniyor.", help: "İfadenin tüm bölümleri doğru olmalıdır." },
-    "eligible-spousal-income": { label: "Müşterinin eşiyle birleşik net geliri önceki iki takvim yılının her birinde 125.000 CAD’ı aştı ve bu yıl da aşması makul olarak bekleniyor.", help: "İfadenin tüm bölümleri doğru olmalıdır." },
-    "entity-net-assets": { label: "Kuruluş, en güncel finansal tablolarına göre en az 5.000.000 CAD net varlığa sahiptir.", help: "Lisanslı inceleme, finansal tabloları ve satın alan kuruluşun sahipliğini doğrulamalıdır." },
-    "entity-regulated-category": { label: "Kuruluş, tanınan düzenlenmiş veya kurumsal bir akredite yatırımcı kategorisindedir.", help: "Örnekler arasında belirli finansal kurumlar, hükümetler, kayıtlı dealer veya adviser kuruluşları, emeklilik fonları ve yatırım fonları bulunur. Kesin yasal kategori bilinmiyorsa Emin değilim seçin." },
-    "entity-not-created-solely-for-accredited-exemption": { label: "Kuruluş, yalnızca akredite yatırımcı muafiyetine dayanarak menkul kıymet almak veya tutmak için oluşturulmamış ya da kullanılmamıştır.", help: "Bu anti-syndication koşulu lisanslı inceleme tarafından kanıtlanmalıdır." },
-  },
-} as const;
+const COUNTRY_CODES = (
+  "AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ " +
+  "CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR " +
+  "GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP " +
+  "KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ " +
+  "NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ " +
+  "TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW"
+).split(" ");
+
+const CANADIAN_REGIONS = [
+  { code: "AB", en: "Alberta", tr: "Alberta" },
+  { code: "BC", en: "British Columbia", tr: "Britanya Kolumbiyası" },
+  { code: "MB", en: "Manitoba", tr: "Manitoba" },
+  { code: "NB", en: "New Brunswick", tr: "New Brunswick" },
+  { code: "NL", en: "Newfoundland and Labrador", tr: "Newfoundland ve Labrador" },
+  { code: "NS", en: "Nova Scotia", tr: "Nova Scotia" },
+  { code: "NT", en: "Northwest Territories", tr: "Kuzeybatı Toprakları" },
+  { code: "NU", en: "Nunavut", tr: "Nunavut" },
+  { code: "ON", en: "Ontario", tr: "Ontario" },
+  { code: "PE", en: "Prince Edward Island", tr: "Prens Edward Adası" },
+  { code: "QC", en: "Quebec", tr: "Quebec" },
+  { code: "SK", en: "Saskatchewan", tr: "Saskatchewan" },
+  { code: "YT", en: "Yukon", tr: "Yukon" },
+] as const;
+
+const PARVIS_GUIDE_URL = "https://www.parvisinvest.com/insights/what-is-a-non-accredited-investor";
 
 const COPY = {
   en: {
-    eyebrow: "Resources", title: "Investor readiness", desc: "Record a client’s statements and generate an Ontario-first preliminary classification, optionally with selected-offering facts. Saved records are session-only demo state, not auditable production storage.",
-    steps: ["Choose client", "Confirm path", "Qualification statements", "Review & save"], step: "Step", back: "Back", continue: "Continue", save: "Save to client", required: "Complete all required information before continuing.",
-    existing: "Existing client", quickAdd: "Quick-add client", existingIntro: "Choose a client already in the partner portal.", newIntro: "Create a prospective client without selecting a fund or investment.", chooseClient: "Select a client", choosePlaceholder: "Choose a client…", individual: "Individual", entity: "Company / entity", firstName: "First name", lastName: "Last name", organization: "Organization", email: "Email", country: "Country of residence", province: "Province / territory", city: "City (optional)",
-    pathIntro: "Confirm the residence path and account structure used for this assessment.", ontario: "Ontario, Canada", outside: "Outside Ontario", ontarioHelp: "Ontario rules are classified automatically in version one.", outsideHelp: "Other Canadian provinces and foreign jurisdictions require manual review.", accountType: "Client structure", residenceOnFile: "Residence on file", changeWarning: "This assessment records the selected path; it does not replace formal residence verification.",
-    statementsIntro: "Answer each applicable statement using the information the client provided. Select Unsure whenever evidence or a definition needs licensed verification.", accreditedGroup: "Accredited-investor indicators", eligibleGroup: "Eligible-investor indicators under the Offering Memorandum (OM) exemption", entityGroup: "Common entity indicators", entityNote: "Partnerships, trusts, estates, complex ownership and other entity categories are routed to manual review.", yes: "Yes", no: "No", unsure: "Unsure",
-    offeringFacts: "Offering and purchase facts", offeringFactsHelp: "Offering Memorandum (OM) means the legal disclosure document used for certain exempt-market offerings. A personalized Ontario OM calculation is shown only after compliance has approved the selected offering for that exemption.", offering: "Selected offering", noOffering: "No offering selected", proposedAcquisition: "Proposed acquisition cost (CAD)", priorOmAcquisitions: "Prior Offering Memorandum purchases in the preceding 12 months (CAD)", futurePayments: "Required future payments under this purchase (CAD)", suitabilityAdvice: "Registered suitability assessment", adviceUnknown: "Not recorded / unknown", adviceRecorded: "Recorded", adviceNotRecorded: "Not recorded", adviceHelp: "The CAD $100,000 eligible-investor amount is not automatic. A portfolio manager, investment dealer, or Exempt Market Dealer (EMD) must record that this investment and exceeding CAD $30,000 are suitable.", relationship: "FFBA relationship status", relationshipNone: "No relationship route claimed", relationshipClaimed: "Claimed — verification pending", relationshipVerified: "Verified by compliance", relationshipHelp: "A claimed relationship never creates a route by itself.", entityMinimumTitle: "Entity minimum-amount conditions", entityMinimumHelp: "These are captured for licensed review only. The CAD $150,000 route also requires an eligible, non-investment-fund offering and an approved exemption.", buysAsPrincipal: "Entity is buying as principal", cashAtDistribution: "Cash will be paid at distribution", singleIssuer: "Purchase is for a single issuer", notCreatedForMinimum: "Entity was not created solely to use the minimum-amount exemption", capacity: "Preliminary Offering Memorandum capacity", limit: "12-month limit", prior: "Prior OM acquisitions", proposed: "Proposed acquisition", future: "Required future payments", postTrade: "Post-trade total", remaining: "Remaining capacity before proposed trade", withinLimit: "The proposed post-trade total is within this preliminary limit.", exceedsLimit: "The proposed post-trade total exceeds this preliminary limit and requires licensed review.",
-    preliminary: "Preliminary classification", basis: "Recorded basis", noBasis: "No automatic qualifying basis recorded", omContext: "Ontario Offering Memorandum (OM) context", ruleset: "Ruleset", sources: "Official sources", sourceInstrument: "NI 45-106", sourcePolicy: "OSC Companion Policy", disclaimer: "This is not an eligibility approval, exemption determination, KYC/KYP or suitability review, legal or investment advice, or permission to invest. A licensed review must verify the category, evidence and applicable exemption.",
-    results: { "potentially-accredited": "Potentially accredited investor", "potentially-eligible": "Potentially eligible investor under the OM exemption", "potentially-non-eligible": "Potentially non-eligible investor under the OM exemption", "manual-review": "Manual review required" },
-    om: { accredited: "No individual OM investment limit is indicated by this preliminary accredited classification. The licensed process must still confirm the exemption used.", eligible: "An eligible individual is generally limited to CAD $30,000 across OM investments during the preceding 12 months, or up to CAD $100,000 with the specified registered suitability advice.", "non-eligible": "A non-eligible individual is generally limited to CAD $10,000 across OM investments during the preceding 12 months.", "manual-review": "No OM limit or investor category is determined until the licensed review is completed." }, omUnavailable: "No OM amount is calculated until licensed compliance confirms that the selected offering may use the Ontario OM exemption.",
-    permission: "I confirm the partner has permission to record this client’s information for preliminary review.", accuracy: "I confirm these answers are accurate to the partner’s knowledge and are not a final eligibility determination.",
-    savedEyebrow: "Assessment saved", savedTitle: "Investor readiness recorded", savedBody: "The dated preliminary assessment is attached to the session profile only; licensed review and auditable storage are still required.", viewClient: "View client", another: "Assess another client",
+    eyebrow: "Professional resource",
+    title: "Investor qualification",
+    description: "Identify the Canadian financial category indicated by a client’s answers, regardless of where they live.",
+    selfEyebrow: "Investor self-check",
+    selfTitle: "Check your investor category",
+    selfDescription: "Answer the questions yourself to see your preliminary Canadian financial category and Canadian offering OM investment ceiling.",
+    introEyebrow: "Country-aware screening",
+    introTitle: "Start with the questions. Use the guide only when you need it.",
+    selfIntroTitle: "Check your category and preliminary investment ceiling.",
+    introBody: "Seven core questions produce a financial-threshold result and a separate jurisdiction review path.",
+    selfIntroBody: "Answer seven core questions, plus the registered-advice question when applicable. The result applies the Canadian financial thresholds and shows the preliminary rolling 12-month OM ceiling.",
+    start: "Start qualification",
+    guide: "View qualification guide",
+    time: "About 3 minutes",
+    complete: "All financial questions are required",
+    referenceMode: "Reference-only mode",
+    referenceBody: "You opened this tool from an existing client. Complete the questions for reference; this result will not overwrite their record.",
+    backToClient: "Back to client",
+    question: "Question",
+    of: "of",
+    back: "Back",
+    next: "Next",
+    seeResult: "See result",
+    restart: "Restart",
+    cadNote: "All thresholds are in Canadian dollars (CAD). Use the purchaser’s CAD-equivalent values.",
+    accountTitle: "Who is the purchaser?",
+    accountBody: "Choose the legal purchaser, not the person completing this tool.",
+    individual: "Individual",
+    individualHelp: "A person purchasing personally or jointly with a spouse.",
+    entity: "Company or entity",
+    entityHelp: "A corporation, trust, partnership, fund, estate, or other organization.",
+    residenceTitle: "Where does the purchaser primarily reside?",
+    residenceBody: "Residence determines the compliance review path, but it does not block the Canadian financial-threshold screen.",
+    country: "Country of residence",
+    chooseCountry: "Choose a country",
+    province: "Province or territory",
+    chooseProvince: "Choose a province or territory",
+    registrationTitle: "Does the purchaser have qualifying Canadian securities registration?",
+    registrationBody: "This includes current registration as a representative of a Canadian dealer or adviser, and certain qualifying former registration.",
+    financialAssetsTitle: "What are the purchaser’s net financial assets?",
+    financialAssetsBody: "Use financial assets owned alone or with a spouse, after related liabilities. Do not include real estate.",
+    incomeTitle: "What was the purchaser’s individual net income before tax?",
+    incomeBody: "Choose the band that was exceeded in each of the previous two calendar years and is reasonably expected to be exceeded this year.",
+    spouseTitle: "What was the purchaser’s combined net income with a spouse?",
+    spouseBody: "Use the same two-prior-years and current-year expectation test.",
+    netAssetsTitle: "What are the purchaser’s total net assets?",
+    netAssetsBody: "Use total assets minus total liabilities, alone or with a spouse. Real estate may be included here.",
+    adviceTitle: "Has the required registered suitability advice been provided?",
+    adviceBody: "To use the higher CAD $100,000 Canadian OM ceiling, a portfolio manager, investment dealer, or exempt market dealer must advise that exceeding CAD $30,000—and the investment itself—is suitable.",
+    adviceYes: "Yes, for the proposed investment",
+    adviceNo: "No",
+    adviceUnsure: "Not sure",
+    answers: {
+      yes: "Yes",
+      no: "No",
+      unsure: "Not sure",
+      "above-million": "More than CAD $1,000,000",
+      "million-or-less": "CAD $1,000,000 or less",
+      "above-200": "More than CAD $200,000",
+      "above-75-to-200": "More than CAD $75,000, up to $200,000",
+      "75-or-less": "CAD $75,000 or less",
+      "above-300": "More than CAD $300,000",
+      "above-125-to-300": "More than CAD $125,000, up to $300,000",
+      "125-or-less": "CAD $125,000 or less",
+      "not-applicable": "No spouse / not applicable",
+      "five-million-plus": "CAD $5,000,000 or more",
+      "above-400-under-five": "More than CAD $400,000, under $5,000,000",
+      "400-or-less": "CAD $400,000 or less",
+    },
+    resultEyebrow: "Canadian financial-threshold result",
+    resultTitles: {
+      "potentially-accredited": "Matches accredited-investor thresholds",
+      "potentially-eligible": "Matches eligible-investor thresholds",
+      "potentially-non-eligible": "Does not currently match either threshold",
+      "needs-information": "More information is needed",
+      "entity-review": "Entity classification requires professional review",
+    } satisfies Record<InvestorFinancialResult, string>,
+    resultBodies: {
+      "potentially-accredited": "At least one recorded answer matches a Canadian accredited-investor financial or registration criterion.",
+      "potentially-eligible": "No accredited criterion was recorded, and at least one answer matches a Canadian eligible-investor financial criterion.",
+      "potentially-non-eligible": "The recorded answers do not establish an accredited- or eligible-investor financial criterion.",
+      "needs-information": "At least one required answer is uncertain, so the financial category cannot be stated confidently.",
+      "entity-review": "Entity categories depend on legal form, ownership, financial statements, and statutory status and are not automated here.",
+    } satisfies Record<InvestorFinancialResult, string>,
+    jurisdictionEyebrow: "Jurisdiction path",
+    jurisdictionTitles: {
+      "ontario-licensed-review": "Ontario licensed verification required",
+      "canada-outside-ontario-review": "Applicable Canadian jurisdiction review required",
+      "cross-border-review": "Cross-border review required",
+    } satisfies Record<InvestorJurisdictionReview, string>,
+    jurisdictionBodies: {
+      "ontario-licensed-review": "Verify evidence, the issuer, the available exemption, KYC/KYP, and suitability before relying on this result.",
+      "canada-outside-ontario-review": "Confirm local registration and prospectus-exemption requirements for the purchaser’s province or territory.",
+      "cross-border-review": "Confirm Canadian and local-country distribution, registration, tax, AML, source-of-funds, and transfer requirements.",
+    } satisfies Record<InvestorJurisdictionReview, string>,
+    recordedBasis: "Recorded basis",
+    noBasis: "No qualifying criterion can be recorded from these answers.",
+    criteria: {
+      "individual-registration": "Qualifying Canadian registration",
+      "individual-financial-assets": "Net financial assets over CAD $1,000,000",
+      "individual-income": "Individual income over CAD $200,000",
+      "individual-spousal-income": "Combined spousal income over CAD $300,000",
+      "individual-net-assets": "Net assets of at least CAD $5,000,000",
+      "eligible-net-assets": "Net assets over CAD $400,000",
+      "eligible-income": "Individual income over CAD $75,000",
+      "eligible-spousal-income": "Combined spousal income over CAD $125,000",
+    } as Partial<Record<InvestorReadinessCriterion, string>>,
+    disclaimer: "This is a preliminary financial indicator—not transaction approval, suitability, legal advice, or permission to invest. Licensed review remains required.",
+    maximumEyebrow: "Preliminary Canadian OM ceiling",
+    maximumLimitBody: "For this Canadian offering screen, the Ontario OM ruleset is applied regardless of residence. The ceiling covers the aggregate acquisition cost of all securities bought under the offering-memorandum exemption in the preceding 12 months.",
+    maximumAdviceBody: "The CAD $100,000 ceiling depends on the specified registrant advice for the investment. A registrant may still determine that a lower amount is suitable.",
+    maximumBaseBody: "A registrant may still determine that a lower amount is suitable.",
+    maximumBalanceNote: "This is not your remaining balance. A registrant must account for applicable OM purchases in the preceding 12 months and confirm whether any transaction-specific relief applies.",
+    maximumNoLimitTitle: "No individual OM ceiling indicated",
+    maximumNoLimitBody: "This preliminary accredited result is not subject to an individual investment ceiling in this Canadian OM screen. Other exemptions, offering terms, suitability, and compliance requirements can still limit a transaction.",
+    maximumNeedsTitle: "Maximum cannot be estimated yet",
+    maximumNeedsBody: "Resolve every uncertain financial answer before relying on a category or preliminary investment ceiling.",
+    maximumEntityTitle: "Entity maximum requires professional review",
+    maximumEntityBody: "Entity limits depend on legal form, ownership, the exemption used, and the specific offering.",
+    exploreFunds: "Explore funds",
+    addClient: "Add as a client",
+    addTitle: "Add this investor as a client",
+    addBody: "Identity is collected only after the qualification result.",
+    firstName: "First name",
+    lastName: "Last name",
+    email: "Email",
+    permission: "I confirm the client has permitted this information to be recorded for preliminary review and contact.",
+    accuracy: "I confirm the answers are accurate to my knowledge and are not a final eligibility determination.",
+    create: "Create client",
+    cancel: "Cancel",
+    required: "Complete all fields and acknowledgements.",
+    saveError: "The client could not be created. Please try again.",
+    duplicateTitle: "A client with this email already exists.",
+    viewExisting: "View existing client",
+    guideTitle: "Canadian qualification guide",
+    guideDescription: "A compact reference for the individual thresholds used by this screening tool.",
+    guideRows: [
+      { title: "Accredited investor", tone: "blue", points: ["Net financial assets over CAD $1M", "Income over CAD $200k individually or $300k with a spouse", "No individual ceiling under Ontario’s OM exemption"] },
+      { title: "Eligible investor", tone: "green", points: ["Net assets over CAD $400k or the qualifying income threshold", "Ontario OM ceiling: CAD $30k over 12 months", "Up to CAD $100k only with the specified registered advice"] },
+      { title: "Non-eligible indicator", tone: "sand", points: ["No accredited or eligible threshold is established", "Ontario OM ceiling: CAD $10k over 12 months", "Does not mean a transaction is approved or rejected"] },
+    ],
+    guideNote: "These Canadian labels are not universal investor categories. Residence is assessed separately, and foreign purchasers always require a cross-border review.",
+    sources: "Sources and further reading",
+    parvis: "Parvis overview",
+    instrument: "NI 45-106",
+    policy: "45-106 companion policy",
   },
   tr: {
-    eyebrow: "Kaynaklar", title: "Yatırımcı hazırlığı", desc: "Müşterinin beyanlarını kaydedin ve isteğe bağlı teklif bilgileriyle Ontario odaklı bir ön sınıflandırma oluşturun. Kaydedilen bilgiler yalnızca oturumluk demo durumudur; denetlenebilir üretim kaydı değildir.",
-    steps: ["Müşteri seçimi", "İnceleme yolu", "Yeterlilik ifadeleri", "İncele ve kaydet"], step: "Adım", back: "Geri", continue: "Devam", save: "Müşteriye kaydet", required: "Devam etmeden önce gerekli tüm bilgileri tamamlayın.",
-    existing: "Mevcut müşteri", quickAdd: "Hızlı müşteri ekle", existingIntro: "Partner portalında bulunan bir müşteriyi seçin.", newIntro: "Fon veya yatırım seçmeden potansiyel müşteri oluşturun.", chooseClient: "Müşteri seçin", choosePlaceholder: "Bir müşteri seçin…", individual: "Bireysel", entity: "Şirket / kuruluş", firstName: "Ad", lastName: "Soyad", organization: "Kurum", email: "E-posta", country: "İkamet ülkesi", province: "İl / eyalet", city: "Şehir (isteğe bağlı)",
-    pathIntro: "Bu değerlendirmede kullanılacak ikamet yolunu ve müşteri yapısını doğrulayın.", ontario: "Ontario, Kanada", outside: "Ontario dışında", ontarioHelp: "İlk sürümde Ontario kuralları otomatik sınıflandırılır.", outsideHelp: "Diğer Kanada eyaletleri ve yabancı yargı alanları manuel inceleme gerektirir.", accountType: "Müşteri yapısı", residenceOnFile: "Kayıtlı ikamet", changeWarning: "Bu değerlendirme seçilen yolu kaydeder; resmî ikamet doğrulamasının yerini almaz.",
-    statementsIntro: "Her geçerli ifadeyi müşterinin verdiği bilgilere göre yanıtlayın. Kanıt veya tanım lisanslı doğrulama gerektiriyorsa Emin değilim seçin.", accreditedGroup: "Akredite yatırımcı göstergeleri", eligibleGroup: "Offering Memorandum (OM / Teklif Muhtırası) muafiyeti kapsamındaki uygun yatırımcı göstergeleri", entityGroup: "Yaygın kuruluş göstergeleri", entityNote: "Ortaklıklar, trust yapıları, tereke, karmaşık sahiplik ve diğer kuruluş kategorileri manuel incelemeye yönlendirilir.", yes: "Evet", no: "Hayır", unsure: "Emin değilim",
-    offeringFacts: "Teklif ve satın alma bilgileri", offeringFactsHelp: "Offering Memorandum (OM), Türkçede Teklif Muhtırası, belirli muaf piyasa tekliflerinde kullanılan yasal açıklama belgesidir. Kişiselleştirilmiş Ontario OM hesaplaması yalnızca uyum ekibi seçilen teklifi bu muafiyet için onayladıktan sonra gösterilir.", offering: "Seçilen teklif", noOffering: "Teklif seçilmedi", proposedAcquisition: "Önerilen edinim maliyeti (CAD)", priorOmAcquisitions: "Önceki 12 aydaki Teklif Muhtırası alımları (CAD)", futurePayments: "Bu satın alma kapsamındaki zorunlu gelecek ödemeler (CAD)", suitabilityAdvice: "Kayıtlı suitability değerlendirmesi", adviceUnknown: "Kaydedilmedi / bilinmiyor", adviceRecorded: "Kaydedildi", adviceNotRecorded: "Kaydedilmedi", adviceHelp: "100.000 CAD uygun yatırımcı tutarı otomatik değildir. Bir portfolio manager, investment dealer veya Exempt Market Dealer (EMD / Muaf Piyasa Satıcısı), bu yatırımın ve 30.000 CAD sınırının aşılmasının uygun olduğunu kaydetmelidir.", relationship: "FFBA ilişki durumu", relationshipNone: "İlişki muafiyeti iddia edilmiyor", relationshipClaimed: "İddia edildi — doğrulama bekliyor", relationshipVerified: "Uyum ekibi tarafından doğrulandı", relationshipHelp: "İddia edilen ilişki tek başına muafiyet yolu oluşturmaz.", entityMinimumTitle: "Kuruluş minimum tutar koşulları", entityMinimumHelp: "Bu koşullar yalnızca lisanslı inceleme için kaydedilir. 150.000 CAD yolu ayrıca uygun, yatırım fonu olmayan bir teklif ve onaylanmış muafiyet gerektirir.", buysAsPrincipal: "Kuruluş kendi adına satın alıyor", cashAtDistribution: "Nakit dağıtım anında ödenecek", singleIssuer: "Satın alma tek bir ihraççı içindir", notCreatedForMinimum: "Kuruluş yalnızca minimum-tutar muafiyetini kullanmak için oluşturulmadı", capacity: "Ön Teklif Muhtırası kapasitesi", limit: "12 aylık limit", prior: "Önceki OM edinimleri", proposed: "Önerilen edinim", future: "Zorunlu gelecek ödemeler", postTrade: "İşlem sonrası toplam", remaining: "Önerilen işlem öncesi kalan kapasite", withinLimit: "Önerilen işlem sonrası toplam bu ön limit içindedir.", exceedsLimit: "Önerilen işlem sonrası toplam bu ön limiti aşıyor ve lisanslı inceleme gerektiriyor.",
-    preliminary: "Ön sınıflandırma", basis: "Kaydedilen dayanak", noBasis: "Otomatik yeterlilik dayanağı kaydedilmedi", omContext: "Ontario Offering Memorandum (OM / Teklif Muhtırası) bağlamı", ruleset: "Kural seti", sources: "Resmî kaynaklar", sourceInstrument: "NI 45-106", sourcePolicy: "OSC Companion Policy", disclaimer: "Bu sonuç uygunluk onayı, muafiyet kararı, KYC/KYP veya suitability incelemesi, hukuk ya da yatırım tavsiyesi veya yatırım izni değildir. Lisanslı inceleme kategori, kanıt ve uygulanacak muafiyeti doğrulamalıdır.",
-    results: { "potentially-accredited": "Potansiyel akredite yatırımcı", "potentially-eligible": "OM muafiyeti kapsamında potansiyel uygun yatırımcı", "potentially-non-eligible": "OM muafiyeti kapsamında potansiyel uygun olmayan yatırımcı", "manual-review": "Manuel inceleme gerekli" },
-    om: { accredited: "Bu ön akredite sınıflandırmasına göre bireysel OM yatırım limiti gösterilmez. Kullanılan muafiyeti lisanslı süreç doğrulamalıdır.", eligible: "Uygun bir birey, önceki 12 ay boyunca OM yatırımlarında genellikle 30.000 CAD ile; belirtilen kayıtlı suitability tavsiyesiyle 100.000 CAD’a kadar sınırlandırılır.", "non-eligible": "Uygun olmayan bir birey, önceki 12 ay boyunca OM yatırımlarında genellikle 10.000 CAD ile sınırlandırılır.", "manual-review": "Lisanslı inceleme tamamlanana kadar OM limiti veya yatırımcı kategorisi belirlenmez." }, omUnavailable: "Lisanslı uyum ekibi, seçilen teklifin Ontario OM muafiyetini kullanabileceğini doğrulayana kadar OM tutarı hesaplanmaz.",
-    permission: "Partnerin, bu müşterinin bilgilerini ön inceleme amacıyla kaydetme iznine sahip olduğunu doğruluyorum.", accuracy: "Bu yanıtların partnerin bilgisi dahilinde doğru olduğunu ve nihai uygunluk kararı olmadığını doğruluyorum.",
-    savedEyebrow: "Değerlendirme kaydedildi", savedTitle: "Yatırımcı hazırlığı kaydedildi", savedBody: "Tarihli ön değerlendirme yalnızca oturum profiline eklendi; lisanslı inceleme ve denetlenebilir kayıt hâlâ gereklidir.", viewClient: "Müşteriyi görüntüle", another: "Başka müşteri değerlendir",
+    eyebrow: "Profesyonel kaynak",
+    title: "Yatırımcı sınıflandırması",
+    description: "Müşterinin nerede yaşadığına bakılmaksızın, yanıtlarının gösterdiği Kanada finansal kategorisini belirleyin.",
+    selfEyebrow: "Yatırımcı öz kontrolü",
+    selfTitle: "Yatırımcı kategorinizi kontrol edin",
+    selfDescription: "Ön Kanada finansal kategorinizi ve Kanada teklifi OM yatırım tavanınızı görmek için soruları kendiniz yanıtlayın.",
+    introEyebrow: "Ülke duyarlı ön inceleme",
+    introTitle: "Sorularla başlayın. Rehberi yalnızca gerektiğinde açın.",
+    selfIntroTitle: "Kategorinizi ve ön yatırım tavanınızı kontrol edin.",
+    introBody: "Yedi temel soru, finansal eşik sonucunu ve ayrı bir yargı alanı inceleme yolunu gösterir.",
+    selfIntroBody: "Yedi temel soruyu ve uygunsa kayıtlı tavsiye sorusunu yanıtlayın. Sonuç Kanada finansal eşiklerini uygular ve ön hareketli 12 aylık OM tavanını gösterir.",
+    start: "Sınıflandırmayı başlat",
+    guide: "Sınıflandırma rehberini aç",
+    time: "Yaklaşık 3 dakika",
+    complete: "Tüm finansal sorular zorunludur",
+    referenceMode: "Yalnızca referans modu",
+    referenceBody: "Bu aracı mevcut bir müşteriden açtınız. Soruları referans için tamamlayın; sonuç müşteri kaydının üzerine yazılmaz.",
+    backToClient: "Müşteriye dön",
+    question: "Soru",
+    of: "/",
+    back: "Geri",
+    next: "İleri",
+    seeResult: "Sonucu göster",
+    restart: "Yeniden başlat",
+    cadNote: "Tüm eşikler Kanada dolarıdır (CAD). Alıcının CAD karşılığı değerlerini kullanın.",
+    accountTitle: "Yasal alıcı kim?",
+    accountBody: "Bu aracı dolduran kişiyi değil, yasal olarak satın alacak tarafı seçin.",
+    individual: "Bireysel",
+    individualHelp: "Kişisel olarak veya eşiyle birlikte satın alan gerçek kişi.",
+    entity: "Şirket veya kuruluş",
+    entityHelp: "Şirket, trust, ortaklık, fon, tereke veya başka bir kuruluş.",
+    residenceTitle: "Alıcı esas olarak hangi ülkede ikamet ediyor?",
+    residenceBody: "İkamet, uyum inceleme yolunu belirler; Kanada finansal eşik incelemesini engellemez.",
+    country: "İkamet ülkesi",
+    chooseCountry: "Ülke seçin",
+    province: "İl veya bölge",
+    chooseProvince: "İl veya bölge seçin",
+    registrationTitle: "Alıcının uygun bir Kanada menkul kıymet kaydı var mı?",
+    registrationBody: "Kanadalı bir dealer veya adviser temsilcisi olarak mevcut kayıt ve belirli uygun eski kayıt türlerini içerir.",
+    financialAssetsTitle: "Alıcının net finansal varlıkları ne kadar?",
+    financialAssetsBody: "Tek başına veya eşle sahip olunan finansal varlıklardan ilgili borçları çıkarın. Gayrimenkulü dahil etmeyin.",
+    incomeTitle: "Alıcının vergi öncesi bireysel net geliri ne kadardı?",
+    incomeBody: "Önceki iki takvim yılının her birinde aşılan ve bu yıl da aşılması makul olarak beklenen aralığı seçin.",
+    spouseTitle: "Alıcının eşiyle birleşik net geliri ne kadardı?",
+    spouseBody: "Aynı iki önceki yıl ve cari yıl beklentisi testini kullanın.",
+    netAssetsTitle: "Alıcının toplam net varlıkları ne kadar?",
+    netAssetsBody: "Tek başına veya eşle birlikte toplam varlıklardan toplam borçları çıkarın. Gayrimenkul burada dahil edilebilir.",
+    adviceTitle: "Gerekli kayıtlı uygunluk tavsiyesi verildi mi?",
+    adviceBody: "Daha yüksek 100.000 CAD Kanada OM tavanını kullanmak için bir portfolio manager, investment dealer veya exempt market dealer; 30.000 CAD sınırının aşılmasının ve yatırımın kendisinin uygun olduğunu belirtmelidir.",
+    adviceYes: "Evet, önerilen yatırım için",
+    adviceNo: "Hayır",
+    adviceUnsure: "Emin değilim",
+    answers: {
+      yes: "Evet",
+      no: "Hayır",
+      unsure: "Emin değilim",
+      "above-million": "1.000.000 CAD üzerinde",
+      "million-or-less": "1.000.000 CAD veya altında",
+      "above-200": "200.000 CAD üzerinde",
+      "above-75-to-200": "75.000 CAD üzerinde, 200.000 CAD'a kadar",
+      "75-or-less": "75.000 CAD veya altında",
+      "above-300": "300.000 CAD üzerinde",
+      "above-125-to-300": "125.000 CAD üzerinde, 300.000 CAD'a kadar",
+      "125-or-less": "125.000 CAD veya altında",
+      "not-applicable": "Eş yok / uygulanmıyor",
+      "five-million-plus": "5.000.000 CAD veya üzerinde",
+      "above-400-under-five": "400.000 CAD üzerinde, 5.000.000 CAD altında",
+      "400-or-less": "400.000 CAD veya altında",
+    },
+    resultEyebrow: "Kanada finansal eşik sonucu",
+    resultTitles: {
+      "potentially-accredited": "Akredite yatırımcı eşikleriyle eşleşiyor",
+      "potentially-eligible": "Uygun yatırımcı eşikleriyle eşleşiyor",
+      "potentially-non-eligible": "Şu anda iki eşikten biriyle eşleşmiyor",
+      "needs-information": "Daha fazla bilgi gerekli",
+      "entity-review": "Kuruluş sınıflandırması profesyonel inceleme gerektirir",
+    } satisfies Record<InvestorFinancialResult, string>,
+    resultBodies: {
+      "potentially-accredited": "Kaydedilen en az bir yanıt, Kanada akredite yatırımcı finansal veya kayıt kriteriyle eşleşiyor.",
+      "potentially-eligible": "Akredite kriter kaydedilmedi ve en az bir yanıt Kanada uygun yatırımcı finansal kriteriyle eşleşiyor.",
+      "potentially-non-eligible": "Kaydedilen yanıtlar akredite veya uygun yatırımcı finansal kriteri oluşturmuyor.",
+      "needs-information": "En az bir zorunlu yanıt belirsiz olduğundan finansal kategori güvenle belirtilemiyor.",
+      "entity-review": "Kuruluş kategorileri hukuki yapı, sahiplik, finansal tablolar ve yasal statüye bağlıdır; burada otomatik belirlenmez.",
+    } satisfies Record<InvestorFinancialResult, string>,
+    jurisdictionEyebrow: "Yargı alanı yolu",
+    jurisdictionTitles: {
+      "ontario-licensed-review": "Ontario lisanslı doğrulaması gerekli",
+      "canada-outside-ontario-review": "İlgili Kanada yargı alanı incelemesi gerekli",
+      "cross-border-review": "Sınır ötesi inceleme gerekli",
+    } satisfies Record<InvestorJurisdictionReview, string>,
+    jurisdictionBodies: {
+      "ontario-licensed-review": "Bu sonuca güvenmeden önce kanıtı, ihraççıyı, mevcut muafiyeti, KYC/KYP ve suitability sürecini doğrulayın.",
+      "canada-outside-ontario-review": "Alıcının il veya bölgesi için yerel kayıt ve izahname muafiyeti gerekliliklerini doğrulayın.",
+      "cross-border-review": "Kanada ve yerel ülkenin dağıtım, kayıt, vergi, AML, fon kaynağı ve transfer gerekliliklerini doğrulayın.",
+    } satisfies Record<InvestorJurisdictionReview, string>,
+    recordedBasis: "Kaydedilen dayanak",
+    noBasis: "Bu yanıtlardan yeterlilik kriteri kaydedilemiyor.",
+    criteria: {
+      "individual-registration": "Uygun Kanada menkul kıymet kaydı",
+      "individual-financial-assets": "1.000.000 CAD üzerinde net finansal varlık",
+      "individual-income": "200.000 CAD üzerinde bireysel gelir",
+      "individual-spousal-income": "300.000 CAD üzerinde eşle birleşik gelir",
+      "individual-net-assets": "En az 5.000.000 CAD net varlık",
+      "eligible-net-assets": "400.000 CAD üzerinde net varlık",
+      "eligible-income": "75.000 CAD üzerinde bireysel gelir",
+      "eligible-spousal-income": "125.000 CAD üzerinde eşle birleşik gelir",
+    } as Partial<Record<InvestorReadinessCriterion, string>>,
+    disclaimer: "Bu yalnızca ön finansal göstergedir; işlem onayı, suitability kararı, hukuki tavsiye veya yatırım izni değildir. Lisanslı inceleme zorunludur.",
+    maximumEyebrow: "Ön Kanada OM tavanı",
+    maximumLimitBody: "Bu Kanada teklifi ön incelemesinde Ontario OM kural seti ikametten bağımsız uygulanır. Tavan, önceki 12 ay içinde teklif muhtırası muafiyeti kapsamında alınan tüm menkul kıymetlerin toplam edinim maliyetine uygulanır.",
+    maximumAdviceBody: "100.000 CAD tavan, yatırım için belirtilen kayıtlı kuruluş tavsiyesine bağlıdır. Kayıtlı kuruluş daha düşük bir tutarın uygun olduğuna karar verebilir.",
+    maximumBaseBody: "Kayıtlı kuruluş daha düşük bir tutarın uygun olduğuna karar verebilir.",
+    maximumBalanceNote: "Bu, kalan bakiyeniz değildir. Kayıtlı kuruluş, önceki 12 aydaki ilgili OM alımlarını hesaba katmalı ve işleme özgü bir muafiyet olup olmadığını doğrulamalıdır.",
+    maximumNoLimitTitle: "Bireysel OM tavanı görünmüyor",
+    maximumNoLimitBody: "Bu ön akredite sonuç, bu Kanada OM ön incelemesinde bireysel yatırım tavanına tabi görünmüyor. Diğer muafiyetler, teklif koşulları, uygunluk ve uyum gereklilikleri işlemi yine sınırlayabilir.",
+    maximumNeedsTitle: "Azami tutar henüz tahmin edilemiyor",
+    maximumNeedsBody: "Bir kategoriye veya ön yatırım tavanına güvenmeden önce tüm belirsiz finansal yanıtları netleştirin.",
+    maximumEntityTitle: "Kuruluş azami tutarı profesyonel inceleme gerektirir",
+    maximumEntityBody: "Kuruluş limitleri hukuki yapıya, sahipliğe, kullanılan muafiyete ve belirli teklife bağlıdır.",
+    exploreFunds: "Fonları keşfet",
+    addClient: "Müşteri olarak ekle",
+    addTitle: "Bu yatırımcıyı müşteri olarak ekle",
+    addBody: "Kimlik bilgileri yalnızca sınıflandırma sonucundan sonra alınır.",
+    firstName: "Ad",
+    lastName: "Soyad",
+    email: "E-posta",
+    permission: "Müşterinin bu bilgilerin ön inceleme ve iletişim amacıyla kaydedilmesine izin verdiğini onaylıyorum.",
+    accuracy: "Yanıtların bilgim dahilinde doğru olduğunu ve nihai uygunluk kararı olmadığını onaylıyorum.",
+    create: "Müşteri oluştur",
+    cancel: "İptal",
+    required: "Tüm alanları ve onayları tamamlayın.",
+    saveError: "Müşteri oluşturulamadı. Lütfen tekrar deneyin.",
+    duplicateTitle: "Bu e-posta adresiyle bir müşteri zaten var.",
+    viewExisting: "Mevcut müşteriyi görüntüle",
+    guideTitle: "Kanada sınıflandırma rehberi",
+    guideDescription: "Bu ön inceleme aracında kullanılan bireysel eşikler için kısa referans.",
+    guideRows: [
+      { title: "Akredite yatırımcı", tone: "blue", points: ["1 milyon CAD üzerinde net finansal varlık", "Bireysel 200 bin CAD veya eşle 300 bin CAD üzerinde gelir", "Ontario OM muafiyetinde bireysel tavan yok"] },
+      { title: "Uygun yatırımcı", tone: "green", points: ["400 bin CAD üzerinde net varlık veya uygun gelir eşiği", "Ontario OM tavanı: 12 ayda 30 bin CAD", "Yalnızca belirtilen kayıtlı tavsiyeyle 100 bin CAD'a kadar"] },
+      { title: "Uygun olmayan göstergesi", tone: "sand", points: ["Akredite veya uygun eşik oluşmamıştır", "Ontario OM tavanı: 12 ayda 10 bin CAD", "İşlemin onaylandığı veya reddedildiği anlamına gelmez"] },
+    ],
+    guideNote: "Bu Kanada terimleri evrensel yatırımcı kategorileri değildir. İkamet ayrıca değerlendirilir ve yabancı alıcılar her zaman sınır ötesi inceleme gerektirir.",
+    sources: "Kaynaklar ve ek okuma",
+    parvis: "Parvis özeti",
+    instrument: "NI 45-106",
+    policy: "45-106 companion policy",
   },
 } as const;
 
-const fieldClass = "h-10 w-full rounded-md border border-[#d5dce1] bg-white px-3 text-sm outline-none focus:border-[#0a4b72]";
+const fieldClass = "h-11 w-full rounded-md border border-[#cfd9df] bg-white px-3 text-sm text-[#263f4f] outline-none transition focus:border-[#0a4b72] focus:ring-2 focus:ring-[#0a4b72]/15";
 
-export function InvestorReadinessTool({ offerings }: { offerings: OfferingBundle[] }) {
+export function InvestorReadinessTool() {
+  const router = useRouter();
+  const params = useSearchParams();
   const { lang } = useLang();
   const c = COPY[lang];
+  const { context } = usePortalAccess();
+  const professionalMode = canUseWorkspace(context, "professional");
   const { clients, createProspect, saveInvestorAssessment } = useClients();
-  const [step, setStep] = useState(0);
-  const [mode, setMode] = useState<ClientMode>("existing");
-  const [selectedClientId, setSelectedClientId] = useState("");
-  const [accountType, setAccountType] = useState<ClientAccountType>("individual");
-  const [jurisdiction, setJurisdiction] = useState<ClientJurisdiction>("ontario");
-  const [answers, setAnswers] = useState<Partial<Record<InvestorReadinessCriterion, InvestorReadinessAnswer>>>({});
-  const [offeringId, setOfferingId] = useState("");
-  const [proposedAcquisitionCost, setProposedAcquisitionCost] = useState("");
-  const [priorOmAcquisitionCost, setPriorOmAcquisitionCost] = useState("");
-  const [requiredFuturePayments, setRequiredFuturePayments] = useState("");
-  const [registeredSuitabilityAdvice, setRegisteredSuitabilityAdvice] = useState<"recorded" | "not-recorded" | "unknown">("unknown");
-  const [relationshipStatus, setRelationshipStatus] = useState<RelationshipStatus>("none");
-  const [entityMinimumConditions, setEntityMinimumConditions] = useState<Record<"buysAsPrincipal" | "paysCashAtDistribution" | "purchasesSingleIssuer" | "notCreatedSolelyForMinimumAmount", EntityMinimumCondition>>({
-    buysAsPrincipal: "unknown", paysCashAtDistribution: "unknown", purchasesSingleIssuer: "unknown", notCreatedSolelyForMinimumAmount: "unknown",
-  });
+  const referenceClientId = params.get("clientId") ?? "";
+  const referenceClient = professionalMode
+    ? clients.find((client) => client.id === referenceClientId)
+    : undefined;
+  const referenceMode = Boolean(referenceClient);
+
+  const countryOptions = useMemo(() => {
+    const displayNames = new Intl.DisplayNames([lang === "tr" ? "tr" : "en"], { type: "region" });
+    return COUNTRY_CODES.map((code) => ({ code, label: displayNames.of(code) ?? code }))
+      .sort((a, b) => a.label.localeCompare(b.label, lang === "tr" ? "tr" : "en"));
+  }, [lang]);
+
+  const [stage, setStage] = useState<Stage>("intro");
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [accountType, setAccountType] = useState<ClientAccountType>();
+  const [countryCode, setCountryCode] = useState("");
+  const [regionCode, setRegionCode] = useState("");
+  const [profile, setProfile] = useState<ProfileAnswers>({});
+  const [registeredAdvice, setRegisteredAdvice] = useState<RegisteredSuitabilityAdvice>();
+  const [guideOpen, setGuideOpen] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
+  const [draft, setDraft] = useState<ProspectDraft>({ firstName: "", lastName: "", email: "" });
   const [permission, setPermission] = useState(false);
   const [accuracy, setAccuracy] = useState(false);
-  const [error, setError] = useState("");
-  const [savedClientId, setSavedClientId] = useState<string | null>(null);
-  const [draft, setDraft] = useState<ProspectDraft>({ accountType: "individual", firstName: "", lastName: "", organization: "", email: "", country: "Canada", region: "Ontario", city: "" });
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "error">("idle");
+  const [duplicateClientId, setDuplicateClientId] = useState("");
 
-  const selectedClient = clients.find((client) => client.id === selectedClientId);
-  const selectedOffering = offerings.find((offering) => offering.id === offeringId);
-  const applicableCriteria: InvestorReadinessCriterion[] = accountType === "individual"
-    ? [...INDIVIDUAL_ACCREDITED_CRITERIA, ...INDIVIDUAL_ELIGIBLE_CRITERIA]
-    : [...ENTITY_ACCREDITED_CRITERIA, "entity-not-created-solely-for-accredited-exemption"];
-  const proposedAmount = moneyValue(proposedAcquisitionCost);
-  const priorOmAmount = moneyValue(priorOmAcquisitionCost);
-  const futurePaymentAmount = moneyValue(requiredFuturePayments);
-  const decision = useMemo(() => assessOntarioInvestor({
-    jurisdiction,
-    accountType,
-    answers,
-    offeringCompliance: selectedOffering?.complianceProfile,
-    proposedAcquisitionCostCad: proposedAmount,
-    priorOmAcquisitionCostCad: priorOmAmount,
-    requiredFuturePaymentsCad: futurePaymentAmount,
-    registeredSuitabilityAdvice,
-    relationshipClaimed: relationshipStatus !== "none",
-    relationshipVerified: relationshipStatus === "verified",
-    entityBuysAsPrincipal: entityMinimumConditions.buysAsPrincipal === "yes",
-    entityPaysCashAtDistribution: entityMinimumConditions.paysCashAtDistribution === "yes",
-    entityPurchasesSingleIssuer: entityMinimumConditions.purchasesSingleIssuer === "yes",
-    entityNotCreatedSolelyForMinimumAmount: entityMinimumConditions.notCreatedSolelyForMinimumAmount === "yes",
-  }), [accountType, answers, entityMinimumConditions, futurePaymentAmount, jurisdiction, priorOmAmount, proposedAmount, registeredSuitabilityAdvice, relationshipStatus, selectedOffering]);
-  const progress = Math.round(((step + 1) / c.steps.length) * 100);
-
-  function updateDraft<K extends keyof ProspectDraft>(key: K, value: ProspectDraft[K]) {
-    setDraft((current) => ({ ...current, [key]: value }));
-    setError("");
-  }
-
-  function chooseExisting(id: string) {
-    const client = clients.find((item) => item.id === id);
-    setSelectedClientId(id);
-    if (client) {
-      setAccountType(client.accountType);
-      setJurisdiction(client.jurisdiction);
-    }
-    setAnswers({});
-    setError("");
-  }
-
-  function chooseAccountType(value: ClientAccountType) {
-    setAccountType(value);
-    setDraft((current) => ({ ...current, accountType: value }));
-    setAnswers({});
-  }
-
-  function chooseJurisdiction(value: ClientJurisdiction) {
-    setJurisdiction(value);
-    setAnswers({});
-  }
-
-  function answer(criterion: InvestorReadinessCriterion, value: InvestorReadinessAnswer) {
-    setAnswers((current) => ({ ...current, [criterion]: value }));
-    setError("");
-  }
-
-  function updateEntityMinimumCondition(
-    condition: keyof typeof entityMinimumConditions,
-    value: EntityMinimumCondition,
-  ) {
-    setEntityMinimumConditions((current) => ({ ...current, [condition]: value }));
-  }
-
-  function validCurrentStep() {
-    if (step === 0 && mode === "existing") return Boolean(selectedClientId);
-    if (step === 0) return Boolean(
-      draft.firstName.trim() && draft.lastName.trim() && /^\S+@\S+\.\S+$/.test(draft.email) &&
-      draft.country.trim() && draft.region.trim() && (draft.accountType !== "entity" || draft.organization.trim()),
+  useEffect(() => {
+    if (!referenceClient || accountType || countryCode) return;
+    const normalizedCountry = referenceClient.country.trim().toLocaleLowerCase("en");
+    const matchedCountry = countryOptions.find((country) =>
+      country.label.trim().toLocaleLowerCase("en") === normalizedCountry
+      || (country.code === "CA" && normalizedCountry === "canada")
+      || (country.code === "TR" && ["turkey", "türkiye"].includes(normalizedCountry)),
     );
-    if (step === 2 && jurisdiction === "ontario") {
-      return applicableCriteria.every((criterion) => Boolean(answers[criterion]))
-        && (!offeringId || (proposedAmount !== undefined && proposedAmount > 0));
+    setAccountType(referenceClient.accountType);
+    setCountryCode(matchedCountry?.code ?? "");
+    if (matchedCountry?.code === "CA") {
+      const region = CANADIAN_REGIONS.find((item) =>
+        item.code === referenceClient.region?.toUpperCase()
+        || item.en.toLowerCase() === referenceClient.region?.toLowerCase(),
+      );
+      setRegionCode(region?.code ?? "");
     }
-    if (step === 3) return permission && accuracy;
-    return true;
+  }, [accountType, countryCode, countryOptions, referenceClient]);
+
+  useEffect(() => {
+    if (professionalMode || accountType || countryCode) return;
+    const residence = context.user.residenceJurisdiction?.trim().toLocaleLowerCase("en") ?? "";
+    setAccountType(context.user.investorAccountType ?? "individual");
+    if (residence.includes("canada")) {
+      setCountryCode("CA");
+      if (residence.includes("ontario")) setRegionCode("ON");
+    } else if (residence.includes("turkey") || residence.includes("türkiye")) {
+      setCountryCode("TR");
+    }
+  }, [accountType, context.user.investorAccountType, context.user.residenceJurisdiction, countryCode, professionalMode]);
+
+  const readinessAnswers = useMemo(() => qualificationBandsToReadinessAnswers(profile), [profile]);
+  const decision = useMemo(() => assessCanadianFinancialProfile({
+    accountType: accountType ?? "individual",
+    answers: readinessAnswers,
+  }), [accountType, readinessAnswers]);
+  const jurisdictionReview = resolveInvestorJurisdiction({
+    residenceCountryCode: countryCode,
+    residenceRegionCode: regionCode || undefined,
+  });
+  const selectedCountry = countryOptions.find((country) => country.code === countryCode);
+  const selectedRegion = CANADIAN_REGIONS.find((region) => region.code === regionCode);
+  const adviceQuestionRequired = accountType === "individual"
+    && decision.financialResult === "potentially-eligible";
+  const totalQuestions = accountType === "entity" ? 2 : adviceQuestionRequired ? 8 : 7;
+  const maximumInvestment = preliminaryMaximumInvestment({
+    financialResult: decision.financialResult,
+    registeredSuitabilityAdvice: registeredAdvice,
+  });
+
+  function start() {
+    setStage("questions");
+    setQuestionIndex(0);
+  }
+
+  function reset() {
+    setStage("intro");
+    setQuestionIndex(0);
+    setProfile({});
+    setRegisteredAdvice(undefined);
+    setAccountType(referenceClient?.accountType);
+    const normalizedCountry = referenceClient?.country.toLowerCase();
+    setCountryCode(normalizedCountry === "canada" ? "CA" : normalizedCountry === "turkey" || normalizedCountry === "türkiye" ? "TR" : "");
+    setRegionCode(referenceClient?.region?.toLowerCase() === "ontario" ? "ON" : "");
+    setAddOpen(false);
+    setDuplicateClientId("");
+    setSaveStatus("idle");
+  }
+
+  function canContinue() {
+    if (questionIndex === 0) return Boolean(accountType);
+    if (questionIndex === 1) return Boolean(countryCode && (countryCode !== "CA" || regionCode));
+    if (questionIndex === 2) return Boolean(profile.registration);
+    if (questionIndex === 3) return Boolean(profile.financialAssets);
+    if (questionIndex === 4) return Boolean(profile.individualIncome);
+    if (questionIndex === 5) return Boolean(profile.spousalIncome);
+    if (questionIndex === 6) return Boolean(profile.netAssets);
+    if (questionIndex === 7) return Boolean(registeredAdvice);
+    return false;
   }
 
   function next() {
-    if (!validCurrentStep()) { setError(c.required); return; }
-    if (step === 0 && mode === "new") {
-      setAccountType(draft.accountType);
-      const country = draft.country.trim().toLocaleLowerCase("en-CA");
-      const region = draft.region.trim().toLocaleLowerCase("en-CA");
-      setJurisdiction(["canada", "kanada"].includes(country) && ["ontario", "on"].includes(region) ? "ontario" : "manual-review");
+    if (!canContinue()) return;
+    const lastQuestion = accountType === "entity"
+      ? questionIndex === 1
+      : questionIndex === 6 ? !adviceQuestionRequired : questionIndex === 7;
+    if (lastQuestion) {
+      setStage("result");
+      return;
     }
-    setError("");
-    setStep((current) => Math.min(current + 1, c.steps.length - 1));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setQuestionIndex((current) => current + 1);
   }
 
-  function previous() {
-    setError("");
-    setStep((current) => Math.max(0, current - 1));
+  function back() {
+    if (questionIndex === 0) {
+      setStage("intro");
+      return;
+    }
+    setQuestionIndex((current) => current - 1);
   }
 
-  async function save() {
-    if (!validCurrentStep()) { setError(c.required); return; }
+  async function addClient() {
+    if (!professionalMode) return;
+    setSaveStatus("idle");
+    setDuplicateClientId("");
+    if (!draft.firstName.trim() || !draft.lastName.trim() || !draft.email.trim() || !permission || !accuracy || !accountType || !selectedCountry) {
+      setSaveStatus("error");
+      return;
+    }
+    const duplicate = clients.find((client) => client.email.trim().toLowerCase() === draft.email.trim().toLowerCase());
+    if (duplicate) {
+      setDuplicateClientId(duplicate.id);
+      return;
+    }
+
+    setSaveStatus("saving");
+    const jurisdiction: ClientJurisdiction = jurisdictionReview === "ontario-licensed-review" ? "ontario" : "manual-review";
+    const reviewReasons: InvestorReadinessReviewReason[] = [];
+    if (decision.financialResult === "needs-information") reviewReasons.push("incomplete-or-uncertain-financial-facts");
+    if (jurisdictionReview !== "ontario-licensed-review") reviewReasons.push("outside-ontario");
     const timestamp = new Date().toISOString();
-    const clientId = mode === "existing" ? selectedClientId : await createProspect({
-      accountType,
-      firstName: draft.firstName.trim(),
-      lastName: draft.lastName.trim(),
-      organization: draft.organization.trim() || undefined,
-      email: draft.email.trim(),
-      country: draft.country.trim(),
-      region: draft.region.trim() || undefined,
-      city: draft.city.trim() || undefined,
-      jurisdiction,
-    });
-    saveInvestorAssessment(clientId, {
-      jurisdiction,
-      accountType,
-      answers,
-      result: decision.result,
-      qualifyingCriteria: decision.qualifyingCriteria,
-      omContext: decision.omContext,
-      candidateRoutes: decision.candidateRoutes,
-      reviewReasons: decision.reviewReasons,
-      omCalculation: decision.omCalculation,
-      assessmentInput: {
+    try {
+      const clientId = await createProspect({
+        accountType,
+        firstName: draft.firstName.trim(),
+        lastName: draft.lastName.trim(),
+        email: draft.email.trim(),
+        country: selectedCountry.label,
+        region: selectedRegion?.[lang],
+        jurisdiction,
+      });
+      saveInvestorAssessment(clientId, {
         jurisdiction,
         accountType,
-        answers,
-        offeringId: selectedOffering?.id,
-        offeringCompliance: selectedOffering?.complianceProfile,
-        proposedAcquisitionCostCad: proposedAmount,
-        priorOmAcquisitionCostCad: priorOmAmount,
-        requiredFuturePaymentsCad: futurePaymentAmount,
-        registeredSuitabilityAdvice,
-        relationshipStatus,
-        entityMinimumConditions,
-      },
-      rulesetId: decision.rulesetId,
-      sourceUrls: decision.sourceUrls,
-      reassessmentTriggers: decision.reassessmentTriggers,
-      assessor: "Marmara Wealth Partners",
-      acknowledgementAt: timestamp,
-      assessedAt: timestamp,
-    });
-    setSavedClientId(clientId);
+        answers: readinessAnswers,
+        result: decision.result,
+        financialResult: decision.financialResult,
+        jurisdictionReview,
+        residenceCountryCode: countryCode,
+        residenceRegionCode: regionCode || undefined,
+        qualifyingCriteria: decision.qualifyingCriteria,
+        omContext: omContextForResult(decision.result),
+        candidateRoutes: ["licensed-review"],
+        reviewReasons,
+        omCalculation: maximumInvestment.status === "limit"
+          ? { status: "calculated", limitCad: maximumInvestment.limitCad }
+          : maximumInvestment.status === "no-individual-om-limit"
+            ? { status: "not-applicable" }
+            : { status: "manual-review" },
+        assessmentInput: {
+          residenceCountryCode: countryCode,
+          residenceRegionCode: regionCode || undefined,
+          profileAnswers: profile,
+          registeredSuitabilityAdvice: registeredAdvice,
+        },
+        rulesetId: decision.rulesetId,
+        sourceUrls: decision.sourceUrls,
+        reassessmentTriggers: [
+          "jurisdiction",
+          "purchaser-type",
+          "financial-facts",
+          ...(adviceQuestionRequired ? ["registered-suitability-advice" as const] : []),
+        ],
+        assessor: "Partner professional",
+        acknowledgementAt: timestamp,
+      });
+      router.push(`${NORTH_BASE}/clients/${clientId}`);
+    } catch {
+      setSaveStatus("error");
+    } finally {
+      setSaveStatus((current) => current === "saving" ? "idle" : current);
+    }
   }
-
-  function startAnother() {
-    setStep(0); setMode("existing"); setSelectedClientId(""); setAccountType("individual"); setJurisdiction("ontario"); setAnswers({}); setOfferingId(""); setProposedAcquisitionCost(""); setPriorOmAcquisitionCost(""); setRequiredFuturePayments(""); setRegisteredSuitabilityAdvice("unknown"); setRelationshipStatus("none"); setEntityMinimumConditions({ buysAsPrincipal: "unknown", paysCashAtDistribution: "unknown", purchasesSingleIssuer: "unknown", notCreatedSolelyForMinimumAmount: "unknown" }); setPermission(false); setAccuracy(false); setError(""); setSavedClientId(null);
-    setDraft({ accountType: "individual", firstName: "", lastName: "", organization: "", email: "", country: "Canada", region: "Ontario", city: "" });
-  }
-
-  if (savedClientId) return <div><PageHeader eyebrow={c.savedEyebrow} title={c.savedTitle} description={c.savedBody} /><Panel className="p-6 sm:p-8"><CheckCircle2 className="size-10 text-[#3d7257]" /><div role="status" aria-live="polite"><h2 className="mt-4 text-xl font-semibold text-[#173044]">{c.results[decision.result]}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-[#66747e]">{c.disclaimer}</p></div><div className="mt-6 flex flex-wrap gap-3"><Link href={`${NORTH_BASE}/clients/${savedClientId}`} className="inline-flex h-10 items-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white">{c.viewClient}<ArrowRight className="size-4" /></Link><button type="button" onClick={startAnother} className="inline-flex h-10 items-center gap-2 rounded-md border border-[#cfd7dc] px-4 text-sm font-semibold text-[#435561]"><RotateCcw className="size-4" />{c.another}</button></div></Panel></div>;
 
   return <div>
-    <PageHeader eyebrow={c.eyebrow} title={c.title} description={c.desc} />
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-5">
-      <Panel className="p-4 sm:p-5"><div className="mb-4 flex items-center justify-between"><span className="text-xs font-semibold text-[#65727c]">{c.step} {step + 1} / {c.steps.length}</span><span className="text-xs font-bold text-[#0a4b72]">{progress}%</span></div><div className="mb-4 h-1.5 overflow-hidden rounded-full bg-[#e7ebef]"><div className="h-full rounded-full bg-[#0a2d46] transition-[width]" style={{ width: `${progress}%` }} /></div><ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">{c.steps.map((name,index) => <li key={name} className={cn("flex items-center gap-2.5 rounded-md border px-3 py-2.5 text-sm", index === step ? "border-[#b8ccd9] bg-[#eaf0f5] font-semibold text-[#0a2d46]" : index < step ? "border-[#d5e1da] bg-[#f4f8f5] text-[#344955]" : "border-[#e1e6e9] text-[#89939a]")}><span className={cn("grid size-6 shrink-0 place-items-center rounded-full border text-[11px] font-bold", index === step ? "border-[#0a2d46] bg-[#0a2d46] text-white" : index < step ? "border-[#4c725e] bg-[#4c725e] text-white" : "border-[#ccd4da]")}>{index < step ? <Check className="size-3" /> : index + 1}</span><span className="leading-5">{name}</span></li>)}</ol></Panel>
-      <Panel className="overflow-hidden"><div className="border-b border-[#e4e8eb] p-5 sm:p-6"><p className="text-xs font-bold uppercase tracking-[0.08em] text-[#77838c]">{c.step} {step + 1}</p><h2 className="mt-2 text-xl font-semibold text-[#172e40]">{c.steps[step]}</h2></div><div className="p-5 sm:p-6">
-        {error && <p role="alert" className="mb-5 rounded-md border border-[#eccdc8] bg-[#fbefed] px-3 py-2 text-xs text-[#98463c]">{error}</p>}
-        {step === 0 && <section className="space-y-5"><div className="grid gap-2"><ModeButton active={mode === "existing"} onClick={() => { setMode("existing"); setError(""); }} icon={<UsersRound className="size-5" />} label={c.existing} description={c.existingIntro} /><ModeButton active={mode === "new"} onClick={() => { setMode("new"); setError(""); }} icon={<UserPlus className="size-5" />} label={c.quickAdd} description={c.newIntro} /></div>{mode === "existing" ? <div><Field label={c.chooseClient}><select value={selectedClientId} onChange={(event) => chooseExisting(event.target.value)} className={fieldClass}><option value="">{c.choosePlaceholder}</option>{clients.map((client) => <option key={client.id} value={client.id}>{client.displayName} · {client.email}</option>)}</select></Field></div> : <div><div className="mb-4 grid gap-2"><ChoiceButton active={draft.accountType === "individual"} onClick={() => { updateDraft("accountType","individual"); chooseAccountType("individual"); }} label={c.individual} /><ChoiceButton active={draft.accountType === "entity"} onClick={() => { updateDraft("accountType","entity"); chooseAccountType("entity"); }} label={c.entity} /></div><div className="grid gap-4 sm:grid-cols-2"><Field label={c.firstName}><input value={draft.firstName} onChange={(event) => updateDraft("firstName",event.target.value)} autoComplete="given-name" className={fieldClass} /></Field><Field label={c.lastName}><input value={draft.lastName} onChange={(event) => updateDraft("lastName",event.target.value)} autoComplete="family-name" className={fieldClass} /></Field>{draft.accountType === "entity" && <Field label={c.organization} className="sm:col-span-2"><input value={draft.organization} onChange={(event) => updateDraft("organization",event.target.value)} autoComplete="organization" className={fieldClass} /></Field>}<Field label={c.email} className="sm:col-span-2"><input type="email" value={draft.email} onChange={(event) => updateDraft("email",event.target.value)} autoComplete="email" className={fieldClass} /></Field><Field label={c.country}><input value={draft.country} onChange={(event) => updateDraft("country",event.target.value)} autoComplete="country-name" className={fieldClass} /></Field><Field label={c.province}><input value={draft.region} onChange={(event) => updateDraft("region",event.target.value)} autoComplete="address-level1" className={fieldClass} /></Field><Field label={c.city} className="sm:col-span-2"><input value={draft.city} onChange={(event) => updateDraft("city",event.target.value)} autoComplete="address-level2" className={fieldClass} /></Field></div></div>}</section>}
-        {step === 1 && <section className="space-y-6"><p className="text-sm leading-6 text-[#65727c]">{c.pathIntro}</p><div><p className="mb-2 text-xs font-semibold text-[#42525e]">{c.accountType}</p><div className="grid gap-2"><ChoiceButton active={accountType === "individual"} onClick={() => chooseAccountType("individual")} label={c.individual} /><ChoiceButton active={accountType === "entity"} onClick={() => chooseAccountType("entity")} label={c.entity} /></div></div><div><p className="mb-2 text-xs font-semibold text-[#42525e]">{c.residenceOnFile}</p>{selectedClient && <p className="mb-3 text-sm text-[#61717d]">{[selectedClient.city,selectedClient.region,selectedClient.country].filter(Boolean).join(", ") || "—"}</p>}<div className="grid gap-3"><PathButton active={jurisdiction === "ontario"} onClick={() => chooseJurisdiction("ontario")} title={c.ontario} text={c.ontarioHelp} /><PathButton active={jurisdiction === "manual-review"} onClick={() => chooseJurisdiction("manual-review")} title={c.outside} text={c.outsideHelp} /></div></div><p className="rounded-md bg-[#f4f7f9] p-3 text-xs leading-5 text-[#647681]">{c.changeWarning}</p></section>}
-        {step === 2 && <section className="space-y-5">
-          <p className="text-sm leading-6 text-[#65727c]">{c.statementsIntro}</p>
-          {jurisdiction === "manual-review" ? <div className="rounded-md border border-[#d9e2e8] bg-[#eef4f7] p-5"><ShieldCheck className="size-6 text-[#0a4b72]" /><h3 className="mt-3 font-semibold text-[#203744]">{c.results["manual-review"]}</h3><p className="mt-2 text-sm leading-6 text-[#65727c]">{c.outsideHelp}</p></div> : <>
-            {accountType === "individual" ? <><QuestionGroup title={c.accreditedGroup} criteria={[...INDIVIDUAL_ACCREDITED_CRITERIA]} answers={answers} onAnswer={answer} lang={lang} copy={c} /><QuestionGroup title={c.eligibleGroup} criteria={[...INDIVIDUAL_ELIGIBLE_CRITERIA]} answers={answers} onAnswer={answer} lang={lang} copy={c} /></> : <><QuestionGroup title={c.entityGroup} criteria={[...ENTITY_ACCREDITED_CRITERIA, "entity-not-created-solely-for-accredited-exemption"]} answers={answers} onAnswer={answer} lang={lang} copy={c} /><p className="rounded-md border border-[#eadcb8] bg-[#fbf7eb] p-3 text-xs leading-5 text-[#6f5a28]">{c.entityNote}</p></>}
-            <OfferingPurchaseFacts
-              accountType={accountType}
-              copy={c}
-              lang={lang}
-              offerings={offerings}
-              offeringId={offeringId}
-              onOfferingChange={setOfferingId}
-              proposedAcquisitionCost={proposedAcquisitionCost}
-              onProposedAcquisitionCostChange={setProposedAcquisitionCost}
-              priorOmAcquisitionCost={priorOmAcquisitionCost}
-              onPriorOmAcquisitionCostChange={setPriorOmAcquisitionCost}
-              requiredFuturePayments={requiredFuturePayments}
-              onRequiredFuturePaymentsChange={setRequiredFuturePayments}
-              registeredSuitabilityAdvice={registeredSuitabilityAdvice}
-              onRegisteredSuitabilityAdviceChange={setRegisteredSuitabilityAdvice}
-              relationshipStatus={relationshipStatus}
-              onRelationshipStatusChange={setRelationshipStatus}
-              entityMinimumConditions={entityMinimumConditions}
-              onEntityMinimumConditionChange={updateEntityMinimumCondition}
-            />
-          </>}
-        </section>}
-        {step === 3 && <section className="space-y-5"><ResultPanel decision={decision} lang={lang} copy={c} /><div className="space-y-2"><Consent checked={permission} onChange={setPermission} label={c.permission} /><Consent checked={accuracy} onChange={setAccuracy} label={c.accuracy} /></div></section>}
-      </div><footer className="flex items-center justify-end gap-3 border-t border-[#e4e8eb] px-5 py-4 sm:px-6"><button type="button" onClick={previous} disabled={step === 0} className="inline-flex h-10 items-center gap-2 rounded-md border border-[#d2d9de] px-4 text-sm font-semibold text-[#53636f] disabled:cursor-not-allowed disabled:opacity-40"><ArrowLeft className="size-4" />{c.back}</button>{step < c.steps.length - 1 ? <button type="button" onClick={next} className="inline-flex h-10 items-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white hover:bg-[#123f5e]">{c.continue}<ArrowRight className="size-4" /></button> : <button type="button" onClick={save} className="inline-flex h-10 items-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white hover:bg-[#123f5e]"><Check className="size-4" />{c.save}</button>}</footer></Panel>
+    <PageHeader
+      eyebrow={professionalMode ? c.eyebrow : c.selfEyebrow}
+      title={professionalMode ? c.title : c.selfTitle}
+      description={professionalMode ? c.description : c.selfDescription}
+    />
+
+    {referenceMode && <div className="mx-auto mb-5 flex max-w-3xl flex-col gap-3 rounded-md border border-[#cddce5] bg-[#eef4f7] p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 size-5 shrink-0 text-[#0a4b72]" /><div><p className="text-sm font-semibold text-[#203f52]">{c.referenceMode}</p><p className="mt-1 text-xs leading-5 text-[#607581]">{c.referenceBody}</p></div></div>
+      {referenceClient && <Link href={`${NORTH_BASE}/clients/${referenceClient.id}`} className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md border border-[#b8cbd6] bg-white px-3 text-xs font-semibold text-[#31566c]"><ArrowLeft className="size-3.5" />{c.backToClient}</Link>}
+    </div>}
+
+    <div className="mx-auto max-w-3xl">
+      {stage === "intro" && <Panel className="overflow-hidden">
+        <div className="relative overflow-hidden bg-[#0a2d46] px-6 py-8 text-white sm:px-9 sm:py-10">
+          <div className="absolute -right-16 -top-20 size-64 rounded-full border border-white/10 bg-white/[0.03]" />
+          <Globe2 className="size-8 text-[#9cc8df]" />
+          <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#a9cadc]">{c.introEyebrow}</p>
+          <h2 className="mt-2 max-w-xl font-serif text-2xl font-semibold leading-tight sm:text-3xl">{professionalMode ? c.introTitle : c.selfIntroTitle}</h2>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-[#d2e0e8]">{professionalMode ? c.introBody : c.selfIntroBody}</p>
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <button type="button" onClick={start} className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-white px-5 text-sm font-semibold text-[#0a2d46] shadow-sm hover:bg-[#f1f6f8]">{c.start}<ArrowRight className="size-4" /></button>
+            <button type="button" onClick={() => setGuideOpen(true)} className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-white/30 px-5 text-sm font-semibold text-white hover:bg-white/10"><BookOpen className="size-4" />{c.guide}</button>
+          </div>
+        </div>
+        <div className="grid gap-3 px-6 py-5 text-xs text-[#5e717d] sm:grid-cols-2 sm:px-9">
+          <p className="flex items-center gap-2"><CheckCircle2 className="size-4 text-[#4c755c]" />{c.time}</p>
+          <p className="flex items-center gap-2"><CheckCircle2 className="size-4 text-[#4c755c]" />{c.complete}</p>
+        </div>
+      </Panel>}
+
+      {stage === "questions" && <Panel className="overflow-hidden">
+        <div className="border-b border-[#e2e8eb] bg-[#f8fafb] px-5 py-4 sm:px-7">
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-xs font-semibold text-[#526976]">{c.question} {questionIndex + 1} {c.of} {totalQuestions}</p>
+            <button type="button" onClick={reset} className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#607480] hover:text-[#0a2d46]"><RotateCcw className="size-3.5" />{c.restart}</button>
+          </div>
+          <Progress value={((questionIndex + 1) / totalQuestions) * 100} className="mt-3 h-1.5 bg-[#dce6eb] [&_[data-slot=progress-indicator]]:bg-[#0a4b72]" />
+        </div>
+
+        <div className="min-h-[390px] px-5 py-7 sm:px-8 sm:py-9">
+          <QuestionContent
+            index={questionIndex}
+            copy={c}
+            accountType={accountType}
+            onAccountType={setAccountType}
+            countryCode={countryCode}
+            onCountryCode={(value) => { setCountryCode(value); if (value !== "CA") setRegionCode(""); }}
+            regionCode={regionCode}
+            onRegionCode={setRegionCode}
+            countryOptions={countryOptions}
+            lang={lang}
+            profile={profile}
+            onProfile={setProfile}
+            registeredAdvice={registeredAdvice}
+            onRegisteredAdvice={setRegisteredAdvice}
+          />
+        </div>
+
+        <div className="flex items-center justify-between gap-3 border-t border-[#e2e8eb] px-5 py-4 sm:px-7">
+          <button type="button" onClick={back} className="inline-flex h-10 items-center gap-2 rounded-md border border-[#d1d9de] px-4 text-sm font-semibold text-[#536570] hover:bg-[#f6f8f9]"><ArrowLeft className="size-4" />{c.back}</button>
+          <button type="button" onClick={next} disabled={!canContinue()} className="inline-flex h-10 items-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white hover:bg-[#123f5e] disabled:cursor-not-allowed disabled:opacity-40">{questionIndex === totalQuestions - 1 ? c.seeResult : c.next}<ArrowRight className="size-4" /></button>
+        </div>
+      </Panel>}
+
+      {stage === "result" && <ResultView
+        copy={c}
+        decision={decision}
+        jurisdictionReview={jurisdictionReview}
+        countryLabel={selectedCountry?.label ?? countryCode}
+        regionLabel={selectedRegion?.[lang]}
+        referenceClientId={referenceClient?.id}
+        selfMode={!professionalMode}
+        maximumInvestment={maximumInvestment}
+        onAdd={() => setAddOpen(true)}
+        onGuide={() => setGuideOpen(true)}
+        onRestart={reset}
+      />}
     </div>
+
+    <QualificationGuide open={guideOpen} onOpenChange={setGuideOpen} copy={c} />
+
+    {professionalMode && <Dialog open={addOpen} onOpenChange={(open) => { setAddOpen(open); if (!open) { setDuplicateClientId(""); setSaveStatus("idle"); } }}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="font-serif text-xl text-[#172e40]">{c.addTitle}</DialogTitle>
+          <DialogDescription>{c.addBody}</DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-1 sm:grid-cols-2">
+          <Field label={c.firstName}><input value={draft.firstName} onChange={(event) => setDraft({ ...draft, firstName: event.target.value })} className={fieldClass} autoComplete="given-name" /></Field>
+          <Field label={c.lastName}><input value={draft.lastName} onChange={(event) => setDraft({ ...draft, lastName: event.target.value })} className={fieldClass} autoComplete="family-name" /></Field>
+          <Field label={c.email} className="sm:col-span-2"><input type="email" value={draft.email} onChange={(event) => setDraft({ ...draft, email: event.target.value })} className={fieldClass} autoComplete="email" /></Field>
+        </div>
+        <div className="space-y-2">
+          <Consent checked={permission} onChange={setPermission} label={c.permission} />
+          <Consent checked={accuracy} onChange={setAccuracy} label={c.accuracy} />
+        </div>
+        {saveStatus === "error" && <p role="alert" className="rounded-md border border-[#edcec8] bg-[#fbefed] px-3 py-2 text-xs text-[#91483f]">{draft.firstName && draft.lastName && draft.email && permission && accuracy ? c.saveError : c.required}</p>}
+        {duplicateClientId && <div role="alert" className="rounded-md border border-[#eadcb8] bg-[#fbf7eb] p-3 text-sm text-[#685526]"><p className="font-semibold">{c.duplicateTitle}</p><Link href={`${NORTH_BASE}/clients/${duplicateClientId}`} className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#0a4b72]">{c.viewExisting}<ArrowRight className="size-3.5" /></Link></div>}
+        <DialogFooter>
+          <button type="button" onClick={() => setAddOpen(false)} className="h-10 rounded-md border border-[#d1d9de] px-4 text-sm font-semibold text-[#536570]">{c.cancel}</button>
+          <button type="button" onClick={addClient} disabled={saveStatus === "saving"} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white disabled:opacity-50"><UserPlus className="size-4" />{c.create}</button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>}
   </div>;
 }
 
 type Copy = (typeof COPY)["en"] | (typeof COPY)["tr"];
 
-function moneyValue(value: string) {
-  if (!value.trim()) return undefined;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed >= 0 ? parsed : undefined;
-}
-
-function formatCad(value: number, lang: "en" | "tr") {
-  return new Intl.NumberFormat(lang === "tr" ? "tr-TR" : "en-CA", { style: "currency", currency: "CAD", maximumFractionDigits: 0 }).format(value);
-}
-
-function OfferingPurchaseFacts({
-  accountType, copy, lang, offerings, offeringId, onOfferingChange,
-  proposedAcquisitionCost, onProposedAcquisitionCostChange,
-  priorOmAcquisitionCost, onPriorOmAcquisitionCostChange,
-  requiredFuturePayments, onRequiredFuturePaymentsChange,
-  registeredSuitabilityAdvice, onRegisteredSuitabilityAdviceChange,
-  relationshipStatus, onRelationshipStatusChange,
-  entityMinimumConditions, onEntityMinimumConditionChange,
+function QuestionContent({
+  index,
+  copy,
+  accountType,
+  onAccountType,
+  countryCode,
+  onCountryCode,
+  regionCode,
+  onRegionCode,
+  countryOptions,
+  lang,
+  profile,
+  onProfile,
+  registeredAdvice,
+  onRegisteredAdvice,
 }: {
-  accountType: ClientAccountType;
+  index: number;
   copy: Copy;
+  accountType?: ClientAccountType;
+  onAccountType: (value: ClientAccountType) => void;
+  countryCode: string;
+  onCountryCode: (value: string) => void;
+  regionCode: string;
+  onRegionCode: (value: string) => void;
+  countryOptions: Array<{ code: string; label: string }>;
   lang: "en" | "tr";
-  offerings: OfferingBundle[];
-  offeringId: string;
-  onOfferingChange: (value: string) => void;
-  proposedAcquisitionCost: string;
-  onProposedAcquisitionCostChange: (value: string) => void;
-  priorOmAcquisitionCost: string;
-  onPriorOmAcquisitionCostChange: (value: string) => void;
-  requiredFuturePayments: string;
-  onRequiredFuturePaymentsChange: (value: string) => void;
-  registeredSuitabilityAdvice: "recorded" | "not-recorded" | "unknown";
-  onRegisteredSuitabilityAdviceChange: (value: "recorded" | "not-recorded" | "unknown") => void;
-  relationshipStatus: RelationshipStatus;
-  onRelationshipStatusChange: (value: RelationshipStatus) => void;
-  entityMinimumConditions: Record<"buysAsPrincipal" | "paysCashAtDistribution" | "purchasesSingleIssuer" | "notCreatedSolelyForMinimumAmount", EntityMinimumCondition>;
-  onEntityMinimumConditionChange: (condition: "buysAsPrincipal" | "paysCashAtDistribution" | "purchasesSingleIssuer" | "notCreatedSolelyForMinimumAmount", value: EntityMinimumCondition) => void;
+  profile: ProfileAnswers;
+  onProfile: (value: ProfileAnswers) => void;
+  registeredAdvice?: RegisteredSuitabilityAdvice;
+  onRegisteredAdvice: (value: RegisteredSuitabilityAdvice) => void;
 }) {
-  return <section className="rounded-md border border-[#d8e0e5] bg-[#f8fafb] p-4 sm:p-5">
-    <h3 className="text-sm font-semibold text-[#203744]">{copy.offeringFacts}</h3>
-    <p className="mt-1 text-xs leading-5 text-[#657580]">{copy.offeringFactsHelp}</p>
-    <div className="mt-4"><Field label={copy.offering}><select value={offeringId} onChange={(event) => onOfferingChange(event.target.value)} className={fieldClass}><option value="">{copy.noOffering}</option>{offerings.map((offering) => <option key={offering.id} value={offering.id}>{offering.shortName[lang]}</option>)}</select></Field></div>
-    {offeringId && <div className="mt-4 space-y-4">
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Field label={copy.proposedAcquisition}><input required type="number" min="0" step="0.01" inputMode="decimal" value={proposedAcquisitionCost} onChange={(event) => onProposedAcquisitionCostChange(event.target.value)} className={fieldClass} /></Field>
-        <Field label={copy.priorOmAcquisitions}><input type="number" min="0" step="0.01" inputMode="decimal" value={priorOmAcquisitionCost} onChange={(event) => onPriorOmAcquisitionCostChange(event.target.value)} className={fieldClass} /></Field>
-        <Field label={copy.futurePayments}><input type="number" min="0" step="0.01" inputMode="decimal" value={requiredFuturePayments} onChange={(event) => onRequiredFuturePaymentsChange(event.target.value)} className={fieldClass} /></Field>
+  if (index === 0) return <QuestionLayout title={copy.accountTitle} body={copy.accountBody}>
+    <div className="grid gap-3 sm:grid-cols-2">
+      <LargeChoice active={accountType === "individual"} onClick={() => onAccountType("individual")} icon={<UserRound className="size-5" />} title={copy.individual} body={copy.individualHelp} />
+      <LargeChoice active={accountType === "entity"} onClick={() => onAccountType("entity")} icon={<Building2 className="size-5" />} title={copy.entity} body={copy.entityHelp} />
+    </div>
+  </QuestionLayout>;
+
+  if (index === 1) return <QuestionLayout title={copy.residenceTitle} body={copy.residenceBody}>
+    <div className="mx-auto max-w-md space-y-4">
+      <Field label={copy.country}>
+        <select value={countryCode} onChange={(event) => onCountryCode(event.target.value)} className={fieldClass}>
+          <option value="">{copy.chooseCountry}</option>
+          {countryOptions.map((country) => <option key={country.code} value={country.code}>{country.label}</option>)}
+        </select>
+      </Field>
+      {countryCode === "CA" && <Field label={copy.province}>
+        <select value={regionCode} onChange={(event) => onRegionCode(event.target.value)} className={fieldClass}>
+          <option value="">{copy.chooseProvince}</option>
+          {CANADIAN_REGIONS.map((region) => <option key={region.code} value={region.code}>{region[lang]}</option>)}
+        </select>
+      </Field>}
+    </div>
+  </QuestionLayout>;
+
+  if (index === 2) return <QuestionLayout title={copy.registrationTitle} body={copy.registrationBody}>
+    <AnswerGrid value={profile.registration} onChange={(value) => onProfile({ ...profile, registration: value as InvestorReadinessAnswer })} options={[
+      { value: "yes", label: copy.answers.yes },
+      { value: "no", label: copy.answers.no },
+      { value: "unsure", label: copy.answers.unsure },
+    ]} />
+  </QuestionLayout>;
+
+  if (index === 3) return <FinancialQuestion title={copy.financialAssetsTitle} body={copy.financialAssetsBody} note={copy.cadNote}>
+    <AnswerGrid value={profile.financialAssets} onChange={(value) => onProfile({ ...profile, financialAssets: value as NonNullable<ProfileAnswers["financialAssets"]> })} options={[
+      { value: "above-million", label: copy.answers["above-million"] },
+      { value: "million-or-less", label: copy.answers["million-or-less"] },
+      { value: "unsure", label: copy.answers.unsure },
+    ]} />
+  </FinancialQuestion>;
+
+  if (index === 4) return <FinancialQuestion title={copy.incomeTitle} body={copy.incomeBody} note={copy.cadNote}>
+    <AnswerGrid value={profile.individualIncome} onChange={(value) => onProfile({ ...profile, individualIncome: value as NonNullable<ProfileAnswers["individualIncome"]> })} options={[
+      { value: "above-200", label: copy.answers["above-200"] },
+      { value: "above-75-to-200", label: copy.answers["above-75-to-200"] },
+      { value: "75-or-less", label: copy.answers["75-or-less"] },
+      { value: "unsure", label: copy.answers.unsure },
+    ]} />
+  </FinancialQuestion>;
+
+  if (index === 5) return <FinancialQuestion title={copy.spouseTitle} body={copy.spouseBody} note={copy.cadNote}>
+    <AnswerGrid value={profile.spousalIncome} onChange={(value) => onProfile({ ...profile, spousalIncome: value as NonNullable<ProfileAnswers["spousalIncome"]> })} options={[
+      { value: "above-300", label: copy.answers["above-300"] },
+      { value: "above-125-to-300", label: copy.answers["above-125-to-300"] },
+      { value: "125-or-less", label: copy.answers["125-or-less"] },
+      { value: "not-applicable", label: copy.answers["not-applicable"] },
+      { value: "unsure", label: copy.answers.unsure },
+    ]} />
+  </FinancialQuestion>;
+
+  if (index === 6) return <FinancialQuestion title={copy.netAssetsTitle} body={copy.netAssetsBody} note={copy.cadNote}>
+    <AnswerGrid value={profile.netAssets} onChange={(value) => onProfile({ ...profile, netAssets: value as NonNullable<ProfileAnswers["netAssets"]> })} options={[
+      { value: "five-million-plus", label: copy.answers["five-million-plus"] },
+      { value: "above-400-under-five", label: copy.answers["above-400-under-five"] },
+      { value: "400-or-less", label: copy.answers["400-or-less"] },
+      { value: "unsure", label: copy.answers.unsure },
+    ]} />
+  </FinancialQuestion>;
+
+  return <FinancialQuestion title={copy.adviceTitle} body={copy.adviceBody} note={copy.cadNote}>
+    <AnswerGrid value={registeredAdvice} onChange={(value) => onRegisteredAdvice(value as RegisteredSuitabilityAdvice)} options={[
+      { value: "yes", label: copy.adviceYes },
+      { value: "no", label: copy.adviceNo },
+      { value: "unsure", label: copy.adviceUnsure },
+    ]} />
+  </FinancialQuestion>;
+}
+
+function ResultView({ copy, decision, jurisdictionReview, countryLabel, regionLabel, referenceClientId, selfMode, maximumInvestment, onAdd, onGuide, onRestart }: {
+  copy: Copy;
+  decision: ReturnType<typeof assessCanadianFinancialProfile>;
+  jurisdictionReview: InvestorJurisdictionReview;
+  countryLabel: string;
+  regionLabel?: string;
+  referenceClientId?: string;
+  selfMode: boolean;
+  maximumInvestment: ReturnType<typeof preliminaryMaximumInvestment>;
+  onAdd: () => void;
+  onGuide: () => void;
+  onRestart: () => void;
+}) {
+  return <div className="space-y-4">
+    <Panel className="overflow-hidden">
+      <div className="bg-[#0a2d46] px-6 py-7 text-white sm:px-8">
+        <div className="flex items-start gap-4"><span className="grid size-11 shrink-0 place-items-center rounded-full bg-white/10"><ShieldCheck className="size-6 text-[#b8d7e7]" /></span><div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.13em] text-[#a9cadc]">{copy.resultEyebrow}</p>
+          <h2 className="mt-2 font-serif text-2xl font-semibold">{copy.resultTitles[decision.financialResult]}</h2>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-[#d3e0e7]">{copy.resultBodies[decision.financialResult]}</p>
+        </div></div>
       </div>
-      <p className="text-xs leading-5 text-[#687984]">{copy.offeringFactsHelp}</p>
-      {accountType === "individual" && <div className="grid gap-4 sm:grid-cols-2">
-        <Field label={copy.suitabilityAdvice}><select value={registeredSuitabilityAdvice} onChange={(event) => onRegisteredSuitabilityAdviceChange(event.target.value as "recorded" | "not-recorded" | "unknown")} className={fieldClass}><option value="unknown">{copy.adviceUnknown}</option><option value="recorded">{copy.adviceRecorded}</option><option value="not-recorded">{copy.adviceNotRecorded}</option></select><span className="mt-1.5 block text-xs leading-5 text-[#687984]">{copy.adviceHelp}</span></Field>
-        <Field label={copy.relationship}><select value={relationshipStatus} onChange={(event) => onRelationshipStatusChange(event.target.value as RelationshipStatus)} className={fieldClass}><option value="none">{copy.relationshipNone}</option><option value="claimed">{copy.relationshipClaimed}</option><option value="verified">{copy.relationshipVerified}</option></select><span className="mt-1.5 block text-xs leading-5 text-[#687984]">{copy.relationshipHelp}</span></Field>
-      </div>}
-      {accountType === "entity" && <div className="rounded border border-[#dfe5e9] bg-white p-4"><p className="text-sm font-semibold text-[#203744]">{copy.entityMinimumTitle}</p><p className="mt-1 text-xs leading-5 text-[#687984]">{copy.entityMinimumHelp}</p><div className="mt-3 grid gap-3 sm:grid-cols-2"><EntityConditionField label={copy.buysAsPrincipal} value={entityMinimumConditions.buysAsPrincipal} onChange={(value) => onEntityMinimumConditionChange("buysAsPrincipal", value)} copy={copy} /><EntityConditionField label={copy.cashAtDistribution} value={entityMinimumConditions.paysCashAtDistribution} onChange={(value) => onEntityMinimumConditionChange("paysCashAtDistribution", value)} copy={copy} /><EntityConditionField label={copy.singleIssuer} value={entityMinimumConditions.purchasesSingleIssuer} onChange={(value) => onEntityMinimumConditionChange("purchasesSingleIssuer", value)} copy={copy} /><EntityConditionField label={copy.notCreatedForMinimum} value={entityMinimumConditions.notCreatedSolelyForMinimumAmount} onChange={(value) => onEntityMinimumConditionChange("notCreatedSolelyForMinimumAmount", value)} copy={copy} /></div></div>}
-    </div>}
-  </section>;
+      <div className="grid gap-4 p-5 sm:p-7 md:grid-cols-2">
+        <MaximumInvestmentCard copy={copy} maximumInvestment={maximumInvestment} />
+        <div className="rounded-md border border-[#dfe6ea] bg-[#f8fafb] p-4">
+          <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6b7d88]">{copy.recordedBasis}</p>
+          {decision.qualifyingCriteria.length ? <ul className="mt-3 space-y-2">{decision.qualifyingCriteria.map((criterion) => <li key={criterion} className="flex gap-2 text-xs leading-5 text-[#405965]"><Check className="mt-0.5 size-3.5 shrink-0 text-[#4d735a]" /><span>{copy.criteria[criterion]}</span></li>)}</ul> : <p className="mt-3 text-xs leading-5 text-[#667985]">{copy.noBasis}</p>}
+        </div>
+        <div className="rounded-md border border-[#cddde6] bg-[#eef4f7] p-4">
+          <div className="flex items-center gap-2 text-[#0a4b72]"><MapPin className="size-4" /><p className="text-[10px] font-bold uppercase tracking-[0.1em]">{copy.jurisdictionEyebrow}</p></div>
+          <h3 className="mt-3 text-sm font-semibold text-[#203f52]">{copy.jurisdictionTitles[jurisdictionReview]}</h3>
+          <p className="mt-1 text-xs font-medium text-[#486474]">{[regionLabel, countryLabel].filter(Boolean).join(", ")}</p>
+          <p className="mt-2 text-xs leading-5 text-[#607581]">{copy.jurisdictionBodies[jurisdictionReview]}</p>
+        </div>
+      </div>
+      <div className="border-t border-[#e3e8eb] px-5 py-4 sm:px-7"><p className="text-xs leading-5 text-[#62747f]">{copy.disclaimer}</p></div>
+    </Panel>
+
+    <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex gap-2">
+        <button type="button" onClick={onRestart} className="inline-flex h-10 items-center gap-2 rounded-md border border-[#d1d9de] bg-white px-4 text-sm font-semibold text-[#536570]"><RotateCcw className="size-4" />{copy.restart}</button>
+        <button type="button" onClick={onGuide} className="inline-flex h-10 items-center gap-2 rounded-md border border-[#d1d9de] bg-white px-4 text-sm font-semibold text-[#536570]"><BookOpen className="size-4" />{copy.guide}</button>
+      </div>
+      {referenceClientId
+        ? <Link href={`${NORTH_BASE}/clients/${referenceClientId}`} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white"><ArrowLeft className="size-4" />{copy.backToClient}</Link>
+        : selfMode
+          ? <Link href={`${NORTH_BASE}/funds`} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white">{copy.exploreFunds}<ArrowRight className="size-4" /></Link>
+          : <button type="button" onClick={onAdd} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white"><UserPlus className="size-4" />{copy.addClient}</button>}
+    </div>
+  </div>;
 }
 
-function EntityConditionField({ label, value, onChange, copy }: { label: string; value: EntityMinimumCondition; onChange: (value: EntityMinimumCondition) => void; copy: Copy }) {
-  return <Field label={label}><select value={value} onChange={(event) => onChange(event.target.value as EntityMinimumCondition)} className={fieldClass}><option value="unknown">{copy.unsure}</option><option value="yes">{copy.yes}</option><option value="no">{copy.no}</option></select></Field>;
+function MaximumInvestmentCard({ copy, maximumInvestment }: {
+  copy: Copy;
+  maximumInvestment: ReturnType<typeof preliminaryMaximumInvestment>;
+}) {
+  let title: string = copy.maximumNeedsTitle;
+  let body: string = copy.maximumNeedsBody;
+  let showBalanceNote = false;
+
+  if (maximumInvestment.status === "limit") {
+    title = `CAD $${new Intl.NumberFormat("en-CA", { maximumFractionDigits: 0 }).format(maximumInvestment.limitCad)}`;
+    body = `${copy.maximumLimitBody} ${maximumInvestment.adviceConfirmed ? copy.maximumAdviceBody : copy.maximumBaseBody}`;
+    showBalanceNote = true;
+  } else if (maximumInvestment.status === "no-individual-om-limit") {
+    title = copy.maximumNoLimitTitle;
+    body = copy.maximumNoLimitBody;
+  } else if (maximumInvestment.status === "needs-information") {
+    title = copy.maximumNeedsTitle;
+    body = copy.maximumNeedsBody;
+  } else if (maximumInvestment.status === "entity-review") {
+    title = copy.maximumEntityTitle;
+    body = copy.maximumEntityBody;
+  }
+
+  return <div className="rounded-md border border-[#b9d1de] bg-[#eaf3f7] p-5 md:col-span-2">
+    <div className="flex items-start gap-3">
+      <span className="grid size-10 shrink-0 place-items-center rounded-md bg-[#0a4b72] text-white"><CircleDollarSign className="size-5" /></span>
+      <div>
+        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#426b80]">{copy.maximumEyebrow}</p>
+        <h3 className="mt-1.5 font-serif text-xl font-semibold text-[#173b50]">{title}</h3>
+        <p className="mt-2 text-xs leading-5 text-[#506d7c]">{body}</p>
+        {showBalanceNote && <p className="mt-3 rounded-md border border-[#ccdde5] bg-white/70 px-3 py-2 text-xs font-medium leading-5 text-[#476675]">{copy.maximumBalanceNote}</p>}
+      </div>
+    </div>
+  </div>;
 }
 
-function ResultPanel({ decision, lang, copy }: { decision: ReturnType<typeof assessOntarioInvestor>; lang: "en" | "tr"; copy: Copy }) {
-  const criteriaCopy = CRITERIA_COPY[lang];
-  const omCopy = decision.omCalculation.status === "not-available" ? copy.omUnavailable : copy.om[decision.omContext.kind];
-  const calculation = decision.omCalculation;
-  return <div role="status" aria-live="polite" className="rounded-md border border-[#b9ccd8] bg-[#edf4f7] p-5"><div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 size-6 shrink-0 text-[#0a4b72]" /><div><p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#5d7685]">{copy.preliminary}</p><h3 className="mt-1 text-lg font-semibold text-[#17384d]">{copy.results[decision.result]}</h3></div></div><div className="mt-5 border-t border-[#d2dfe6] pt-4"><p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#6d7f8a]">{copy.basis}</p>{decision.qualifyingCriteria.length ? <ul className="mt-2 space-y-1.5">{decision.qualifyingCriteria.map((criterion) => <li key={criterion} className="text-sm leading-5 text-[#405765]">• {criteriaCopy[criterion].label}</li>)}</ul> : <p className="mt-2 text-sm text-[#617682]">{copy.noBasis}</p>}</div><div className="mt-4 rounded bg-white/75 p-3"><p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#6d7f8a]">{copy.omContext}</p><p className="mt-1 text-sm leading-6 text-[#526b7a]">{omCopy}</p></div>{calculation.status === "calculated" && <div className="mt-4 rounded border border-[#d4e0e5] bg-white p-3"><p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#6d7f8a]">{copy.capacity}</p><dl className="mt-2 grid gap-x-5 gap-y-1 text-sm text-[#405765] sm:grid-cols-2"><CapacityRow label={copy.limit} value={formatCad(calculation.limitCad ?? 0, lang)} /><CapacityRow label={copy.prior} value={formatCad(calculation.priorAcquisitionCostCad ?? 0, lang)} /><CapacityRow label={copy.proposed} value={formatCad(calculation.proposedAcquisitionCostCad ?? 0, lang)} /><CapacityRow label={copy.future} value={formatCad(calculation.requiredFuturePaymentsCad ?? 0, lang)} /><CapacityRow label={copy.postTrade} value={formatCad(calculation.totalAfterProposedCad ?? 0, lang)} /><CapacityRow label={copy.remaining} value={formatCad(calculation.remainingCapacityCad ?? 0, lang)} /></dl><p className={cn("mt-3 text-xs font-semibold", calculation.withinPreliminaryLimit ? "text-[#356b4a]" : "text-[#994f43]")}>{calculation.withinPreliminaryLimit ? copy.withinLimit : copy.exceedsLimit}</p></div>}<p className="mt-4 text-xs leading-5 text-[#596f7c]">{copy.disclaimer}</p><div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[#d2dfe6] pt-3 text-[10px] text-[#6c7e88]"><span>{copy.ruleset}: {READINESS_RULESET.id}</span><span>{copy.sources}:</span><a href={READINESS_RULESET.sources[0]} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-[#0a4b72]">{copy.sourceInstrument}<ExternalLink className="size-3" /></a><a href={READINESS_RULESET.sources[1]} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-[#0a4b72]">{copy.sourcePolicy}<ExternalLink className="size-3" /></a></div></div>;
+function QualificationGuide({ open, onOpenChange, copy }: { open: boolean; onOpenChange: (open: boolean) => void; copy: Copy }) {
+  return <Dialog open={open} onOpenChange={onOpenChange}>
+    <DialogContent className="max-h-[88vh] overflow-y-auto sm:max-w-4xl">
+      <DialogHeader>
+        <DialogTitle className="font-serif text-2xl text-[#172e40]">{copy.guideTitle}</DialogTitle>
+        <DialogDescription>{copy.guideDescription}</DialogDescription>
+      </DialogHeader>
+      <div className="grid gap-3 md:grid-cols-3">
+        {copy.guideRows.map((row) => <section key={row.title} className={cn("rounded-md border p-4", row.tone === "blue" && "border-[#c8dae4] bg-[#eef4f7]", row.tone === "green" && "border-[#d2e1d6] bg-[#f1f6f2]", row.tone === "sand" && "border-[#e8ddc6] bg-[#fbf7ef]")}>
+          <h3 className="text-sm font-semibold text-[#203f52]">{row.title}</h3>
+          <ul className="mt-3 space-y-2">{row.points.map((point) => <li key={point} className="flex gap-2 text-xs leading-5 text-[#526a77]"><CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-[#4e735d]" /><span>{point}</span></li>)}</ul>
+        </section>)}
+      </div>
+      <p className="rounded-md border border-[#e2e7ea] bg-[#f8fafb] p-4 text-xs leading-5 text-[#5d717d]">{copy.guideNote}</p>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[#e4e8eb] pt-4 text-xs">
+        <span className="font-semibold text-[#425762]">{copy.sources}:</span>
+        <a href={PARVIS_GUIDE_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-[#0a4b72]">{copy.parvis}<ExternalLink className="size-3" /></a>
+        <a href={READINESS_RULESET.sources[0]} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-[#0a4b72]">{copy.instrument}<ExternalLink className="size-3" /></a>
+        <a href={READINESS_RULESET.sources[1]} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-[#0a4b72]">{copy.policy}<ExternalLink className="size-3" /></a>
+      </div>
+    </DialogContent>
+  </Dialog>;
 }
 
-function CapacityRow({ label, value }: { label: string; value: string }) { return <div className="flex items-center justify-between gap-2"><dt>{label}</dt><dd className="font-semibold text-[#203744]">{value}</dd></div>; }
-
-function QuestionGroup({ title, criteria, answers, onAnswer, lang, copy }: { title: string; criteria: InvestorReadinessCriterion[]; answers: Partial<Record<InvestorReadinessCriterion, InvestorReadinessAnswer>>; onAnswer: (criterion: InvestorReadinessCriterion, answer: InvestorReadinessAnswer) => void; lang: "en" | "tr"; copy: Copy }) {
-  return <div><h3 className="text-sm font-semibold text-[#203744]">{title}</h3><div className="mt-3 space-y-3">{criteria.map((criterion) => { const item = CRITERIA_COPY[lang][criterion]; return <fieldset key={criterion} className="rounded-md border border-[#dfe4e9] bg-[#fafbfc] p-4"><legend className="sr-only">{item.label}</legend><p className="text-sm font-medium leading-6 text-[#40515e]">{item.label}</p><p className="mt-1 text-xs leading-5 text-[#71808a]">{item.help}</p><div className="mt-3 grid grid-cols-3 gap-2" role="radiogroup" aria-label={item.label}>{(["yes","no","unsure"] as const).map((value) => <button key={value} type="button" role="radio" aria-checked={answers[criterion] === value} onClick={() => onAnswer(criterion,value)} className={cn("min-h-9 rounded-md border px-2 text-xs font-semibold", answers[criterion] === value ? "border-[#0a2d46] bg-[#0a2d46] text-white" : "border-[#ced7dd] bg-white text-[#536671] hover:border-[#8fa6b4]")}>{copy[value]}</button>)}</div></fieldset>; })}</div></div>;
+function QuestionLayout({ title, body, children }: { title: string; body: string; children: React.ReactNode }) {
+  return <div><div className="mx-auto max-w-xl text-center"><h2 className="font-serif text-2xl font-semibold text-[#172e40]">{title}</h2><p className="mt-3 text-sm leading-6 text-[#657783]">{body}</p></div><div className="mx-auto mt-7 max-w-xl">{children}</div></div>;
 }
 
-function ModeButton({ active, onClick, icon, label, description }: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string; description: string }) { return <button type="button" onClick={onClick} aria-pressed={active} className={cn("flex min-h-20 items-center gap-3 rounded-md border p-4 text-left", active ? "border-[#0a4b72] bg-[#eef4f7] text-[#17384d]" : "border-[#d8dfe4] text-[#53636f]")}><span className="grid size-10 shrink-0 place-items-center rounded-md bg-white text-[#0a4b72] shadow-sm">{icon}</span><span><span className="block text-sm font-semibold">{label}</span><span className="mt-1 block text-xs font-normal leading-5 text-[#71808a]">{description}</span></span></button>; }
-function ChoiceButton({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) { return <button type="button" onClick={onClick} aria-pressed={active} className={cn("min-h-11 rounded-md border px-4 text-left text-sm font-semibold", active ? "border-[#0a2d46] bg-[#0a2d46] text-white" : "border-[#d2dae0] bg-white text-[#53636f]")}>{label}</button>; }
-function PathButton({ active, onClick, title, text }: { active: boolean; onClick: () => void; title: string; text: string }) { return <button type="button" onClick={onClick} aria-pressed={active} className={cn("rounded-md border p-4 text-left", active ? "border-[#0a4b72] bg-[#eef4f7]" : "border-[#d8dfe4] bg-white")}><span className="block text-sm font-semibold text-[#203744]">{title}</span><span className="mt-1 block text-xs leading-5 text-[#71808a]">{text}</span></button>; }
-function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) { return <label className={cn("block",className)}><span className="mb-1.5 block text-xs font-semibold text-[#42525e]">{label}</span>{children}</label>; }
-function Consent({ checked, onChange, label }: { checked: boolean; onChange: (checked: boolean) => void; label: string }) { return <label className="flex cursor-pointer items-start gap-3 rounded-md border border-[#dfe4e9] p-3.5"><input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="mt-0.5 size-4 accent-[#0a2d46]" /><span className="text-sm leading-5 text-[#40515e]">{label}</span></label>; }
+function FinancialQuestion({ title, body, note, children }: { title: string; body: string; note: string; children: React.ReactNode }) {
+  return <QuestionLayout title={title} body={body}><p className="mb-4 rounded-md bg-[#eef4f7] px-3 py-2 text-center text-xs font-medium leading-5 text-[#4e6a79]">{note}</p>{children}</QuestionLayout>;
+}
+
+function LargeChoice({ active, onClick, icon, title, body }: { active: boolean; onClick: () => void; icon: React.ReactNode; title: string; body: string }) {
+  return <button type="button" role="radio" aria-checked={active} onClick={onClick} className={cn("flex min-h-32 flex-col items-start rounded-md border p-5 text-left transition", active ? "border-[#0a4b72] bg-[#eef4f7] shadow-sm" : "border-[#d9e1e5] bg-white hover:border-[#9eb2bd]")}><span className={cn("grid size-9 place-items-center rounded-md", active ? "bg-[#0a4b72] text-white" : "bg-[#eef2f4] text-[#476477]")}>{icon}</span><span className="mt-4 text-sm font-semibold text-[#203f52]">{title}</span><span className="mt-1 text-xs leading-5 text-[#6b7c86]">{body}</span></button>;
+}
+
+function AnswerGrid({ value, onChange, options }: { value?: string; onChange: (value: string) => void; options: Array<{ value: string; label: string }> }) {
+  return <div className="grid gap-2" role="radiogroup">{options.map((option) => <button key={option.value} type="button" role="radio" aria-checked={value === option.value} onClick={() => onChange(option.value)} className={cn("flex min-h-12 items-center justify-between gap-3 rounded-md border px-4 py-3 text-left text-sm font-semibold transition", value === option.value ? "border-[#0a4b72] bg-[#eef4f7] text-[#173f57] shadow-sm" : "border-[#d6dfe4] bg-white text-[#526671] hover:border-[#9db0bb]")}><span>{option.label}</span><span className={cn("grid size-5 shrink-0 place-items-center rounded-full border", value === option.value ? "border-[#0a4b72] bg-[#0a4b72] text-white" : "border-[#bdc9d0]")}>{value === option.value && <Check className="size-3" />}</span></button>)}</div>;
+}
+
+function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
+  return <label className={cn("block", className)}><span className="mb-1.5 block text-xs font-semibold text-[#425762]">{label}</span>{children}</label>;
+}
+
+function Consent({ checked, onChange, label }: { checked: boolean; onChange: (checked: boolean) => void; label: string }) {
+  return <label className="flex cursor-pointer items-start gap-3 rounded-md border border-[#dfe5e8] p-3"><input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="mt-0.5 size-4 accent-[#0a2d46]" /><span className="text-xs leading-5 text-[#526671]">{label}</span></label>;
+}

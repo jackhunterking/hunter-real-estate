@@ -9,6 +9,7 @@ const config = [
     ignores: [
       ".next/**",
       ".supabase-cli-home/**",
+      "_kredibaba-source/dist/**",
       "node_modules/**",
       "lib/supabase/database.types.ts",
       "next-env.d.ts",

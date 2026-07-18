@@ -1,5 +1,5 @@
-import { FirmWorkspace } from "@/components/capital/north/FirmWorkspace";
+import { AuthorizedHomeRedirect } from "@/components/capital/north/AuthorizedHomeRedirect";
 
 export default function HunterNorthFirmMembersPage() {
-  return <FirmWorkspace section="members" />;
+  return <AuthorizedHomeRedirect />;
 }

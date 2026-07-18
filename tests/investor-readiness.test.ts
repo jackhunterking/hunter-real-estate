@@ -2,10 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { InvestorReadinessAnswer, InvestorReadinessCriterion } from "../lib/capital/types.ts";
 import {
+  assessCanadianFinancialProfile,
   assessInvestorReadiness,
   ENTITY_ACCREDITED_CRITERIA,
   INDIVIDUAL_ACCREDITED_CRITERIA,
   INDIVIDUAL_ELIGIBLE_CRITERIA,
+  preliminaryMaximumInvestment,
+  qualificationBandsToReadinessAnswers,
+  resolveInvestorJurisdiction,
 } from "../lib/capital/investor-readiness.ts";
 import { assessOntarioInvestor } from "../lib/capital/ontario-investor-assessment.ts";
 import { READINESS_RULESET } from "../lib/capital/readiness-rules.ts";
@@ -311,6 +315,166 @@ test("every non-Ontario assessment routes to manual review", () => {
   });
   assert.equal(decision.result, "manual-review");
   assert.deepEqual(decision.qualifyingCriteria, []);
+});
+
+test("country-independent screening preserves the financial result across residences", () => {
+  const profileAnswers = qualificationBandsToReadinessAnswers({
+    registration: "no",
+    financialAssets: "million-or-less",
+    individualIncome: "above-75-to-200",
+    spousalIncome: "not-applicable",
+    netAssets: "400-or-less",
+  });
+  const financial = assessCanadianFinancialProfile({ accountType: "individual", answers: profileAnswers });
+
+  assert.equal(financial.financialResult, "potentially-eligible");
+  assert.equal(financial.result, "potentially-eligible");
+  assert.deepEqual(financial.qualifyingCriteria, ["eligible-income"]);
+  assert.equal(resolveInvestorJurisdiction({ residenceCountryCode: "CA", residenceRegionCode: "ON" }), "ontario-licensed-review");
+  assert.equal(resolveInvestorJurisdiction({ residenceCountryCode: "CA", residenceRegionCode: "BC" }), "canada-outside-ontario-review");
+  assert.equal(resolveInvestorJurisdiction({ residenceCountryCode: "TR" }), "cross-border-review");
+  assert.equal(resolveInvestorJurisdiction({ residenceCountryCode: "DE" }), "cross-border-review");
+});
+
+test("mutually exclusive bands map every strict Canadian threshold correctly", () => {
+  assert.deepEqual(qualificationBandsToReadinessAnswers({
+    registration: "no",
+    financialAssets: "above-million",
+    individualIncome: "above-200",
+    spousalIncome: "above-300",
+    netAssets: "five-million-plus",
+  }), {
+    "individual-registration": "no",
+    "individual-financial-assets": "yes",
+    "individual-income": "yes",
+    "eligible-income": "yes",
+    "individual-spousal-income": "yes",
+    "eligible-spousal-income": "yes",
+    "individual-net-assets": "yes",
+    "eligible-net-assets": "yes",
+  });
+
+  assert.deepEqual(qualificationBandsToReadinessAnswers({
+    registration: "no",
+    financialAssets: "million-or-less",
+    individualIncome: "above-75-to-200",
+    spousalIncome: "above-125-to-300",
+    netAssets: "above-400-under-five",
+  }), {
+    "individual-registration": "no",
+    "individual-financial-assets": "no",
+    "individual-income": "no",
+    "eligible-income": "yes",
+    "individual-spousal-income": "no",
+    "eligible-spousal-income": "yes",
+    "individual-net-assets": "no",
+    "eligible-net-assets": "yes",
+  });
+
+  assert.deepEqual(qualificationBandsToReadinessAnswers({
+    registration: "no",
+    financialAssets: "million-or-less",
+    individualIncome: "75-or-less",
+    spousalIncome: "not-applicable",
+    netAssets: "400-or-less",
+  }), {
+    "individual-registration": "no",
+    "individual-financial-assets": "no",
+    "individual-income": "no",
+    "eligible-income": "no",
+    "individual-spousal-income": "no",
+    "eligible-spousal-income": "no",
+    "individual-net-assets": "no",
+    "eligible-net-assets": "no",
+  });
+});
+
+test("any uncertain financial answer produces needs-information after the complete questionnaire", () => {
+  const uncertainFields = ["registration", "financialAssets", "individualIncome", "spousalIncome", "netAssets"] as const;
+  for (const field of uncertainFields) {
+    const profile = {
+      registration: "no" as const,
+      financialAssets: "million-or-less" as const,
+      individualIncome: "75-or-less" as const,
+      spousalIncome: "not-applicable" as const,
+      netAssets: "400-or-less" as const,
+      [field]: "unsure" as const,
+    };
+    const result = assessCanadianFinancialProfile({
+      accountType: "individual",
+      answers: qualificationBandsToReadinessAnswers(profile),
+    });
+    assert.equal(result.financialResult, "needs-information", field);
+    assert.equal(result.result, "manual-review", field);
+  }
+});
+
+test("entity screening is always routed to professional review", () => {
+  const result = assessCanadianFinancialProfile({ accountType: "entity", answers: {} });
+  assert.equal(result.financialResult, "entity-review");
+  assert.equal(result.result, "manual-review");
+  assert.deepEqual(result.qualifyingCriteria, []);
+});
+
+test("Canadian offering OM ceilings follow the financial category and registered advice", () => {
+  assert.deepEqual(preliminaryMaximumInvestment({
+    financialResult: "potentially-non-eligible",
+  }), { status: "limit", limitCad: 10_000, periodMonths: 12, adviceConfirmed: false });
+
+  assert.deepEqual(preliminaryMaximumInvestment({
+    financialResult: "potentially-eligible",
+    registeredSuitabilityAdvice: "no",
+  }), { status: "limit", limitCad: 30_000, periodMonths: 12, adviceConfirmed: false });
+  assert.deepEqual(preliminaryMaximumInvestment({
+    financialResult: "potentially-eligible",
+    registeredSuitabilityAdvice: "unsure",
+  }), { status: "limit", limitCad: 30_000, periodMonths: 12, adviceConfirmed: false });
+
+  assert.deepEqual(preliminaryMaximumInvestment({
+    financialResult: "potentially-eligible",
+    registeredSuitabilityAdvice: "yes",
+  }), { status: "limit", limitCad: 100_000, periodMonths: 12, adviceConfirmed: true });
+
+  assert.deepEqual(preliminaryMaximumInvestment({
+    financialResult: "potentially-accredited",
+  }), { status: "no-individual-om-limit" });
+});
+
+test("foreign residence changes the review path but not the Canadian non-eligible ceiling", () => {
+  const completeNonEligible = qualificationBandsToReadinessAnswers({
+    registration: "no",
+    financialAssets: "million-or-less",
+    individualIncome: "75-or-less",
+    spousalIncome: "not-applicable",
+    netAssets: "400-or-less",
+  });
+  for (const residence of [
+    { residenceCountryCode: "CA", residenceRegionCode: "ON" },
+    { residenceCountryCode: "TR" },
+  ]) {
+    const financial = assessCanadianFinancialProfile({ accountType: "individual", answers: completeNonEligible });
+    assert.equal(financial.financialResult, "potentially-non-eligible");
+    assert.deepEqual(preliminaryMaximumInvestment({ financialResult: financial.financialResult }), {
+      status: "limit",
+      limitCad: 10_000,
+      periodMonths: 12,
+      adviceConfirmed: false,
+    });
+    assert.ok(resolveInvestorJurisdiction(residence));
+  }
+  assert.notEqual(
+    resolveInvestorJurisdiction({ residenceCountryCode: "CA", residenceRegionCode: "ON" }),
+    resolveInvestorJurisdiction({ residenceCountryCode: "TR" }),
+  );
+});
+
+test("maximum-investment helper requires complete individual facts and professional entity review", () => {
+  assert.deepEqual(preliminaryMaximumInvestment({
+    financialResult: "needs-information",
+  }), { status: "needs-information" });
+  assert.deepEqual(preliminaryMaximumInvestment({
+    financialResult: "entity-review",
+  }), { status: "entity-review" });
 });
 
 test("the ruleset is versioned from a verifiable source-effective date", () => {

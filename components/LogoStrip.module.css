@@ -6,7 +6,7 @@
 
 .eyebrow {
   text-align: center;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.6);
   font-size: 10px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -86,7 +86,7 @@
 .placeholder small {
   display: block;
   font-size: 8px;
-  color: rgba(235, 199, 107, 0.5);
+  color: var(--gold);
   margin-top: 4px;
   letter-spacing: 0.3em;
 }

@@ -6,9 +6,11 @@ export const NORTH_BASE = "/hunter-north-capital";
 export function NorthBrand({
   compact = false,
   markOnlyOnDesktop = false,
+  dark = false,
 }: {
   compact?: boolean;
   markOnlyOnDesktop?: boolean;
+  dark?: boolean;
 }) {
   return (
     <Link
@@ -27,7 +29,7 @@ export function NorthBrand({
       <span
         className={markOnlyOnDesktop ? "min-w-0 leading-none lg:hidden" : "min-w-0 leading-none"}
       >
-        <span className="block truncate text-[15px] font-semibold text-white">
+        <span className={`block truncate text-[15px] font-semibold ${dark ? "text-[#0a2d46]" : "text-white"}`}>
           Hunter North
         </span>
         {!compact && (

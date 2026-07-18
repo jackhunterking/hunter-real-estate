@@ -3,7 +3,7 @@ import type {
   PartnerTier,
 } from "./types";
 
-export type PortalWorkspace = "investor" | "partner" | "firm" | "admin";
+export type PortalWorkspace = "investor" | "professional" | "operations";
 export type PreviewPersona = "investor" | "applicant" | "partner" | "firm-admin" | "hnc-admin";
 
 export type FirmMembershipRole =
@@ -64,8 +64,21 @@ export type PortalUser = {
   accountIntent?: "investor" | "turkiye_licensed_professional_or_firm";
   investorAccountType?: "individual" | "entity";
   onboardingStatus?: "pending" | "completed";
+  residenceJurisdiction?: string;
+  investmentObjective?: string;
+  timeHorizon?: string;
+  riskAcknowledgedAt?: string;
+  contactConsentAt?: string;
   platformRoles: PlatformRole[];
 };
+
+export type ProfessionalProfileState =
+  | "not_applied"
+  | "in_review"
+  | "action_required"
+  | "approved_pending_activation"
+  | "active"
+  | "inactive";
 
 export type Organization = {
   id: string;
@@ -189,6 +202,7 @@ export type CommissionEntry = {
   approvedAt?: string;
   paidAt?: string;
   paymentReference?: string;
+  fundCommissionScheduleId?: string;
 };
 
 export type InvestmentApplication = {
@@ -196,6 +210,12 @@ export type InvestmentApplication = {
   userId: string;
   offeringId: string;
   amount: number;
+  accountType?: "individual" | "entity";
+  preferredContactChannel?: "email" | "phone" | "whatsapp";
+  contactConsentAt?: string;
+  note?: string;
+  submittedAt?: string;
+  legacySource?: boolean;
   status:
     | "draft"
     | "submitted"
@@ -365,18 +385,48 @@ export function isPartnerActive(context: PortalAccessContext) {
   return partnerActivationIssues(context).length === 0;
 }
 
+export function professionalProfileState(
+  context: PortalAccessContext,
+): ProfessionalProfileState {
+  if (isPartnerActive(context)) return "active";
+
+  const account = context.dataset.partnerAccounts.find(
+    (item) => item.userId === context.user.id,
+  );
+  if (
+    account?.status === "suspended" ||
+    account?.status === "expired" ||
+    account?.status === "terminated" ||
+    account?.status === "active"
+  ) {
+    return "inactive";
+  }
+
+  const application = latestPartnerApplication(context.dataset, context.user.id);
+  if (!application) return "not_applied";
+  if (application.status === "draft" || application.status === "changes_requested") {
+    return "action_required";
+  }
+  if (application.status === "rejected") return "action_required";
+  if (application.status === "approved") return "approved_pending_activation";
+  return "in_review";
+}
+
 export function firmRoles(context: PortalAccessContext) {
   return membershipForUser(context.dataset, context.user.id)?.roles ?? [];
 }
 
 export function canUseWorkspace(context: PortalAccessContext, workspace: PortalWorkspace) {
   if (context.user.accountStatus !== "active") return false;
-  if (workspace === "investor") return context.user.emailVerified;
-  if (workspace === "partner") return isPartnerActive(context);
-  if (workspace === "firm") {
-    const roles = firmRoles(context);
-    return roles.includes("membership_admin") || roles.includes("finance_admin");
+  if (workspace === "investor") {
+    const staff = hasPlatformRole(context.user, "platform_admin", "compliance_admin", "finance_admin");
+    if (!staff) return context.user.emailVerified;
+    return context.user.emailVerified && (
+      context.user.accountIntent === "investor" ||
+      context.dataset.investments.some((investment) => investment.userId === context.user.id)
+    );
   }
+  if (workspace === "professional") return isPartnerActive(context);
   return hasPlatformRole(
     context.user,
     "platform_admin",
@@ -386,23 +436,38 @@ export function canUseWorkspace(context: PortalAccessContext, workspace: PortalW
 }
 
 export function availableWorkspaces(context: PortalAccessContext): PortalWorkspace[] {
-  return (["investor", "partner", "firm", "admin"] as const).filter((workspace) =>
+  return (["investor", "professional", "operations"] as const).filter((workspace) =>
     canUseWorkspace(context, workspace),
   );
 }
 
 export function canAccessPath(context: PortalAccessContext, pathname: string) {
-  if (pathname.includes("/admin")) return canUseWorkspace(context, "admin");
-  if (pathname.includes("/firm")) return canUseWorkspace(context, "firm");
+  if (pathname.endsWith("/home") || pathname.endsWith("/profile") || pathname.includes("/firm")) {
+    return availableWorkspaces(context).length > 0;
+  }
+  if (pathname.includes("/operations") || pathname.includes("/admin")) {
+    return canUseWorkspace(context, "operations");
+  }
+  if (pathname.includes("/resources/investor-readiness")) {
+    return canUseWorkspace(context, "investor") || canUseWorkspace(context, "professional");
+  }
   if (
     pathname.includes("/clients") ||
     pathname.includes("/commissions") ||
+    pathname.includes("/professional") ||
+    pathname.includes("/resources/") ||
     pathname.includes("/partner-program") ||
     (pathname.includes("/partner") && !pathname.includes("/partner/apply"))
   ) {
-    return canUseWorkspace(context, "partner") || canUseWorkspace(context, "admin");
+    return canUseWorkspace(context, "professional");
   }
   return canUseWorkspace(context, "investor");
+}
+
+export function defaultPortalPath(context: PortalAccessContext) {
+  if (canUseWorkspace(context, "operations")) return "/operations";
+  if (canUseWorkspace(context, "professional")) return "/professional";
+  return "/portfolio";
 }
 
 export function visibleCommissions(context: PortalAccessContext) {
@@ -410,31 +475,15 @@ export function visibleCommissions(context: PortalAccessContext) {
     return context.dataset.commissions;
   }
 
-  const roles = firmRoles(context);
-  const membership = membershipForUser(context.dataset, context.user.id);
   return context.dataset.commissions.filter((entry) => {
     if (entry.status !== "approved" && entry.status !== "paid") return false;
-    if (
-      entry.beneficiaryType === "representative" &&
-      entry.beneficiaryUserId === context.user.id
-    ) {
-      return true;
-    }
-    return Boolean(
-      entry.beneficiaryType === "organization" &&
-      membership &&
-      roles.includes("finance_admin") &&
-      entry.beneficiaryOrganizationId === membership.organizationId,
-    );
+    return entry.beneficiaryType === "representative" && entry.beneficiaryUserId === context.user.id;
   });
 }
 
 export function visibleMemberDirectory(context: PortalAccessContext) {
-  const membership = membershipForUser(context.dataset, context.user.id);
-  if (!membership || !membership.roles.includes("membership_admin")) return [];
-  return context.dataset.memberships.filter(
-    (item) => item.organizationId === membership.organizationId,
-  );
+  if (!hasPlatformRole(context.user, "platform_admin", "compliance_admin")) return [];
+  return context.dataset.memberships;
 }
 
 export function offeringAccessForUser(context: PortalAccessContext) {

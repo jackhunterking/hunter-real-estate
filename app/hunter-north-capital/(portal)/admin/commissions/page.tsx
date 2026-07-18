@@ -1,6 +1,5 @@
-import { AdminWorkspace } from "@/components/capital/north/AdminWorkspace";
-import { getPublishedOfferings } from "@/lib/capital/repository-server";
+import { redirect } from "next/navigation";
 
-export default async function CommissionsAdminPage() {
-  return <AdminWorkspace section="commissions" offerings={await getPublishedOfferings()} />;
+export default function CommissionsAdminPage() {
+  redirect("/hunter-north-capital/operations?module=payments");
 }

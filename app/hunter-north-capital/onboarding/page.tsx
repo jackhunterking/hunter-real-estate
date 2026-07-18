@@ -3,7 +3,7 @@ import { OnboardingFlow } from "@/components/capital/north/OnboardingFlow";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-type Search = Promise<{ path?: string; offering?: string }>;
+type Search = Promise<{ path?: string; offering?: string; next?: string }>;
 
 export default async function OnboardingPage({ searchParams }: { searchParams: Search }) {
   const search = await searchParams;
@@ -20,11 +20,13 @@ export default async function OnboardingPage({ searchParams }: { searchParams: S
     .maybeSingle();
   if (profile.data?.onboarding_status === "completed") {
     redirect(
-      search.offering
+      search.next?.startsWith(`${NORTH_BASE}/`)
+        ? search.next
+        : search.offering
         ? `${NORTH_BASE}/funds/${encodeURIComponent(search.offering)}`
         : search.path === "professional"
           ? `${NORTH_BASE}/partner/apply`
-        : `${NORTH_BASE}/dashboard`,
+        : `${NORTH_BASE}/portfolio`,
     );
   }
 
@@ -36,5 +38,5 @@ export default async function OnboardingPage({ searchParams }: { searchParams: S
         ? "investor"
         : undefined;
 
-  return <OnboardingFlow initialIntent={initialIntent} offeringSlug={search.offering} />;
+  return <OnboardingFlow initialIntent={initialIntent} offeringSlug={search.offering} returnPath={search.next} />;
 }

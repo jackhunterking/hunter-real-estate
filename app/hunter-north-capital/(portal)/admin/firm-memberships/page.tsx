@@ -1,5 +1,5 @@
-import { AdminWorkspace } from "@/components/capital/north/AdminWorkspace";
+import { redirect } from "next/navigation";
 
 export default function FirmMembershipsAdminPage() {
-  return <AdminWorkspace section="firm-memberships" />;
+  redirect("/hunter-north-capital/operations?module=firms");
 }

@@ -57,9 +57,11 @@ const COPY = {
 export function OnboardingFlow({
   initialIntent,
   offeringSlug,
+  returnPath,
 }: {
   initialIntent?: Intent;
   offeringSlug?: string;
+  returnPath?: string;
 }) {
   const { lang } = useLang();
   const router = useRouter();
@@ -74,8 +76,10 @@ export function OnboardingFlow({
     }
     return offeringSlug
       ? `${NORTH_BASE}/funds/${encodeURIComponent(offeringSlug)}`
-      : `${NORTH_BASE}/dashboard`;
-  }, [intent, offeringSlug]);
+      : returnPath?.startsWith(`${NORTH_BASE}/`)
+        ? returnPath
+      : `${NORTH_BASE}/portfolio`;
+  }, [intent, offeringSlug, returnPath]);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

@@ -53,7 +53,7 @@ function shell(params: {
       <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff">
         <tr><td style="background:#071c2c;padding:28px;color:#d7b86b;font-size:12px;letter-spacing:.16em;text-transform:uppercase">Hunter Group</td></tr>
         <tr><td style="padding:38px 32px">
-          <p style="margin:0 0 12px;color:#a27b26;font-size:11px;letter-spacing:.14em;text-transform:uppercase">${escapeHtml(params.eyebrow)}</p>
+          <p style="margin:0 0 12px;color:#7b5c19;font-size:11px;letter-spacing:.14em;text-transform:uppercase">${escapeHtml(params.eyebrow)}</p>
           <h1 style="margin:0 0 18px;font:500 30px Georgia,serif;color:#071c2c">${escapeHtml(params.title)}</h1>
           <p style="margin:0 0 28px;line-height:1.65;color:#465761">${escapeHtml(params.body)}</p>
           <a href="${escapeHtml(params.actionUrl)}" style="display:inline-block;background:#071c2c;color:#fff;padding:14px 22px;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">${escapeHtml(params.actionLabel)}</a>

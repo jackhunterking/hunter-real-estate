@@ -1,6 +1,5 @@
-import { PartnershipOverview } from "@/components/capital/north/PartnershipOverview";
-import { getPublishedOfferings } from "@/lib/capital/repository-server";
+import { redirect } from "next/navigation";
 
-export default async function PartnerProgramPage() {
-  return <PartnershipOverview offerings={await getPublishedOfferings()} />;
+export default function PartnerProgramPage() {
+  redirect("/hunter-north-capital/profile#partner-program");
 }

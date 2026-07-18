@@ -1,6 +1,5 @@
-import { getPublishedOfferings } from "@/lib/capital/repository-server";
-import { DashboardView } from "../dashboard/DashboardView";
+import { redirect } from "next/navigation";
 
-export default async function HunterNorthPartnerDashboardPage() {
-  return <DashboardView offerings={await getPublishedOfferings()} />;
+export default function HunterNorthPartnerDashboardPage() {
+  redirect("/hunter-north-capital/professional");
 }

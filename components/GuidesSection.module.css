@@ -58,7 +58,7 @@
 .sub {
   font-family: var(--serif);
   font-size: clamp(15px, 1.6vw, 18px);
-  color: rgba(0, 0, 0, 0.45);
+  color: #4f4f4f;
   max-width: 480px;
   margin: 0 auto;
   line-height: 1.6;

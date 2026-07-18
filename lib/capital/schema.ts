@@ -11,8 +11,30 @@ const sourced = z.object({
   approval: z.enum(["approved-public", "review-required", "private"]),
 });
 
-const imageSlot = z.object({ src: z.string().min(1).optional(), alt: localized.optional() });
-const mediaSet = z.object({ card: imageSlot.optional(), banner: imageSlot.optional(), logo: imageSlot.optional() });
+const imageSlot = z.object({
+  src: z.string().min(1).optional(),
+  alt: localized.optional(),
+  kind: z.enum(["photo", "render"]).optional(),
+  sourceId: z.string().min(1).optional(),
+  verifiedAt: z.string().min(10).optional(),
+});
+const mediaSet = z.object({
+  card: imageSlot.optional(),
+  banner: imageSlot.optional(),
+  logo: imageSlot.optional(),
+  gallery: z.array(imageSlot).optional(),
+});
+const fundDefinedFact = z.object({
+  id: z.string().min(1),
+  label: localized,
+  value: localized,
+  category: z.enum(["target", "fee", "liquidity", "lockup", "early-exit", "term"]),
+  shareClassId: z.string().min(1).optional(),
+  sourceId: z.string().min(1),
+  sourcePage: z.number().int().positive().optional(),
+  effectiveDate: z.string().min(10),
+  approval: z.enum(["approved-public", "review-required", "private"]),
+});
 const manager = z.object({
   id: z.string().min(1),
   slug: z.string().min(1),
@@ -36,6 +58,7 @@ const offeringSchema = z.object({
   strategyIds: z.array(z.string()), assetClassIds: z.array(z.string()), regionIds: z.array(z.string()),
   shareClassIds: z.array(z.string()), propertyIds: z.array(z.string()), documentIds: z.array(z.string()),
   featured: z.boolean(), portfolioFacts: z.array(sourced), risks: z.array(localized),
+  fundDefinedFacts: z.array(fundDefinedFact).optional(),
   media: mediaSet.optional(), offeringSize: sourced.optional(), unitsTotal: sourced.optional(),
   fundType: localized.optional(), fundStatus: localized.optional(), inceptionDate: z.string().optional(),
   aum: sourced.optional(), amountRaised: sourced.optional(), fundingPercent: z.number().optional(),

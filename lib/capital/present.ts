@@ -312,6 +312,7 @@ export function offeringTaxonomyLabels(bundle: OfferingBundle, lang: Lang) {
 export type MapProperty = {
   id: string;
   name: string;
+  address?: string;
   city: string;
   province: string;
   latitude: number;
@@ -322,24 +323,37 @@ export type MapProperty = {
   detail: string;
   verification: string;
   assetClass: string;
+  offeringName?: string;
+  image?: ImageSlot;
+  asOfDate?: string;
+  sourceId?: string;
 };
 
 /** Portfolio buildings for the map, sourced from real lat/lng. */
 export function buildMapProperties(bundle: OfferingBundle, lang: Lang): MapProperty[] {
-  return bundle.properties.map((p) => ({
-    id: p.id,
-    name: p.name[lang],
-    city: p.city,
-    province: p.province,
-    latitude: p.latitude,
-    longitude: p.longitude,
-    listingUrl: p.listingUrl,
-    accent: assetClasses.find((a) => a.id === p.assetClassId)?.color ?? "#2f6f4f",
-    status: STATUS[p.status][lang],
-    detail: formatUnits(p, lang) ?? "",
-    verification: VERIFICATION[p.verificationStatus][lang],
-    assetClass: taxonomyLabel(assetClasses, p.assetClassId, lang),
-  }));
+  return bundle.properties.map((p) => {
+    const verifiedImage = p.media?.gallery?.find((image) => image.src && image.verifiedAt)
+      ?? (p.media?.card?.src && p.media.card.verifiedAt ? p.media.card : undefined);
+    return {
+      id: p.id,
+      name: p.name[lang],
+      address: p.address?.[lang],
+      city: p.city,
+      province: p.province,
+      latitude: p.latitude,
+      longitude: p.longitude,
+      listingUrl: p.listingUrl?.startsWith("http") && !p.listingUrl.includes("TODO") ? p.listingUrl : undefined,
+      accent: assetClasses.find((a) => a.id === p.assetClassId)?.color ?? "#2f6f4f",
+      status: STATUS[p.status][lang],
+      detail: formatUnits(p, lang) ?? "",
+      verification: VERIFICATION[p.verificationStatus][lang],
+      assetClass: taxonomyLabel(assetClasses, p.assetClassId, lang),
+      offeringName: bundle.shortName[lang],
+      image: verifiedImage,
+      asOfDate: verifiedImage?.verifiedAt ?? bundle.verifiedAt,
+      sourceId: p.units?.sourceId ?? p.squareFeet?.sourceId,
+    };
+  });
 }
 
 /* ------------------------------------------------------------------ */

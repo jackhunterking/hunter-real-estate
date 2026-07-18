@@ -350,7 +350,7 @@
   position: absolute;
   left: 28px;
   bottom: 26px;
-  color: var(--gold-soft);
+  color: var(--gold-deep);
   transition: transform 0.25s ease, color 0.25s ease;
 }
 

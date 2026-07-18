@@ -148,7 +148,7 @@
   font-size: 9px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.85);
   background: rgba(0, 0, 0, 0.3);
   padding: 6px 12px;
   border: 1px solid rgba(235, 199, 107, 0.25);
@@ -180,7 +180,7 @@
   font-weight: 600;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--gold-soft);
+  color: var(--gold-deep);
   margin-bottom: 20px;
 }
 

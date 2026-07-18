@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
-import { fundHeadline, resolveImage } from "@/lib/capital/present";
+import { resolveImage } from "@/lib/capital/present";
 import type { OfferingBundle } from "@/lib/capital/types";
 
 export function OfferingCard({ offering }: { offering: OfferingBundle }) {
@@ -12,8 +12,6 @@ export function OfferingCard({ offering }: { offering: OfferingBundle }) {
   const media = resolveImage(offering.media?.card, offering.slug, offering.shortName[lang], lang);
   const logo = resolveImage(offering.media?.logo, `${offering.slug}-logo`, offering.shortName[lang], lang);
   const strategyLabel = taxonomyLabel(strategies, offering.strategyIds[0], lang);
-  const headline = fundHeadline(offering, lang);
-  const headlineCaption = offering.offeringSize ? c.offeringSize : c.aumLabel;
 
   return (
     <Link
@@ -49,13 +47,6 @@ export function OfferingCard({ offering }: { offering: OfferingBundle }) {
       <div className="flex flex-1 flex-col p-5">
         <h3 className="text-lg font-bold leading-tight text-foreground">{offering.shortName[lang]}</h3>
         <p className="mt-1 text-sm text-muted-foreground">{offering.manager.name[lang]}</p>
-
-        {headline && (
-          <p className="mt-3 flex items-baseline gap-2">
-            <strong className="text-xl font-bold text-primary">{headline}</strong>
-            <span className="text-xs text-muted-foreground">{headlineCaption}</span>
-          </p>
-        )}
 
         <span className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary text-xs font-bold uppercase tracking-[0.06em] text-primary-foreground transition-colors group-hover:bg-primary/90">
           {c.learnMore}

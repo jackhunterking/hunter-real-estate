@@ -1,6 +1,5 @@
-import { getPublishedOfferings } from "@/lib/capital/repository-server";
-import { InvestorDashboard } from "@/components/capital/north/InvestorWorkspace";
+import { redirect } from "next/navigation";
 
-export default async function HunterNorthDashboardPage() {
-  return <InvestorDashboard offerings={await getPublishedOfferings()} />;
+export default function HunterNorthDashboardPage() {
+  redirect("/hunter-north-capital/portfolio");
 }

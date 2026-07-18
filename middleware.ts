@@ -12,10 +12,13 @@ const JACK_HOSTS = new Set([
   "www.jackvetara.com",
 ]);
 const INTERNAL_PREFIX = "/hunter-north-capital";
+const DEDICATED_HUNTER_NORTH_DOMAIN_ENABLED =
+  process.env.HNC_ENABLE_DEDICATED_DOMAIN === "true";
 
 export async function middleware(request: NextRequest) {
   const host = (request.headers.get("host") ?? "").split(":")[0].toLowerCase();
-  const dedicatedHost = HUNTER_NORTH_HOSTS.has(host);
+  const dedicatedHost =
+    DEDICATED_HUNTER_NORTH_DOMAIN_ENABLED && HUNTER_NORTH_HOSTS.has(host);
   const internalPortalRequest =
     request.nextUrl.pathname === INTERNAL_PREFIX ||
     request.nextUrl.pathname.startsWith(`${INTERNAL_PREFIX}/`);
@@ -48,12 +51,17 @@ export async function middleware(request: NextRequest) {
   }
 
   let response: NextResponse;
+  const forwardedHeaders = new Headers(request.headers);
+  const portalPath = dedicatedHost
+    ? `${INTERNAL_PREFIX}${pathname === "/" ? "" : pathname}${request.nextUrl.search}`
+    : `${request.nextUrl.pathname}${request.nextUrl.search}`;
+  forwardedHeaders.set("x-hnc-path", portalPath);
   if (dedicatedHost) {
     const destination = request.nextUrl.clone();
     destination.pathname = pathname === "/" ? INTERNAL_PREFIX : `${INTERNAL_PREFIX}${pathname}`;
-    response = NextResponse.rewrite(destination);
+    response = NextResponse.rewrite(destination, { request: { headers: forwardedHeaders } });
   } else {
-    response = NextResponse.next({ request });
+    response = NextResponse.next({ request: { headers: forwardedHeaders } });
   }
 
   return refreshSupabaseSession(request, response);

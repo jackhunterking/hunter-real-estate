@@ -1,5 +1,5 @@
-import { AdminWorkspace } from "@/components/capital/north/AdminWorkspace";
+import { redirect } from "next/navigation";
 
 export default function AuditAdminPage() {
-  return <AdminWorkspace section="audit" />;
+  redirect("/hunter-north-capital/operations?module=audit");
 }

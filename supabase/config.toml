@@ -164,9 +164,7 @@ additional_redirect_urls = [
   "http://127.0.0.1:3000/hunter-north-capital/auth/confirm",
   "http://localhost:3000/hunter-north-capital/auth/confirm",
   "https://jackhunter.com/hunter-north-capital/auth/confirm",
-  "https://www.jackhunter.com/hunter-north-capital/auth/confirm",
-  "https://hunternorthcapital.com/auth/confirm",
-  "https://www.hunternorthcapital.com/auth/confirm"
+  "https://www.jackhunter.com/hunter-north-capital/auth/confirm"
 ]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600

@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ExternalLink, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 
-const HNC_URL = process.env.NEXT_PUBLIC_HNC_SITE_URL ?? "https://hunternorthcapital.com";
+const HNC_URL = process.env.NEXT_PUBLIC_HNC_SITE_URL ?? "/hunter-north-capital";
 
 const COPY = {
   tr: {
@@ -39,7 +39,7 @@ export function InvestingBridge() {
             <h1 className="mt-5 max-w-xl font-serif text-4xl font-semibold leading-tight sm:text-5xl">{c.title}</h1>
             <p className="mt-6 max-w-xl text-base leading-8 text-white/68">{c.body}</p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <a href={HNC_URL} className="inline-flex h-12 items-center gap-2 bg-[#d8bf7a] px-5 text-sm font-bold text-[#071c2c]">{c.continue}<ExternalLink className="size-4" /></a>
+              <Link href={HNC_URL} className="inline-flex h-12 items-center gap-2 bg-[#d8bf7a] px-5 text-sm font-bold text-[#071c2c]">{c.continue}<ArrowRight className="size-4" /></Link>
               <Link href="/" className="inline-flex h-12 items-center gap-2 border border-white/20 px-5 text-sm font-semibold"><ArrowLeft className="size-4" />{c.back}</Link>
             </div>
           </div>
@@ -47,7 +47,7 @@ export function InvestingBridge() {
             <ShieldCheck className="size-8 text-[#8f7030]" />
             <div className="mt-8 space-y-6">{c.points.map((point, index) => <div key={point} className="flex gap-4 border-b border-[#d8d1c2] pb-6 last:border-0"><span className="font-serif text-xl text-[#9b7b32]">0{index + 1}</span><p className="text-sm leading-7 text-[#50616c]">{point}</p></div>)}</div>
             <p className="mt-8 text-xs leading-6 text-[#6e777c]">{c.disclosure}</p>
-            <a href={HNC_URL} className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#0a4b72]">{c.continue}<ArrowRight className="size-4" /></a>
+            <Link href={HNC_URL} className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#0a4b72]">{c.continue}<ArrowRight className="size-4" /></Link>
           </aside>
         </section>
       </div>

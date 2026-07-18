@@ -1,5 +1,5 @@
-import { PartnerApplicationView } from "@/components/capital/north/PartnerApplicationView";
+import { redirect } from "next/navigation";
 
 export default function HunterNorthPartnerApplicationPage() {
-  return <PartnerApplicationView />;
+  redirect("/hunter-north-capital/profile?apply=1#professional-access");
 }

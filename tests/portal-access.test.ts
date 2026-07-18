@@ -5,6 +5,7 @@ import {
   canAccessPath,
   isPartnerActive,
   normalizeRegistrySurname,
+  professionalProfileState,
   visibleCommissions,
   visibleMemberDirectory,
   type PortalAccessContext,
@@ -35,7 +36,7 @@ test("every verified user starts with investor access only unless another worksp
 test("partner access requires application, SPL, firm, organization, and account gates together", () => {
   const active = context("partner");
   assert.equal(isPartnerActive(active), true);
-  assert.deepEqual(availableWorkspaces(active), ["investor", "partner"]);
+  assert.deepEqual(availableWorkspaces(active), ["investor", "professional"]);
 
   const withoutFirm = datasetCopy();
   withoutFirm.affiliations = withoutFirm.affiliations.map((item) =>
@@ -54,10 +55,57 @@ test("partner access requires application, SPL, firm, organization, and account 
   assert.equal(isPartnerActive(context("partner", withoutLicence)), false);
 });
 
-test("firm administrators receive a limited member directory but no partner routes", () => {
+test("professional profile presentation covers every application and activation state", () => {
+  assert.equal(professionalProfileState(context("investor")), "not_applied");
+  assert.equal(professionalProfileState(context("applicant")), "in_review");
+  assert.equal(professionalProfileState(context("partner")), "active");
+
+  const actionRequired = datasetCopy();
+  actionRequired.partnerApplications = actionRequired.partnerApplications.map((application) =>
+    application.userId === DEMO_PERSONA_USER_IDS.applicant
+      ? { ...application, status: "changes_requested" }
+      : application,
+  );
+  assert.equal(
+    professionalProfileState(context("applicant", actionRequired)),
+    "action_required",
+  );
+
+  const rejected = datasetCopy();
+  rejected.partnerApplications = rejected.partnerApplications.map((application) =>
+    application.userId === DEMO_PERSONA_USER_IDS.applicant
+      ? { ...application, status: "rejected" }
+      : application,
+  );
+  assert.equal(
+    professionalProfileState(context("applicant", rejected)),
+    "action_required",
+  );
+
+  const approvedPending = datasetCopy();
+  approvedPending.partnerApplications = approvedPending.partnerApplications.map((application) =>
+    application.userId === DEMO_PERSONA_USER_IDS.applicant
+      ? { ...application, status: "approved" }
+      : application,
+  );
+  assert.equal(
+    professionalProfileState(context("applicant", approvedPending)),
+    "approved_pending_activation",
+  );
+
+  const inactive = datasetCopy();
+  inactive.partnerAccounts = inactive.partnerAccounts.map((account) =>
+    account.userId === DEMO_PERSONA_USER_IDS.partner
+      ? { ...account, status: "suspended" }
+      : account,
+  );
+  assert.equal(professionalProfileState(context("partner", inactive)), "inactive");
+});
+
+test("firm records remain internal and firm administrators receive no firm workspace", () => {
   const firmAdmin = context("firm-admin");
   const directory = visibleMemberDirectory(firmAdmin);
-  assert.ok(directory.length > 0);
+  assert.deepEqual(directory, []);
   assert.equal(canAccessPath(firmAdmin, "/hunter-north-capital/firm/members"), true);
   assert.equal(canAccessPath(firmAdmin, "/hunter-north-capital/clients"), false);
   assert.equal(canAccessPath(firmAdmin, "/hunter-north-capital/partner-program"), false);
@@ -71,10 +119,7 @@ test("commission visibility follows the beneficiary instead of the firm associat
   );
 
   const firmEntries = visibleCommissions(context("firm-admin"));
-  assert.deepEqual(
-    firmEntries.map((entry) => entry.id),
-    ["commission-firm-1"],
-  );
+  assert.deepEqual(firmEntries, []);
 
   const withVoidEntry = datasetCopy();
   withVoidEntry.commissions.push({
@@ -88,11 +133,20 @@ test("commission visibility follows the beneficiary instead of the firm associat
   );
 });
 
-test("Hunter North administrators can review every workspace without changing firm privacy", () => {
+test("Hunter North administrators start in Operations and require separate investing or professional approval", () => {
   const admin = context("hnc-admin");
-  assert.deepEqual(availableWorkspaces(admin), ["investor", "admin"]);
+  assert.deepEqual(availableWorkspaces(admin), ["operations"]);
   assert.equal(canAccessPath(admin, "/hunter-north-capital/admin/license-verifications"), true);
-  assert.equal(canAccessPath(admin, "/hunter-north-capital/clients"), true);
+  assert.equal(canAccessPath(admin, "/hunter-north-capital/operations"), true);
+  assert.equal(canAccessPath(admin, "/hunter-north-capital/portfolio"), false);
+  assert.equal(canAccessPath(admin, "/hunter-north-capital/clients"), false);
+});
+
+test("investor qualification is available to verified investors and active professionals", () => {
+  assert.equal(canAccessPath(context("partner"), "/hunter-north-capital/resources/investor-readiness"), true);
+  assert.equal(canAccessPath(context("investor"), "/hunter-north-capital/resources/investor-readiness"), true);
+  assert.equal(canAccessPath(context("applicant"), "/hunter-north-capital/resources/investor-readiness"), true);
+  assert.equal(canAccessPath(context("hnc-admin"), "/hunter-north-capital/resources/investor-readiness"), false);
 });
 
 test("registry surnames retain submitted text while duplicate matching uses Turkish normalization", () => {

@@ -1,5 +1,5 @@
-import { AdminWorkspace } from "@/components/capital/north/AdminWorkspace";
+import { redirect } from "next/navigation";
 
 export default function LicenseVerificationsAdminPage() {
-  return <AdminWorkspace section="license-verifications" />;
+  redirect("/hunter-north-capital/operations?module=licences");
 }

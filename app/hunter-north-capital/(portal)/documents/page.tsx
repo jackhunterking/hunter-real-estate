@@ -1,6 +1,5 @@
-import { getPublishedOfferings } from "@/lib/capital/repository-server";
-import { DocumentsLibrary } from "./DocumentsLibrary";
+import { redirect } from "next/navigation";
 
-export default async function HunterNorthDocumentsPage() {
-  return <DocumentsLibrary offerings={await getPublishedOfferings()} />;
+export default function HunterNorthDocumentsPage() {
+  redirect("/hunter-north-capital/funds");
 }

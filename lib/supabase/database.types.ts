@@ -190,6 +190,7 @@ export type Database = {
         created_by: string;
         created_at: string;
         updated_at: string;
+        fund_commission_schedule_id: string | null;
       }>;
       document_records: ApiView<{
         id: string;
@@ -233,11 +234,27 @@ export type Database = {
         approved_at: string | null;
         ended_at: string | null;
       }>;
+      fund_commission_schedules: ApiView<{
+        id: string;
+        offering_id: string;
+        gross_commission_bps: number;
+        status: Database["app"]["Enums"]["publication_status"];
+        effective_from: string;
+        effective_to: string | null;
+        published_at: string | null;
+        created_at: string;
+        updated_at: string;
+      }>;
       investment_applications: ApiView<{
         id: string;
         user_id: string;
         offering_id: string;
         amount: number;
+        account_type: Database["app"]["Enums"]["investor_account_type"] | null;
+        preferred_contact_channel: Database["app"]["Enums"]["contact_channel"] | null;
+        contact_consent_at: string | null;
+        note: string | null;
+        submitted_at: string | null;
         status: Database["app"]["Enums"]["investment_application_status"];
         created_at: string;
         updated_at: string;
@@ -257,6 +274,16 @@ export type Database = {
         status: Database["app"]["Enums"]["investment_interest_status"];
         created_at: string;
         updated_at: string;
+      }>;
+      operations_queue: ApiView<{
+        id: string;
+        module: string;
+        title: string;
+        summary: string;
+        status: string;
+        occurred_at: string;
+        required_role: string;
+        payload: Json;
       }>;
       license_verification_events: ApiView<{
         id: string;
@@ -436,6 +463,48 @@ export type Database = {
           p_contact_consent: boolean;
         };
         Returns: string;
+      };
+      create_investment_request: {
+        Args: {
+          p_offering_id: string;
+          p_amount: number;
+          p_account_type: Database["app"]["Enums"]["investor_account_type"];
+          p_preferred_contact_method: Database["app"]["Enums"]["contact_channel"];
+          p_contact_consent: boolean;
+          p_note: string;
+        };
+        Returns: string;
+      };
+      create_fund_commission_schedule: {
+        Args: {
+          p_offering_id: string;
+          p_gross_commission_bps: number;
+          p_effective_from: string;
+          p_internal_note?: string | null;
+        };
+        Returns: string;
+      };
+      publish_fund_commission_schedule: {
+        Args: { p_schedule_id: string };
+        Returns: undefined;
+      };
+      list_fund_commission_schedules_admin: {
+        Args: Record<PropertyKey, never>;
+        Returns: Array<{
+          id: string;
+          offering_id: string;
+          gross_commission_bps: number;
+          status: Database["app"]["Enums"]["publication_status"];
+          effective_from: string;
+          effective_to: string | null;
+          internal_note: string | null;
+          created_by: string;
+          published_by: string | null;
+          published_at: string | null;
+          superseded_by: string | null;
+          created_at: string;
+          updated_at: string;
+        }>;
       };
       list_investment_interest_admin: {
         Args: Record<PropertyKey, never>;

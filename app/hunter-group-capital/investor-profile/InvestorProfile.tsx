@@ -134,7 +134,7 @@ export function InvestorProfile({ offerings }: { offerings: OfferingBundle[] }) 
     <div className="grid items-start gap-6 md:grid-cols-[280px_minmax(0,1fr)]">
       {/* Stepper */}
       <aside className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5 md:sticky md:top-20">
-        <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-gold">{p.eyebrow}</p>
+        <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#7b5c19]">{p.eyebrow}</p>
         <h1 className="font-serif text-xl font-semibold leading-tight text-foreground">{p.title}</h1>
         <ol className="flex flex-col gap-0.5 max-md:hidden">
           {stepNames.map((name, i) => (

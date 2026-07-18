@@ -12,6 +12,15 @@ const migration = readdirSync(migrationDir)
   .sort()
   .map((file) => readFileSync(resolve(migrationDir, file), "utf8"))
   .join("\n");
+const partnerRedesignMigration = readFileSync(
+  resolve(
+    migrationDir,
+    readdirSync(migrationDir).find((file) =>
+      file.endsWith("_simplify_partner_application_and_protect_fund_commissions.sql"),
+    ) ?? "missing-partner-redesign-migration.sql",
+  ),
+  "utf8",
+);
 
 test("every exposed privacy-domain table enables row level security", () => {
   const tables = [
@@ -31,6 +40,7 @@ test("every exposed privacy-domain table enables row level security", () => {
     "document_records",
     "audit_events",
     "investment_interest_requests",
+    "fund_commission_schedules",
   ];
   for (const table of tables) {
     assert.match(migration, new RegExp(`alter table app\\.${table} enable row level security;`));
@@ -57,6 +67,48 @@ test("investment interests are owner-readable and administrator-controlled", () 
   const ownerView = migration.match(/create view api\.investment_interest_requests[\s\S]*?create or replace function app\.complete_hnc_onboarding/)?.[0] ?? "";
   assert.doesNotMatch(ownerView, /reviewer_notes|reviewed_by/);
   assert.match(migration, /list_investment_interest_admin/);
+});
+
+test("investment requests enforce consent, positive amounts, publication, and duplicate checks", () => {
+  const requestFunction = migration.match(
+    /create or replace function app\.create_investment_request[\s\S]*?create or replace function api\.create_investment_request/,
+  )?.[0] ?? "";
+  assert.match(requestFunction, /Authentication is required/);
+  assert.match(requestFunction, /Contact consent is required/);
+  assert.match(requestFunction, /p_amount is null or p_amount <= 0/);
+  assert.match(requestFunction, /offering\.status = 'published'/);
+  assert.match(requestFunction, /An open request already exists for this fund/);
+  assert.match(requestFunction, /status[\s\S]*'submitted'/);
+});
+
+test("partner applications prevent duplicate active reviews while allowing revised submissions", () => {
+  const applicationFunction = migration.match(
+    /create or replace function app\.submit_partner_application[\s\S]*?create or replace function app\.decide_firm_membership/,
+  )?.[0] ?? "";
+  assert.match(applicationFunction, /application\.status in \('submitted', 'under_review'\)/);
+  assert.match(applicationFunction, /An active partner application already exists/);
+  assert.doesNotMatch(
+    applicationFunction,
+    /application\.status in \('submitted', 'under_review', 'changes_requested', 'rejected'\)/,
+  );
+});
+
+test("simplified partner applications atomically resolve typed firm names", () => {
+  assert.match(partnerRedesignMigration, /Firm name is required/);
+  assert.match(partnerRedesignMigration, /pg_advisory_xact_lock/);
+  assert.match(partnerRedesignMigration, /lower\(organization\.legal_name\)[\s\S]*lower\(pg_catalog\.btrim\(p_new_firm_legal_name\)\)/);
+  assert.match(partnerRedesignMigration, /'pending_review'/);
+  assert.match(partnerRedesignMigration, /on conflict \(organization_id, user_id\) do update/);
+});
+
+test("Operations queue is security-invoker and keeps compliance and finance modules separate", () => {
+  assert.match(migration, /create view api\.operations_queue with \(security_invoker = true\)/);
+  assert.match(migration, /'compliance_admin'::text as required_role/);
+  assert.match(migration, /'finance_admin'/);
+  assert.match(migration, /private\.has_platform_role\('compliance_admin'\)/);
+  assert.match(migration, /private\.has_platform_role\('finance_admin'\)/);
+  assert.match(migration, /revoke all on api\.operations_queue from public, anon/);
+  assert.match(migration, /grant select on api\.operations_queue to authenticated/);
 });
 
 test("controlled offering content cannot skip publication stages", () => {
@@ -125,6 +177,37 @@ test("fund distribution commissions use the fixed tier allocation schedule", () 
   assert.match(createCommissionFunction, /when 'principal' then 40/);
   assert.match(createCommissionFunction, /when 'managing_partner' then 50/);
   assert.match(createCommissionFunction, /p_distribution_commission_received_at > current_date/);
+});
+
+test("fund commission schedules are effective-dated, RLS protected, and finance controlled", () => {
+  assert.match(migration, /create table app\.fund_commission_schedules/);
+  assert.match(migration, /gross_commission_bps numeric\(8, 2\)/);
+  assert.match(migration, /effective_from date not null/);
+  assert.match(migration, /effective_to date/);
+  assert.match(migration, /alter table app\.fund_commission_schedules enable row level security/);
+  assert.match(migration, /fund_commission_schedules_current_select/);
+  assert.match(migration, /status = 'published'[\s\S]*effective_from <= current_date/);
+  assert.match(migration, /private\.has_platform_role\('finance_admin'/);
+  assert.match(migration, /create or replace view api\.fund_commission_schedules[\s\S]*security_invoker = true/);
+  assert.match(migration, /Published fund commission schedules are immutable/);
+  assert.match(migration, /fund_commission_schedule\.created/);
+  assert.match(migration, /fund_commission_schedule\.published/);
+  assert.match(
+    partnerRedesignMigration,
+    /fund_commission_schedules_current_select[\s\S]*private\.partner_is_active\(\(select auth\.uid\(\)\)\)/,
+  );
+});
+
+test("new commission entries retain an optional matching fund-schedule reference", () => {
+  assert.match(migration, /add column fund_commission_schedule_id uuid/);
+  assert.match(migration, /references app\.fund_commission_schedules\(id\) on delete set null/);
+  assert.match(migration, /create trigger commission_entries_attach_fund_schedule/);
+  const attachment = migration.match(
+    /create or replace function private\.attach_fund_commission_schedule[\s\S]*?create trigger commission_entries_attach_fund_schedule/,
+  )?.[0] ?? "";
+  assert.match(attachment, /schedule\.status = 'published'/);
+  assert.match(attachment, /schedule\.effective_from <= new\.funded_at/);
+  assert.match(attachment, /schedule\.effective_to is null or schedule\.effective_to >= new\.funded_at/);
 });
 
 test("Hunter North privileged functions require MFA-aware database permissions", () => {

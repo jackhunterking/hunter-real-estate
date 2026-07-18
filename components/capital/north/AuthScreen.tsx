@@ -28,7 +28,7 @@ const COPY = {
     preview: "Yerel portal önizlemesini aç",
     notConfigured: "Supabase bilgileri henüz bağlanmadığı için yerel önizleme kullanılabilir.",
     error: "İşlem tamamlanamadı.",
-    benefits: ["Önce yatırımcı erişimi", "Ayrı firma bağlantılı partner onayı", "Gizlilik açısından ayrılmış müşteri kayıtları"],
+    benefits: ["Önce yatırımcı erişimi", "Ayrı lisanslı profesyonel onayı", "Gizlilik açısından ayrılmış müşteri kayıtları"],
   },
   en: {
     signIn: "Sign in",
@@ -49,7 +49,7 @@ const COPY = {
     preview: "Open local portal preview",
     notConfigured: "Supabase credentials are not connected yet, so the local preview remains available.",
     error: "The request could not be completed.",
-    benefits: ["Investor-first access", "Separate firm-affiliated partner approval", "Privacy-isolated client records"],
+    benefits: ["Investor-first access", "Separate licensed-professional approval", "Privacy-isolated client records"],
   },
 } as const;
 
@@ -88,9 +88,14 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
         const continuation = new URLSearchParams();
         const offering = query.get("offering");
         const path = query.get("path");
+        const next = query.get("next");
+        if (next?.startsWith(`${NORTH_BASE}/`) && !next.startsWith(`${NORTH_BASE}/sign-in`)) {
+          window.location.assign(next);
+          return;
+        }
         if (offering) continuation.set("offering", offering);
         if (path === "professional" || path === "investor") continuation.set("path", path);
-        window.location.assign(continuation.size ? `${NORTH_BASE}/onboarding?${continuation.toString()}` : `${NORTH_BASE}/dashboard`);
+        window.location.assign(continuation.size ? `${NORTH_BASE}/onboarding?${continuation.toString()}` : `${NORTH_BASE}/home`);
         return;
       }
 
@@ -100,8 +105,10 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
       const onboardingQuery = new URLSearchParams();
       const offering = query.get("offering");
       const path = query.get("path");
+      const next = query.get("next");
       if (offering) onboardingQuery.set("offering", offering);
       if (path === "professional" || path === "investor") onboardingQuery.set("path", path);
+      if (next?.startsWith(`${NORTH_BASE}/`) && !next.startsWith(`${NORTH_BASE}/sign-in`)) onboardingQuery.set("next", next);
       const onboarding = `${NORTH_BASE}/onboarding${onboardingQuery.size ? `?${onboardingQuery.toString()}` : ""}`;
       const result = await client.auth.signUp({
         email,
@@ -133,7 +140,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
         <div className="grid overflow-hidden rounded-lg border border-white/15 bg-white shadow-2xl lg:grid-cols-[0.85fr_1.15fr]">
           <section className="bg-[#0a2539] p-7 text-white sm:p-10">
             <ShieldCheck className="size-8 text-[#d8bf7a]" />
-            <p className="mt-7 text-xs font-bold uppercase tracking-[0.14em] text-white/45">
+            <p className="mt-7 text-xs font-bold uppercase tracking-[0.14em] text-white/60">
               {mode === "sign-in" ? c.signIn : c.signUp}
             </p>
             <h1 className="mt-3 font-serif text-3xl font-semibold">
@@ -189,7 +196,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
               {!configured && (
                 <div className="mt-5 rounded-md bg-[#f4f6f8] p-4">
                   <p className="text-xs leading-5 text-[#6b7680]">{c.notConfigured}</p>
-                  <Link href={`${NORTH_BASE}/dashboard`} className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#0a4b72]">
+                  <Link href={`${NORTH_BASE}/home`} className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#0a4b72]">
                     {c.preview}<ArrowRight className="size-3.5" />
                   </Link>
                 </div>

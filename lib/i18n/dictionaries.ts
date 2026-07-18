@@ -534,8 +534,6 @@ export const tr = {
       targetLabel: "Hedef getiri",
       exploreCta: "Keşfet",
       mapCta: "Haritada gör",
-      offeringSize: "teklif büyüklüğü",
-      aumLabel: "yönetilen varlık",
       learnMore: "DETAYLARI GÖR",
     },
     detail: {
@@ -1415,8 +1413,6 @@ export const en: Dictionary = {
       targetLabel: "Target return",
       exploreCta: "Explore",
       mapCta: "View on map",
-      offeringSize: "offering size",
-      aumLabel: "assets under management",
       learnMore: "LEARN MORE",
     },
     detail: {

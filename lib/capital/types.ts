@@ -11,12 +11,16 @@ export type MetricClassification = "historical" | "current" | "target" | "illust
 export type ImageSlot = {
   src?: string;
   alt?: LocalizedText;
+  kind?: "photo" | "render";
+  sourceId?: string;
+  verifiedAt?: string;
 };
 
 export type MediaSet = {
   card?: ImageSlot;
   banner?: ImageSlot;
   logo?: ImageSlot;
+  gallery?: ImageSlot[];
 };
 
 export type SourceReference = {
@@ -32,6 +36,22 @@ export type SourcedValue<T = string | number> = {
   asOfDate: string;
   sourceId: string;
   sourcePage?: number;
+  approval: Approval;
+};
+
+/**
+ * A label and value published by the fund. The interface must display both
+ * verbatim and may only show a class-specific fact for the selected class.
+ */
+export type FundDefinedFact = {
+  id: string;
+  label: LocalizedText;
+  value: LocalizedText;
+  category: "target" | "fee" | "liquidity" | "lockup" | "early-exit" | "term";
+  shareClassId?: string;
+  sourceId: string;
+  sourcePage?: number;
+  effectiveDate: string;
   approval: Approval;
 };
 
@@ -58,6 +78,7 @@ export type ShareClass = {
   redemptionTerms?: LocalizedText;
   drip?: LocalizedText;
   registeredAccountTypes: string[];
+  fundDefinedFacts?: FundDefinedFact[];
 };
 
 export type Property = {
@@ -65,6 +86,7 @@ export type Property = {
   offeringIds: string[];
   managerId: string;
   name: LocalizedText;
+  address?: LocalizedText;
   city: string;
   province: string;
   country: string;
@@ -88,6 +110,7 @@ export type OfferingDocument = {
   type: "fact-sheet" | "presentation" | "offering-memorandum" | "term-sheet" | "subscription-agreement" | "report";
   effectiveDate: string;
   version: string;
+  sourceId?: string;
   visibility: "public" | "approved-investor" | "private";
   href?: string;
 };
@@ -127,6 +150,7 @@ export type Offering = {
   featured: boolean;
   portfolioFacts: SourcedValue<string>[];
   risks: LocalizedText[];
+  fundDefinedFacts?: FundDefinedFact[];
   media?: MediaSet;
   offeringSize?: SourcedValue<number>;
   unitsTotal?: SourcedValue<number>;
@@ -172,6 +196,28 @@ export type OfferingBundle = Offering & {
 
 export type PartnerTier = "associate" | "principal" | "managingPartner";
 export type PartnerCommissionAllocationPercentage = 30 | 40 | 50;
+
+export type FundCommissionScheduleStatus =
+  | "draft"
+  | "published"
+  | "superseded"
+  | "withdrawn";
+
+export type FundCommissionSchedule = {
+  id: string;
+  offeringId: string;
+  grossCommissionBps: number;
+  status: FundCommissionScheduleStatus;
+  effectiveFrom: string;
+  effectiveTo?: string;
+  internalNote?: string;
+  createdBy?: string;
+  publishedBy?: string;
+  publishedAt?: string;
+  supersededBy?: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export type ReferralStatus =
   | "introduced"
@@ -306,6 +352,18 @@ export type InvestorReadinessResult =
   | "potentially-non-eligible"
   | "manual-review";
 
+export type InvestorFinancialResult =
+  | "potentially-accredited"
+  | "potentially-eligible"
+  | "potentially-non-eligible"
+  | "needs-information"
+  | "entity-review";
+
+export type InvestorJurisdictionReview =
+  | "ontario-licensed-review"
+  | "canada-outside-ontario-review"
+  | "cross-border-review";
+
 export type InvestorReadinessOmContext = {
   kind: "accredited" | "eligible" | "non-eligible" | "manual-review";
   baseLimitCad?: number;
@@ -355,6 +413,14 @@ export type InvestorReadinessAssessment = {
   accountType: ClientAccountType;
   answers: Partial<Record<InvestorReadinessCriterion, InvestorReadinessAnswer>>;
   result: InvestorReadinessResult;
+  /**
+   * New assessments keep the financial threshold result separate from the
+   * residence/compliance review. Older records may only have `result`.
+   */
+  financialResult?: InvestorFinancialResult;
+  jurisdictionReview?: InvestorJurisdictionReview;
+  residenceCountryCode?: string;
+  residenceRegionCode?: string;
   qualifyingCriteria: InvestorReadinessCriterion[];
   omContext: InvestorReadinessOmContext;
   candidateRoutes?: ClientExemptionRoute[];

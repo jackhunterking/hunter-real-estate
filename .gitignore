@@ -38,6 +38,8 @@ __pycache__/
 
 # Misc
 .vercel/
+.playwright-cli/
+output/
 .turbo/
 .cache/
 work/

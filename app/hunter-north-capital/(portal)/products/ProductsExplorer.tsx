@@ -4,7 +4,6 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { OfferingBundle } from "@/lib/capital/types";
 import { useLang } from "@/lib/i18n/LanguageProvider";
-import { fundHeadline, formatCurrencyCad, formatReturnPhrase, primaryShareClass } from "@/lib/capital/present";
 import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { PageHeader, Panel } from "@/components/capital/north/PortalUI";
@@ -13,39 +12,27 @@ const COPY = {
   tr: {
     eyebrow: "Yatırım çözümleri",
     title: "Fonlar",
-    desc: "Partner değerlendirmesine açık Kanada özel gayrimenkul fonlarını koşulları, performansı ve portföyleriyle inceleyin.",
+    desc: "Onaylı koşulları, dayanak binaları ve fon belgelerini geniş resimden kaynağa doğru inceleyin.",
     review: "Detayları incele",
     manager: "Yönetici",
     strategy: "Strateji",
-    minimum: "Minimum yatırım",
-    target: "Hedef getiri",
-    size: "Fon büyüklüğü",
-    updated: "Raporlama tarihi",
     noResults: "Şu anda görüntülenecek fon bulunmuyor.",
-    availability: { available: "İncelemeye açık", information: "Daha fazla bilgi gerekli", review: "Lisanslı inceleme gerekli" },
-    preliminary: "Ön erişim göstergesidir; onay, suitability veya doğrulanmış uygunluk değildir.",
   },
   en: {
     eyebrow: "Investment solutions",
     title: "Funds",
-    desc: "Review Canadian private real-estate funds available for partner review across terms, performance, and underlying portfolios.",
+    desc: "Review approved conditions, underlying buildings, and fund documents from the broad picture down to the source.",
     review: "Review details",
     manager: "Manager",
     strategy: "Strategy",
-    minimum: "Minimum investment",
-    target: "Target return",
-    size: "Fund size",
-    updated: "Reporting date",
     noResults: "There are no funds to show right now.",
-    availability: { available: "Available to review", information: "More information needed", review: "Licensed review required" },
-    preliminary: "A preliminary access indicator—not approval, suitability, or confirmed eligibility.",
   },
 } as const;
 
 function ProductVisual({ offering, lang }: { offering: OfferingBundle; lang: "tr" | "en" }) {
   const image = offering.media?.card?.src;
   return (
-    <div className="relative aspect-[16/6] overflow-hidden bg-[#0d2d43]">
+    <div className="relative aspect-[60/13] overflow-hidden bg-[#0d2d43]">
       {image && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={image} alt={offering.media?.card?.alt?.[lang] ?? offering.shortName[lang]} className="h-full w-full object-cover" />
@@ -70,16 +57,10 @@ export function ProductsExplorer({ offerings }: { offerings: OfferingBundle[] })
       {offerings.length ? (
         <div className="grid gap-5 xl:grid-cols-2">
           {offerings.map((offering) => {
-            const share = primaryShareClass(offering);
-            const availability = offering.status !== "available"
-              ? "information"
-              : offering.complianceProfile.approvedOntarioExemptions.length
-                ? "available"
-                : "review";
             return (
-              <article key={offering.id} className="overflow-hidden rounded-md border border-[#dbe1e5] bg-white shadow-[0_1px_2px_rgba(10,28,43,0.04)]">
+              <article key={offering.id} className="flex flex-col overflow-hidden rounded-md border border-[#dbe1e5] bg-white shadow-[0_1px_2px_rgba(10,28,43,0.04)]">
                 <ProductVisual offering={offering} lang={lang} />
-                <div className="p-5">
+                <div className="flex flex-1 flex-col px-4 py-4 sm:px-5">
                   <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
                     <div className="min-w-0">
                       <h2 className="text-lg font-semibold text-[#152b3b]">{offering.shortName[lang]}</h2>
@@ -89,16 +70,9 @@ export function ProductsExplorer({ offerings }: { offerings: OfferingBundle[] })
                       {c.strategy} · {taxonomyLabel(strategies, offering.strategyIds[0], lang)}
                     </span>
                   </div>
-                  <div className="mt-4"><span className={`inline-flex rounded px-2.5 py-1 text-[10px] font-bold ${availability === "available" ? "bg-[#e8f2ec] text-[#2d6849]" : availability === "review" ? "bg-[#f7efd9] text-[#7b5c19]" : "bg-[#eaf0f5] text-[#3c5d75]"}`}>{c.availability[availability]}</span><p className="mt-2 text-[10px] leading-5 text-[#7b858e]">{c.preliminary}</p></div>
-                  <p className="mt-4 min-h-12 text-sm leading-6 text-[#5f6d78]">{offering.summary[lang]}</p>
-                  <dl className="mt-5 grid grid-cols-2 gap-x-5 gap-y-4 border-y border-[#e6eaed] py-4 sm:grid-cols-4">
-                    <div><dt className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#7b858e]">{c.minimum}</dt><dd className="mt-1 text-sm font-semibold text-[#243845]">{share?.minimumInvestment ? formatCurrencyCad(share.minimumInvestment.value, lang) : "—"}</dd></div>
-                    <div><dt className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#7b858e]">{c.target}</dt><dd className="mt-1 text-sm font-semibold text-[#243845]">{share?.targetReturn ? formatReturnPhrase(share.targetReturn.value, lang) : "—"}</dd></div>
-                    <div><dt className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#7b858e]">{c.size}</dt><dd className="mt-1 text-sm font-semibold text-[#243845]">{fundHeadline(offering, lang) ?? "—"}</dd></div>
-                    <div><dt className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#7b858e]">{c.updated}</dt><dd className="mt-1 text-sm font-semibold text-[#243845]">{offering.lastUpdated ?? offering.verifiedAt}</dd></div>
-                  </dl>
-                  <div className="mt-4 flex items-center justify-end gap-4">
-                    <Link href={`${NORTH_BASE}/funds/${offering.slug}`} className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md bg-[#0a2d46] px-3.5 text-xs font-semibold text-white hover:bg-[#123f5e]">{c.review}<ArrowRight className="size-3.5" /></Link>
+                  <div className="mt-3 flex flex-1 flex-col justify-between gap-4 sm:min-h-12 sm:flex-row sm:items-end">
+                    <p className="max-w-2xl text-sm leading-5 text-[#5f6d78]">{offering.summary[lang]}</p>
+                    <Link href={`${NORTH_BASE}/funds/${offering.slug}`} className="inline-flex h-9 shrink-0 self-start items-center gap-1.5 rounded-md bg-[#0a2d46] px-3.5 text-xs font-semibold text-white transition-colors hover:bg-[#123f5e] sm:self-auto">{c.review}<ArrowRight className="size-3.5" /></Link>
                   </div>
                 </div>
               </article>

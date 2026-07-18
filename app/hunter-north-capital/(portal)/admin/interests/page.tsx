@@ -1,6 +1,5 @@
-import { InterestRequestAdmin } from "@/components/capital/north/InterestRequestAdmin";
-import { getPublishedOfferings } from "@/lib/capital/repository-server";
+import { redirect } from "next/navigation";
 
-export default async function InterestRequestsAdminPage() {
-  return <InterestRequestAdmin offerings={await getPublishedOfferings()} />;
+export default function InterestRequestsAdminPage() {
+  redirect("/hunter-north-capital/operations?module=requests");
 }

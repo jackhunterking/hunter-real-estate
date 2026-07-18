@@ -1,5 +1,5 @@
-import { AdminWorkspace } from "@/components/capital/north/AdminWorkspace";
+import { redirect } from "next/navigation";
 
 export default function PartnerApplicationsAdminPage() {
-  return <AdminWorkspace section="partner-applications" />;
+  redirect("/hunter-north-capital/operations?module=professional");
 }

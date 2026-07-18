@@ -1,6 +1,5 @@
-import { FirmWorkspace } from "@/components/capital/north/FirmWorkspace";
-import { getPublishedOfferings } from "@/lib/capital/repository-server";
+import { AuthorizedHomeRedirect } from "@/components/capital/north/AuthorizedHomeRedirect";
 
-export default async function HunterNorthFirmProductsPage() {
-  return <FirmWorkspace section="products" offerings={await getPublishedOfferings()} />;
+export default function HunterNorthFirmProductsPage() {
+  return <AuthorizedHomeRedirect />;
 }

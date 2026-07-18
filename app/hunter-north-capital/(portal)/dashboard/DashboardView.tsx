@@ -5,7 +5,6 @@ import { ArrowRight, Building2, FileText, HandCoins, Plus, TrendingUp, UsersRoun
 import type { OfferingBundle, PartnerTier, ReferralStatus } from "@/lib/capital/types";
 import { PARTNER_COMMISSION_ALLOCATIONS, PARTNER_TIER_THRESHOLDS, nextPartnerTier } from "@/lib/capital/commissions";
 import { useLang } from "@/lib/i18n/LanguageProvider";
-import { fundHeadline, formatReturnPhrase, primaryShareClass } from "@/lib/capital/present";
 import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { PageHeader, Panel, SectionHeader, money } from "@/components/capital/north/PortalUI";
@@ -15,13 +14,13 @@ import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider
 
 const COPY = {
   tr: {
-    eyebrow: "Partner merkezi",
-    title: "Genel Bakış",
-    desc: "Fon erişimi, müşteri tanıştırmaları, komisyon payı ve yıllık partner ilerlemesi tek görünümde.",
+    eyebrow: "Profesyonel merkezi",
+    title: "Profesyonel Genel Bakış",
+    desc: "Müşteri süreci, fon sunumları, bireysel komisyonlar ve yıllık profesyonel ilerleme tek görünümde.",
     newReferral: "Yeni müşteri",
     cleared: "Yıllık kabul edilen sermaye",
-    tier: "Partner kademesi",
-    commission: "Dağıtım komisyonu payı",
+    tier: "Profesyonel seviye",
+    commission: "Bireysel komisyon payı",
     referrals: "Müşteriler",
     products: "Aktif fonlar",
     tierLabels: {
@@ -37,11 +36,7 @@ const COPY = {
     status: "Durum",
     availableProducts: "Kullanılabilir fonlar",
     strategy: "Strateji",
-    min: "Minimum",
-    target: "Hedef getiri",
-    headline: "Fon büyüklüğü",
-    updated: "Raporlama tarihi",
-    review: "Fonu incele",
+    review: "Sunumu aç",
     statusMap: {
       introduced: "Tanıştırıldı",
       contacted: "İletişime geçildi",
@@ -51,13 +46,13 @@ const COPY = {
     } as Record<ReferralStatus, string>,
   },
   en: {
-    eyebrow: "Partner centre",
-    title: "Overview",
-    desc: "Fund access, client introductions, commission allocation, and annual partner progress in one view.",
+    eyebrow: "Professional centre",
+    title: "Professional Overview",
+    desc: "Client pipeline, fund presentations, individual commissions, and annual professional progress in one view.",
     newReferral: "New client",
     cleared: "Annual accepted capital",
-    tier: "Partner tier",
-    commission: "Distribution commission allocation",
+    tier: "Professional level",
+    commission: "Individual commission allocation",
     referrals: "Clients",
     products: "Active funds",
     tierLabels: {
@@ -73,11 +68,7 @@ const COPY = {
     status: "Status",
     availableProducts: "Available funds",
     strategy: "Strategy",
-    min: "Minimum",
-    target: "Target return",
-    headline: "Fund size",
-    updated: "Reporting date",
-    review: "Review fund",
+    review: "Open presentation",
     statusMap: {
       introduced: "Introduced",
       contacted: "Contacted",
@@ -189,11 +180,10 @@ export function DashboardView({ offerings }: { offerings: OfferingBundle[] }) {
         <SectionHeader title={c.availableProducts} action={<Link href={`${NORTH_BASE}/funds`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#0a4b72] hover:underline">{c.all}<ArrowRight className="size-3.5" /></Link>} />
         <div className="grid gap-4 md:grid-cols-2">
             {offerings.map((offering) => {
-              const share = primaryShareClass(offering);
               const image = offering.media?.card?.src;
               return (
                 <article key={offering.id} className="overflow-hidden rounded-md border border-[#dbe1e5] bg-white shadow-[0_1px_2px_rgba(10,28,43,0.04)]">
-                  <div className="relative aspect-[16/6] overflow-hidden bg-[#0d2d43]">
+                  <div className="relative aspect-[60/13] overflow-hidden bg-[#0d2d43]">
                     {image && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={image} alt={offering.media?.card?.alt?.[lang] ?? offering.shortName[lang]} className="h-full w-full object-cover" />
@@ -215,14 +205,8 @@ export function DashboardView({ offerings }: { offerings: OfferingBundle[] }) {
                       </span>
                     </div>
                     <p className="mt-3 line-clamp-2 min-h-10 text-xs leading-5 text-[#5f6d78]">{offering.summary[lang]}</p>
-                    <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 border-y border-[#e6eaed] py-3">
-                      <div><dt className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#7b858e]">{c.min}</dt><dd className="mt-1 text-sm font-semibold text-[#243845]">{share?.minimumInvestment ? money(share.minimumInvestment.value, lang) : "—"}</dd></div>
-                      <div><dt className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#7b858e]">{c.target}</dt><dd className="mt-1 text-sm font-semibold text-[#243845]">{share?.targetReturn ? formatReturnPhrase(share.targetReturn.value, lang) : "—"}</dd></div>
-                      <div><dt className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#7b858e]">{c.headline}</dt><dd className="mt-1 text-sm font-semibold text-[#243845]">{fundHeadline(offering, lang) ?? "—"}</dd></div>
-                      <div><dt className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#7b858e]">{c.updated}</dt><dd className="mt-1 text-sm font-semibold text-[#243845]">{offering.lastUpdated ?? offering.verifiedAt}</dd></div>
-                    </dl>
                     <div className="mt-3 flex items-center justify-end gap-3">
-                      <Link href={`${NORTH_BASE}/funds/${offering.slug}`} className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-[#0a2d46] px-3 text-xs font-semibold text-white hover:bg-[#123f5e]">{c.review}<ArrowRight className="size-3.5" /></Link>
+                      <Link href={`${NORTH_BASE}/funds/${offering.slug}/present`} className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-[#0a2d46] px-3 text-xs font-semibold text-white hover:bg-[#123f5e]">{c.review}<ArrowRight className="size-3.5" /></Link>
                     </div>
                   </div>
                 </article>

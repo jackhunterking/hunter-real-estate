@@ -25,7 +25,7 @@ export function FundMap({
   onSelect: (id: string | null) => void;
   variant?: "embed" | "full";
 }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const m = t.capitalApp.map;
 
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -157,13 +157,22 @@ export function FundMap({
                   p.id === selectedId ? "border-primary bg-secondary/50" : "border-transparent bg-muted/50 hover:border-border",
                 )}
               >
-                <BuildingMapThumb
-                  latitude={p.latitude}
-                  longitude={p.longitude}
-                  query={`${p.name}, ${p.city}, ${p.province}`}
-                  label={p.name}
-                  className="w-full rounded-md border border-border"
-                />
+                {p.image?.src ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={p.image.src}
+                    alt={p.image.alt?.[lang] ?? p.name}
+                    className="aspect-[4/3] w-full rounded-md border border-border object-cover"
+                  />
+                ) : (
+                  <BuildingMapThumb
+                    latitude={p.latitude}
+                    longitude={p.longitude}
+                    query={`${p.address ?? p.name}, ${p.city}, ${p.province}`}
+                    label={p.name}
+                    className="w-full rounded-md border border-border"
+                  />
+                )}
                 <div className="flex min-w-0 flex-col gap-1">
                   <button
                     type="button"
@@ -173,6 +182,7 @@ export function FundMap({
                   >
                     <span className="block text-[13px] font-semibold leading-snug text-foreground">{p.name}</span>
                     <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">{p.city}, {p.province}</span>
+                    {p.offeringName && <span className="mt-1 block text-[10px] font-bold uppercase tracking-wide text-primary">{p.offeringName}</span>}
                   </button>
                   {p.listingUrl && (
                     <a
@@ -196,10 +206,14 @@ export function FundMap({
             <h3 className="font-serif text-[17px] font-semibold text-foreground">{selected.name}</h3>
             <p className="mb-2 text-[12.5px] text-muted-foreground">{selected.city}, {selected.province}</p>
             <dl className="grid grid-cols-2 gap-2.5">
+              <div className="col-span-2"><dt className="text-[10.5px] font-semibold text-muted-foreground">{lang === "tr" ? "Adres" : "Address"}</dt><dd className="text-[13px] font-semibold text-foreground">{selected.address ?? (lang === "tr" ? "Mevcut değil" : "Unavailable")}</dd></div>
+              {selected.offeringName && <div><dt className="text-[10.5px] font-semibold text-muted-foreground">{lang === "tr" ? "İlgili fon" : "Related fund"}</dt><dd className="text-[13px] font-semibold text-foreground">{selected.offeringName}</dd></div>}
               <div><dt className="text-[10.5px] font-semibold text-muted-foreground">{t.capitalApp.detail.assetClass}</dt><dd className="text-[13px] font-semibold text-foreground">{selected.assetClass}</dd></div>
               {selected.detail && <div><dt className="text-[10.5px] font-semibold text-muted-foreground">{t.capitalApp.portfolio.size}</dt><dd className="text-[13px] font-semibold text-foreground">{selected.detail}</dd></div>}
               <div><dt className="text-[10.5px] font-semibold text-muted-foreground">{t.capitalApp.portfolio.status}</dt><dd className="text-[13px] font-semibold text-foreground">{selected.status}</dd></div>
               <div><dt className="text-[10.5px] font-semibold text-muted-foreground">{t.capitalApp.portfolio.verification}</dt><dd className="text-[13px] font-semibold text-foreground">{selected.verification}</dd></div>
+              <div><dt className="text-[10.5px] font-semibold text-muted-foreground">{lang === "tr" ? "Kaynak" : "Source"}</dt><dd className="text-[13px] font-semibold text-foreground">{selected.sourceId ?? (lang === "tr" ? "Mevcut değil" : "Unavailable")}</dd></div>
+              <div><dt className="text-[10.5px] font-semibold text-muted-foreground">{lang === "tr" ? "Bilgi tarihi" : "Information date"}</dt><dd className="text-[13px] font-semibold text-foreground">{selected.asOfDate ?? (lang === "tr" ? "Mevcut değil" : "Unavailable")}</dd></div>
             </dl>
           </div>
         )}

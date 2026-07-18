@@ -39,6 +39,7 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
     offeringAccessResult,
     commissionsResult,
     investmentsResult,
+    legacyInterestsResult,
     referralsResult,
     documentsResult,
     auditResult,
@@ -46,7 +47,7 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
     supabase.auth.getUser(),
     supabase
       .from("profiles")
-      .select("user_id,first_name,middle_names,last_name,display_name,email,locale,account_status,account_intent,investor_account_type,onboarding_status"),
+      .select("user_id,first_name,middle_names,last_name,display_name,email,locale,account_status,account_intent,investor_account_type,onboarding_status,residence_jurisdiction,investment_objective,time_horizon,risk_acknowledged_at,contact_consent_at"),
     supabase
       .from("platform_role_assignments")
       .select("user_id,role"),
@@ -76,10 +77,13 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
       .select("id,organization_id,offering_id,status,effective_at,paused_at"),
     supabase
       .from("commission_entries")
-      .select("id,beneficiary_type,beneficiary_user_id,beneficiary_organization_id,redacted_referral_reference,offering_id,gross_distribution_commission_amount,allocation_percentage,tier_at_funding,amount,currency,earning_period,funded_at,distribution_commission_received_at,status,approved_at,paid_at,payment_reference"),
+      .select("id,beneficiary_type,beneficiary_user_id,beneficiary_organization_id,redacted_referral_reference,offering_id,gross_distribution_commission_amount,allocation_percentage,tier_at_funding,amount,currency,earning_period,funded_at,distribution_commission_received_at,status,approved_at,paid_at,payment_reference,fund_commission_schedule_id"),
     supabase
       .from("investment_applications")
-      .select("id,user_id,offering_id,amount,status,updated_at"),
+      .select("id,user_id,offering_id,amount,account_type,preferred_contact_channel,contact_consent_at,note,submitted_at,status,updated_at"),
+    supabase
+      .from("investment_interest_requests")
+      .select("id,user_id,offering_id,status,preferred_channel,message,created_at,updated_at"),
     supabase
       .from("referrals")
       .select("id,owner_user_id,firm_id,client_account_type,client_first_name,client_last_name,client_display_name,client_organization,client_email,client_phone,country,region,city,offering_id,indicative_amount,status,contact_consent_at,accuracy_consent_at,created_at,updated_at"),
@@ -106,6 +110,11 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
     accountIntent: profile.account_intent ?? undefined,
     investorAccountType: profile.investor_account_type ?? undefined,
     onboardingStatus: profile.onboarding_status,
+    residenceJurisdiction: profile.residence_jurisdiction ?? undefined,
+    investmentObjective: profile.investment_objective ?? undefined,
+    timeHorizon: profile.time_horizon ?? undefined,
+    riskAcknowledgedAt: profile.risk_acknowledged_at ?? undefined,
+    contactConsentAt: profile.contact_consent_at ?? undefined,
     platformRoles: roleRows
       .filter((role) => role.user_id === profile.user_id)
       .map((role) => role.role),
@@ -239,15 +248,35 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
       approvedAt: commission.approved_at ?? undefined,
       paidAt: commission.paid_at ?? undefined,
       paymentReference: commission.payment_reference ?? undefined,
+      fundCommissionScheduleId: commission.fund_commission_schedule_id ?? undefined,
     })),
-    investments: rows(investmentsResult).map((investment) => ({
+    investments: [
+      ...rows(investmentsResult).map((investment) => ({
       id: investment.id,
       userId: investment.user_id,
       offeringId: investment.offering_id,
       amount: Number(investment.amount),
+      accountType: investment.account_type ?? undefined,
+      preferredContactChannel: investment.preferred_contact_channel ?? undefined,
+      contactConsentAt: investment.contact_consent_at ?? undefined,
+      note: investment.note ?? undefined,
+      submittedAt: investment.submitted_at ?? undefined,
       status: investment.status,
       updatedAt: investment.updated_at,
-    })),
+      })),
+      ...rows(legacyInterestsResult).map((interest) => ({
+        id: `legacy-interest:${interest.id}`,
+        userId: interest.user_id,
+        offeringId: interest.offering_id,
+        amount: 0,
+        preferredContactChannel: interest.preferred_channel,
+        note: interest.message ?? undefined,
+        submittedAt: interest.created_at,
+        status: interest.status === "new" ? "submitted" as const : interest.status === "closed" ? "closed" as const : "compliance_review" as const,
+        updatedAt: interest.updated_at,
+        legacySource: true,
+      })),
+    ],
     referrals: rows(referralsResult).map((referral) => ({
       id: referral.id,
       ownerUserId: referral.owner_user_id,
