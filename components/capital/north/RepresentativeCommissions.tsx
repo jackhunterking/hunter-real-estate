@@ -11,7 +11,7 @@ const COPY = {
     eyebrow: "Bireysel partner",
     title: "Ödemeler",
     description:
-      "Hunter Advisory tarafından hesabınıza tanımlanan onaylı ve tamamlanmış ödemeler gösterilir.",
+      "Hunter & Hunter Yatırım Danışmanlığı tarafından hesabınıza tanımlanan onaylı ve tamamlanmış ödemeler gösterilir.",
     reference: "Referans",
     offering: "Yatırım ürünü",
     payment: "Ödeme",
@@ -24,7 +24,7 @@ const COPY = {
     eyebrow: "Individual partner",
     title: "Payments",
     description:
-      "Approved and completed payments assigned to your account by Hunter Advisory are shown here.",
+      "Approved and completed payments assigned to your account by Hunter & Hunter Investment Advisory are shown here.",
     reference: "Reference",
     offering: "Offering",
     payment: "Payment",

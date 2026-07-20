@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { OnboardingFlow } from "@/components/capital/north/OnboardingFlow";
-import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
+import { INVESTMENT_BASE_PATH as NORTH_BASE } from "@/lib/capital/investment-brand";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type Search = Promise<{ path?: string; offering?: string; next?: string }>;

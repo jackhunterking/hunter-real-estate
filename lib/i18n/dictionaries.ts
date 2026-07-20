@@ -66,10 +66,10 @@ export const tr = {
         cta: "Mortgage seçenekleri",
       },
       invest: {
-        tag: "Hunter Advisory",
+        tag: "Hunter & Hunter Yatırım Danışmanlığı",
         title: "Özel Piyasalar",
         desc: "Kanada’daki özel gayrimenkul ve alternatif yatırım fırsatlarını kaynakları, riskleri ve dayanak varlıklarıyla inceleyin.",
-        cta: "Hunter Advisory’ye geçiş",
+        cta: "Hunter & Hunter Yatırım Danışmanlığı’na geçiş",
       },
     },
     guides: {
@@ -90,7 +90,7 @@ export const tr = {
   },
 
   capital: {
-    metaTitle: "Hunter Advisory, Kanada Özel Piyasa Erişimi",
+    metaTitle: "Hunter & Hunter Yatırım Danışmanlığı, Kanada Özel Piyasa Erişimi",
     metaDesc:
       "Ontario'da çoklu konut projeleri için operasyon ve geliştirme ortağı. Sermaye sizin, proje sizin, biz yürütme ekibinizyiz.",
     hero: {
@@ -177,7 +177,7 @@ export const tr = {
       cta: "WhatsApp ile Yazın",
     },
     compliance:
-      "Hunter Advisory, exempt-market ürünler ve Kanada çok konutlu yatırım seçenekleri hakkında eğitim, ön hazırlık ve lisanslı süreç koordinasyonu sağlar.",
+      "Hunter & Hunter Yatırım Danışmanlığı, exempt-market ürünler ve Kanada çok konutlu yatırım seçenekleri hakkında eğitim, ön hazırlık ve lisanslı süreç koordinasyonu sağlar.",
   },
 
   alici: {
@@ -236,7 +236,7 @@ export const tr = {
   },
 
   capitalTeaser: {
-    eyebrow: "Hunter Advisory",
+    eyebrow: "Hunter & Hunter Yatırım Danışmanlığı",
     title: "Kanada’daki özel gayrimenkul ve alternatif yatırımlara",
     titleEm: "daha şeffaf bir bakış.",
     sub: "Fonları, riskleri, dayanak varlıkları ve kaynak belgeleri Türkçe inceleyin; sonraki adımlar ilgili lisanslı tarafların kontrolündeki süreçte ilerler.",
@@ -244,7 +244,7 @@ export const tr = {
     path1Min: "Western Canada REIT",
     path2Label: "Lankin Apartment REIT",
     path2Min: "Canadian multifamily",
-    cta: "Hunter Advisory’yi Keşfedin",
+    cta: "Hunter & Hunter Yatırım Danışmanlığı’nı Keşfedin",
   },
 
   mortgage: {
@@ -485,7 +485,7 @@ export const tr = {
   },
 
   capitalApp: {
-    brand: { name: "Hunter Advisory", tagline: "Kanada’daki özel gayrimenkul ve alternatif yatırımlara daha şeffaf bir bakış" },
+    brand: { name: "Hunter & Hunter Yatırım Danışmanlığı", tagline: "Kanada’daki özel gayrimenkul ve alternatif yatırımlara daha şeffaf bir bakış" },
     nav: {
       dashboard: "Fırsatlar",
       offerings: "Keşfet",
@@ -792,7 +792,7 @@ export const tr = {
         { title: "Strateji ve mülkleri inceleyin", text: "Fon düzeyindeki tezden altındaki binaların ve pazarların doğrulanmış örneklerine geçin." },
         { title: "Pay sınıflarını karşılaştırın", text: "Minimumları, hesap uygunluğunu, dağıtımları, likiditeyi ve her koşulun kaynak tarihini anlayın." },
         { title: "Yatırımcı hazırlığını tamamlayın", text: "Kısa bir Ontario veya Türkiye yolunu yanıtlayın. Sonuç ön niteliktedir, asla onay değildir." },
-        { title: "Hunter Advisory ile görüşün", text: "Hedefleri, soruları, dil tercihini ve bir sonraki lisanslı adımı konuşun." },
+        { title: "Hunter & Hunter Yatırım Danışmanlığı ile görüşün", text: "Hedefleri, soruları, dil tercihini ve bir sonraki lisanslı adımı konuşun." },
         { title: "Lisanslı incelemeyi tamamlayın", text: "Denetleyen süreç kimliği, muafiyet uygunluğunu, KYC, KYP ve uygunluğu doğrular." },
         { title: "Resmi belgeleri inceleyin", text: "Belirleyici teklif belgelerini, risk beyanlarını ve bağımsız tavsiyeyi okuyun." },
         { title: "Onaylı süreçle abone olun", text: "Yalnızca inceleme sonrası, ilgili aracı veya ihraççı akışıyla belgeleri imzalayın ve fonlayın." },
@@ -820,7 +820,7 @@ export const tr = {
       submit: "Profili incelemeye gönder",
       submitting: "Gönderiliyor…",
       error: "Gönderilemedi. Lütfen formu kontrol edip tekrar deneyin.",
-      contactConsent: "Hunter Advisory’nin bu profil hakkında benimle iletişime geçmesini kabul ediyorum.",
+      contactConsent: "Hunter & Hunter Yatırım Danışmanlığı’nın bu profil hakkında benimle iletişime geçmesini kabul ediyorum.",
       accuracyConsent: "Bunun ön değerlendirme olduğunu, onay veya yatırım talimatı olmadığını anlıyorum.",
       labels: {
         shareClass: "Pay sınıfı",
@@ -945,10 +945,10 @@ export const en: Dictionary = {
         cta: "Mortgage options",
       },
       invest: {
-        tag: "Hunter Advisory",
+        tag: "Hunter & Hunter Investment Advisory",
         title: "Private Markets",
         desc: "Explore Canadian private real estate and alternative investment opportunities with their sources, risks, and underlying assets.",
-        cta: "Continue to Hunter Advisory",
+        cta: "Continue to Hunter & Hunter Investment Advisory",
       },
     },
     guides: {
@@ -969,7 +969,7 @@ export const en: Dictionary = {
   },
 
   capital: {
-    metaTitle: "Hunter Advisory, Canadian Private Markets Access",
+    metaTitle: "Hunter & Hunter Investment Advisory, Canadian Private Markets Access",
     metaDesc:
       "Operations and development partner for multifamily projects in Ontario. The capital is yours, the project is yours, we're your execution team.",
     hero: {
@@ -1056,7 +1056,7 @@ export const en: Dictionary = {
       cta: "Message on WhatsApp",
     },
     compliance:
-      "Hunter Advisory provides education, preliminary readiness, and licensed-process coordination for exempt-market products and Canadian multifamily investment opportunities.",
+      "Hunter & Hunter Investment Advisory provides education, preliminary readiness, and licensed-process coordination for exempt-market products and Canadian multifamily investment opportunities.",
   },
 
   alici: {
@@ -1115,7 +1115,7 @@ export const en: Dictionary = {
   },
 
   capitalTeaser: {
-    eyebrow: "Hunter Advisory",
+    eyebrow: "Hunter & Hunter Investment Advisory",
     title: "A clearer view of Canadian private real estate and",
     titleEm: "alternative investments.",
     sub: "Review funds, risks, underlying assets, and source documents in a bilingual experience; next steps proceed through the applicable licensed parties.",
@@ -1123,7 +1123,7 @@ export const en: Dictionary = {
     path1Min: "Western Canada REIT",
     path2Label: "Lankin Apartment REIT",
     path2Min: "Canadian multifamily",
-    cta: "Explore Hunter Advisory",
+    cta: "Explore Hunter & Hunter Investment Advisory",
   },
 
   mortgage: {
@@ -1364,7 +1364,7 @@ export const en: Dictionary = {
   },
 
   capitalApp: {
-    brand: { name: "Hunter Advisory", tagline: "A clearer view of Canadian private real estate and alternative investments" },
+    brand: { name: "Hunter & Hunter Investment Advisory", tagline: "A clearer view of Canadian private real estate and alternative investments" },
     nav: {
       dashboard: "Opportunities",
       offerings: "Discover",
@@ -1671,7 +1671,7 @@ export const en: Dictionary = {
         { title: "Review strategy and properties", text: "Move from the fund-level thesis to verified examples of the buildings and markets underneath it." },
         { title: "Compare share classes", text: "Understand minimums, account eligibility, distributions, liquidity, and the source date for every material term." },
         { title: "Complete investor readiness", text: "Answer a short Ontario or Turkey path. The result is preliminary and never an approval." },
-        { title: "Speak with Hunter Advisory", text: "Discuss objectives, questions, language preference, and the next licensed step." },
+        { title: "Speak with Hunter & Hunter Investment Advisory", text: "Discuss objectives, questions, language preference, and the next licensed step." },
         { title: "Complete licensed review", text: "The supervising process verifies identity, exemption eligibility, KYC, KYP, and suitability." },
         { title: "Review official documents", text: "Read the controlling offering documents, risk acknowledgements, and independent advice." },
         { title: "Subscribe through the approved process", text: "Only after review, execute documents and fund through the applicable dealer or issuer workflow." },
@@ -1699,7 +1699,7 @@ export const en: Dictionary = {
       submit: "Submit for review",
       submitting: "Submitting…",
       error: "Unable to submit. Please review the form and try again.",
-      contactConsent: "I consent to Hunter Advisory contacting me about this profile.",
+      contactConsent: "I consent to Hunter & Hunter Investment Advisory contacting me about this profile.",
       accuracyConsent: "I understand this is preliminary, not an approval or investment instruction.",
       labels: {
         shareClass: "Share class",

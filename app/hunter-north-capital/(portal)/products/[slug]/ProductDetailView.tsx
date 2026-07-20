@@ -9,6 +9,7 @@ import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { FundMapEmbed } from "@/components/capital/map/FundMapEmbed";
 import { InvestmentRequestButton } from "@/components/capital/north/InvestmentRequestButton";
+import { DealerDisclosure } from "@/components/capital/north/DealerDisclosure";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { Panel } from "@/components/capital/north/PortalUI";
 import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider";
@@ -41,7 +42,7 @@ const COPY = {
     redemption: "Redemptions", managementFee: "Management fee",
     highlights: "Highlights", cities: "Cities", buildingsCount: "Buildings", locations: "Locations",
     approach: "Investment approach", presentation: "Presentation", presentationOpen: "Open presentation",
-    presentationVersion: "Version", presentationUnavailable: "Available through Hunter Advisory",
+    presentationVersion: "Version", presentationUnavailable: "Available through Hunter & Hunter Investment Advisory",
     risks: "Material risks and trade-offs",
     historical: "Full historical information", noHistory: "No approved historical information is available.", historicalTag: "Historical—not a forecast",
     sources: "Sources and information dates", sourcesBody: "Fund information verified",
@@ -50,7 +51,7 @@ const COPY = {
     share: "Share class",
     buildingHelp: "Select a marker or card. Missing facts are shown as unavailable and are not inferred.",
     docsHelp: "Approved documents are kept with this offering so their source and version remain clear.",
-    type: "Type", effective: "Effective date", version: "Version", source: "Source", open: "Open document", held: "Available through Hunter Advisory",
+    type: "Type", effective: "Effective date", version: "Version", source: "Source", open: "Open document", held: "Available through Hunter & Hunter Investment Advisory",
     noDocs: "No approved documents are available.",
     commissionTitle: "Published fund commission", commissionGross: "Gross commission as posted", commissionAsPosted: "Shown as published for this fund. Apply your current partner-tier percentage separately.",
     commissionLoading: "Loading the published schedule…", commissionUnavailable: "No current published commission schedule is available.",
@@ -65,7 +66,7 @@ const COPY = {
     redemption: "Para çekme", managementFee: "Yönetim ücreti",
     highlights: "Öne çıkanlar", cities: "Şehir", buildingsCount: "Bina", locations: "Konum",
     approach: "Yatırım yaklaşımı", presentation: "Sunum", presentationOpen: "Sunumu aç",
-    presentationVersion: "Sürüm", presentationUnavailable: "Hunter Advisory üzerinden mevcut",
+    presentationVersion: "Sürüm", presentationUnavailable: "Hunter & Hunter Yatırım Danışmanlığı üzerinden mevcut",
     risks: "Önemli riskler ve ödünleşimler",
     historical: "Ayrıntılı geçmiş bilgiler", noHistory: "Onaylı geçmiş bilgi mevcut değil.", historicalTag: "Geçmiş bilgi—tahmin değildir",
     sources: "Kaynak ve bilgi tarihleri", sourcesBody: "Fon bilgisi doğrulama tarihi",
@@ -74,7 +75,7 @@ const COPY = {
     share: "Pay sınıfı",
     buildingHelp: "Bir işaretçi veya kart seçin. Eksik bilgiler mevcut değil olarak gösterilir ve tahmin edilmez.",
     docsHelp: "Onaylı belgeler, kaynak ve sürümlerinin açık kalması için bu seçenekle birlikte tutulur.",
-    type: "Tür", effective: "Yürürlük tarihi", version: "Sürüm", source: "Kaynak", open: "Belgeyi aç", held: "Hunter Advisory üzerinden mevcut",
+    type: "Tür", effective: "Yürürlük tarihi", version: "Sürüm", source: "Kaynak", open: "Belgeyi aç", held: "Hunter & Hunter Yatırım Danışmanlığı üzerinden mevcut",
     noDocs: "Onaylı belge mevcut değil.",
     commissionTitle: "Yayımlanan fon komisyonu", commissionGross: "Yayımlandığı şekliyle brüt komisyon", commissionAsPosted: "Bu fon için yayımlandığı şekliyle gösterilir. Mevcut partner kademenizin yüzdesini ayrıca uygulayın.",
     commissionLoading: "Yayımlanan program yükleniyor…", commissionUnavailable: "Geçerli yayımlanmış komisyon programı bulunmuyor.",
@@ -352,6 +353,7 @@ export function ProductDetailView({ offering }: { offering: OfferingBundle }) {
                 </label>
               )}
             </div>
+            {investor && <DealerDisclosure level="transactional" tone="dark" className="mt-5 max-w-2xl border-t border-white/15 pt-4" />}
           </div>
         </div>
       </header>

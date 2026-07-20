@@ -13,7 +13,7 @@ const nextConfig = {
         destination: '/#kaynaklar',
         permanent: true,
       },
-      // Legacy Capital routes now resolve to the Hunter Advisory experience.
+      // Legacy Capital routes now resolve to the Hunter & Hunter Investment Advisory experience.
       { source: '/hunter-group-capital/:path*', destination: '/hunter-advisory', permanent: true },
       { source: '/hunter-x-capital/:path*', destination: '/hunter-advisory', permanent: true },
     ];

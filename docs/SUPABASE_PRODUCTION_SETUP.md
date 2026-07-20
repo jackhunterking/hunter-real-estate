@@ -52,7 +52,7 @@ Remaining account-level actions:
   `resend-supabase-auth` for Auth SMTP. Do not reuse either key.
 - Configure senders:
   - `Hunter Group <hello@updates.jackhunter.com>`
-  - `Hunter Advisory <advisory@updates.jackhunter.com>`
+  - `Hunter & Hunter Investment Advisory <advisory@updates.jackhunter.com>`
   - `Hunter Account Security <auth@updates.jackhunter.com>`
 - Keep `hello@jackhunter.com` as reply-to.
 - Disable open/click tracking for Auth and sensitive operational categories.
@@ -70,7 +70,7 @@ Remaining account-level actions:
   Turnstile secret, cron secret, access token, or database password to browser
   code.
 - Set exact Auth redirect URLs for localhost, `jackhunter.com`, and the current
-  dedicated-domain alias `hunternorthcapital.com`. Add the final Hunter Advisory
+  dedicated-domain alias `hunternorthcapital.com`. Add the final Hunter & Hunter Investment Advisory
   domain before switching DNS or removing the legacy alias.
 - Configure Cloudflare Turnstile and set both site and secret keys.
 - Confirm the hosting scheduler sends `Authorization: Bearer $CRON_SECRET` to

@@ -22,10 +22,12 @@ import {
   X,
 } from "lucide-react";
 import { canUseWorkspace } from "@/lib/capital/portal-access";
+import { investmentBrandFor } from "@/lib/capital/investment-brand";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { cn } from "@/lib/utils";
+import { DealerDisclosure } from "./DealerDisclosure";
 import { usePortalAccess } from "./PortalAccessProvider";
-import { NORTH_BASE, NorthBrand } from "./NorthBrand";
+import { NORTH_BASE, NorthBrand, ParvisCoBrand } from "./NorthBrand";
 
 type NavigationItem = {
   href: string;
@@ -41,7 +43,7 @@ type NavigationGroup = {
 
 const COPY = {
   tr: {
-    groups: { investing: "Yatırımlar", professional: "Profesyonel", resources: "Kaynaklar", operations: "Hunter Advisory" },
+    groups: { investing: "Yatırımlar", professional: "Profesyonel", resources: "Kaynaklar", operations: "Hunter & Hunter Yatırım Danışmanlığı" },
     investing: [
       ["/portfolio", "Portföyüm", WalletCards],
       ["/funds", "Keşfet", Compass],
@@ -70,7 +72,7 @@ const COPY = {
     returnHome: "Ana sayfama dön",
   },
   en: {
-    groups: { investing: "Investing", professional: "Professional", resources: "Resources", operations: "Hunter Advisory" },
+    groups: { investing: "Investing", professional: "Professional", resources: "Resources", operations: "Hunter & Hunter Investment Advisory" },
     investing: [
       ["/portfolio", "My portfolio", WalletCards],
       ["/funds", "Discover", Compass],
@@ -115,6 +117,7 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const c = COPY[lang];
+  const brand = investmentBrandFor(lang);
   const investor = canUseWorkspace(context, "investor");
   const professional = canUseWorkspace(context, "professional");
   const operations = canUseWorkspace(context, "operations");
@@ -214,13 +217,13 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
         </button>
 
         <div className={cn("flex h-20 items-center justify-between border-b border-white/10 px-5", desktopCollapsed && "lg:justify-center lg:px-0")}>
-          <NorthBrand markOnlyOnDesktop={desktopCollapsed} />
+          <NorthBrand markOnlyOnDesktop={desktopCollapsed} showCoBrand={false} />
           <button type="button" onClick={() => setMobileOpen(false)} className="grid size-9 place-items-center rounded-md text-white/70 lg:hidden" aria-label="Close menu">
             <X className="size-5" />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-5" aria-label="Hunter Advisory">
+        <nav className="flex-1 overflow-y-auto px-3 py-5" aria-label={brand.name}>
           <div className="space-y-7">
             {groups.map((group) => (
               <section key={group.id}>
@@ -278,8 +281,8 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
               <button key={item} type="button" onClick={() => setLang(item)} className={cn("h-8 flex-1 rounded px-2 text-[11px] font-bold uppercase", desktopCollapsed && "lg:w-full lg:flex-none", lang === item ? "bg-white text-[#0a2d46]" : "text-white/55")} aria-pressed={lang === item}>{item}</button>
             ))}
           </div>
-          <div className="relative">
-            <button type="button" onClick={() => setAccountOpen((open) => !open)} className={cn("flex w-full items-center gap-2 rounded-md border border-white/10 bg-white/5 px-2.5 py-2 text-left text-white", desktopCollapsed && "lg:justify-center lg:px-0")} aria-expanded={accountOpen}>
+          <div className={cn("relative rounded-md border border-white/10 bg-white/5", desktopCollapsed && "lg:border-0 lg:bg-transparent")}>
+            <button type="button" onClick={() => setAccountOpen((open) => !open)} className={cn("flex w-full items-center gap-2 px-2.5 py-2 text-left text-white", desktopCollapsed && "lg:justify-center lg:px-0")} aria-expanded={accountOpen}>
               <span className="grid size-7 shrink-0 place-items-center rounded bg-[#e8edf1] text-[#0a2d46]"><UserRound className="size-3.5" /></span>
               <span className={cn("min-w-0", desktopCollapsed && "lg:hidden")}>
                 <span className="block truncate text-[11px] font-semibold">{currentUser.displayName}</span>
@@ -288,13 +291,16 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
               <ChevronDown className={cn("ml-auto size-3.5 text-white/60", desktopCollapsed && "lg:hidden")} />
             </button>
             {accountOpen && (
-              <div className={cn("absolute bottom-12 left-0 z-10 w-full min-w-64 rounded-md border border-[#dfe4e9] bg-white p-2 text-[#17202b] shadow-lg", desktopCollapsed && "lg:left-[calc(100%+0.75rem)] lg:bottom-0")}>
+              <div className={cn("absolute bottom-[calc(100%+0.5rem)] left-0 z-10 w-full min-w-64 rounded-md border border-[#dfe4e9] bg-white p-2 text-[#17202b] shadow-lg", desktopCollapsed && "lg:left-[calc(100%+0.75rem)] lg:bottom-0")}>
                 <p className="px-2 py-1 text-xs text-[#6b7680]">{currentUser.email}</p>
                 <form action={`${NORTH_BASE}/auth/sign-out`} method="post">
                   <button className="mt-1 flex h-9 w-full items-center gap-2 rounded px-2 text-sm hover:bg-[#f3f5f7]"><LogOut className="size-4" />{c.signOut}</button>
                 </form>
               </div>
             )}
+          </div>
+          <div className={cn("mt-2 flex justify-center", desktopCollapsed && "lg:mt-1.5")}>
+            <ParvisCoBrand compact={desktopCollapsed} />
           </div>
         </div>
       </aside>
@@ -314,9 +320,9 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
           )}
         </main>
         <footer className="border-t border-[#dfe4e9] bg-white px-4 py-5 text-xs text-[#6b7680] sm:px-6 lg:px-8">
-          <div className="mx-auto flex w-full max-w-[1500px] flex-col justify-between gap-2 md:flex-row">
-            <p>© 2026 Hunter Advisory.</p>
-            <p className="max-w-3xl md:text-right">Access, eligibility, suitability, and subscription remain subject to the applicable licensed process.</p>
+          <div className="mx-auto grid w-full max-w-[1500px] gap-3 md:grid-cols-[auto_1fr] md:items-start">
+            <p>© 2026 {brand.name}.</p>
+            <DealerDisclosure level="micro" className="max-w-3xl md:justify-self-end md:text-right md:[&_div]:justify-end" />
           </div>
         </footer>
       </div>

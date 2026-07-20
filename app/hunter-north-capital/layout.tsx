@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import "./north.css";
 
 export const metadata: Metadata = {
-  title: { absolute: "Hunter Advisory" },
+  title: { absolute: "Hunter & Hunter Investment Advisory" },
   description:
-    "A clearer view of Canadian private real estate and alternative investments for investors in Türkiye.",
+    "Hunter & Hunter Investment Advisory, powered by Parvis, provides a clearer view of Canadian private real estate and alternative investments.",
   openGraph: {
-    title: "Hunter Advisory",
-    description: "Canadian private real estate and alternative investments, presented with source-led research and a human-supported process.",
-    siteName: "Hunter Advisory",
+    title: "Hunter & Hunter Investment Advisory",
+    description: "Hunter & Hunter Investment Advisory, powered by Parvis, presents Canadian private-market opportunities with source-led research and a human-supported process.",
+    siteName: "Hunter & Hunter Investment Advisory",
     type: "website",
     locale: "tr_TR",
     alternateLocale: "en_CA",

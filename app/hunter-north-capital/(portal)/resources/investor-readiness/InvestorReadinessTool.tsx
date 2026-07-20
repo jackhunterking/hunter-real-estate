@@ -45,6 +45,7 @@ import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { useClients } from "@/components/capital/north/ClientProvider";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider";
+import { DealerDisclosure } from "@/components/capital/north/DealerDisclosure";
 import { PageHeader, Panel } from "@/components/capital/north/PortalUI";
 import {
   Dialog,
@@ -612,6 +613,7 @@ export function InvestorReadinessTool() {
       title={professionalMode ? c.title : c.selfTitle}
       description={professionalMode ? c.description : c.selfDescription}
     />
+    <DealerDisclosure level="transactional" className="mx-auto mb-5 max-w-3xl rounded-md border border-[#d9e1e6] bg-white p-4" />
 
     {referenceMode && <div className="mx-auto mb-5 flex max-w-3xl flex-col gap-3 rounded-md border border-[#cddce5] bg-[#eef4f7] p-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 size-5 shrink-0 text-[#0a4b72]" /><div><p className="text-sm font-semibold text-[#203f52]">{c.referenceMode}</p><p className="mt-1 text-xs leading-5 text-[#607581]">{c.referenceBody}</p></div></div>

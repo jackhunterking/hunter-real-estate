@@ -23,7 +23,7 @@ const appSender =
   process.env.RESEND_FROM_EMAIL ?? "Hunter Group <hello@updates.jackhunter.com>";
 const capitalSender =
   process.env.RESEND_CAPITAL_FROM_EMAIL ??
-  "Hunter Advisory <advisory@updates.jackhunter.com>";
+  "Hunter & Hunter Investment Advisory <advisory@updates.jackhunter.com>";
 const replyTo = process.env.RESEND_REPLY_TO ?? "hello@jackhunter.com";
 
 function escapeHtml(value: unknown) {
@@ -42,7 +42,19 @@ function shell(params: {
   body: string;
   actionLabel: string;
   actionUrl: string;
+  investmentBrand?: boolean;
 }) {
+  const investmentName = params.language === "tr"
+    ? "Hunter & Hunter Yatırım Danışmanlığı"
+    : "Hunter & Hunter Investment Advisory";
+  const brandHeader = params.investmentBrand
+    ? `<div style="color:#fff;font-size:15px;font-weight:700">Hunter &amp; Hunter</div>
+       <div style="margin-top:5px;color:#d7b86b;font-size:9px;letter-spacing:.12em;text-transform:uppercase">${params.language === "tr" ? "Yatırım Danışmanlığı" : "Investment Advisory"}</div>
+       <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16);color:#9eabb3;font-size:8px;letter-spacing:.1em;text-transform:uppercase">Powered by <img src="${siteUrl}/logos/parvis-wordmark-white.svg" width="64" alt="Parvis" style="display:inline-block;width:64px;height:auto;margin-left:7px;vertical-align:middle"></div>`
+    : "Hunter Group";
+  const footer = params.investmentBrand
+    ? `${params.language === "tr" ? "Menkul kıymet hizmetleri Parvis Investment Services Inc. aracılığıyla sunulur" : "Securities services through Parvis Investment Services Inc."} · NRD #74000.<br><a href="${siteUrl}/hunter-advisory/legal" style="color:#315f79">${investmentName}</a> · <a href="https://www.parvisinvest.com/legal/disclosures" style="color:#315f79">${params.language === "tr" ? "Parvis açıklamaları" : "Parvis disclosures"}</a>`
+    : "Questions? Reply to this email or contact hello@jackhunter.com.";
   const html = `<!doctype html>
 <html lang="${params.language}">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
@@ -51,19 +63,19 @@ function shell(params: {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
     <tr><td align="center" style="padding:32px 16px">
       <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff">
-        <tr><td style="background:#071c2c;padding:28px;color:#d7b86b;font-size:12px;letter-spacing:.16em;text-transform:uppercase">Hunter Group</td></tr>
+        <tr><td style="background:#071c2c;padding:28px;color:#d7b86b;font-size:12px;letter-spacing:.16em;text-transform:uppercase">${brandHeader}</td></tr>
         <tr><td style="padding:38px 32px">
           <p style="margin:0 0 12px;color:#7b5c19;font-size:11px;letter-spacing:.14em;text-transform:uppercase">${escapeHtml(params.eyebrow)}</p>
           <h1 style="margin:0 0 18px;font:500 30px Georgia,serif;color:#071c2c">${escapeHtml(params.title)}</h1>
           <p style="margin:0 0 28px;line-height:1.65;color:#465761">${escapeHtml(params.body)}</p>
           <a href="${escapeHtml(params.actionUrl)}" style="display:inline-block;background:#071c2c;color:#fff;padding:14px 22px;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">${escapeHtml(params.actionLabel)}</a>
         </td></tr>
-        <tr><td style="padding:24px 32px;background:#f1f3f4;color:#687780;font-size:12px;line-height:1.5">Questions? Reply to this email or contact hello@jackhunter.com.</td></tr>
+        <tr><td style="padding:24px 32px;background:#f1f3f4;color:#687780;font-size:12px;line-height:1.6">${footer}</td></tr>
       </table>
     </td></tr>
   </table>
 </body></html>`;
-  const text = `${params.eyebrow}\n\n${params.title}\n\n${params.body}\n\n${params.actionLabel}: ${params.actionUrl}`;
+  const text = `${params.investmentBrand ? `${investmentName}\nPowered by Parvis\n\n` : ""}${params.eyebrow}\n\n${params.title}\n\n${params.body}\n\n${params.actionLabel}: ${params.actionUrl}${params.investmentBrand ? "\n\nSecurities services through Parvis Investment Services Inc. · NRD #74000.\nhttps://www.parvisinvest.com/legal/disclosures" : ""}`;
   return { html, text };
 }
 
@@ -114,12 +126,13 @@ export function renderEmailJob(job: EmailJobTemplate): RenderedEmail {
     body: `A new submission (${reference}) is ready for review. Sign in to the protected portal to view the details.`,
     actionLabel: "Open lead inbox",
     actionUrl: `${siteUrl}/hunter-advisory/admin/leads`,
+    investmentBrand: true,
   });
   return {
     from: capitalSender,
     replyTo,
     to: job.recipient,
-    subject: `New Hunter Advisory intake · ${reference}`,
+    subject: `New Hunter & Hunter Investment Advisory intake · ${reference}`,
     ...content,
   };
 }

@@ -246,22 +246,22 @@ port = 465
 user = "resend"
 pass = "env(RESEND_SUPABASE_AUTH_API_KEY)"
 admin_email = "auth@updates.jackhunter.com"
-sender_name = "Hunter Account Security"
+sender_name = "Hunter & Hunter Account Security"
 
 [auth.email.template.invite]
-subject = "Your Hunter North Capital invitation"
+subject = "Your Hunter & Hunter Investment Advisory invitation"
 content_path = "./supabase/templates/invite.html"
 
 [auth.email.template.confirmation]
-subject = "Confirm your Hunter North Capital account"
+subject = "Confirm your Hunter & Hunter Investment Advisory account"
 content_path = "./supabase/templates/confirmation.html"
 
 [auth.email.template.recovery]
-subject = "Reset your Hunter North Capital password"
+subject = "Reset your Hunter & Hunter Investment Advisory password"
 content_path = "./supabase/templates/recovery.html"
 
 [auth.email.template.email_change]
-subject = "Confirm your new Hunter North Capital email"
+subject = "Confirm your new Hunter & Hunter Investment Advisory email"
 content_path = "./supabase/templates/email-change.html"
 
 # Uncomment to customize notification email template
