@@ -7,11 +7,25 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (path: string) => readFileSync(resolve(root, path), "utf8");
 
-test("fund detail exposes only Overview, Buildings, and Documents tabs", () => {
+test("fund detail exposes Performance immediately after Overview", () => {
   const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
-  const tabIds = [...detail.matchAll(/id: "(overview|buildings|documents)"/g)].map((match) => match[1]);
-  assert.deepEqual(tabIds, ["overview", "buildings", "documents"]);
+  const tabIds = [...detail.matchAll(/id: "(overview|performance|buildings|documents)"/g)].map((match) => match[1]);
+  assert.deepEqual(tabIds, ["overview", "performance", "buildings", "documents"]);
   assert.doesNotMatch(detail, /id: "(?:money|risk|contact)"/);
+});
+
+test("historical returns live in a dedicated compact Performance view", () => {
+  const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
+  const overview = detail.match(/function Overview[\s\S]*?\n}\n\ntype LocalizedPerformanceRow/)?.[0] ?? "";
+  const performance = detail.match(/function Performance\([\s\S]*?\n}\n\nfunction Buildings/)?.[0] ?? "";
+
+  assert.doesNotMatch(overview, /trailingReturns|value="historical"/);
+  assert.match(performance, /offering\.trailingReturns/);
+  assert.match(performance, /<PerformanceLineChart rows=\{rows\}/);
+  assert.match(performance, /<table className="w-full text-left">/);
+  assert.match(performance, /item\.note\?\.\[lang\]/);
+  assert.match(performance, /trailingReturnsNote/);
+  assert.match(performance, /c\.noHistory/);
 });
 
 test("fund terms remain verbatim and early exit conditions live in Overview", () => {
@@ -21,6 +35,29 @@ test("fund terms remain verbatim and early exit conditions live in Overview", ()
   assert.match(detail, /share\?\.redemptionTerms\?\.\[lang\]/);
   assert.doesNotMatch(detail, /formatReturnPhrase/);
   assert.doesNotMatch(detail, /Cash income goal/i);
+});
+
+test("fund overview replaces oversized metric cards with a lean, trust-oriented flow", () => {
+  const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
+  const overview = detail.match(/function Overview[\s\S]*?\n}\n\ntype LocalizedPerformanceRow/)?.[0] ?? "";
+
+  assert.doesNotMatch(overview, /summaryCards|<StatCard/);
+  assert.ok(overview.indexOf("<SectionTitle title={c.approach}") < overview.indexOf("<SectionTitle title={c.keyFacts}"));
+  assert.match(overview, /<SectionTitle title=\{c\.approach\} \/>[\s\S]*?<p className="max-w-4xl[^>]*">\{offering\.thesis\[lang\]\}<\/p>/);
+  assert.match(overview, /add\(c\.aum,[\s\S]*add\(c\.inception,[\s\S]*add\(c\.offeringSize,/);
+});
+
+test("fund manager context appears immediately before independent verification", () => {
+  const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
+  const overview = detail.match(/function Overview[\s\S]*?\n}\n\ntype LocalizedPerformanceRow/)?.[0] ?? "";
+  const managerIndex = overview.indexOf("<SectionTitle title={c.aboutManager}");
+  const trustIndex = overview.indexOf("<TrustStrip");
+
+  assert.ok(managerIndex >= 0 && managerIndex < trustIndex);
+  assert.match(overview, /offering\.manager\.description\[lang\]/);
+  assert.match(overview, /offering\.manager\.headquarters\.city/);
+  assert.match(overview, /offering\.fundType\[lang\]/);
+  assert.match(overview, /offering\.manager\.website/);
 });
 
 test("fund cards keep financial and portfolio facts on detail pages only", () => {
@@ -170,7 +207,8 @@ test("unified profile uses an account workspace and state-aware modal profession
 test("fund pages show only the published gross schedule to active professionals", () => {
   const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
   const route = read("app/api/hnc-fund-commission-schedules/route.ts");
-  assert.match(detail, /professional && <PublishedFundCommission/);
+  assert.match(detail, /usePublishedFundCommissionValue\(offering\.id, professional, lang\)/);
+  assert.match(detail, /if \(professional && commission\) facts\.push\(\{ label: c\.commission, value: commission \}\)/);
   assert.match(detail, /offeringId=\$\{encodeURIComponent\(offeringId\)\}/);
   assert.match(detail, /grossCommissionBps/);
   assert.doesNotMatch(detail, /effectivePartnerBps|PARTNER_COMMISSION_ALLOCATIONS/);

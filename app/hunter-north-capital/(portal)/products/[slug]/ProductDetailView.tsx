@@ -2,95 +2,90 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, BadgePercent, Building2, FileText, Landmark, type LucideIcon, MapPinned, TrendingUp, Wallet } from "lucide-react";
-import type { FundCommissionSchedule, OfferingBundle, ShareClass } from "@/lib/capital/types";
-import { formatCurrencyCad, formatMoneyCompact } from "@/lib/capital/present";
+import { ArrowLeft, Building2, ExternalLink, FileText, MapPinned, TrendingUp } from "lucide-react";
+import type { FundCommissionSchedule, OfferingBundle, ShareClass, TrailingReturn } from "@/lib/capital/types";
+import { formatCurrencyCad, formatDate, formatMoneyCompact } from "@/lib/capital/present";
+import { isChronologicalPerformancePeriod, parsePerformancePercentage } from "@/lib/capital/performance";
 import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { FundMapEmbed } from "@/components/capital/map/FundMapEmbed";
 import { InvestmentRequestButton } from "@/components/capital/north/InvestmentRequestButton";
-import { DealerDisclosure } from "@/components/capital/north/DealerDisclosure";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { Panel } from "@/components/capital/north/PortalUI";
 import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider";
+import { OfferingVisual } from "../ProductsExplorer";
 import { canUseWorkspace } from "@/lib/capital/portal-access";
 import {
   Highlights,
   type KeyFact,
   KeyFactsCard,
   PresentationCard,
-  StatCard,
   TrustStrip,
 } from "@/components/capital/offering-ui";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 
-type Tab = "overview" | "buildings" | "documents";
+type Tab = "overview" | "performance" | "buildings" | "documents";
 
 const COPY = {
   en: {
-    back: "Back to Discover", overview: "Overview", buildings: "Buildings", documents: "Documents", managed: "Managed by",
+    back: "Back to Discover", overview: "Overview", performance: "Performance", buildings: "Buildings", documents: "Documents", managed: "Managed by",
     available: "Available", paused: "Paused", closed: "Closed", coming: "Coming soon",
     realEstate: "The real estate", realEstateHelp: "Verified underlying properties connected to this offering — not direct ownership by an investor.",
     summaryReturns: "Projected returns", offeringSize: "Offering size", aum: "Assets under management",
-    keyFacts: "Key facts", riskProfile: "Risk profile", minimum: "Minimum investment", projectedReturn: "Projected return",
+    keyFacts: "Key facts", inception: "Inception date", riskProfile: "Risk profile", minimum: "Minimum investment", projectedReturn: "Projected return",
     unitPrice: "Unit price", term: "Investment term", distribution: "Distribution", registered: "Registered accounts",
-    redemption: "Redemptions", managementFee: "Management fee",
+    redemption: "Redemptions", managementFee: "Management fee", commission: "Published fund commission",
     highlights: "Highlights", cities: "Cities", buildingsCount: "Buildings", locations: "Locations",
     approach: "Investment approach", presentation: "Presentation", presentationOpen: "Open presentation",
     presentationVersion: "Version", presentationUnavailable: "Available through Hunter & Hunter Investment Advisory",
     risks: "Material risks and trade-offs",
-    historical: "Full historical information", noHistory: "No approved historical information is available.", historicalTag: "Historical—not a forecast",
-    sources: "Sources and information dates", sourcesBody: "Fund information verified",
+    historical: "Historical performance", historicalHelp: "Published returns for this fund, shown exactly as provided.", noHistory: "No approved historical information is available.", historicalTag: "Historical—not a forecast",
+    performanceChart: "Performance over time", performanceChartDescription: "Chronological published returns shown as a line chart.", chartUnavailable: "There are not enough chartable chronological values to draw a performance trend.",
+    period: "Period", returnValue: "Return",
     exact: "Values and conditions are shown as published for the selected share class. Targets are not guaranteed.",
+    aboutManager: "About the company", headquarters: "Headquarters", fundStructure: "Fund structure", companyWebsite: "Company website",
     trust: "Independently verified", auditor: "Auditor", legalCounsel: "Legal counsel", appraiser: "Appraiser", verified: "Verified",
     share: "Share class",
-    buildingHelp: "Select a marker or card. Missing facts are shown as unavailable and are not inferred.",
+    buildingHelp: "The real, rentable buildings this fund owns — on the map and below. Select a marker or card to view information; missing facts are shown as unavailable and are not inferred.",
     docsHelp: "Approved documents are kept with this offering so their source and version remain clear.",
     type: "Type", effective: "Effective date", version: "Version", source: "Source", open: "Open document", held: "Available through Hunter & Hunter Investment Advisory",
     noDocs: "No approved documents are available.",
-    commissionTitle: "Published fund commission", commissionGross: "Gross commission as posted", commissionAsPosted: "Shown as published for this fund. Apply your current partner-tier percentage separately.",
-    commissionLoading: "Loading the published schedule…", commissionUnavailable: "No current published commission schedule is available.",
   },
   tr: {
-    back: "Keşfet'e dön", overview: "Genel Bakış", buildings: "Binalar", documents: "Belgeler", managed: "Yönetici",
+    back: "Keşfet'e dön", overview: "Genel Bakış", performance: "Performans", buildings: "Binalar", documents: "Belgeler", managed: "Yönetici",
     available: "Mevcut", paused: "Duraklatıldı", closed: "Kapalı", coming: "Yakında",
     realEstate: "Gayrimenkul", realEstateHelp: "Bu seçenekle bağlantılı doğrulanmış dayanak mülkler — yatırımcının doğrudan mülk sahipliği anlamına gelmez.",
     summaryReturns: "Öngörülen getiri", offeringSize: "Teklif büyüklüğü", aum: "Yönetilen varlıklar",
-    keyFacts: "Temel bilgiler", riskProfile: "Risk profili", minimum: "Minimum yatırım", projectedReturn: "Öngörülen getiri",
+    keyFacts: "Temel bilgiler", inception: "Yatırım aracı başlangıç tarihi", riskProfile: "Risk profili", minimum: "Minimum yatırım", projectedReturn: "Öngörülen getiri",
     unitPrice: "Birim fiyatı", term: "Yatırım süresi", distribution: "Dağıtım", registered: "Kayıtlı hesaplar",
-    redemption: "Para çekme", managementFee: "Yönetim ücreti",
+    redemption: "Para çekme", managementFee: "Yönetim ücreti", commission: "Yayımlanan fon komisyonu",
     highlights: "Öne çıkanlar", cities: "Şehir", buildingsCount: "Bina", locations: "Konum",
     approach: "Yatırım yaklaşımı", presentation: "Sunum", presentationOpen: "Sunumu aç",
     presentationVersion: "Sürüm", presentationUnavailable: "Hunter & Hunter Yatırım Danışmanlığı üzerinden mevcut",
     risks: "Önemli riskler ve ödünleşimler",
-    historical: "Ayrıntılı geçmiş bilgiler", noHistory: "Onaylı geçmiş bilgi mevcut değil.", historicalTag: "Geçmiş bilgi—tahmin değildir",
-    sources: "Kaynak ve bilgi tarihleri", sourcesBody: "Fon bilgisi doğrulama tarihi",
+    historical: "Geçmiş performans", historicalHelp: "Bu fon için yayımlanan getiriler, sağlandığı şekliyle gösterilir.", noHistory: "Onaylı geçmiş bilgi mevcut değil.", historicalTag: "Geçmiş bilgi—tahmin değildir",
+    performanceChart: "Zaman içindeki performans", performanceChartDescription: "Kronolojik yayımlanmış getirilerin çizgi grafiği.", chartUnavailable: "Performans eğrisi çizmek için yeterli kronolojik sayısal değer bulunmuyor.",
+    period: "Dönem", returnValue: "Getiri",
     exact: "Değerler ve koşullar seçili pay sınıfı için yayımlandığı şekliyle gösterilir. Hedefler garanti edilmez.",
+    aboutManager: "Şirket hakkında", headquarters: "Merkez", fundStructure: "Fon yapısı", companyWebsite: "Şirket web sitesi",
     trust: "Bağımsız olarak doğrulandı", auditor: "Denetçi", legalCounsel: "Hukuk müşaviri", appraiser: "Değerleme uzmanı", verified: "Doğrulama tarihi",
     share: "Pay sınıfı",
-    buildingHelp: "Bir işaretçi veya kart seçin. Eksik bilgiler mevcut değil olarak gösterilir ve tahmin edilmez.",
+    buildingHelp: "Bu fonun sahip olduğu gerçek, kiralık binalar — haritada ve aşağıda. Bilgileri görmek için bir işaretçi veya kart seçin; eksik bilgiler mevcut değil olarak gösterilir ve tahmin edilmez.",
     docsHelp: "Onaylı belgeler, kaynak ve sürümlerinin açık kalması için bu seçenekle birlikte tutulur.",
     type: "Tür", effective: "Yürürlük tarihi", version: "Sürüm", source: "Kaynak", open: "Belgeyi aç", held: "Hunter & Hunter Yatırım Danışmanlığı üzerinden mevcut",
     noDocs: "Onaylı belge mevcut değil.",
-    commissionTitle: "Yayımlanan fon komisyonu", commissionGross: "Yayımlandığı şekliyle brüt komisyon", commissionAsPosted: "Bu fon için yayımlandığı şekliyle gösterilir. Mevcut partner kademenizin yüzdesini ayrıca uygulayın.",
-    commissionLoading: "Yayımlanan program yükleniyor…", commissionUnavailable: "Geçerli yayımlanmış komisyon programı bulunmuyor.",
   },
 } as const;
 
-function PublishedFundCommission({ offeringId }: { offeringId: string }) {
-  const { lang } = useLang();
-  const c = COPY[lang];
-  const [schedule, setSchedule] = useState<FundCommissionSchedule>();
-  const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
-
+function usePublishedFundCommissionValue(offeringId: string, enabled: boolean, lang: "en" | "tr") {
+  const [commission, setCommission] = useState("");
   useEffect(() => {
+    if (!enabled) {
+      setCommission("");
+      return;
+    }
+
     let active = true;
-    setStatus("loading");
+    setCommission("");
     fetch(`/api/hnc-fund-commission-schedules?offeringId=${encodeURIComponent(offeringId)}`, { cache: "no-store" })
       .then(async (response) => {
         const result = await response.json() as { data?: FundCommissionSchedule[] };
@@ -99,41 +94,15 @@ function PublishedFundCommission({ offeringId }: { offeringId: string }) {
       })
       .then((item) => {
         if (!active) return;
-        setSchedule(item);
-        setStatus(item ? "ready" : "unavailable");
+        setCommission(item ? `${new Intl.NumberFormat(lang === "tr" ? "tr-TR" : "en-CA", { maximumFractionDigits: 2 }).format(item.grossCommissionBps)} BPS` : "");
       })
       .catch(() => {
-        if (active) setStatus("unavailable");
+        if (active) setCommission("");
       });
     return () => { active = false; };
-  }, [offeringId]);
+  }, [enabled, lang, offeringId]);
 
-  return (
-    <Panel className="mt-4 overflow-hidden rounded-xl border-border bg-secondary/40">
-      <div className="flex flex-col justify-between gap-4 p-4 sm:flex-row sm:items-center sm:px-5">
-        <div className="flex items-start gap-3">
-          <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-secondary text-primary">
-            <BadgePercent className="size-5" />
-          </span>
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">{c.commissionTitle}</p>
-            <p className="mt-1 text-sm leading-5 text-muted-foreground">{c.commissionAsPosted}</p>
-          </div>
-        </div>
-        {status === "ready" && schedule ? (
-          <div className="shrink-0 rounded-lg border border-border bg-card px-4 py-3 sm:text-right">
-            <p className="text-[10px] font-bold uppercase tracking-[0.09em] text-muted-foreground">{c.commissionGross}</p>
-            <p className="mt-1 text-2xl font-semibold tabular-nums text-primary">
-              {new Intl.NumberFormat(lang === "tr" ? "tr-TR" : "en-CA", { maximumFractionDigits: 2 }).format(schedule.grossCommissionBps)} BPS
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">{c.effective}: {new Intl.DateTimeFormat(lang === "tr" ? "tr-TR" : "en-CA", { day: "numeric", month: "short", year: "numeric" }).format(new Date(`${schedule.effectiveFrom}T12:00:00Z`))}</p>
-          </div>
-        ) : (
-          <p className="shrink-0 text-sm font-medium text-muted-foreground">{status === "loading" ? c.commissionLoading : c.commissionUnavailable}</p>
-        )}
-      </div>
-    </Panel>
-  );
+  return commission;
 }
 
 function SectionTitle({ title, help }: { title: string; help?: string }) {
@@ -148,9 +117,11 @@ function SectionTitle({ title, help }: { title: string; help?: string }) {
   );
 }
 
-function Overview({ offering, share }: { offering: OfferingBundle; share?: ShareClass }) {
+function Overview({ offering, share, professional }: { offering: OfferingBundle; share?: ShareClass; professional: boolean }) {
   const { lang } = useLang();
   const c = COPY[lang];
+  const commission = usePublishedFundCommissionValue(offering.id, professional, lang);
+  const companyLogo = offering.media?.logo;
 
   // Fund-published facts are shown VERBATIM (never reformatted) for compliance.
   const definedFacts = [...(offering.fundDefinedFacts ?? []), ...(share?.fundDefinedFacts ?? [])].filter(
@@ -160,20 +131,14 @@ function Overview({ offering, share }: { offering: OfferingBundle; share?: Share
   const termFacts = definedFacts.filter((fact) => fact.category !== "target");
   const hasCategory = (category: string) => termFacts.some((fact) => fact.category === category);
 
-  // Summary stat cards (3-up) — the clean headline row, values shown as published.
-  const returnFact = targetFacts[0];
-  const summaryCards = [
-    returnFact ? { value: returnFact.value[lang], label: c.summaryReturns, icon: TrendingUp }
-      : share?.targetReturn ? { value: share.targetReturn.value, label: c.summaryReturns, icon: TrendingUp } : null,
-    offering.offeringSize ? { value: formatMoneyCompact(Number(offering.offeringSize.value), lang), label: c.offeringSize, icon: Wallet } : null,
-    offering.aum ? { value: String(offering.aum.value), label: c.aum, icon: Landmark } : null,
-  ].filter(Boolean) as { value: string; label: string; icon: LucideIcon }[];
-
-  // Key facts (Parvis-style). Redemptions stay visible on the main page.
+  // Key facts keep the former headline metrics visible without a separate card row.
   const facts: KeyFact[] = [];
   const add = (label: string, value?: string | null, provenance?: KeyFact["provenance"]) => {
     if (value) facts.push({ label, value, provenance });
   };
+  add(c.aum, offering.aum ? String(offering.aum.value) : null, offering.aum);
+  add(c.inception, offering.inceptionDate ? formatDate(offering.inceptionDate, lang) : null);
+  add(c.offeringSize, offering.offeringSize ? formatMoneyCompact(Number(offering.offeringSize.value), lang) : null, offering.offeringSize);
   add(c.riskProfile, offering.riskProfile?.[lang]);
   add(c.minimum, share?.minimumInvestment ? formatCurrencyCad(share.minimumInvestment.value, lang) : null, share?.minimumInvestment);
   // Fund-published target facts (return, distribution) shown verbatim; else share fallbacks.
@@ -190,19 +155,18 @@ function Overview({ offering, share }: { offering: OfferingBundle; share?: Share
   if (!hasCategory("term")) add(c.term, share?.term?.value, share?.term);
   if (!hasCategory("fee")) add(c.managementFee, offering.managementFee?.[lang]);
   if (!hasCategory("early-exit")) add(c.redemption, share?.redemptionTerms?.[lang]);
+  if (professional && commission) facts.push({ label: c.commission, value: commission });
 
   const funFacts = (offering.highlights ?? []).map((highlight) => highlight[lang]);
-  const trailingReturns = (offering.trailingReturns ?? []).map((item) => ({ period: item.period[lang], value: item.value }));
-  const trailingReturnsNote = offering.trailingReturnsNote?.[lang];
   const presentation = offering.documents.find((doc) => doc.type === "presentation" && doc.visibility !== "private");
 
   return (
     <div className="space-y-8">
-      {summaryCards.length > 0 && (
-        <section className="grid gap-3 sm:grid-cols-3">
-          {summaryCards.map((card) => <StatCard key={card.label} value={card.value} label={card.label} icon={card.icon} />)}
-        </section>
-      )}
+
+      <section>
+        <SectionTitle title={c.approach} />
+        <p className="max-w-4xl text-sm leading-7 text-muted-foreground sm:text-[15px]">{offering.thesis[lang]}</p>
+      </section>
 
       <section>
         <SectionTitle title={c.keyFacts} />
@@ -218,13 +182,6 @@ function Overview({ offering, share }: { offering: OfferingBundle; share?: Share
         />
       </section>
 
-      <section>
-        <SectionTitle title={c.approach} />
-        <div className="rounded-xl border border-border bg-card p-6 sm:p-7">
-          <p className="text-sm leading-7 text-muted-foreground">{offering.thesis[lang]}</p>
-        </div>
-      </section>
-
       {presentation && (
         <section>
           <SectionTitle title={c.presentation} />
@@ -237,34 +194,49 @@ function Overview({ offering, share }: { offering: OfferingBundle; share?: Share
         </section>
       )}
 
-      <Accordion type="multiple" className="rounded-xl border border-border bg-card px-5">
-        <AccordionItem value="historical" className="border-border">
-          <AccordionTrigger className="text-sm font-semibold text-foreground">
-            <span className="flex items-center gap-2">{c.historical}
-              <span className="rounded bg-secondary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">{c.historicalTag}</span>
-            </span>
-          </AccordionTrigger>
-          <AccordionContent>
-            {trailingReturns.length ? (
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {trailingReturns.map((item) => (
-                  <div key={item.period} className="rounded-md bg-secondary/60 p-3">
-                    <p className="text-[11px] text-muted-foreground">{item.period}</p>
-                    <p className="mt-1 text-base font-semibold text-foreground">{item.value}</p>
-                  </div>
-                ))}
+      <section>
+        <SectionTitle title={c.aboutManager} />
+        <div className="rounded-xl border border-border bg-card p-5 sm:p-6">
+          <div className="grid gap-5 sm:grid-cols-[12rem_minmax(0,1fr)] sm:items-center">
+            {companyLogo?.src && (
+              <div className="flex h-24 w-full max-w-48 items-center justify-center rounded-lg border border-border bg-white p-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={companyLogo.src} alt={companyLogo.alt?.[lang] ?? offering.manager.name[lang]} className="max-h-full max-w-full object-contain" />
               </div>
-            ) : <p className="text-sm text-muted-foreground">{c.noHistory}</p>}
-            {trailingReturnsNote && <p className="mt-3 text-xs leading-5 text-muted-foreground">{trailingReturnsNote}</p>}
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="sources" className="border-0">
-          <AccordionTrigger className="text-sm font-semibold text-foreground">{c.sources}</AccordionTrigger>
-          <AccordionContent>
-            <p className="text-xs leading-5 text-muted-foreground">{c.sourcesBody}: {offering.verifiedAt}.</p>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+            )}
+            <div className="min-w-0">
+              <h3 className="font-serif text-2xl font-semibold text-foreground">{offering.manager.name[lang]}</h3>
+              <p className="mt-2 max-w-4xl text-sm leading-6 text-muted-foreground">{offering.manager.description[lang]}</p>
+            </div>
+          </div>
+
+          <dl className="mt-6 grid gap-x-8 gap-y-4 border-t border-border pt-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <dt className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">{c.headquarters}</dt>
+              <dd className="mt-1 text-sm font-semibold text-foreground">
+                {offering.manager.officeAddress?.[lang] ?? `${offering.manager.headquarters.city}, ${offering.manager.headquarters.province}, ${offering.manager.headquarters.country}`}
+              </dd>
+            </div>
+            {offering.fundType?.[lang] && (
+              <div>
+                <dt className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">{c.fundStructure}</dt>
+                <dd className="mt-1 text-sm font-semibold text-foreground">{offering.fundType[lang]}</dd>
+              </div>
+            )}
+            {offering.manager.website && (
+              <div>
+                <dt className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">{c.companyWebsite}</dt>
+                <dd className="mt-1">
+                  <a href={offering.manager.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+                    {offering.manager.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                    <ExternalLink className="size-3.5" aria-hidden />
+                  </a>
+                </dd>
+              </div>
+            )}
+          </dl>
+        </div>
+      </section>
 
       <TrustStrip
         providers={offering.serviceProviders}
@@ -275,11 +247,144 @@ function Overview({ offering, share }: { offering: OfferingBundle; share?: Share
   );
 }
 
+type LocalizedPerformanceRow = {
+  period: string;
+  value: string;
+  note?: string;
+};
+
+function PerformanceLineChart({ rows }: { rows: LocalizedPerformanceRow[] }) {
+  const { lang } = useLang();
+  const c = COPY[lang];
+  const points = rows.flatMap((row) => {
+    if (!isChronologicalPerformancePeriod(row.period)) return [];
+    const numericValue = parsePerformancePercentage(row.value);
+    return numericValue === null ? [] : [{ ...row, numericValue }];
+  });
+
+  if (points.length < 2) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
+        {c.chartUnavailable}
+      </div>
+    );
+  }
+
+  const width = 760;
+  const height = 300;
+  const margin = { top: 42, right: 32, bottom: 48, left: 52 };
+  const plotWidth = width - margin.left - margin.right;
+  const plotHeight = height - margin.top - margin.bottom;
+  const values = points.map((point) => point.numericValue);
+  const rawMin = Math.min(0, ...values);
+  const rawMax = Math.max(0, ...values);
+  const rawSpan = rawMax - rawMin;
+  const padding = rawSpan === 0 ? 1 : rawSpan * 0.12;
+  const yMin = rawMin < 0 ? rawMin - padding : 0;
+  const yMax = rawMax > 0 ? rawMax + padding : 0;
+  const domainMin = yMin === yMax ? yMin - 1 : yMin;
+  const domainMax = yMin === yMax ? yMax + 1 : yMax;
+  const domainSpan = domainMax - domainMin;
+  const xFor = (index: number) => margin.left + (plotWidth * index) / (points.length - 1);
+  const yFor = (value: number) => margin.top + ((domainMax - value) / domainSpan) * plotHeight;
+  const tickValues = Array.from({ length: 5 }, (_, index) => domainMax - (domainSpan * index) / 4);
+  const path = points.map((point, index) => `${index === 0 ? "M" : "L"} ${xFor(index)} ${yFor(point.numericValue)}`).join(" ");
+
+  return (
+    <figure className="overflow-hidden rounded-xl border border-border bg-card p-4 sm:p-6">
+      <figcaption className="mb-2 font-semibold text-foreground">{c.performanceChart}</figcaption>
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label={`${c.performanceChart}. ${c.performanceChartDescription}`}
+        className="h-auto w-full"
+      >
+        {tickValues.map((tick) => {
+          const y = yFor(tick);
+          return (
+            <g key={tick}>
+              <line x1={margin.left} x2={width - margin.right} y1={y} y2={y} stroke="currentColor" className="text-border" strokeWidth="1" />
+              <text x={margin.left - 10} y={y + 4} textAnchor="end" className="fill-muted-foreground text-[11px]">
+                {new Intl.NumberFormat(lang === "tr" ? "tr-TR" : "en-CA", { maximumFractionDigits: 1 }).format(tick)}%
+              </text>
+            </g>
+          );
+        })}
+        <path d={path} fill="none" stroke="currentColor" className="text-primary" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+        {points.map((point, index) => {
+          const x = xFor(index);
+          const y = yFor(point.numericValue);
+          const valueY = point.numericValue < 0 ? Math.min(height - margin.bottom - 6, y + 22) : Math.max(18, y - 13);
+          return (
+            <g key={`${point.period}-${index}`}>
+              <circle cx={x} cy={y} r="5" fill="currentColor" className="text-gold" stroke="white" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+              <text x={x} y={valueY} textAnchor="middle" className="fill-foreground text-[12px] font-semibold">{point.value}</text>
+              <text x={x} y={height - 18} textAnchor="middle" className="fill-muted-foreground text-[11px]">{point.period}</text>
+            </g>
+          );
+        })}
+      </svg>
+    </figure>
+  );
+}
+
+function Performance({ offering }: { offering: OfferingBundle }) {
+  const { lang } = useLang();
+  const c = COPY[lang];
+  const rows: LocalizedPerformanceRow[] = (offering.trailingReturns ?? []).map((item: TrailingReturn) => ({
+    period: item.period[lang],
+    value: item.value,
+    note: item.note?.[lang],
+  }));
+  const note = offering.trailingReturnsNote?.[lang];
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+        <SectionTitle title={c.historical} help={c.historicalHelp} />
+        <span className="w-fit shrink-0 rounded bg-secondary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+          {c.historicalTag}
+        </span>
+      </div>
+
+      {rows.length ? (
+        <>
+          <PerformanceLineChart rows={rows} />
+          <div className="overflow-hidden rounded-xl border border-border bg-card">
+            <table className="w-full text-left">
+              <thead className="border-b border-border bg-secondary/40">
+                <tr>
+                  <th scope="col" className="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground sm:px-5">{c.period}</th>
+                  <th scope="col" className="px-4 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground sm:px-5">{c.returnValue}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {rows.map((row, index) => (
+                  <tr key={`${row.period}-${index}`}>
+                    <th scope="row" className="px-4 py-3 text-sm font-medium text-foreground sm:px-5">
+                      {row.period}
+                      {row.note && <span className="mt-0.5 block text-xs font-normal leading-5 text-muted-foreground">{row.note}</span>}
+                    </th>
+                    <td className="px-4 py-3 text-right text-base font-semibold tabular-nums text-foreground sm:px-5">{row.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {note && <p className="rounded-lg border border-border bg-secondary/40 px-4 py-3 text-xs leading-5 text-muted-foreground">{note}</p>}
+        </>
+      ) : (
+        <div className="rounded-xl border border-border bg-card p-10 text-center text-sm text-muted-foreground">{c.noHistory}</div>
+      )}
+    </div>
+  );
+}
+
 function Buildings({ offering }: { offering: OfferingBundle }) {
-  const { lang } = useLang(); const c = COPY[lang];
+  const { lang, t } = useLang(); const c = COPY[lang];
   return (
     <div className="space-y-4">
-      <SectionTitle title={c.buildings} help={c.buildingHelp} />
+      <SectionTitle title={t.capitalApp.map.portfolioBuildings} help={c.buildingHelp} />
       <FundMapEmbed offering={offering} />
     </div>
   );
@@ -332,40 +437,36 @@ export function ProductDetailView({ offering }: { offering: OfferingBundle }) {
   return (
     <div>
       <Link href={`${NORTH_BASE}/funds`} className="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"><ArrowLeft className="size-3.5" />{c.back}</Link>
-      <header className="overflow-hidden rounded-xl bg-primary text-primary-foreground">
-        <div className="relative p-6 sm:p-8">
-          <div className="absolute inset-0 opacity-25" style={{ backgroundImage: offering.media?.banner?.src ? `url(${offering.media.banner.src})` : undefined, backgroundPosition: "center", backgroundSize: "cover" }} />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, color-mix(in srgb, var(--primary) 96%, black) 0%, color-mix(in srgb, var(--primary) 88%, transparent) 55%, color-mix(in srgb, var(--primary) 55%, transparent) 100%)" }} />
-          <div className="relative max-w-3xl">
+      <header className="overflow-hidden rounded-xl border border-[#dbe1e5] bg-white shadow-[0_1px_2px_rgba(10,28,43,0.04)]">
+        <OfferingVisual offering={offering} lang={lang} />
+        <div className="px-5 py-5 sm:px-6 sm:py-6">
+          <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-3 text-xs font-semibold">
-              {strategyLabel && <span className="rounded-full bg-white/12 px-3 py-1 text-white/90">{strategyLabel}</span>}
-              <span className="uppercase tracking-[0.14em] text-[color:var(--gold)]">{offering.manager.name[lang]}</span>
+              {strategyLabel && <span className="rounded-full bg-secondary px-3 py-1 text-primary">{strategyLabel}</span>}
+              <span className="uppercase tracking-[0.14em] text-[color:var(--gold-foreground)]">{offering.manager.name[lang]}</span>
             </div>
-            <h1 className="mt-4 font-serif text-3xl font-semibold sm:text-4xl">{offering.name[lang]}</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-white/80 sm:text-base">{offering.summary[lang]}</p>
+            <h1 className="mt-4 font-serif text-3xl font-semibold leading-tight text-foreground sm:text-4xl">{offering.name[lang]}</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">{offering.summary[lang]}</p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              {investor && <InvestmentRequestButton offerings={[offering]} initialOfferingId={offering.id} light />}
+              {investor && <InvestmentRequestButton offerings={[offering]} initialOfferingId={offering.id} />}
               {offering.shareClasses.length > 1 && (
-                <label className="flex items-center gap-2 text-xs font-semibold text-white/80">{c.share}
-                  <select value={shareClassId} onChange={(event) => setShareClassId(event.target.value)} className="h-10 rounded-md border border-white/25 bg-white/10 px-3 text-sm text-white">
-                    {offering.shareClasses.map((item) => <option key={item.id} value={item.id} className="text-foreground">{item.name}</option>)}
+                <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">{c.share}
+                  <select value={shareClassId} onChange={(event) => setShareClassId(event.target.value)} className="h-10 rounded-md border border-border bg-card px-3 text-sm text-foreground">
+                    {offering.shareClasses.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
                   </select>
                 </label>
               )}
             </div>
-            {investor && <DealerDisclosure level="transactional" tone="dark" className="mt-5 max-w-2xl border-t border-white/15 pt-4" />}
           </div>
         </div>
       </header>
 
-      {professional && <PublishedFundCommission offeringId={offering.id} />}
-
-      <nav aria-label={offering.shortName[lang]} className="sticky top-0 z-20 mt-4 flex gap-1 rounded-lg border border-border bg-card p-1 shadow-sm">
-        {([{ id: "overview", label: c.overview, icon: MapPinned }, { id: "buildings", label: c.buildings, icon: Building2 }, { id: "documents", label: c.documents, icon: FileText }] as const).map(({ id, label, icon: Icon }) => (
-          <button key={id} type="button" onClick={() => setTab(id)} aria-current={tab === id ? "page" : undefined} className={`flex min-h-10 flex-1 items-center justify-center gap-2 rounded-md px-3 text-sm font-semibold ${tab === id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"}`}><Icon className="size-4" />{label}</button>
+      <nav aria-label={offering.shortName[lang]} className="sticky top-0 z-20 mt-4 flex gap-1 overflow-x-auto rounded-lg border border-border bg-card p-1 shadow-sm">
+        {([{ id: "overview", label: c.overview, icon: MapPinned }, { id: "performance", label: c.performance, icon: TrendingUp }, { id: "buildings", label: c.buildings, icon: Building2 }, { id: "documents", label: c.documents, icon: FileText }] as const).map(({ id, label, icon: Icon }) => (
+          <button key={id} type="button" onClick={() => setTab(id)} aria-current={tab === id ? "page" : undefined} className={`flex min-h-10 min-w-[8.25rem] flex-1 shrink-0 items-center justify-center gap-2 rounded-md px-3 text-sm font-semibold sm:min-w-0 ${tab === id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"}`}><Icon className="size-4" />{label}</button>
         ))}
       </nav>
-      <main className="mt-6">{tab === "overview" ? <Overview offering={offering} share={share} /> : tab === "buildings" ? <Buildings offering={offering} /> : <Documents offering={offering} />}</main>
+      <main className="mt-6">{tab === "overview" ? <Overview offering={offering} share={share} professional={professional} /> : tab === "performance" ? <Performance offering={offering} /> : tab === "buildings" ? <Buildings offering={offering} /> : <Documents offering={offering} />}</main>
     </div>
   );
 }

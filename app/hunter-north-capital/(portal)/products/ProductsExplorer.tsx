@@ -26,7 +26,7 @@ const COPY = {
   },
 } as const;
 
-function ProductVisual({ offering, lang }: { offering: OfferingBundle; lang: "tr" | "en" }) {
+export function OfferingVisual({ offering, lang }: { offering: OfferingBundle; lang: "tr" | "en" }) {
   const image = offering.media?.card?.src;
   return (
     <div className="relative aspect-[60/13] overflow-hidden bg-[#0d2d43]">
@@ -55,7 +55,7 @@ export function ProductsExplorer({ offerings }: { offerings: OfferingBundle[] })
         <div className="grid gap-5 xl:grid-cols-2">
           {offerings.map((offering) => (
             <article key={offering.id} className="flex flex-col overflow-hidden rounded-md border border-[#dbe1e5] bg-white shadow-[0_1px_2px_rgba(10,28,43,0.04)]">
-              <ProductVisual offering={offering} lang={lang} />
+              <OfferingVisual offering={offering} lang={lang} />
               <div className="flex flex-1 flex-col px-4 py-4 sm:px-5">
                 <div className="min-w-0">
                   <h2 className="text-lg font-semibold text-[#152b3b]">{offering.name[lang]}</h2>

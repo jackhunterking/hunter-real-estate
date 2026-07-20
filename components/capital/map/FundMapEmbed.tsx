@@ -14,17 +14,12 @@ const FundMap = dynamic(() => import("./FundMap").then((m) => m.FundMap), {
 });
 
 export function FundMapEmbed({ offering }: { offering: OfferingBundle }) {
-  const { lang, t } = useLang();
-  const m = t.capitalApp.map;
+  const { lang } = useLang();
   const buildings = buildMapProperties(offering, lang);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <h2 className="font-serif text-lg font-semibold text-foreground">{m.portfolioBuildings}</h2>
-        <p className="text-sm text-muted-foreground">{m.intro}</p>
-      </div>
+    <div>
       <FundMap properties={buildings} selectedId={selectedId} onSelect={setSelectedId} variant="embed" />
     </div>
   );
