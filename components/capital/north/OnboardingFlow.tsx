@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Building2, CheckCircle2, UserRound } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick } from "@/lib/i18n/localize";
 import { DealerDisclosure } from "./DealerDisclosure";
 import { NORTH_BASE, NorthBrand } from "./NorthBrand";
 
@@ -66,7 +67,7 @@ export function OnboardingFlow({
 }) {
   const { lang } = useLang();
   const router = useRouter();
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
   const [intent, setIntent] = useState<Intent | null>(initialIntent ?? null);
   const [accountType, setAccountType] = useState<AccountType>("individual");
   const [pending, setPending] = useState(false);

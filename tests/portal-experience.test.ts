@@ -21,9 +21,9 @@ test("historical returns live in a dedicated compact Performance view", () => {
 
   assert.doesNotMatch(overview, /trailingReturns|value="historical"/);
   assert.match(performance, /offering\.trailingReturns/);
-  assert.match(performance, /<PerformanceLineChart rows=\{rows\}/);
   assert.match(performance, /<table className="w-full text-left">/);
-  assert.match(performance, /item\.note\?\.\[lang\]/);
+  assert.match(performance, /rows\.map\(\(row, index\) =>/);
+  assert.match(performance, /tx\(item\.note, lang\)/);
   assert.match(performance, /trailingReturnsNote/);
   assert.match(performance, /c\.noHistory/);
 });
@@ -31,8 +31,8 @@ test("historical returns live in a dedicated compact Performance view", () => {
 test("fund terms remain verbatim and early exit conditions live in Overview", () => {
   const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
   assert.match(detail, /fundDefinedFacts/);
-  assert.match(detail, /fact\.value\[lang\]/);
-  assert.match(detail, /share\?\.redemptionTerms\?\.\[lang\]/);
+  assert.match(detail, /tx\(fact\.value, lang\)/);
+  assert.match(detail, /tx\(share\?\.redemptionTerms, lang\)/);
   assert.doesNotMatch(detail, /formatReturnPhrase/);
   assert.doesNotMatch(detail, /Cash income goal/i);
 });
@@ -43,7 +43,7 @@ test("fund overview replaces oversized metric cards with a lean, trust-oriented 
 
   assert.doesNotMatch(overview, /summaryCards|<StatCard/);
   assert.ok(overview.indexOf("<SectionTitle title={c.approach}") < overview.indexOf("<SectionTitle title={c.keyFacts}"));
-  assert.match(overview, /<SectionTitle title=\{c\.approach\} \/>[\s\S]*?<p className="max-w-4xl[^>]*">\{offering\.thesis\[lang\]\}<\/p>/);
+  assert.match(overview, /<SectionTitle title=\{c\.approach\} \/>[\s\S]*?<p className="max-w-4xl[^>]*">\{tx\(offering\.thesis, lang\)\}<\/p>/);
   assert.match(overview, /add\(c\.aum,[\s\S]*add\(c\.inception,[\s\S]*add\(c\.offeringSize,/);
 });
 
@@ -54,9 +54,9 @@ test("fund manager context appears immediately before independent verification",
   const trustIndex = overview.indexOf("<TrustStrip");
 
   assert.ok(managerIndex >= 0 && managerIndex < trustIndex);
-  assert.match(overview, /offering\.manager\.description\[lang\]/);
+  assert.match(overview, /tx\(offering\.manager\.description, lang\)/);
   assert.match(overview, /offering\.manager\.headquarters\.city/);
-  assert.match(overview, /offering\.fundType\[lang\]/);
+  assert.match(overview, /tx\(offering\.fundType, lang\)/);
   assert.match(overview, /offering\.manager\.website/);
 });
 
@@ -81,8 +81,8 @@ test("fund cards keep financial and portfolio facts on detail pages only", () =>
 
 test("Discover cards show the exact offering name, company, and an audited trust cue (no categories)", () => {
   const discover = read("app/hunter-north-capital/(portal)/products/ProductsExplorer.tsx");
-  assert.match(discover, /offering\.name\[lang\]/);
-  assert.match(discover, /offering\.manager\.name\[lang\]/);
+  assert.match(discover, /tx\(offering\.name, lang\)/);
+  assert.match(discover, /tx\(offering\.manager\.name, lang\)/);
   // Discover is deliberately uncategorized — no strategy/type badge or filter.
   assert.doesNotMatch(discover, /taxonomyLabel\(strategies/);
   assert.match(discover, /offering\.serviceProviders\?\.auditor/);

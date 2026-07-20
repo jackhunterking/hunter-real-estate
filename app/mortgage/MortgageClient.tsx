@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import AdvisorStrip from "@/components/mortgage/AdvisorStrip";
 import MortgageDisclosure from "@/components/mortgage/MortgageDisclosure";
 import { useLang, useT } from "@/lib/i18n/LanguageProvider";
+import { pick } from "@/lib/i18n/localize";
 import { LEGAL_DOCS, LEGAL_SLUGS } from "@/lib/mortgage/legal";
 import { waHref } from "@/lib/mortgage/wa";
 import styles from "./mortgage.module.css";
@@ -31,7 +32,7 @@ export default function MortgageClient() {
   const t = useT();
   const { lang } = useLang();
   const f = t.mortgage;
-  const legalDocs = LEGAL_DOCS[lang];
+  const legalDocs = pick(LEGAL_DOCS, lang);
   const legalLinks = [
     { href: `/${LEGAL_SLUGS.privacy}`, label: legalDocs.privacy.title },
     { href: `/${LEGAL_SLUGS.terms}`, label: legalDocs.terms.title },

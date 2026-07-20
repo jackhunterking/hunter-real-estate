@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import type { Lang } from "@/lib/capital/types";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
@@ -41,6 +42,7 @@ import { canUseWorkspace } from "@/lib/capital/portal-access";
 import { omContextForResult } from "@/lib/capital/ontario-investor-assessment";
 import { READINESS_RULESET } from "@/lib/capital/readiness";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick, tx } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { useClients } from "@/components/capital/north/ClientProvider";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
@@ -400,7 +402,7 @@ export function InvestorReadinessTool() {
   const params = useSearchParams();
   const { lang } = useLang();
   const posthog = usePostHog();
-  const c = investorTerminology(COPY[lang]);
+  const c = investorTerminology(pick(COPY, lang));
   const { context, accountView } = usePortalAccess();
   const referenceClientId = params.get("clientId") ?? "";
   const professionalMode = canUseWorkspace(context, "professional")
@@ -562,7 +564,7 @@ export function InvestorReadinessTool() {
         lastName: draft.lastName.trim(),
         email: draft.email.trim(),
         country: selectedCountry.label,
-        region: selectedRegion?.[lang],
+        region: tx(selectedRegion, lang),
         jurisdiction,
       });
       await saveInvestorAssessment(clientId, {
@@ -678,7 +680,7 @@ export function InvestorReadinessTool() {
         decision={decision}
         jurisdictionReview={jurisdictionReview}
         countryLabel={selectedCountry?.label ?? countryCode}
-        regionLabel={selectedRegion?.[lang]}
+        regionLabel={tx(selectedRegion, lang)}
         referenceClientId={referenceClient?.id}
         selfMode={!professionalMode}
         maximumInvestment={maximumInvestment}
@@ -743,7 +745,7 @@ function QuestionContent({
   regionCode: string;
   onRegionCode: (value: string) => void;
   countryOptions: Array<{ code: string; label: string }>;
-  lang: "en" | "tr";
+  lang: Lang;
   profile: ProfileAnswers;
   onProfile: (value: ProfileAnswers) => void;
   registeredAdvice?: RegisteredSuitabilityAdvice;
@@ -767,7 +769,7 @@ function QuestionContent({
       {countryCode === "CA" && <Field label={copy.province}>
         <select value={regionCode} onChange={(event) => onRegionCode(event.target.value)} className={fieldClass}>
           <option value="">{copy.chooseProvince}</option>
-          {CANADIAN_REGIONS.map((region) => <option key={region.code} value={region.code}>{region[lang]}</option>)}
+          {CANADIAN_REGIONS.map((region) => <option key={region.code} value={region.code}>{tx(region, lang)}</option>)}
         </select>
       </Field>}
     </div>

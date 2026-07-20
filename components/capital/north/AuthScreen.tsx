@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { investmentBrandFor } from "@/lib/capital/investment-brand";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
@@ -58,7 +59,7 @@ const COPY = {
 
 export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
   const { lang } = useLang();
-  const c = investorTerminology(COPY[lang]);
+  const c = investorTerminology(pick(COPY, lang));
   const brand = investmentBrandFor(lang);
   const configured = isSupabaseConfigured();
   const [pending, setPending] = useState(false);

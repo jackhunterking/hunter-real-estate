@@ -12,7 +12,7 @@ export const PARVIS_RELATIONSHIP = {
   representativeJurisdiction: "Ontario",
   disclosuresUrl: "https://www.parvisinvest.com/legal/disclosures",
   // Publish only exact language supplied by Parvis compliance.
-  compensationDisclosure: { en: "", tr: "" } satisfies Record<Lang, string>,
+  compensationDisclosure: { en: "", tr: "" } satisfies { tr: string; en: string },
 } as const;
 
 export const INVESTMENT_BRAND = {
@@ -61,5 +61,5 @@ export const INVESTMENT_BRAND = {
 } as const;
 
 export function investmentBrandFor(lang: Lang) {
-  return INVESTMENT_BRAND[lang];
+  return INVESTMENT_BRAND[lang === "tr" ? "tr" : "en"];
 }

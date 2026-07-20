@@ -22,6 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import {
   SPL_PUBLIC_SEARCH_URL,
@@ -190,7 +191,7 @@ export function PartnerApplicationView({
     dataset,
     submitPartnerApplication,
   } = usePortalAccess();
-  const c = investorTerminology(COPY[lang]);
+  const c = investorTerminology(pick(COPY, lang));
   const state = professionalProfileState(context);
   const canSubmit =
     canUseWorkspace(context, "investor") &&

@@ -4,6 +4,7 @@ import { Check, Clock3 } from "lucide-react";
 import type { OfferingBundle } from "@/lib/capital/types";
 import { requestOutcome } from "@/lib/capital/investment-requests";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick, tx } from "@/lib/i18n/localize";
 import { usePortalAccess } from "./PortalAccessProvider";
 import { InvestmentRequestButton } from "./InvestmentRequestButton";
 import { PageHeader, Panel, money, shortDate } from "./PortalUI";
@@ -64,7 +65,7 @@ function RequestStatus({ outcome, copy }: { outcome: "funded" | "closed" | null;
 export function RequestsView({ offerings }: { offerings: OfferingBundle[] }) {
   const { lang } = useLang();
   const { currentUser, dataset } = usePortalAccess();
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
   const requests = dataset.investments
     .filter((request) => request.userId === currentUser.id)
     .sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt));
@@ -94,7 +95,7 @@ export function RequestsView({ offerings }: { offerings: OfferingBundle[] }) {
                 >
                   <div className="col-span-2 flex min-w-0 items-start justify-between gap-3 lg:col-span-1 lg:col-start-1 lg:row-start-1">
                     <div className="min-w-0">
-                      <h2 className="text-base font-semibold leading-6 text-[#183144]">{fund?.shortName[lang] ?? request.offeringId}</h2>
+                      <h2 className="text-base font-semibold leading-6 text-[#183144]">{tx(fund?.shortName, lang) ?? request.offeringId}</h2>
                       {request.legacySource && <span className="mt-1.5 inline-flex rounded border border-[#dfe4e7] bg-[#f2f5f6] px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.07em] text-[#65747e]">{c.legacy}</span>}
                     </div>
                   </div>

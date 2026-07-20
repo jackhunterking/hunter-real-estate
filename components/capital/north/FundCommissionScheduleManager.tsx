@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { CalendarClock, CheckCircle2, Plus, ShieldCheck } from "lucide-react";
 import type { FundCommissionSchedule, LocalizedText } from "@/lib/capital/types";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick, tx } from "@/lib/i18n/localize";
 import { Panel, shortDate } from "./PortalUI";
 
 type OfferingOption = { id: string; name: LocalizedText };
@@ -55,7 +56,7 @@ export function FundCommissionScheduleManager({
   backendConfigured: boolean;
 }) {
   const { lang } = useLang();
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
   const [schedules, setSchedules] = useState<FundCommissionSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -179,7 +180,7 @@ export function FundCommissionScheduleManager({
             {c.fund}
             <select name="offeringId" required defaultValue="" className="mt-1.5 h-10 w-full rounded-md border border-[#d3dbe0] bg-white px-3 text-sm font-normal">
               <option value="" disabled>—</option>
-              {offerings.map((offering) => <option key={offering.id} value={offering.id}>{offering.name[lang]}</option>)}
+              {offerings.map((offering) => <option key={offering.id} value={offering.id}>{tx(offering.name, lang)}</option>)}
             </select>
           </label>
           <label className="text-xs font-semibold text-[#52636e]">
@@ -210,7 +211,7 @@ export function FundCommissionScheduleManager({
             return (
               <div key={schedule.id} className="grid gap-3 px-4 py-4 md:grid-cols-[minmax(0,1fr)_auto_auto_auto] md:items-center md:px-5">
                 <div>
-                  <p className="text-sm font-semibold text-[#1c3546]">{offering?.name[lang] ?? schedule.offeringId}</p>
+                  <p className="text-sm font-semibold text-[#1c3546]">{tx(offering?.name, lang) ?? schedule.offeringId}</p>
                   <p className="mt-1 text-xs text-[#6b7982]">{schedule.internalNote ?? "—"}</p>
                 </div>
                 <p className="text-sm font-semibold tabular-nums text-[#0a4b72]">{schedule.grossCommissionBps.toLocaleString(lang === "tr" ? "tr-TR" : "en-CA")} BPS</p>

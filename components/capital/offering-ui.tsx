@@ -8,6 +8,7 @@
  * They never fetch or mutate — callers pass already-derived, localized values.
  */
 import { useState } from "react";
+import { tx } from "@/lib/i18n/localize";
 import {
   Building2,
   CheckCircle2,
@@ -161,7 +162,7 @@ export function AssetGallery({ properties, lang }: { properties: Property[]; lan
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {properties.map((p) => {
-        const image = resolveImage(p.media?.card ?? p.media?.gallery?.[0], p.id, p.name[lang], lang);
+        const image = resolveImage(p.media?.card ?? p.media?.gallery?.[0], p.id, tx(p.name, lang), lang);
         const verified = p.verificationStatus === "verified";
         return (
           <figure key={p.id} className="overflow-hidden rounded-xl border border-border bg-card">
@@ -183,9 +184,9 @@ export function AssetGallery({ properties, lang }: { properties: Property[]; lan
               )}
             </div>
             <figcaption className="p-3">
-              <p className="truncate text-sm font-semibold text-foreground">{p.name[lang]}</p>
+              <p className="truncate text-sm font-semibold text-foreground">{tx(p.name, lang)}</p>
               <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                {p.address?.[lang] ? `${p.address[lang]} · ` : ""}
+                {tx(p.address, lang) ? `${tx(p.address, lang)} · ` : ""}
                 {p.city}, {p.province}
               </p>
             </figcaption>
@@ -224,7 +225,7 @@ export function PresentationCard({
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gold-foreground">{copy.title}</p>
-          <h3 className="mt-1 font-serif text-lg font-semibold text-foreground">{document.title[lang]}</h3>
+          <h3 className="mt-1 font-serif text-lg font-semibold text-foreground">{tx(document.title, lang)}</h3>
           <p className="mt-1 text-xs text-muted-foreground">
             {copy.version} {document.version} · {document.effectiveDate}
           </p>
@@ -246,7 +247,7 @@ export function PresentationCard({
       </div>
       {expanded && document.href && (
         <div className="border-t border-border">
-          <object data={document.href} type="application/pdf" className="h-[70vh] w-full" aria-label={document.title[lang]}>
+          <object data={document.href} type="application/pdf" className="h-[70vh] w-full" aria-label={tx(document.title, lang)}>
             <a href={document.href} target="_blank" rel="noreferrer" className="block p-6 text-sm font-semibold text-primary hover:underline">
               {copy.open} <ExternalLink className="ml-1 inline size-4" aria-hidden />
             </a>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight, Building2, MapPinned, ShieldCheck, UsersRound, WalletCards } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { DealerDisclosure } from "./DealerDisclosure";
 import { NORTH_BASE, NorthBrand } from "./NorthBrand";
@@ -36,7 +37,7 @@ const COPY = {
 
 export function PublicLanding() {
   const { lang, setLang } = useLang();
-  const c = investorTerminology(COPY[lang]);
+  const c = investorTerminology(pick(COPY, lang));
   const audienceCards = [
     { Icon: WalletCards, title: c.investor, body: c.investorBody },
     { Icon: UsersRound, title: c.professional, body: c.professionalBody },

@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import type { Lang } from "@/lib/capital/types";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import type { OfferingBundle } from "@/lib/capital/types";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick, tx } from "@/lib/i18n/localize";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { PageHeader, Panel } from "@/components/capital/north/PortalUI";
 
@@ -26,13 +28,13 @@ const COPY = {
   },
 } as const;
 
-export function OfferingVisual({ offering, lang }: { offering: OfferingBundle; lang: "tr" | "en" }) {
+export function OfferingVisual({ offering, lang }: { offering: OfferingBundle; lang: Lang }) {
   const image = offering.media?.card?.src;
   return (
     <div className="relative aspect-[60/13] overflow-hidden bg-[#0d2d43]">
       {image && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={image} alt={offering.media?.card?.alt?.[lang] ?? offering.shortName[lang]} className="h-full w-full object-cover" />
+        <img src={image} alt={tx(offering.media?.card?.alt, lang) ?? tx(offering.shortName, lang)} className="h-full w-full object-cover" />
       )}
       <div className="absolute inset-0 bg-gradient-to-r from-[#071c2c]/75 via-[#071c2c]/15 to-transparent" />
       {offering.media?.logo?.src && (
@@ -45,7 +47,7 @@ export function OfferingVisual({ offering, lang }: { offering: OfferingBundle; l
 
 export function ProductsExplorer({ offerings }: { offerings: OfferingBundle[] }) {
   const { lang } = useLang();
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
 
   return (
     <div>
@@ -58,11 +60,11 @@ export function ProductsExplorer({ offerings }: { offerings: OfferingBundle[] })
               <OfferingVisual offering={offering} lang={lang} />
               <div className="flex flex-1 flex-col px-4 py-4 sm:px-5">
                 <div className="min-w-0">
-                  <h2 className="text-lg font-semibold text-[#152b3b]">{offering.name[lang]}</h2>
-                  <p className="mt-1 text-xs text-[#75818a]">{offering.manager.name[lang]}</p>
+                  <h2 className="text-lg font-semibold text-[#152b3b]">{tx(offering.name, lang)}</h2>
+                  <p className="mt-1 text-xs text-[#75818a]">{tx(offering.manager.name, lang)}</p>
                 </div>
                 <div className="mt-3 flex flex-1 flex-col justify-between gap-4 sm:min-h-12 sm:flex-row sm:items-end">
-                  <p className="max-w-2xl text-sm leading-5 text-[#5f6d78]">{offering.summary[lang]}</p>
+                  <p className="max-w-2xl text-sm leading-5 text-[#5f6d78]">{tx(offering.summary, lang)}</p>
                   <Link href={`${NORTH_BASE}/funds/${offering.slug}`} className="inline-flex h-9 shrink-0 self-start items-center gap-1.5 rounded-md bg-[#0a2d46] px-3.5 text-xs font-semibold text-white transition-colors hover:bg-[#123f5e] sm:self-auto">{c.review}<ArrowRight className="size-3.5" /></Link>
                 </div>
                 {offering.serviceProviders?.auditor && (

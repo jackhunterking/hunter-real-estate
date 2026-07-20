@@ -2,6 +2,7 @@
 
 import { CircleDollarSign } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick, tx } from "@/lib/i18n/localize";
 import type { OfferingBundle } from "@/lib/capital/types";
 import { PageHeader, Panel, money } from "./PortalUI";
 import { usePortalAccess } from "./PortalAccessProvider";
@@ -38,7 +39,7 @@ const COPY = {
 export function RepresentativeCommissions({ offerings }: { offerings: OfferingBundle[] }) {
   const { lang } = useLang();
   const { currentUser, commissions } = usePortalAccess();
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
   const entries = commissions.filter(
     (entry) =>
       entry.beneficiaryType === "representative" &&
@@ -60,7 +61,7 @@ export function RepresentativeCommissions({ offerings }: { offerings: OfferingBu
                 {entries.map((entry) => (
                   <tr key={entry.id} className="border-b border-[#edf0f2] last:border-0">
                     <td className="px-5 py-4 font-mono text-xs text-[#486474]">{entry.redactedReferralReference}</td>
-                    <td className="px-5 py-4 font-semibold text-[#293d49]">{offerings.find((item) => item.id === entry.offeringId)?.shortName[lang] ?? entry.offeringId}</td>
+                    <td className="px-5 py-4 font-semibold text-[#293d49]">{tx(offerings.find((item) => item.id === entry.offeringId)?.shortName, lang) || entry.offeringId}</td>
                     <td className="px-5 py-4 text-[#63717c]">{money(entry.grossDistributionCommissionAmount, lang, entry.currency)}</td>
                     <td className="px-5 py-4 font-semibold text-[#193143]">{money(entry.amount, lang, entry.currency)}</td>
                     <td className="px-5 py-4"><span className="rounded bg-[#e8f2ec] px-2 py-1 text-[10px] font-bold text-[#2d6849]">{c.statuses[entry.status]}</span></td>

@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick, tx } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import type { ClientQualificationCriterion, OfferingBundle } from "@/lib/capital/types";
 import { cn } from "@/lib/utils";
@@ -104,8 +105,8 @@ export function InvestorProfile({ offerings }: { offerings: OfferingBundle[] }) 
   const params = useSearchParams();
   const { lang, t } = useLang();
   const p = t.capitalApp.profile;
-  const resultCopy = investorTerminology(PUBLIC_RESULT_COPY[lang]);
-  const qualificationCopy = investorTerminology(QUALIFICATION_COPY[lang]);
+  const resultCopy = investorTerminology(pick(PUBLIC_RESULT_COPY, lang));
+  const qualificationCopy = investorTerminology(pick(QUALIFICATION_COPY, lang));
   const opt = (value: string) => p.options[value] ?? value;
 
   const initialOffering = offerings.find((o) => o.slug === params.get("offering")) ?? offerings[0];
@@ -155,8 +156,8 @@ export function InvestorProfile({ offerings }: { offerings: OfferingBundle[] }) 
           ))}
         </ol>
         <div className="flex flex-col gap-0.5 border-t border-border pt-3 max-md:hidden">
-          <strong className="font-serif text-[17px] text-foreground">{offering.shortName[lang]}</strong>
-          <small className="text-xs text-muted-foreground">{offering.manager.name[lang]}</small>
+          <strong className="font-serif text-[17px] text-foreground">{tx(offering.shortName, lang)}</strong>
+          <small className="text-xs text-muted-foreground">{tx(offering.manager.name, lang)}</small>
         </div>
       </aside>
 
@@ -179,8 +180,8 @@ export function InvestorProfile({ offerings }: { offerings: OfferingBundle[] }) 
                   <button type="button" key={item.id} onClick={() => chooseOffering(item.id)}
                     className={cn(choiceCls, item.id === form.offeringId ? "border-primary bg-secondary/60" : "border-border")}>
                     <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">{item.manager.headquarters.city}</span>
-                    <strong className="font-serif text-lg text-foreground">{item.shortName[lang]}</strong>
-                    <small className="text-[13px] leading-snug text-muted-foreground">{item.summary[lang]}</small>
+                    <strong className="font-serif text-lg text-foreground">{tx(item.shortName, lang)}</strong>
+                    <small className="text-[13px] leading-snug text-muted-foreground">{tx(item.summary, lang)}</small>
                   </button>
                 ))}
               </div>

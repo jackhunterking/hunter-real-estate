@@ -51,6 +51,35 @@ function FlagEN() {
   );
 }
 
+function FlagFR() {
+  return (
+    <svg
+      className={styles.flag}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <rect width="10" height="20" x="0" fill="#0055A4" />
+      <rect width="10" height="20" x="10" fill="#fff" />
+      <rect width="10" height="20" x="20" fill="#EF4135" />
+    </svg>
+  );
+}
+
+function FlagES() {
+  return (
+    <svg
+      className={styles.flag}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <rect width="30" height="20" fill="#AA151B" />
+      <rect width="30" height="10" y="5" fill="#F1BF00" />
+    </svg>
+  );
+}
+
 interface NavProps {
   /** Starts transparent over a dark hero and goes solid on scroll */
   overlayHero?: boolean;
@@ -188,6 +217,26 @@ export default function Nav({ overlayHero = false }: NavProps) {
             >
               <FlagEN />
               <span>{t.nav.langEN}</span>
+            </button>
+            <span className={styles.langSep} aria-hidden="true">|</span>
+            <button
+              type="button"
+              className={`${styles.langBtn} ${lang === "fr" ? styles.langActive : ""}`}
+              onClick={() => setLang("fr")}
+              aria-pressed={lang === "fr"}
+            >
+              <FlagFR />
+              <span>{t.nav.langFR}</span>
+            </button>
+            <span className={styles.langSep} aria-hidden="true">|</span>
+            <button
+              type="button"
+              className={`${styles.langBtn} ${lang === "es" ? styles.langActive : ""}`}
+              onClick={() => setLang("es")}
+              aria-pressed={lang === "es"}
+            >
+              <FlagES />
+              <span>{t.nav.langES}</span>
             </button>
           </div>
         </nav>

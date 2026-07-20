@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { tx } from "@/lib/i18n/localize";
 import {
   INVESTMENT_BASE_PATH,
   PARVIS_RELATIONSHIP,
@@ -30,14 +31,14 @@ export function DealerDisclosure({
       : copy.shortDisclosure;
 
   if (level === "full") {
-    const compensation = PARVIS_RELATIONSHIP.compensationDisclosure[lang];
+    const compensation = tx(PARVIS_RELATIONSHIP.compensationDisclosure, lang);
     return (
       <section className={`rounded-xl border border-[#d8dfe3] bg-white p-6 sm:p-8 ${className}`} aria-labelledby="dealer-disclosure-title">
         <h2 id="dealer-disclosure-title" className="font-serif text-2xl font-semibold text-[#172b3a] sm:text-3xl">
           {copy.legalTitle}
         </h2>
         <div className="mt-5 space-y-4 text-sm leading-7 text-[#5f6d77]">
-          {copy.legalParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          {copy.legalParagraphs.map((paragraph: string) => <p key={paragraph}>{paragraph}</p>)}
           {compensation && <p>{compensation}</p>}
         </div>
         <a href={PARVIS_RELATIONSHIP.disclosuresUrl} target="_blank" rel="noreferrer" className="mt-6 inline-flex text-sm font-semibold text-[#0a4b72] hover:underline">

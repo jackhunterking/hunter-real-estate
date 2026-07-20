@@ -24,6 +24,7 @@ import {
 import { canUseWorkspace } from "@/lib/capital/portal-access";
 import { investmentBrandFor } from "@/lib/capital/investment-brand";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick } from "@/lib/i18n/localize";
 import { cn } from "@/lib/utils";
 import { DealerDisclosure } from "./DealerDisclosure";
 import { usePortalAccess } from "./PortalAccessProvider";
@@ -116,7 +117,7 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
   const brand = investmentBrandFor(lang);
   const investor = canUseWorkspace(context, "investor");
   const professional = canUseWorkspace(context, "professional");

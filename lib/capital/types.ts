@@ -1,5 +1,11 @@
-export type Lang = "en" | "tr";
-export type LocalizedText = Record<Lang, string>;
+import type { Lang } from "@/lib/i18n/dictionaries";
+export type { Lang };
+/**
+ * Content-level localized string. `tr` and `en` are the authored source of
+ * truth; `fr` and `es` are optional machine translations that fall back to
+ * English via the `tx()` resolver (see lib/i18n/localize.ts) when absent.
+ */
+export type LocalizedText = { tr: string; en: string; fr?: string; es?: string };
 export type Approval = "approved-public" | "review-required" | "private";
 export type MetricClassification = "historical" | "current" | "target" | "illustrative";
 

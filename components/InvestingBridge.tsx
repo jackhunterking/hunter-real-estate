@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
 import { DealerDisclosure } from "@/components/capital/north/DealerDisclosure";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick } from "@/lib/i18n/localize";
 
 const HNC_URL = process.env.NEXT_PUBLIC_HNC_SITE_URL ?? "/hunter-advisory";
 
@@ -30,7 +31,7 @@ const COPY = {
 
 export function InvestingBridge() {
   const { lang } = useLang();
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
   return (
     <main className="min-h-screen bg-[#071c2c] px-5 py-10 text-white">
       <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-5xl items-center">

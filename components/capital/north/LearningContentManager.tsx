@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 import { FLAGSHIP_LEARNING_RESOURCE, type LearningAdminResource, type LearningResourceSource } from "@/lib/capital/learning";
 import { hasPlatformRole } from "@/lib/capital/portal-access";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick, tx } from "@/lib/i18n/localize";
 import { usePortalAccess } from "./PortalAccessProvider";
 
 type Draft = {
@@ -104,7 +105,7 @@ function apiBody(draft: Draft) {
 export function LearningContentManager({ resources, backendConfigured }: { resources: LearningAdminResource[]; backendConfigured: boolean }) {
   const { lang } = useLang();
   const { currentUser } = usePortalAccess();
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
   const [draft, setDraft] = useState<Draft | null>(() => resources[0] ? fromResource(resources[0]) : null);
   const [editLanguage, setEditLanguage] = useState<"en" | "tr">("en");
   const [preview, setPreview] = useState(false);
@@ -151,7 +152,7 @@ export function LearningContentManager({ resources, backendConfigured }: { resou
 
     <div className="grid gap-5 xl:grid-cols-[260px_minmax(0,1fr)]">
       <aside className="rounded-lg border border-[#d9e1e5] bg-white p-3">
-        {!versions.length ? <p className="p-4 text-sm text-[#71808a]">{c.noContent}</p> : <div className="space-y-2">{versions.map((item) => <button key={item.id} type="button" onClick={() => setDraft(fromResource(item))} className={`w-full rounded-md border p-3 text-left ${draft?.versionId === item.id ? "border-[#8aaabd] bg-[#eef4f7]" : "border-transparent hover:bg-[#f5f7f8]"}`}><p className="line-clamp-2 text-sm font-semibold text-[#294657]">{item.title[lang] || item.slug}</p><div className="mt-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.08em] text-[#78868f]"><span>{c.version} {item.version}</span><span>{item.status}</span></div></button>)}</div>}
+        {!versions.length ? <p className="p-4 text-sm text-[#71808a]">{c.noContent}</p> : <div className="space-y-2">{versions.map((item) => <button key={item.id} type="button" onClick={() => setDraft(fromResource(item))} className={`w-full rounded-md border p-3 text-left ${draft?.versionId === item.id ? "border-[#8aaabd] bg-[#eef4f7]" : "border-transparent hover:bg-[#f5f7f8]"}`}><p className="line-clamp-2 text-sm font-semibold text-[#294657]">{tx(item.title, lang) || item.slug}</p><div className="mt-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.08em] text-[#78868f]"><span>{c.version} {item.version}</span><span>{item.status}</span></div></button>)}</div>}
       </aside>
 
       {draft && <div className="rounded-lg border border-[#d9e1e5] bg-white p-5 sm:p-7">

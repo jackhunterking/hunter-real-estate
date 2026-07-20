@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { tx } from "@/lib/i18n/localize";
 import type { MapProperty } from "@/lib/capital/present";
 import { cn } from "@/lib/utils";
 import { BuildingMapThumb } from "./BuildingMapThumb";
@@ -175,7 +176,7 @@ export function FundMap({
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={p.image.src}
-                    alt={p.image.alt?.[lang] ?? p.name}
+                    alt={tx(p.image.alt, lang) ?? p.name}
                     className="aspect-[4/3] w-full rounded-md border border-border object-cover"
                   />
                 ) : (

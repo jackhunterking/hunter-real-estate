@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import MortgageDisclosure from "@/components/mortgage/MortgageDisclosure";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick } from "@/lib/i18n/localize";
 import {
   LEGAL_DOCS,
   LEGAL_LAST_MODIFIED,
@@ -14,7 +15,7 @@ import styles from "./LegalDocument.module.css";
 
 export default function LegalDocument({ docKey }: { docKey: LegalKey }) {
   const { lang } = useLang();
-  const doc = LEGAL_DOCS[lang][docKey];
+  const doc = pick(LEGAL_DOCS, lang)[docKey];
 
   return (
     <main>

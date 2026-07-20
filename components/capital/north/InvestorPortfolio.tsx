@@ -6,6 +6,7 @@ import { Building2, Compass, Landmark, MapPinned, WalletCards } from "lucide-rea
 import type { OfferingBundle } from "@/lib/capital/types";
 import { buildMapProperties, formatMoneyCompact } from "@/lib/capital/present";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick, tx } from "@/lib/i18n/localize";
 import { FundMap } from "@/components/capital/map/FundMap";
 import { TrustStrip } from "@/components/capital/offering-ui";
 import { NORTH_BASE } from "./NorthBrand";
@@ -55,7 +56,7 @@ export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }
   const { lang } = useLang();
   const { currentUser, dataset } = usePortalAccess();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
 
   const fundedPositions = dataset.investments.filter(
     (investment) => investment.userId === currentUser.id && investment.status === "funded",
@@ -74,7 +75,7 @@ export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }
       ...property,
       id: `${fund.id}:${property.id}`,
       accent: FUND_COLORS[index % FUND_COLORS.length],
-      offeringName: fund.shortName[lang],
+      offeringName: tx(fund.shortName, lang),
     }))),
     [fundedFunds, lang],
   );
@@ -133,8 +134,8 @@ export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }
               <Panel key={position.id} className="p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[#71808b]">{fund.manager.name[lang]}</p>
-                    <h3 className="mt-2 text-base font-semibold text-[#193143]">{fund.shortName[lang]}</h3>
+                    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[#71808b]">{tx(fund.manager.name, lang)}</p>
+                    <h3 className="mt-2 text-base font-semibold text-[#193143]">{tx(fund.shortName, lang)}</h3>
                     <p className="mt-2 text-sm text-[#65737e]">{formatMoneyCompact(position.amount, lang)} · {fund.properties.length} {lang === "tr" ? "bina" : "buildings"}</p>
                   </div>
                   <Link href={`${NORTH_BASE}/funds/${fund.slug}`} className="shrink-0 text-xs font-semibold text-[#0a4b72] hover:underline">{c.viewFund}</Link>

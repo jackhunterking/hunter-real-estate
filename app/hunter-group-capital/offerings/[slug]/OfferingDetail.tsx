@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { Lang } from "@/lib/capital/types";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import {
@@ -20,6 +21,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { tx } from "@/lib/i18n/localize";
 import { assessOntarioInvestor } from "@/lib/capital/ontario-investor-assessment";
 import { READINESS_RULESET } from "@/lib/capital/readiness-rules";
 import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
@@ -74,7 +76,7 @@ export function OfferingDetail({ offering }: { offering: OfferingBundle }) {
   const vm = buildFundDetailViewModel(offering, lang);
   const share = primaryShareClass(offering);
   const profileHref = `/hunter-advisory/sign-up?offering=${offering.slug}${share ? `&shareClass=${share.id}` : ""}`;
-  const whatsappHref = `${WHATSAPP}?text=${encodeURIComponent(`Hi, I would like to learn more about ${offering.name[lang]}.`)}`;
+  const whatsappHref = `${WHATSAPP}?text=${encodeURIComponent(`Hi, I would like to learn more about ${tx(offering.name, lang)}.`)}`;
   const whatsappLabel = lang === "tr" ? "WhatsApp'tan Yaz" : "Message on WhatsApp";
   const tabs = d.tabs as Record<(typeof TAB_LABEL)[TabKey], string>;
 
@@ -115,8 +117,8 @@ export function OfferingDetail({ offering }: { offering: OfferingBundle }) {
               )}
             </div>
             <div className="min-w-0">
-              <h1 className="font-serif text-2xl font-semibold leading-tight text-foreground sm:text-3xl">{offering.name[lang]}</h1>
-              <p className="mt-1 truncate text-sm text-muted-foreground">{offering.manager.name[lang]}</p>
+              <h1 className="font-serif text-2xl font-semibold leading-tight text-foreground sm:text-3xl">{tx(offering.name, lang)}</h1>
+              <p className="mt-1 truncate text-sm text-muted-foreground">{tx(offering.manager.name, lang)}</p>
             </div>
           </div>
 
@@ -299,14 +301,14 @@ function OfferDetailsTab({ offering }: { offering: OfferingBundle }) {
             <h3 className="text-base font-bold text-foreground">
               {offering.manager.website ? (
                 <a href={offering.manager.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 transition-colors hover:text-primary">
-                  {offering.manager.name[lang]}
+                  {tx(offering.manager.name, lang)}
                   <ArrowUpRight className="size-3.5" aria-hidden />
                 </a>
               ) : (
-                offering.manager.name[lang]
+                tx(offering.manager.name, lang)
               )}
             </h3>
-            <p className="mt-1 text-sm text-muted-foreground">{offering.manager.officeAddress?.[lang] ?? `${offering.manager.headquarters.city}, ${offering.manager.headquarters.province}`}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{tx(offering.manager.officeAddress, lang) ?? `${offering.manager.headquarters.city}, ${offering.manager.headquarters.province}`}</p>
           </div>
         </div>
       </section>
@@ -473,7 +475,7 @@ function InvestorReferenceDialog({
   copy,
 }: {
   offering: OfferingBundle;
-  lang: "en" | "tr";
+  lang: Lang;
   copy: InvestorReferenceCopy;
 }) {
   const formatAmount = (value: number) => formatCurrencyCad(value, lang);
@@ -722,8 +724,8 @@ function DocumentsTab({ offering }: { offering: OfferingBundle }) {
                   <div className="flex items-start gap-2.5">
                     <FileText className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
                     <span className="min-w-0">
-                      <span className="block font-semibold text-foreground">{doc.title[lang]}</span>
-                      {doc.description && <small className="text-xs text-muted-foreground">{doc.description[lang]}</small>}
+                      <span className="block font-semibold text-foreground">{tx(doc.title, lang)}</span>
+                      {doc.description && <small className="text-xs text-muted-foreground">{tx(doc.description, lang)}</small>}
                     </span>
                   </div>
                 </TableCell>

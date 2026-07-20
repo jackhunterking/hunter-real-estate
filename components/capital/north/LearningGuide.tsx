@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import type { Lang } from "@/lib/capital/types";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, BookOpen, Clock3, ExternalLink, ShieldCheck } from "lucide-react";
 import ReactMarkdown from "react-markdown";
@@ -9,6 +10,7 @@ import { usePostHog } from "posthog-js/react";
 import type { LearningResourceDetail } from "@/lib/capital/learning";
 import { learningCategoryLabel } from "@/lib/capital/learning";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick, tx } from "@/lib/i18n/localize";
 import { NORTH_BASE } from "./NorthBrand";
 
 const COPY = {
@@ -29,17 +31,17 @@ function headings(markdown: string) {
   return [...markdown.matchAll(/^##\s+(.+)$/gm)].map((match) => ({ title: match[1].trim(), id: anchor(match[1]) }));
 }
 
-function formatDate(value: string, lang: "en" | "tr") {
+function formatDate(value: string, lang: Lang) {
   return new Intl.DateTimeFormat(lang === "tr" ? "tr-TR" : "en-CA", { year: "numeric", month: "long", day: "numeric" }).format(new Date(value));
 }
 
 export function LearningGuide({ resource }: { resource: LearningResourceDetail }) {
   const { lang } = useLang();
   const posthog = usePostHog();
-  const c = COPY[lang];
-  const body = resource.bodyMarkdown[lang];
+  const c = pick(COPY, lang);
+  const body = tx(resource.bodyMarkdown, lang);
   const contents = headings(body);
-  const category = learningCategoryLabel(resource.categoryKey)[lang];
+  const category = tx(learningCategoryLabel(resource.categoryKey), lang);
 
   useEffect(() => {
     posthog?.capture("hnc_learning_guide_opened", { slug: resource.slug, version: resource.version, language: lang });
@@ -52,10 +54,10 @@ export function LearningGuide({ resource }: { resource: LearningResourceDetail }
       <div className="relative px-6 py-9 sm:px-10 sm:py-12">
         <div className="absolute -right-24 -top-28 size-72 rounded-full border border-white/10 bg-white/[0.025]" />
         <p className="relative text-[10px] font-bold uppercase tracking-[0.14em] text-[#e3c66f]">{category}</p>
-        <h1 className="relative mt-4 max-w-4xl font-serif text-3xl font-semibold leading-tight sm:text-4xl">{resource.title[lang]}</h1>
-        <p className="relative mt-4 max-w-3xl text-sm leading-6 text-[#d1e0e8] sm:text-base">{resource.summary[lang]}</p>
+        <h1 className="relative mt-4 max-w-4xl font-serif text-3xl font-semibold leading-tight sm:text-4xl">{tx(resource.title, lang)}</h1>
+        <p className="relative mt-4 max-w-3xl text-sm leading-6 text-[#d1e0e8] sm:text-base">{tx(resource.summary, lang)}</p>
         <div className="relative mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-[#afc5d1]">
-          <span className="inline-flex items-center gap-1.5"><Clock3 className="size-3.5" />{resource.readingMinutes[lang]} {c.minutes}</span>
+          <span className="inline-flex items-center gap-1.5"><Clock3 className="size-3.5" />{lang === "tr" ? resource.readingMinutes.tr : resource.readingMinutes.en} {c.minutes}</span>
           <span>{c.reviewed}: {formatDate(resource.reviewedAt, lang)}</span>
           <span>{c.version}: {resource.version}</span>
         </div>
@@ -102,7 +104,7 @@ export function LearningGuide({ resource }: { resource: LearningResourceDetail }
         </section>
 
         <div className="mt-7 flex items-start gap-3 rounded-md border border-[#d7e1e6] bg-[#f1f6f8] p-4 text-xs leading-5 text-[#526b78]">
-          <ShieldCheck className="mt-0.5 size-5 shrink-0 text-[#0a4b72]" /><p>{resource.disclaimer[lang]}</p>
+          <ShieldCheck className="mt-0.5 size-5 shrink-0 text-[#0a4b72]" /><p>{tx(resource.disclaimer, lang)}</p>
         </div>
       </div>
     </div>

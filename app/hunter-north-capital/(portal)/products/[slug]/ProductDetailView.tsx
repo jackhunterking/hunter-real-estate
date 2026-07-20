@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { Lang } from "@/lib/capital/types";
 import Link from "next/link";
 import { ArrowLeft, Building2, ExternalLink, FileText, MapPinned, TrendingUp } from "lucide-react";
 import type { FundCommissionSchedule, OfferingBundle, ShareClass, TrailingReturn } from "@/lib/capital/types";
 import { formatCurrencyCad, formatDate, formatMoneyCompact } from "@/lib/capital/present";
-import { isChronologicalPerformancePeriod, parsePerformancePercentage } from "@/lib/capital/performance";
 import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick, tx } from "@/lib/i18n/localize";
 import { FundMapEmbed } from "@/components/capital/map/FundMapEmbed";
 import { InvestmentRequestButton } from "@/components/capital/north/InvestmentRequestButton";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
@@ -39,7 +40,6 @@ const COPY = {
     presentationVersion: "Version", presentationUnavailable: "Available through Hunter & Hunter Investment Advisory",
     risks: "Material risks and trade-offs",
     historical: "Historical performance", historicalHelp: "Published returns for this fund, shown exactly as provided.", noHistory: "No approved historical information is available.", historicalTag: "Historical—not a forecast",
-    performanceChart: "Performance over time", performanceChartDescription: "Chronological published returns shown as a line chart.", chartUnavailable: "There are not enough chartable chronological values to draw a performance trend.",
     period: "Period", returnValue: "Return",
     exact: "Values and conditions are shown as published for the selected share class. Targets are not guaranteed.",
     aboutManager: "About the company", headquarters: "Headquarters", fundStructure: "Fund structure", companyWebsite: "Company website",
@@ -63,7 +63,6 @@ const COPY = {
     presentationVersion: "Sürüm", presentationUnavailable: "Hunter & Hunter Yatırım Danışmanlığı üzerinden mevcut",
     risks: "Önemli riskler ve ödünleşimler",
     historical: "Geçmiş performans", historicalHelp: "Bu fon için yayımlanan getiriler, sağlandığı şekliyle gösterilir.", noHistory: "Onaylı geçmiş bilgi mevcut değil.", historicalTag: "Geçmiş bilgi—tahmin değildir",
-    performanceChart: "Zaman içindeki performans", performanceChartDescription: "Kronolojik yayımlanmış getirilerin çizgi grafiği.", chartUnavailable: "Performans eğrisi çizmek için yeterli kronolojik sayısal değer bulunmuyor.",
     period: "Dönem", returnValue: "Getiri",
     exact: "Değerler ve koşullar seçili pay sınıfı için yayımlandığı şekliyle gösterilir. Hedefler garanti edilmez.",
     aboutManager: "Şirket hakkında", headquarters: "Merkez", fundStructure: "Fon yapısı", companyWebsite: "Şirket web sitesi",
@@ -76,7 +75,7 @@ const COPY = {
   },
 } as const;
 
-function usePublishedFundCommissionValue(offeringId: string, enabled: boolean, lang: "en" | "tr") {
+function usePublishedFundCommissionValue(offeringId: string, enabled: boolean, lang: Lang) {
   const [commission, setCommission] = useState("");
   useEffect(() => {
     if (!enabled) {
@@ -119,7 +118,7 @@ function SectionTitle({ title, help }: { title: string; help?: string }) {
 
 function Overview({ offering, share, professional }: { offering: OfferingBundle; share?: ShareClass; professional: boolean }) {
   const { lang } = useLang();
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
   const commission = usePublishedFundCommissionValue(offering.id, professional, lang);
   const companyLogo = offering.media?.logo;
 
@@ -139,25 +138,25 @@ function Overview({ offering, share, professional }: { offering: OfferingBundle;
   add(c.aum, offering.aum ? String(offering.aum.value) : null, offering.aum);
   add(c.inception, offering.inceptionDate ? formatDate(offering.inceptionDate, lang) : null);
   add(c.offeringSize, offering.offeringSize ? formatMoneyCompact(Number(offering.offeringSize.value), lang) : null, offering.offeringSize);
-  add(c.riskProfile, offering.riskProfile?.[lang]);
+  add(c.riskProfile, tx(offering.riskProfile, lang));
   add(c.minimum, share?.minimumInvestment ? formatCurrencyCad(share.minimumInvestment.value, lang) : null, share?.minimumInvestment);
   // Fund-published target facts (return, distribution) shown verbatim; else share fallbacks.
   if (targetFacts.length) {
-    targetFacts.forEach((fact) => facts.push({ label: fact.label[lang], value: fact.value[lang] }));
+    targetFacts.forEach((fact) => facts.push({ label: tx(fact.label, lang), value: tx(fact.value, lang) }));
   } else {
     add(c.projectedReturn, share?.targetReturn?.value, share?.targetReturn);
-    add(c.distribution, share?.targetDistribution?.value ?? share?.distributionPerUnit?.value ?? offering.distributionFrequency?.[lang], share?.targetDistribution ?? share?.distributionPerUnit);
+    add(c.distribution, share?.targetDistribution?.value ?? share?.distributionPerUnit?.value ?? tx(offering.distributionFrequency, lang), share?.targetDistribution ?? share?.distributionPerUnit);
   }
   add(c.unitPrice, share?.unitPrice ? formatCurrencyCad(share.unitPrice.value, lang) : null, share?.unitPrice);
   add(c.registered, share?.registeredAccountTypes.length ? share.registeredAccountTypes.join(", ") : null);
   // Fund-published term/fee/early-exit facts shown verbatim; else fallbacks.
-  termFacts.forEach((fact) => facts.push({ label: fact.label[lang], value: fact.value[lang] }));
+  termFacts.forEach((fact) => facts.push({ label: tx(fact.label, lang), value: tx(fact.value, lang) }));
   if (!hasCategory("term")) add(c.term, share?.term?.value, share?.term);
-  if (!hasCategory("fee")) add(c.managementFee, offering.managementFee?.[lang]);
-  if (!hasCategory("early-exit")) add(c.redemption, share?.redemptionTerms?.[lang]);
+  if (!hasCategory("fee")) add(c.managementFee, tx(offering.managementFee, lang));
+  if (!hasCategory("early-exit")) add(c.redemption, tx(share?.redemptionTerms, lang));
   if (professional && commission) facts.push({ label: c.commission, value: commission });
 
-  const funFacts = (offering.highlights ?? []).map((highlight) => highlight[lang]);
+  const funFacts = (offering.highlights ?? []).map((highlight) => tx(highlight, lang));
   const presentation = offering.documents.find((doc) => doc.type === "presentation" && doc.visibility !== "private");
 
   return (
@@ -165,7 +164,7 @@ function Overview({ offering, share, professional }: { offering: OfferingBundle;
 
       <section>
         <SectionTitle title={c.approach} />
-        <p className="max-w-4xl text-sm leading-7 text-muted-foreground sm:text-[15px]">{offering.thesis[lang]}</p>
+        <p className="max-w-4xl text-sm leading-7 text-muted-foreground sm:text-[15px]">{tx(offering.thesis, lang)}</p>
       </section>
 
       <section>
@@ -201,12 +200,12 @@ function Overview({ offering, share, professional }: { offering: OfferingBundle;
             {companyLogo?.src && (
               <div className="flex h-24 w-full max-w-48 items-center justify-center rounded-lg border border-border bg-white p-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={companyLogo.src} alt={companyLogo.alt?.[lang] ?? offering.manager.name[lang]} className="max-h-full max-w-full object-contain" />
+                <img src={companyLogo.src} alt={tx(companyLogo.alt, lang) ?? tx(offering.manager.name, lang)} className="max-h-full max-w-full object-contain" />
               </div>
             )}
             <div className="min-w-0">
-              <h3 className="font-serif text-2xl font-semibold text-foreground">{offering.manager.name[lang]}</h3>
-              <p className="mt-2 max-w-4xl text-sm leading-6 text-muted-foreground">{offering.manager.description[lang]}</p>
+              <h3 className="font-serif text-2xl font-semibold text-foreground">{tx(offering.manager.name, lang)}</h3>
+              <p className="mt-2 max-w-4xl text-sm leading-6 text-muted-foreground">{tx(offering.manager.description, lang)}</p>
             </div>
           </div>
 
@@ -214,13 +213,13 @@ function Overview({ offering, share, professional }: { offering: OfferingBundle;
             <div>
               <dt className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">{c.headquarters}</dt>
               <dd className="mt-1 text-sm font-semibold text-foreground">
-                {offering.manager.officeAddress?.[lang] ?? `${offering.manager.headquarters.city}, ${offering.manager.headquarters.province}, ${offering.manager.headquarters.country}`}
+                {tx(offering.manager.officeAddress, lang) ?? `${offering.manager.headquarters.city}, ${offering.manager.headquarters.province}, ${offering.manager.headquarters.country}`}
               </dd>
             </div>
-            {offering.fundType?.[lang] && (
+            {tx(offering.fundType, lang) && (
               <div>
                 <dt className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">{c.fundStructure}</dt>
-                <dd className="mt-1 text-sm font-semibold text-foreground">{offering.fundType[lang]}</dd>
+                <dd className="mt-1 text-sm font-semibold text-foreground">{tx(offering.fundType, lang)}</dd>
               </div>
             )}
             {offering.manager.website && (
@@ -253,90 +252,15 @@ type LocalizedPerformanceRow = {
   note?: string;
 };
 
-function PerformanceLineChart({ rows }: { rows: LocalizedPerformanceRow[] }) {
-  const { lang } = useLang();
-  const c = COPY[lang];
-  const points = rows.flatMap((row) => {
-    if (!isChronologicalPerformancePeriod(row.period)) return [];
-    const numericValue = parsePerformancePercentage(row.value);
-    return numericValue === null ? [] : [{ ...row, numericValue }];
-  });
-
-  if (points.length < 2) {
-    return (
-      <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-        {c.chartUnavailable}
-      </div>
-    );
-  }
-
-  const width = 760;
-  const height = 300;
-  const margin = { top: 42, right: 32, bottom: 48, left: 52 };
-  const plotWidth = width - margin.left - margin.right;
-  const plotHeight = height - margin.top - margin.bottom;
-  const values = points.map((point) => point.numericValue);
-  const rawMin = Math.min(0, ...values);
-  const rawMax = Math.max(0, ...values);
-  const rawSpan = rawMax - rawMin;
-  const padding = rawSpan === 0 ? 1 : rawSpan * 0.12;
-  const yMin = rawMin < 0 ? rawMin - padding : 0;
-  const yMax = rawMax > 0 ? rawMax + padding : 0;
-  const domainMin = yMin === yMax ? yMin - 1 : yMin;
-  const domainMax = yMin === yMax ? yMax + 1 : yMax;
-  const domainSpan = domainMax - domainMin;
-  const xFor = (index: number) => margin.left + (plotWidth * index) / (points.length - 1);
-  const yFor = (value: number) => margin.top + ((domainMax - value) / domainSpan) * plotHeight;
-  const tickValues = Array.from({ length: 5 }, (_, index) => domainMax - (domainSpan * index) / 4);
-  const path = points.map((point, index) => `${index === 0 ? "M" : "L"} ${xFor(index)} ${yFor(point.numericValue)}`).join(" ");
-
-  return (
-    <figure className="overflow-hidden rounded-xl border border-border bg-card p-4 sm:p-6">
-      <figcaption className="mb-2 font-semibold text-foreground">{c.performanceChart}</figcaption>
-      <svg
-        viewBox={`0 0 ${width} ${height}`}
-        role="img"
-        aria-label={`${c.performanceChart}. ${c.performanceChartDescription}`}
-        className="h-auto w-full"
-      >
-        {tickValues.map((tick) => {
-          const y = yFor(tick);
-          return (
-            <g key={tick}>
-              <line x1={margin.left} x2={width - margin.right} y1={y} y2={y} stroke="currentColor" className="text-border" strokeWidth="1" />
-              <text x={margin.left - 10} y={y + 4} textAnchor="end" className="fill-muted-foreground text-[11px]">
-                {new Intl.NumberFormat(lang === "tr" ? "tr-TR" : "en-CA", { maximumFractionDigits: 1 }).format(tick)}%
-              </text>
-            </g>
-          );
-        })}
-        <path d={path} fill="none" stroke="currentColor" className="text-primary" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-        {points.map((point, index) => {
-          const x = xFor(index);
-          const y = yFor(point.numericValue);
-          const valueY = point.numericValue < 0 ? Math.min(height - margin.bottom - 6, y + 22) : Math.max(18, y - 13);
-          return (
-            <g key={`${point.period}-${index}`}>
-              <circle cx={x} cy={y} r="5" fill="currentColor" className="text-gold" stroke="white" strokeWidth="2" vectorEffect="non-scaling-stroke" />
-              <text x={x} y={valueY} textAnchor="middle" className="fill-foreground text-[12px] font-semibold">{point.value}</text>
-              <text x={x} y={height - 18} textAnchor="middle" className="fill-muted-foreground text-[11px]">{point.period}</text>
-            </g>
-          );
-        })}
-      </svg>
-    </figure>
-  );
-}
-
 function Performance({ offering }: { offering: OfferingBundle }) {
   const { lang } = useLang();
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
   const rows: LocalizedPerformanceRow[] = (offering.trailingReturns ?? []).map((item: TrailingReturn) => ({
-    period: item.period[lang],
+    period: tx(item.period, lang),
     value: item.value,
-    note: item.note?.[lang],
+    note: tx(item.note, lang),
   }));
-  const note = offering.trailingReturnsNote?.[lang];
+  const note = tx(offering.trailingReturnsNote, lang);
 
   return (
     <div className="space-y-5">
@@ -349,25 +273,28 @@ function Performance({ offering }: { offering: OfferingBundle }) {
 
       {rows.length ? (
         <>
-          <PerformanceLineChart rows={rows} />
-          <div className="overflow-hidden rounded-xl border border-border bg-card">
+          <div className="overflow-x-auto rounded-xl border border-border bg-card">
             <table className="w-full text-left">
               <thead className="border-b border-border bg-secondary/40">
                 <tr>
                   <th scope="col" className="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground sm:px-5">{c.period}</th>
-                  <th scope="col" className="px-4 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground sm:px-5">{c.returnValue}</th>
+                  {rows.map((row, index) => (
+                    <th key={`${row.period}-${index}`} scope="col" className="px-4 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground sm:px-5">
+                      {row.period}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {rows.map((row, index) => (
-                  <tr key={`${row.period}-${index}`}>
-                    <th scope="row" className="px-4 py-3 text-sm font-medium text-foreground sm:px-5">
-                      {row.period}
+                <tr>
+                  <th scope="row" className="px-4 py-3 text-sm font-medium text-foreground sm:px-5">{c.returnValue}</th>
+                  {rows.map((row, index) => (
+                    <td key={`${row.period}-${index}`} className="px-4 py-3 text-right text-base font-semibold tabular-nums text-foreground sm:px-5">
+                      {row.value}
                       {row.note && <span className="mt-0.5 block text-xs font-normal leading-5 text-muted-foreground">{row.note}</span>}
-                    </th>
-                    <td className="px-4 py-3 text-right text-base font-semibold tabular-nums text-foreground sm:px-5">{row.value}</td>
-                  </tr>
-                ))}
+                    </td>
+                  ))}
+                </tr>
               </tbody>
             </table>
           </div>
@@ -381,7 +308,7 @@ function Performance({ offering }: { offering: OfferingBundle }) {
 }
 
 function Buildings({ offering }: { offering: OfferingBundle }) {
-  const { lang, t } = useLang(); const c = COPY[lang];
+  const { lang, t } = useLang(); const c = pick(COPY, lang);
   return (
     <div className="space-y-4">
       <SectionTitle title={t.capitalApp.map.portfolioBuildings} help={c.buildingHelp} />
@@ -391,7 +318,7 @@ function Buildings({ offering }: { offering: OfferingBundle }) {
 }
 
 function Documents({ offering }: { offering: OfferingBundle }) {
-  const { lang } = useLang(); const c = COPY[lang];
+  const { lang } = useLang(); const c = pick(COPY, lang);
   const approvedDocuments = offering.documents.filter((document) => document.visibility !== "private");
   return (
     <div>
@@ -403,7 +330,7 @@ function Documents({ offering }: { offering: OfferingBundle }) {
               <div className="flex min-w-0 gap-3">
                 <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-secondary text-primary"><FileText className="size-5" /></span>
                 <div>
-                  <h3 className="font-semibold text-foreground">{document.title[lang]}</h3>
+                  <h3 className="font-semibold text-foreground">{tx(document.title, lang)}</h3>
                   <dl className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
                     <div><dt className="inline font-semibold">{c.type}: </dt><dd className="inline">{document.type}</dd></div>
                     <div><dt className="inline font-semibold">{c.effective}: </dt><dd className="inline">{document.effectiveDate}</dd></div>
@@ -426,7 +353,7 @@ function Documents({ offering }: { offering: OfferingBundle }) {
 export function ProductDetailView({ offering }: { offering: OfferingBundle }) {
   const { lang } = useLang();
   const { context, accountView } = usePortalAccess();
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
   const [tab, setTab] = useState<Tab>("overview");
   const [shareClassId, setShareClassId] = useState(offering.shareClasses[0]?.id ?? "");
   const share = offering.shareClasses.find((item) => item.id === shareClassId) ?? offering.shareClasses[0];
@@ -443,10 +370,10 @@ export function ProductDetailView({ offering }: { offering: OfferingBundle }) {
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-3 text-xs font-semibold">
               {strategyLabel && <span className="rounded-full bg-secondary px-3 py-1 text-primary">{strategyLabel}</span>}
-              <span className="uppercase tracking-[0.14em] text-[color:var(--gold-foreground)]">{offering.manager.name[lang]}</span>
+              <span className="uppercase tracking-[0.14em] text-[color:var(--gold-foreground)]">{tx(offering.manager.name, lang)}</span>
             </div>
-            <h1 className="mt-4 font-serif text-3xl font-semibold leading-tight text-foreground sm:text-4xl">{offering.name[lang]}</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">{offering.summary[lang]}</p>
+            <h1 className="mt-4 font-serif text-3xl font-semibold leading-tight text-foreground sm:text-4xl">{tx(offering.name, lang)}</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">{tx(offering.summary, lang)}</p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               {investor && <InvestmentRequestButton offerings={[offering]} initialOfferingId={offering.id} />}
               {offering.shareClasses.length > 1 && (
@@ -461,7 +388,7 @@ export function ProductDetailView({ offering }: { offering: OfferingBundle }) {
         </div>
       </header>
 
-      <nav aria-label={offering.shortName[lang]} className="sticky top-0 z-20 mt-4 flex gap-1 overflow-x-auto rounded-lg border border-border bg-card p-1 shadow-sm">
+      <nav aria-label={tx(offering.shortName, lang)} className="sticky top-0 z-20 mt-4 flex gap-1 overflow-x-auto rounded-lg border border-border bg-card p-1 shadow-sm">
         {([{ id: "overview", label: c.overview, icon: MapPinned }, { id: "performance", label: c.performance, icon: TrendingUp }, { id: "buildings", label: c.buildings, icon: Building2 }, { id: "documents", label: c.documents, icon: FileText }] as const).map(({ id, label, icon: Icon }) => (
           <button key={id} type="button" onClick={() => setTab(id)} aria-current={tab === id ? "page" : undefined} className={`flex min-h-10 min-w-[8.25rem] flex-1 shrink-0 items-center justify-center gap-2 rounded-md px-3 text-sm font-semibold sm:min-w-0 ${tab === id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"}`}><Icon className="size-4" />{label}</button>
         ))}

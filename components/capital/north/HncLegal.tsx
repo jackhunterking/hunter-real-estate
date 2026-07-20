@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick } from "@/lib/i18n/localize";
 import { DealerDisclosure } from "./DealerDisclosure";
 import { NORTH_BASE, NorthBrand } from "./NorthBrand";
 
@@ -34,6 +35,6 @@ const COPY = {
 
 export function HncLegal() {
   const { lang } = useLang();
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
   return <main className="min-h-screen bg-[#f7f4ed] text-[#172b3a]"><header className="bg-[#071c2c] px-5 py-5 text-white"><div className="mx-auto max-w-5xl"><NorthBrand /></div></header><article className="mx-auto max-w-5xl px-5 py-16 sm:py-24"><h1 className="max-w-3xl font-serif text-4xl font-semibold sm:text-5xl">{c.title}</h1><p className="mt-6 max-w-3xl text-base leading-8 text-[#5f6d77]">{c.intro}</p><DealerDisclosure level="full" className="mt-10" /><div className="mt-6 grid gap-5 md:grid-cols-2">{c.sections.map(([title, body]) => <section key={title} className="border border-[#d8d1c2] bg-white p-6"><h2 className="font-serif text-2xl font-semibold">{title}</h2><p className="mt-4 text-sm leading-7 text-[#65727b]">{body}</p></section>)}</div><section className="mt-6 border border-[#d8d1c2] bg-white p-6"><h2 className="font-semibold">{c.sources}</h2><div className="mt-4 flex flex-wrap gap-4 text-sm font-semibold text-[#0a4b72]"><a href="https://www.osc.ca/sites/default/files/2023-05/rule_20220921_45-501cp_unofficial-consolidation.pdf" target="_blank" rel="noreferrer">OSC Rule 45-501 Companion Policy</a><a href="https://spk.gov.tr/kurumlar/fonlar/yatirim-fonlari/yabanci-yatirim-fonlari/tanitim-rehberi" target="_blank" rel="noreferrer">SPK Foreign Investment Fund Guidance</a></div></section><Link href={NORTH_BASE} className="mt-8 inline-flex h-11 items-center bg-[#0a2d46] px-5 text-sm font-semibold text-white">{c.back}</Link></article></main>;
 }

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { CheckCircle2, X } from "lucide-react";
 import type { OfferingBundle } from "@/lib/capital/types";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick, tx } from "@/lib/i18n/localize";
 import { usePortalAccess } from "./PortalAccessProvider";
 
 const COPY = {
@@ -32,7 +33,7 @@ const COPY = {
 export function InvestmentRequestButton({ offerings, initialOfferingId, className = "", light = false }: { offerings: OfferingBundle[]; initialOfferingId?: string; className?: string; light?: boolean }) {
   const { lang } = useLang();
   const { backendConfigured, currentUser } = usePortalAccess();
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [result, setResult] = useState<"idle" | "sending" | "success" | "error">("idle");
 
@@ -74,7 +75,7 @@ export function InvestmentRequestButton({ offerings, initialOfferingId, classNam
           <div className="p-8 text-center"><CheckCircle2 className="mx-auto size-10 text-[#2f7654]" /><p className="mx-auto mt-4 max-w-md text-sm leading-6 text-[#4e626f]">{c.success}</p><button type="button" onClick={() => dialogRef.current?.close()} className="mt-6 h-10 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white">{c.cancel}</button></div>
         ) : (
           <form action={submit} className="space-y-5 p-5 sm:p-6">
-            <div><label htmlFor="request-offering" className="text-xs font-semibold text-[#51636f]">{c.fund}</label><select id="request-offering" name="offeringId" defaultValue={initialOfferingId ?? offerings[0]?.id} required className="mt-1.5 h-11 w-full rounded-md border border-[#ccd5db] bg-white px-3 text-sm">{offerings.filter((offering) => offering.status === "available").map((offering) => <option key={offering.id} value={offering.id}>{offering.shortName[lang]}</option>)}</select></div>
+            <div><label htmlFor="request-offering" className="text-xs font-semibold text-[#51636f]">{c.fund}</label><select id="request-offering" name="offeringId" defaultValue={initialOfferingId ?? offerings[0]?.id} required className="mt-1.5 h-11 w-full rounded-md border border-[#ccd5db] bg-white px-3 text-sm">{offerings.filter((offering) => offering.status === "available").map((offering) => <option key={offering.id} value={offering.id}>{tx(offering.shortName, lang)}</option>)}</select></div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div><label htmlFor="request-amount" className="text-xs font-semibold text-[#51636f]">{c.amount}</label><input id="request-amount" name="amount" type="number" min="1" step="1" required className="mt-1.5 h-11 w-full rounded-md border border-[#ccd5db] px-3 text-sm" /></div>
               <div><label htmlFor="request-account" className="text-xs font-semibold text-[#51636f]">{c.account}</label><select id="request-account" name="accountType" defaultValue={currentUser.investorAccountType ?? "individual"} required className="mt-1.5 h-11 w-full rounded-md border border-[#ccd5db] bg-white px-3 text-sm"><option value="individual">{c.individual}</option><option value="entity">{c.entity}</option></select></div>

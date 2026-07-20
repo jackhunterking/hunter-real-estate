@@ -6,6 +6,7 @@
  * so screens stay thin. The English canonical strings in data.ts are the source
  * of truth; Turkish display values are derived here at render time.
  */
+import { tx } from "@/lib/i18n/localize";
 import {
   assetClasses,
   regions,
@@ -48,11 +49,11 @@ const VERIFICATION: Record<Property["verificationStatus"], LocalizedText> = {
 };
 
 export function localizeStatus(status: Property["status"], lang: Lang) {
-  return STATUS[status][lang];
+  return tx(STATUS[status], lang);
 }
 
 export function localizeVerification(status: Property["verificationStatus"], lang: Lang) {
-  return VERIFICATION[status][lang];
+  return tx(VERIFICATION[status], lang);
 }
 
 /* ------------------------------------------------------------------ */
@@ -91,7 +92,7 @@ export function formatUnits(property: Property, lang: Lang): string | null {
 /** "Target · 2026-01-30 · p.1" / "Hedef · 2026-01-30 · s.1" */
 export function formatSourceLine(value: SourcedValue | undefined, lang: Lang): string | null {
   if (!value) return null;
-  const parts: string[] = [CLASSIFICATION[value.classification][lang], value.asOfDate];
+  const parts: string[] = [tx(CLASSIFICATION[value.classification], lang), value.asOfDate];
   if (value.sourcePage) parts.push(lang === "tr" ? `s.${value.sourcePage}` : `p.${value.sourcePage}`);
   return parts.join(" · ");
 }
@@ -183,7 +184,7 @@ export function resolveImage(
   const gradient = `linear-gradient(135deg, ${dark} 0%, ${base} 60%, hsl(${(hue + 24) % 360}, 18%, 46%) 100%)`;
   return {
     src: slot?.src,
-    alt: slot?.alt?.[lang] ?? label,
+    alt: tx(slot?.alt, lang) ?? label,
     gradient,
     initials: initialsFrom(label),
   };
@@ -336,19 +337,19 @@ export function buildMapProperties(bundle: OfferingBundle, lang: Lang): MapPrope
       ?? (p.media?.card?.src && p.media.card.verifiedAt ? p.media.card : undefined);
     return {
       id: p.id,
-      name: p.name[lang],
-      address: p.address?.[lang],
+      name: tx(p.name, lang),
+      address: tx(p.address, lang),
       city: p.city,
       province: p.province,
       latitude: p.latitude,
       longitude: p.longitude,
       listingUrl: p.listingUrl?.startsWith("http") && !p.listingUrl.includes("TODO") ? p.listingUrl : undefined,
       accent: assetClasses.find((a) => a.id === p.assetClassId)?.color ?? "#2f6f4f",
-      status: STATUS[p.status][lang],
+      status: tx(STATUS[p.status], lang),
       detail: formatUnits(p, lang) ?? "",
-      verification: VERIFICATION[p.verificationStatus][lang],
+      verification: tx(VERIFICATION[p.verificationStatus], lang),
       assetClass: taxonomyLabel(assetClasses, p.assetClassId, lang),
-      offeringName: bundle.shortName[lang],
+      offeringName: tx(bundle.shortName, lang),
       image: verifiedImage,
       asOfDate: verifiedImage?.verifiedAt ?? bundle.verifiedAt,
       sourceId: p.units?.sourceId ?? p.squareFeet?.sourceId,
@@ -374,7 +375,7 @@ export function formatMoneyCompact(value: number, lang: Lang): string {
   return lang === "tr" ? `${c} CAD` : `$${c} CAD`;
 }
 
-const MONTHS: Record<Lang, string[]> = {
+const MONTHS: { en: string[]; tr: string[] } = {
   en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
   tr: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
 };
@@ -384,7 +385,7 @@ export function formatDate(iso: string, lang: Lang): string {
   const parts = iso.split("-");
   const year = parts[0];
   if (parts.length === 1) return year;
-  const month = MONTHS[lang][Math.max(0, Math.min(11, parseInt(parts[1], 10) - 1))];
+  const month = MONTHS[lang === "tr" ? "tr" : "en"][Math.max(0, Math.min(11, parseInt(parts[1], 10) - 1))];
   if (parts.length === 2) return `${month} ${year}`;
   const day = parseInt(parts[2], 10);
   return lang === "tr" ? `${day} ${month} ${year}` : `${month} ${day}, ${year}`;
@@ -421,8 +422,8 @@ export function fundHeadline(bundle: OfferingBundle, lang: Lang): string | null 
 export function buildFundDetailViewModel(bundle: OfferingBundle, lang: Lang): FundDetailViewModel {
   const sc = primaryShareClass(bundle);
 
-  const bannerImage = resolveImage(bundle.media?.banner, `${bundle.slug}-banner`, bundle.shortName[lang], lang);
-  const logo = resolveImage(bundle.media?.logo, `${bundle.slug}-logo`, bundle.shortName[lang], lang);
+  const bannerImage = resolveImage(bundle.media?.banner, `${bundle.slug}-banner`, tx(bundle.shortName, lang), lang);
+  const logo = resolveImage(bundle.media?.logo, `${bundle.slug}-logo`, tx(bundle.shortName, lang), lang);
 
   // Overview highlights: target return, AUM, buildings, and units.
   const summaryTiles: MetricTile[] = [];
@@ -451,7 +452,7 @@ export function buildFundDetailViewModel(bundle: OfferingBundle, lang: Lang): Fu
   // Fund details rows (only those with data)
   const fundDetails: LabeledRow[] = [];
   const row = (key: string, value?: string | null) => { if (value) fundDetails.push({ key, value }); };
-  row("riskProfile", bundle.riskProfile?.[lang]);
+  row("riskProfile", tx(bundle.riskProfile, lang));
   row(
     "projectedReturn",
     sc?.targetReturn
@@ -464,7 +465,7 @@ export function buildFundDetailViewModel(bundle: OfferingBundle, lang: Lang): Fu
   row("unitPrice", sc?.unitPrice ? formatCurrencyCad(sc.unitPrice.value, lang) : null);
   row("minimum", sc?.minimumInvestment ? formatCurrencyCad(sc.minimumInvestment.value, lang) : null);
   row("distribution", sc?.distributionPerUnit ? formatReturnPhrase(sc.distributionPerUnit.value, lang) : null);
-  row("redemption", sc?.redemptionTerms?.[lang]);
+  row("redemption", tx(sc?.redemptionTerms, lang));
 
   const providers: ProviderRow[] = [];
   const provider = (key: string, value?: { name: string; url?: string }) => {
@@ -481,9 +482,9 @@ export function buildFundDetailViewModel(bundle: OfferingBundle, lang: Lang): Fu
     fundingPercent: typeof bundle.fundingPercent === "number" ? bundle.fundingPercent : null,
     summaryTiles,
     fundDetails,
-    highlights: (bundle.highlights ?? []).map((h) => h[lang]),
-    trailingReturns: (bundle.trailingReturns ?? []).map((t) => ({ period: t.period[lang], value: t.value, note: t.note?.[lang] ?? null })),
-    trailingReturnsNote: bundle.trailingReturnsNote?.[lang] ?? null,
+    highlights: (bundle.highlights ?? []).map((h) => tx(h, lang)),
+    trailingReturns: (bundle.trailingReturns ?? []).map((t) => ({ period: tx(t.period, lang), value: t.value, note: tx(t.note, lang) ?? null })),
+    trailingReturnsNote: tx(bundle.trailingReturnsNote, lang) ?? null,
     providers,
     lastUpdated: bundle.lastUpdated ? formatDate(bundle.lastUpdated, lang) : bundle.verifiedAt ? formatDate(bundle.verifiedAt, lang) : null,
   };

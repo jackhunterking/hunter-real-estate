@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { tx } from "@/lib/i18n/localize";
 import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
 import { resolveImage } from "@/lib/capital/present";
 import type { OfferingBundle } from "@/lib/capital/types";
@@ -9,8 +10,8 @@ import type { OfferingBundle } from "@/lib/capital/types";
 export function OfferingCard({ offering }: { offering: OfferingBundle }) {
   const { lang, t } = useLang();
   const c = t.capitalApp.card;
-  const media = resolveImage(offering.media?.card, offering.slug, offering.shortName[lang], lang);
-  const logo = resolveImage(offering.media?.logo, `${offering.slug}-logo`, offering.shortName[lang], lang);
+  const media = resolveImage(offering.media?.card, offering.slug, tx(offering.shortName, lang), lang);
+  const logo = resolveImage(offering.media?.logo, `${offering.slug}-logo`, tx(offering.shortName, lang), lang);
   const strategyLabel = taxonomyLabel(strategies, offering.strategyIds[0], lang);
 
   return (
@@ -45,8 +46,8 @@ export function OfferingCard({ offering }: { offering: OfferingBundle }) {
       </div>
 
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="text-lg font-bold leading-tight text-foreground">{offering.shortName[lang]}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">{offering.manager.name[lang]}</p>
+        <h3 className="text-lg font-bold leading-tight text-foreground">{tx(offering.shortName, lang)}</h3>
+        <p className="mt-1 text-sm text-muted-foreground">{tx(offering.manager.name, lang)}</p>
 
         <span className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary text-xs font-bold uppercase tracking-[0.06em] text-primary-foreground transition-colors group-hover:bg-primary/90">
           {c.learnMore}

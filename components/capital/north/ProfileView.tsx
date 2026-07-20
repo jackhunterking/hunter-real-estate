@@ -2,6 +2,7 @@
 
 import { CheckCircle2, CircleAlert, Globe2, Mail, MapPin } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick } from "@/lib/i18n/localize";
 import { PartnerApplicationView } from "./PartnerApplicationView";
 import { PageHeader, Panel, SectionHeader } from "./PortalUI";
 import { usePortalAccess } from "./PortalAccessProvider";
@@ -62,7 +63,7 @@ function initials(name: string) {
 export function ProfileView() {
   const { lang } = useLang();
   const { currentUser } = usePortalAccess();
-  const c = COPY[lang];
+  const c = pick(COPY, lang);
   const accountType = currentUser.investorAccountType === "individual"
     ? c.individual
     : currentUser.investorAccountType === "entity"

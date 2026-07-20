@@ -30,8 +30,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored === "tr" || stored === "en") {
-        setLangState(stored);
+      if (stored && Object.prototype.hasOwnProperty.call(dictionaries, stored)) {
+        setLangState(stored as Lang);
         document.documentElement.lang = stored;
       }
     } catch {

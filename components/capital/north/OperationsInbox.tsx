@@ -6,6 +6,7 @@ import type { LocalizedText } from "@/lib/capital/types";
 import type { LearningAdminResource } from "@/lib/capital/learning";
 import { hasPlatformRole } from "@/lib/capital/portal-access";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { FundCommissionScheduleManager } from "./FundCommissionScheduleManager";
 import { LearningContentManager } from "./LearningContentManager";
@@ -26,7 +27,7 @@ const COPY = {
 export function OperationsInbox({ leads = [], initialModule = "all", initialQueue = [], offerings = [], learningResources = [], backendConfigured = false }: { leads?: LeadRow[]; initialModule?: OperationsModule | "all"; initialQueue?: OperationsQueueItem[]; offerings?: { id: string; name: LocalizedText }[]; learningResources?: LearningAdminResource[]; backendConfigured?: boolean }) {
   const { lang } = useLang();
   const { currentUser, dataset, decideOrganization, updateCommissionStatus, markCommissionPaid } = usePortalAccess();
-  const c = investorTerminology(COPY[lang]);
+  const c = investorTerminology(pick(COPY, lang));
   const [module, setModule] = useState<OperationsModule | "all">(initialModule);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<QueueItem | null>(null);

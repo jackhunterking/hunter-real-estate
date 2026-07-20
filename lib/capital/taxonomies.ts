@@ -1,4 +1,5 @@
-import type { LocalizedText } from "./types";
+import { tx } from "@/lib/i18n/localize";
+import type { Lang, LocalizedText } from "./types";
 
 export type TaxonomyItem = { id: string; label: LocalizedText; color: string };
 
@@ -20,6 +21,7 @@ export const regions: TaxonomyItem[] = [
   { id: "british-columbia", label: { en: "British Columbia", tr: "British Columbia" }, color: "#5c7157" },
 ];
 
-export function taxonomyLabel(items: TaxonomyItem[], id: string, lang: "en" | "tr") {
-  return items.find((item) => item.id === id)?.label[lang] ?? id;
+export function taxonomyLabel(items: TaxonomyItem[], id: string, lang: Lang) {
+  const item = items.find((item) => item.id === id);
+  return item ? tx(item.label, lang) : id;
 }

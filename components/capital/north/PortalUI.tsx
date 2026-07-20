@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { Lang } from "@/lib/capital/types";
 
 export function PageHeader({
   title,
@@ -36,7 +37,7 @@ export function Panel({ children, className = "" }: { children: ReactNode; class
   return <section className={`rounded-md border border-[#dfe4e9] bg-white ${className}`}>{children}</section>;
 }
 
-export function money(value: number, lang: "tr" | "en", currency = "CAD") {
+export function money(value: number, lang: Lang, currency = "CAD") {
   return new Intl.NumberFormat(lang === "tr" ? "tr-TR" : "en-CA", {
     style: "currency",
     currency,
@@ -44,7 +45,7 @@ export function money(value: number, lang: "tr" | "en", currency = "CAD") {
   }).format(value);
 }
 
-export function shortDate(value: string, lang: "tr" | "en") {
+export function shortDate(value: string, lang: Lang) {
   return new Intl.DateTimeFormat(lang === "tr" ? "tr-TR" : "en-CA", {
     day: "numeric",
     month: "short",
