@@ -1,20 +1,21 @@
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
-import { INVESTMENT_BASE_PATH as NORTH_BASE } from "@/lib/capital/investment-brand";
+import {
+  advisoryPublicPath,
+  safeAdvisoryNext,
+} from "@/lib/capital/advisory-domain";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-function safeNext(value: string | null) {
-  if (!value || !value.startsWith(NORTH_BASE) || value.startsWith("//")) {
-    return `${NORTH_BASE}/onboarding`;
-  }
-  return value;
+function requestHostname(request: NextRequest) {
+  return (request.headers.get("host") ?? request.nextUrl.hostname).split(":")[0];
 }
 
 export async function GET(request: NextRequest) {
+  const hostname = requestHostname(request);
   const client = await createSupabaseServerClient();
   const destination = request.nextUrl.clone();
   if (!client) {
-    destination.pathname = `${NORTH_BASE}/sign-in`;
+    destination.pathname = advisoryPublicPath(hostname, "/sign-in");
     destination.searchParams.set("error", "supabase-not-configured");
     return NextResponse.redirect(destination);
   }
@@ -22,7 +23,7 @@ export async function GET(request: NextRequest) {
   const tokenHash = request.nextUrl.searchParams.get("token_hash");
   const type = request.nextUrl.searchParams.get("type") as EmailOtpType | null;
   const code = request.nextUrl.searchParams.get("code");
-  const next = safeNext(request.nextUrl.searchParams.get("next"));
+  const next = safeAdvisoryNext(hostname, request.nextUrl.searchParams.get("next"));
   let error: Error | null = null;
 
   if (tokenHash && type) {
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
     error = new Error("Missing confirmation token");
   }
 
-  destination.pathname = error ? `${NORTH_BASE}/sign-in` : next;
+  destination.pathname = error ? advisoryPublicPath(hostname, "/sign-in") : next;
   destination.search = "";
   if (error) destination.searchParams.set("error", "confirmation-failed");
   return NextResponse.redirect(destination);

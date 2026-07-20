@@ -46,14 +46,14 @@ Remaining account-level actions:
 
 ## 2. Resend transactional account
 
-- Verify `updates.jackhunter.com`.
+- Verify `updates.hunterhunteradvisors.com`.
 - Publish and validate SPF, DKIM, and DMARC records.
 - Create `resend-web-app` for application email and
   `resend-supabase-auth` for Auth SMTP. Do not reuse either key.
 - Configure senders:
   - `Hunter Group <hello@updates.jackhunter.com>`
   - `Hunter & Hunter Investment Advisory <advisory@updates.jackhunter.com>`
-  - `Hunter Account Security <auth@updates.jackhunter.com>`
+  - `Hunter & Hunter Account Security <auth@updates.hunterhunteradvisors.com>`
 - Keep `hello@jackhunter.com` as reply-to.
 - Disable open/click tracking for Auth and sensitive operational categories.
 - Configure Supabase Auth SMTP with `smtp.resend.com`, port `465`, username
@@ -69,9 +69,12 @@ Remaining account-level actions:
 - Never expose `SUPABASE_WEB_SECRET_KEY`, Resend keys, webhook secret,
   Turnstile secret, cron secret, access token, or database password to browser
   code.
-- Set exact Auth redirect URLs for localhost, `jackhunter.com`, and the current
-  dedicated-domain alias `hunternorthcapital.com`. Add the final Hunter & Hunter Investment Advisory
-  domain before switching DNS or removing the legacy alias.
+- Set the Auth Site URL to `https://www.hunterhunteradvisors.com`. Allow the
+  exact `/auth/confirm` callback on the dedicated apex and `www` domains, and
+  the exact `/hunter-advisory/auth/confirm` callback on localhost and
+  `jackhunter.com`.
+- Keep `hunternorthcapital.com` only as a legacy Vercel alias during migration;
+  do not use it as the Auth Site URL.
 - Configure Cloudflare Turnstile and set both site and secret keys.
 - Confirm the hosting scheduler sends `Authorization: Bearer $CRON_SECRET` to
   `/api/cron/email-jobs`. Vercel Cron does this automatically when

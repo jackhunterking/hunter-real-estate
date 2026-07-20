@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { refreshSupabaseSession } from "@/lib/supabase/middleware";
+import { HUNTER_ADVISORY_HOSTS } from "@/lib/capital/advisory-domain";
 
 // Keep the existing dedicated-domain aliases working while the public brand and
 // canonical application path move to Hunter & Hunter Investment Advisory.
-const HUNTER_ADVISORY_HOSTS = new Set([
-  "hunternorthcapital.com",
-  "www.hunternorthcapital.com",
-]);
 const JACK_HOSTS = new Set([
   "jackhunter.com",
   "www.jackhunter.com",

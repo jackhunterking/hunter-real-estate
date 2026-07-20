@@ -8,7 +8,7 @@
         <h1 style="font-family:Georgia,serif">You have been invited</h1>
         <p>Use the secure button below to accept your Hunter &amp; Hunter Investment Advisory invitation.</p>
         <p style="color:#5c6d77">Hunter &amp; Hunter Yatırım Danışmanlığı davetinizi kabul etmek için aşağıdaki güvenli düğmeyi kullanın.</p>
-        <p><a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#071c2c;color:#fff;padding:14px 20px;text-decoration:none">Accept invitation · Daveti kabul et</a></p>
+        <p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=invite&amp;next=/onboarding" style="display:inline-block;background:#071c2c;color:#fff;padding:14px 20px;text-decoration:none">Accept invitation · Daveti kabul et</a></p>
       </section>
       <footer style="padding:22px 36px;background:#f1f3f4;color:#687780;font-size:11px;line-height:1.6">Securities services through Parvis Investment Services Inc. · NRD #74000.<br>Menkul kıymet hizmetleri Parvis Investment Services Inc. aracılığıyla sunulur · NRD No. 74000.<br><a href="https://www.parvisinvest.com/legal/disclosures" style="color:#315f79">Parvis disclosures · Parvis açıklamaları</a></footer>
     </main>

@@ -17,14 +17,17 @@ declare global {
         },
       ) => string;
       remove: (widgetId: string) => void;
+      reset: (widgetId?: string) => void;
     };
   }
 }
 
 export function TurnstileField({
   onToken,
+  resetSignal = 0,
 }: {
   onToken: (token: string | undefined) => void;
+  resetSignal?: number;
 }) {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const host = useRef<HTMLDivElement>(null);
@@ -47,6 +50,12 @@ export function TurnstileField({
       }
     };
   }, [onToken, ready, siteKey]);
+
+  useEffect(() => {
+    if (!resetSignal || !widgetId.current || !window.turnstile) return;
+    window.turnstile.reset(widgetId.current);
+    onToken(undefined);
+  }, [onToken, resetSignal]);
 
   if (!siteKey) return null;
   return (

@@ -7,8 +7,14 @@ import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { investmentBrandFor } from "@/lib/capital/investment-brand";
+import {
+  advisoryAuthRedirectUrl,
+  advisoryPublicPath,
+  safeAdvisoryNext,
+} from "@/lib/capital/advisory-domain";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { TurnstileField } from "@/components/TurnstileField";
 import { DealerDisclosure } from "./DealerDisclosure";
 import { NORTH_BASE, NorthBrand } from "./NorthBrand";
 
@@ -28,7 +34,15 @@ const COPY = {
     submitSignUp: "Hesap oluştur",
     switchToSignUp: "Yeni hesap oluştur",
     switchToSignIn: "Zaten hesabınız var mı?",
+    forgotPassword: "Şifrenizi mi unuttunuz?",
     verification: "E-posta doğrulama bağlantısı gönderildi. Doğruladıktan sonra giriş yapabilirsiniz.",
+    resent: "Yeni bir doğrulama bağlantısı gönderildi.",
+    resend: "Doğrulama e-postasını yeniden gönder",
+    resendWait: (seconds: number) => `${seconds} saniye sonra yeniden gönderin`,
+    passwordUpdated: "Şifreniz güncellendi. Yeni şifrenizle giriş yapabilirsiniz.",
+    confirmationFailed: "Doğrulama bağlantısı geçersiz veya süresi dolmuş. Lütfen yeniden deneyin.",
+    signInFailed: "E-posta veya şifre doğrulanamadı ya da e-posta henüz onaylanmadı.",
+    security: "Devam etmek için güvenlik doğrulamasını tamamlayın.",
     preview: "Yerel portal önizlemesini aç",
     notConfigured: "Supabase bilgileri henüz bağlanmadığı için yerel önizleme kullanılabilir.",
     error: "İşlem tamamlanamadı.",
@@ -49,7 +63,15 @@ const COPY = {
     submitSignUp: "Create account",
     switchToSignUp: "Create a new account",
     switchToSignIn: "Already have an account?",
+    forgotPassword: "Forgot your password?",
     verification: "A verification link was sent. Confirm your email, then sign in.",
+    resent: "A new verification link was sent.",
+    resend: "Resend verification email",
+    resendWait: (seconds: number) => `Resend in ${seconds} seconds`,
+    passwordUpdated: "Your password was updated. You can now sign in with the new password.",
+    confirmationFailed: "That confirmation link is invalid or expired. Please try again.",
+    signInFailed: "The email or password was not recognized, or the email has not been verified.",
+    security: "Complete the security verification to continue.",
     preview: "Open local portal preview",
     notConfigured: "Supabase credentials are not connected yet, so the local preview remains available.",
     error: "The request could not be completed.",
@@ -66,10 +88,49 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [continuationSearch, setContinuationSearch] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string>();
+  const [captchaResetSignal, setCaptchaResetSignal] = useState(0);
+  const [pendingConfirmation, setPendingConfirmation] = useState<{
+    email: string;
+    redirectTo: string;
+  }>();
+  const [resending, setResending] = useState(false);
+  const [resendAvailableAt, setResendAvailableAt] = useState(0);
+  const [resendSeconds, setResendSeconds] = useState(0);
+  const turnstileRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 
   useEffect(() => {
     setContinuationSearch(window.location.search);
-  }, []);
+    const query = new URLSearchParams(window.location.search);
+    if (query.get("message") === "password-updated") setMessage(c.passwordUpdated);
+    if (query.get("error") === "confirmation-failed") setError(c.confirmationFailed);
+  }, [c.confirmationFailed, c.passwordUpdated]);
+
+  useEffect(() => {
+    if (!resendAvailableAt) {
+      setResendSeconds(0);
+      return;
+    }
+    const update = () => {
+      setResendSeconds(Math.max(0, Math.ceil((resendAvailableAt - Date.now()) / 1_000)));
+    };
+    update();
+    const timer = window.setInterval(update, 1_000);
+    return () => window.clearInterval(timer);
+  }, [resendAvailableAt]);
+
+  function resetCaptcha() {
+    setCaptchaToken(undefined);
+    setCaptchaResetSignal((value) => value + 1);
+  }
+
+  function mappedError(caught: unknown) {
+    const code = typeof caught === "object" && caught && "code" in caught
+      ? String(caught.code)
+      : "";
+    if (code.includes("captcha")) return c.security;
+    return mode === "sign-in" ? c.signInFailed : c.error;
+  }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -83,24 +144,35 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
     const form = new FormData(event.currentTarget);
     const email = String(form.get("email") ?? "").trim();
     const password = String(form.get("password") ?? "");
+    if (turnstileRequired && !captchaToken) {
+      setError(c.security);
+      return;
+    }
     setPending(true);
 
     try {
       if (mode === "sign-in") {
-        const result = await client.auth.signInWithPassword({ email, password });
+        const result = await client.auth.signInWithPassword({
+          email,
+          password,
+          options: { captchaToken },
+        });
         if (result.error) throw result.error;
         const query = new URLSearchParams(window.location.search);
         const continuation = new URLSearchParams();
         const offering = query.get("offering");
         const path = query.get("path");
         const next = query.get("next");
-        if (next?.startsWith(`${NORTH_BASE}/`) && !next.startsWith(`${NORTH_BASE}/sign-in`)) {
-          window.location.assign(next);
+        if (next) {
+          window.location.assign(safeAdvisoryNext(window.location.hostname, next));
           return;
         }
         if (offering) continuation.set("offering", offering);
         if (path === "professional" || path === "investor") continuation.set("path", path);
-        window.location.assign(continuation.size ? `${NORTH_BASE}/onboarding?${continuation.toString()}` : `${NORTH_BASE}/home`);
+        const destination = continuation.size
+          ? `/onboarding?${continuation.toString()}`
+          : "/home";
+        window.location.assign(advisoryPublicPath(window.location.hostname, destination));
         return;
       }
 
@@ -113,23 +185,62 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
       const next = query.get("next");
       if (offering) onboardingQuery.set("offering", offering);
       if (path === "professional" || path === "investor") onboardingQuery.set("path", path);
-      if (next?.startsWith(`${NORTH_BASE}/`) && !next.startsWith(`${NORTH_BASE}/sign-in`)) onboardingQuery.set("next", next);
-      const onboarding = `${NORTH_BASE}/onboarding${onboardingQuery.size ? `?${onboardingQuery.toString()}` : ""}`;
+      if (next) onboardingQuery.set("next", safeAdvisoryNext(window.location.hostname, next));
+      const onboardingSuffix = `/onboarding${onboardingQuery.size ? `?${onboardingQuery.toString()}` : ""}`;
+      const emailRedirectTo = advisoryAuthRedirectUrl(window.location, onboardingSuffix);
       const result = await client.auth.signUp({
         email,
         password,
         options: {
           data: { first_name: firstName, last_name: lastName, locale: lang },
-          emailRedirectTo: `${window.location.origin}${NORTH_BASE}/auth/confirm?next=${encodeURIComponent(onboarding)}`,
+          emailRedirectTo,
+          captchaToken,
         },
       });
       if (result.error) throw result.error;
       setMessage(c.verification);
+      setPendingConfirmation({ email, redirectTo: emailRedirectTo });
+      setResendAvailableAt(Date.now() + 60_000);
       event.currentTarget.reset();
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : c.error);
+      setError(mappedError(caught));
     } finally {
       setPending(false);
+      resetCaptcha();
+    }
+  }
+
+  async function resendConfirmation() {
+    if (!pendingConfirmation || resendSeconds > 0 || resending) return;
+    setMessage("");
+    setError("");
+    if (turnstileRequired && !captchaToken) {
+      setError(c.security);
+      return;
+    }
+    const client = createSupabaseBrowserClient();
+    if (!client) {
+      setError(c.notConfigured);
+      return;
+    }
+    setResending(true);
+    try {
+      const result = await client.auth.resend({
+        type: "signup",
+        email: pendingConfirmation.email,
+        options: {
+          emailRedirectTo: pendingConfirmation.redirectTo,
+          captchaToken,
+        },
+      });
+      if (result.error) throw result.error;
+      setMessage(c.resent);
+      setResendAvailableAt(Date.now() + 60_000);
+    } catch (caught) {
+      setError(mappedError(caught));
+    } finally {
+      setResending(false);
+      resetCaptcha();
     }
   }
 
@@ -186,12 +297,30 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
                 {c.password}
                 <input name="password" required minLength={8} type="password" autoComplete={mode === "sign-in" ? "current-password" : "new-password"} className="mt-2 h-11 w-full rounded-md border border-[#d6dde2] px-3 font-normal outline-none focus:border-[#0a4b72]" />
               </label>
+              {mode === "sign-in" && (
+                <div className="-mt-2 text-right">
+                  <Link href={`${NORTH_BASE}/forgot-password`} className="text-xs font-semibold text-[#0a4b72] hover:underline">
+                    {c.forgotPassword}
+                  </Link>
+                </div>
+              )}
+              <TurnstileField onToken={setCaptchaToken} resetSignal={captchaResetSignal} />
               {message && <p role="status" className="rounded-md border border-[#b8d8c5] bg-[#edf7f1] p-3 text-sm text-[#316247]">{message}</p>}
               {error && <p role="alert" className="rounded-md border border-[#eccdc8] bg-[#fbefed] p-3 text-sm text-[#98463c]">{error}</p>}
-              <button disabled={pending} className="flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white disabled:opacity-60">
+              <button disabled={pending || (turnstileRequired && !captchaToken)} className="flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white disabled:opacity-60">
                 {mode === "sign-in" ? c.submitSignIn : c.submitSignUp}
                 <ArrowRight className="size-4" />
               </button>
+              {mode === "sign-up" && pendingConfirmation && (
+                <button
+                  type="button"
+                  onClick={resendConfirmation}
+                  disabled={resending || resendSeconds > 0 || (turnstileRequired && !captchaToken)}
+                  className="w-full text-center text-xs font-semibold text-[#0a4b72] hover:underline disabled:cursor-not-allowed disabled:text-[#87949c] disabled:no-underline"
+                >
+                  {resendSeconds > 0 ? c.resendWait(resendSeconds) : c.resend}
+                </button>
+              )}
             </form>
 
             <div className="mt-7 border-t border-[#e4e8eb] pt-5">

@@ -4,11 +4,7 @@ import { useEffect, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react";
-
-const HUNTER_ADVISORY_HOSTS = new Set([
-  "hunternorthcapital.com",
-  "www.hunternorthcapital.com",
-]);
+import { HUNTER_ADVISORY_HOSTS } from "@/lib/capital/advisory-domain";
 
 function isHunterAdvisoryRoute(pathname: string, hostname: string) {
   return (
