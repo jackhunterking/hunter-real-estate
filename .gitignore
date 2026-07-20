@@ -23,6 +23,7 @@ node_modules/
 !.yarn/releases
 !.yarn/versions
 .next/
+.next-dev/
 .next-stale*/
 out/
 dist/

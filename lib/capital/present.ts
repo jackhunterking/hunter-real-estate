@@ -212,27 +212,6 @@ function compactPercent(value: string, lang: Lang): string | null {
   return lang === "tr" ? `%${percent.replace("%", "")}` : percent;
 }
 
-function compactSummaryMetric(value: string, fallbackLabel: string, lang: Lang): Pick<MetricTile, "label" | "value"> {
-  const percent = compactPercent(value, lang);
-  if (!percent) return { label: fallbackLabel, value: formatReturnPhrase(value, lang) };
-
-  if (/net return/i.test(value)) {
-    return {
-      label: lang === "tr" ? "Yıllık net getiri" : "Annual net return",
-      value: percent,
-    };
-  }
-
-  if (/paid monthly/i.test(value)) {
-    return {
-      label: lang === "tr" ? "Aylık ödenir" : "Paid monthly",
-      value: percent,
-    };
-  }
-
-  return { label: fallbackLabel, value: percent };
-}
-
 /**
  * Metric tiles for a fund's overview/terms. `plain` returns only the headline
  * few (overview, lighter); full includes unit price + accounts (terms, denser).

@@ -151,29 +151,9 @@ export function OfferingDetail({ offering }: { offering: OfferingBundle }) {
   );
 }
 
-function FundingRing({ percent, label }: { percent: number; label: string }) {
-  const r = 26;
-  const circ = 2 * Math.PI * r;
-  const dash = (percent / 100) * circ;
-  return (
-    <div className="mb-1 flex items-center gap-3">
-      <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden>
-        <circle cx="32" cy="32" r={r} fill="none" stroke="var(--border)" strokeWidth="6" />
-        <circle cx="32" cy="32" r={r} fill="none" stroke="var(--gold)" strokeWidth="6" strokeLinecap="round" strokeDasharray={`${dash} ${circ}`} transform="rotate(-90 32 32)" />
-      </svg>
-      <div className="flex flex-col">
-        <strong className="text-xl font-bold leading-none text-foreground">{percent}%</strong>
-        <span className="text-xs text-muted-foreground">{label}</span>
-      </div>
-    </div>
-  );
-}
-
 const CARD = "rounded-xl border border-border bg-card p-6";
 const H2 = "font-serif text-lg font-semibold text-foreground";
 const EYEBROW = "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground";
-const CHOICE =
-  "rounded-md border px-3 py-2 text-center text-sm font-semibold transition-colors hover:border-primary/60";
 const CHOICE_LG =
   "rounded-lg border px-4 py-4 text-center text-[15px] font-semibold transition-colors hover:border-primary/60";
 

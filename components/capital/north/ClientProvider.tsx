@@ -425,7 +425,7 @@ export function ClientProvider({ children }: { children: React.ReactNode }) {
     } : client));
   }
 
-  const value = useMemo(() => ({ clients, createClient, createProspect, saveInvestorAssessment, addFundInterest, uploadDocument, removeDocument, markContacted }), [clients]);
+  const value = { clients, createClient, createProspect, saveInvestorAssessment, addFundInterest, uploadDocument, removeDocument, markContacted };
   return <ClientContext.Provider value={value}>{children}</ClientContext.Provider>;
 }
 

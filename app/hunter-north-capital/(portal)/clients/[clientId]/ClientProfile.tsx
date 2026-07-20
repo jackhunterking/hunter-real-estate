@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { Lang } from "@/lib/capital/types";
 import Link from "next/link";
-import { ArrowLeft, Check, CheckCircle2, Clock3, Download, Eye, FileCheck2, FileText, FolderLock, LockKeyhole, Mail, MapPin, Phone, Plus, ShieldCheck, Trash2, Upload, UserRound, X } from "lucide-react";
+import { ArrowLeft, Check, CheckCircle2, Clock3, Download, Eye, FileCheck2, FileText, FolderLock, LockKeyhole, Mail, Plus, ShieldCheck, Trash2, Upload, UserRound, X } from "lucide-react";
 import type { ClientDocument, ClientDocumentCategory, ClientDocumentStatus, ClientRecord, OfferingBundle, ReferralStatus } from "@/lib/capital/types";
 import { REFERRAL_STATUS_ORDER } from "@/lib/capital/types";
 import { useLang } from "@/lib/i18n/LanguageProvider";
@@ -11,7 +11,7 @@ import { pick, tx } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { useClients } from "@/components/capital/north/ClientProvider";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
-import { Panel, money, shortDate } from "@/components/capital/north/PortalUI";
+import { Panel, money } from "@/components/capital/north/PortalUI";
 import { cn } from "@/lib/utils";
 
 type Tab = "overview" | "details" | "documents" | "activity";
@@ -167,14 +167,3 @@ function Field({ label, description, children }: { label: string; description?: 
 function formatCad(value: number, lang: Lang) { return new Intl.NumberFormat(lang === "tr" ? "tr-TR" : "en-CA", { style: "currency", currency: "CAD", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value); }
 function formatBytes(value: number) { return value < 1024 * 1024 ? `${Math.round(value / 1024)} KB` : `${(value / 1024 / 1024).toFixed(1)} MB`; }
 function formatDateTime(value: string, lang: Lang) { return new Intl.DateTimeFormat(lang === "tr" ? "tr-TR" : "en-CA", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value)); }
-function relationshipLabel(value: string, lang: Lang) {
-  const labels: Record<string, { en: string; tr: string }> = {
-    "ffba:issuer": { en: "Issuer director, executive, control person, or founder", tr: "İhraççı direktörü, yöneticisi, kontrol kişisi veya kurucusu" },
-    "ffba:family": { en: "Close family relationship", tr: "Yakın aile ilişkisi" },
-    "ffba:friend": { en: "Close personal friend", tr: "Yakın kişisel arkadaş" },
-    "ffba:business": { en: "Close business associate", tr: "Yakın iş ortağı" },
-    "private:employee": { en: "Private-issuer insider or employee", tr: "Özel ihraççı iç kişisi veya çalışanı" },
-    "private:family": { en: "Private-issuer close family relationship", tr: "Özel ihraççı yakın aile ilişkisi" },
-  };
-  return tx(labels[value], lang) ?? value;
-}

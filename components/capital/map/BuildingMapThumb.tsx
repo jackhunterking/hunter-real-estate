@@ -69,6 +69,8 @@ export function BuildingMapThumb({
         style={{ transform: `translate(${-mosaicX}px, ${-mosaicY}px)` }}
       >
         {tiles.map((tile) => (
+          // Map tiles are already sized and optimized by the tile provider.
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             key={tile.key}
             src={tileUrl(ZOOM, tile.tx, tile.ty)}

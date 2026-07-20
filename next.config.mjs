@@ -1,5 +1,9 @@
+import { PHASE_DEVELOPMENT_SERVER } from 'next/constants.js';
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const createNextConfig = (phase) => ({
+  // Prevent a production build from replacing manifests used by `next dev`.
+  distDir: phase === PHASE_DEVELOPMENT_SERVER ? '.next-dev' : '.next',
   images: {
     formats: ['image/avif', 'image/webp'],
   },
@@ -37,6 +41,6 @@ const nextConfig = {
   },
   // Required to support PostHog trailing-slash API requests through the proxy.
   skipTrailingSlashRedirect: true,
-};
+});
 
-export default nextConfig;
+export default createNextConfig;

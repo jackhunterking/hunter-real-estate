@@ -22,6 +22,8 @@ export default function LogoStrip() {
           {LOGOS.map((logo) => (
             <div key={logo.name} className={styles.slot}>
               {logo.src ? (
+                // Fixed public assets are styled by the existing logo-strip CSS.
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={logo.src}
                   alt={logo.name}
