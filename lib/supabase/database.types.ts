@@ -393,6 +393,32 @@ export type Database = {
         created_at: string;
         updated_at: string;
       }>;
+      learning_resource_admin: ApiView<{
+        id: string;
+        slug: string;
+        resource_type: string;
+        category_key: string;
+        audience: string;
+        current_version_id: string | null;
+        version_id: string;
+        version: number;
+        status: Database["app"]["Enums"]["publication_status"];
+        title: Json;
+        summary: Json;
+        body_markdown: Json;
+        disclaimer: Json;
+        reading_minutes: Json;
+        author_id: string;
+        reviewer_id: string | null;
+        compliance_owner_id: string | null;
+        review_notes: string | null;
+        reviewed_at: string | null;
+        effective_at: string | null;
+        published_at: string | null;
+        withdrawal_at: string | null;
+        created_at: string;
+        sources: Json;
+      }>;
       published_guide_assets: ApiView<{
         guide_key: string;
         language: string;
@@ -409,6 +435,48 @@ export type Database = {
         content_snapshot: Json;
         effective_at: string;
         published_at: string | null;
+      }>;
+      published_learning_resources: ApiView<{
+        id: string;
+        slug: string;
+        resource_type: string;
+        category_key: string;
+        audience: string;
+        version_id: string;
+        version: number;
+        title: Json;
+        summary: Json;
+        body_markdown: Json;
+        disclaimer: Json;
+        reading_minutes: Json;
+        effective_at: string;
+        published_at: string | null;
+        reviewed_at: string;
+        sources: Json;
+      }>;
+      referral_qualification_assessments: ApiView<{
+        id: string;
+        referral_id: string;
+        assessor_user_id: string;
+        jurisdiction: string;
+        account_type: string;
+        answers: Json;
+        result: string;
+        financial_result: string | null;
+        jurisdiction_review: string | null;
+        residence_country_code: string | null;
+        residence_region_code: string | null;
+        qualifying_criteria: Json;
+        om_context: Json;
+        candidate_routes: Json;
+        review_reasons: Json;
+        om_calculation: Json;
+        assessment_input: Json;
+        ruleset_id: string;
+        source_urls: Json;
+        reassessment_triggers: Json;
+        acknowledgement_at: string;
+        created_at: string;
       }>;
       referrals: ApiView<{
         id: string;
@@ -454,6 +522,14 @@ export type Database = {
           p_contact_consent: boolean;
         };
         Returns: undefined;
+      };
+      create_learning_resource: {
+        Args: { p_input: Json };
+        Returns: Json;
+      };
+      create_referral_qualification_assessment: {
+        Args: { p_referral_id: string; p_input: Json };
+        Returns: string;
       };
       create_investment_interest: {
         Args: {
@@ -695,6 +771,19 @@ export type Database = {
           p_new_firm_evidence_storage_path?: string | null;
         };
         Returns: string;
+      };
+      transition_learning_resource: {
+        Args: {
+          p_resource_id: string;
+          p_version_id: string;
+          p_action: string;
+          p_note?: string | null;
+        };
+        Returns: Json;
+      };
+      update_learning_resource_draft: {
+        Args: { p_resource_id: string; p_version_id: string; p_input: Json };
+        Returns: undefined;
       };
       update_lead: {
         Args: {

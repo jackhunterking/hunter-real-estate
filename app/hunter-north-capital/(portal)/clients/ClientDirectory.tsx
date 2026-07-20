@@ -13,13 +13,13 @@ import { StageIndicator } from "@/components/capital/north/StageIndicator";
 
 const COPY = {
   tr: {
-    eyebrow: "Partner iş akışı", title: "Müşteriler", desc: "Her müşterinin ilerlemesini, yatırım ilgilerini ve istenen belgelerini tek profilden yönetin.", add: "Yeni müşteri",
-    search: "Ad, kurum veya e-posta ara", allStatuses: "Tüm durumlar", allFunds: "Tüm fonlar", client: "Müşteri", fund: "Birincil fon", amount: "Gösterge tutarı", stage: "Aşama", next: "Sonraki adım", updated: "Son güncelleme", empty: "Bu filtrelerle eşleşen müşteri yok.",
+    eyebrow: "Partner iş akışı", title: "Yatırımcılar", desc: "Her yatırımcının ilerlemesini, yatırım ilgilerini ve istenen belgelerini tek profilden yönetin.", add: "Yeni yatırımcı",
+    search: "Ad, kurum veya e-posta ara", allStatuses: "Tüm durumlar", allFunds: "Tüm fonlar", client: "Yatırımcı", fund: "Birincil fon", amount: "Gösterge tutarı", stage: "Aşama", next: "Sonraki adım", updated: "Son güncelleme", empty: "Bu filtrelerle eşleşen yatırımcı yok.",
     statuses: { introduced: "Tanıştırıldı", contacted: "İletişime geçildi", "compliance-review": "Uyum incelemesi", accepted: "Kabul edildi", funded: "Fonlandı" } as Record<ReferralStatus, string>,
   },
   en: {
-    eyebrow: "Partner workflow", title: "Clients", desc: "Manage each client’s progress, investment interests, and requested documents from one profile.", add: "New client",
-    search: "Search name, organization, or email", allStatuses: "All statuses", allFunds: "All funds", client: "Client", fund: "Primary fund", amount: "Illustrative amount", stage: "Stage", next: "Next action", updated: "Last update", empty: "No clients match these filters.",
+    eyebrow: "Partner workflow", title: "Investors", desc: "Manage each investor’s progress, investment interests, and requested documents from one profile.", add: "New investor",
+    search: "Search name, organization, or email", allStatuses: "All statuses", allFunds: "All funds", client: "Investor", fund: "Primary fund", amount: "Illustrative amount", stage: "Stage", next: "Next action", updated: "Last update", empty: "No investors match these filters.",
     statuses: { introduced: "Introduced", contacted: "Contacted", "compliance-review": "Compliance review", accepted: "Accepted", funded: "Funded" } as Record<ReferralStatus, string>,
   },
 } as const;
@@ -48,7 +48,7 @@ export function ClientDirectory({ offerings }: { offerings: OfferingBundle[] }) 
   }).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt)), [clients, fund, lang, offerings, query, status]);
 
   return <div>
-    <PageHeader eyebrow={c.eyebrow} title={c.title} description={c.desc} action={<Link href={`${NORTH_BASE}/clients/new`} className="inline-flex h-10 items-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white hover:bg-[#123f5e]"><Plus className="size-4" />{c.add}</Link>} />
+    <PageHeader title={c.title} description={c.desc} action={<Link href={`${NORTH_BASE}/clients/new`} className="inline-flex h-10 items-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white hover:bg-[#123f5e]"><Plus className="size-4" />{c.add}</Link>} />
 
     <div className="mb-4 grid gap-3 rounded-md border border-[#dfe4e9] bg-white p-3 md:grid-cols-[minmax(0,1fr)_210px_220px]">
       <label className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#7b858e]" /><span className="sr-only">{c.search}</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={c.search} className="h-10 w-full rounded-md border border-[#d6dde2] pl-9 pr-3 text-sm outline-none focus:border-[#0a4b72]" /></label>

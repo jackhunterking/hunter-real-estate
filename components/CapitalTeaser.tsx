@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useT } from "@/lib/i18n/LanguageProvider";
 import styles from "./CapitalTeaser.module.css";
 
-/* Small JV diagram (matches the Hunter North Capital experience) */
+/* Small JV diagram (matches the Hunter Advisory experience) */
 function JVMark() {
   return (
     <svg width="48" height="32" viewBox="0 0 84 56" fill="none" aria-hidden="true">
@@ -37,7 +37,7 @@ export default function CapitalTeaser() {
   const c = t.capitalTeaser;
 
   return (
-    <section className={styles.section} id="hunter-x-capital-teaser">
+    <section className={styles.section} id="hunter-advisory-teaser">
       <div className={styles.media}>
         <Image
           src="/hunter-x-bg.png"

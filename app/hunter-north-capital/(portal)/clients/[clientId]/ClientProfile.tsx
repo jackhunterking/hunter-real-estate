@@ -6,6 +6,7 @@ import { ArrowLeft, Check, CheckCircle2, Clock3, Download, Eye, FileCheck2, File
 import type { ClientDocument, ClientDocumentCategory, ClientDocumentStatus, ClientRecord, OfferingBundle, ReferralStatus } from "@/lib/capital/types";
 import { REFERRAL_STATUS_ORDER } from "@/lib/capital/types";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { useClients } from "@/components/capital/north/ClientProvider";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { Panel, money, shortDate } from "@/components/capital/north/PortalUI";
@@ -15,7 +16,7 @@ type Tab = "overview" | "details" | "documents" | "activity";
 
 const COPY = {
   tr: {
-    back: "Müşterilere dön", addDocument: "Belge ekle", addFund: "Fon ilgisi ekle", contacted: "İletişimi tamamla", partnerAction: "Partner işlemi", licensedAction: "Hunter North / lisanslı inceleme", sharedNote: "Tanıştırma ve belge görevleri partner tarafından tamamlanır. Uyum, kabul ve fonlama aşamalarını lisanslı süreç yönetir.",
+    back: "Müşterilere dön", addDocument: "Belge ekle", addFund: "Fon ilgisi ekle", contacted: "İletişimi tamamla", partnerAction: "Partner işlemi", licensedAction: "Hunter Advisory / lisanslı inceleme", sharedNote: "Tanıştırma ve belge görevleri partner tarafından tamamlanır. Uyum, kabul ve fonlama aşamalarını lisanslı süreç yönetir.",
     tabs: { overview: "Genel bakış", details: "Onboarding bilgileri", documents: "Belgeler", activity: "Aktivite" },
     status: { introduced: "Tanıştırıldı", contacted: "İletişime geçildi", "compliance-review": "Uyum incelemesi", accepted: "Kabul edildi", funded: "Fonlandı" } as Record<ReferralStatus,string>,
     nextAction: "Sonraki adım", contact: "İletişim", readiness: "Ön uygunluk özeti", documentProgress: "Belge ilerlemesi", complete: "tamamlandı", fundInterests: "Fon ilgileri", primary: "Birincil", amount: "Tahmini yatırım tutarı", shareQuantity: "Satın alınacak pay adedi", unitPrice: "Pay başına fiyat", minimum: "Asgari yatırım", shares: "pay", timeline: "Zamanlama", account: "Yatırım hesabı türü", accountHelp: "Yatırımın kayıtsız kişisel hesapta, kayıtlı planda veya şirket hesabında tutulacağını belirtir.", recent: "Son aktiviteler", seeAll: "Tümünü gör", none: "Henüz kayıt yok.",
@@ -27,7 +28,7 @@ const COPY = {
     activityTitle: "Müşteri aktivitesi", addFundTitle: "Fon ilgisi ekle", fund: "Fon", shareClass: "Pay sınıfı", save: "İlgiyi ekle", cancel: "İptal", expiredTitle: "Müşteri kaydı kullanılamıyor", expiredBody: "Bu müşteri kaydı artık mevcut değil. Müşteri listesine dönerek devam edebilirsiniz.", notFoundTitle: "Müşteri bulunamadı", notFoundBody: "Bu müşteri kaydı mevcut değil.", returnClients: "Müşteri listesine dön",
   },
   en: {
-    back: "Back to clients", addDocument: "Add document", addFund: "Add fund interest", contacted: "Complete contact", partnerAction: "Partner action", licensedAction: "Hunter North / licensed review", sharedNote: "Introduction and document tasks are completed by the partner. Compliance, acceptance, and funding are controlled by the licensed process.",
+    back: "Back to clients", addDocument: "Add document", addFund: "Add fund interest", contacted: "Complete contact", partnerAction: "Partner action", licensedAction: "Hunter Advisory / licensed review", sharedNote: "Introduction and document tasks are completed by the partner. Compliance, acceptance, and funding are controlled by the licensed process.",
     tabs: { overview: "Overview", details: "Onboarding details", documents: "Documents", activity: "Activity" },
     status: { introduced: "Introduced", contacted: "Contacted", "compliance-review": "Compliance review", accepted: "Accepted", funded: "Funded" } as Record<ReferralStatus,string>,
     nextAction: "Next action", contact: "Contact", readiness: "Preliminary readiness", documentProgress: "Document progress", complete: "complete", fundInterests: "Fund interests", primary: "Primary", amount: "Estimated investment total", shareQuantity: "Number of shares to purchase", unitPrice: "Price per share", minimum: "Minimum investment", shares: "shares", timeline: "Timeline", account: "Investment account type", accountHelp: "Whether the investment will be held in a personal non-registered account, a registered plan, or a company account.", recent: "Recent activity", seeAll: "View all", none: "No records yet.",
@@ -57,7 +58,7 @@ function documentStyle(status: ClientDocumentStatus) {
 
 export function ClientProfile({ clientId, offerings }: { clientId: string; offerings: OfferingBundle[] }) {
   const { lang } = useLang();
-  const c = COPY[lang];
+  const c = investorTerminology(COPY[lang]);
   const { clients, addFundInterest, uploadDocument, removeDocument, markContacted } = useClients();
   const client = clients.find((item) => item.id === clientId);
   const [tab, setTab] = useState<Tab>("overview");
@@ -135,7 +136,7 @@ function Documents({ client, c, lang, fileError, onFile, onRemove, onPreview }: 
 }
 
 function Activity({ client, c, lang }: { client: ClientRecord; c: Copy; lang: "tr" | "en" }) { return <Panel className="p-5 sm:p-6"><h2 className="font-semibold text-[#172e40]">{c.activityTitle}</h2><Timeline client={client} lang={lang} /></Panel>; }
-function Timeline({ client, lang, limit }: { client: ClientRecord; lang: "tr" | "en"; limit?: number }) { const items = limit ? client.activity.slice(0,limit) : client.activity; return <ol className="mt-4 space-y-4">{items.map((activity,index) => <li key={activity.id} className="relative flex gap-3">{index < items.length - 1 && <span className="absolute bottom-[-18px] left-3 top-6 w-px bg-[#dfe4e9]" />}<span className="relative z-10 mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-[#eaf0f5] text-[#0a4b72]"><CheckCircle2 className="size-3.5" /></span><div><p className="text-sm text-[#40515e]">{activity.description[lang]}</p><p className="mt-1 text-[10px] text-[#849099]">{formatDateTime(activity.occurredAt,lang)}</p></div></li>)}{!items.length && <li className="text-sm text-[#75818a]">—</li>}</ol>; }
+function Timeline({ client, lang, limit }: { client: ClientRecord; lang: "tr" | "en"; limit?: number }) { const items = limit ? client.activity.slice(0,limit) : client.activity; return <ol className="mt-4 space-y-4">{items.map((activity,index) => <li key={activity.id} className="relative flex gap-3">{index < items.length - 1 && <span className="absolute bottom-[-18px] left-3 top-6 w-px bg-[#dfe4e9]" />}<span className="relative z-10 mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-[#eaf0f5] text-[#0a4b72]"><CheckCircle2 className="size-3.5" /></span><div><p className="text-sm text-[#40515e]">{investorTerminology(activity.description[lang])}</p><p className="mt-1 text-[10px] text-[#849099]">{formatDateTime(activity.occurredAt,lang)}</p></div></li>)}{!items.length && <li className="text-sm text-[#75818a]">—</li>}</ol>; }
 
 function FundDialog({ client, offerings, c, lang, onClose, onSave }: { client: ClientRecord; offerings: OfferingBundle[]; c: Copy; lang: "tr" | "en"; onClose: () => void; onSave: (interest: { offeringId: string; shareClassId?: string; shareQuantity?: number; amount: number; timeline: string; accountPreference: string }) => void }) {
   const { t } = useLang();

@@ -15,7 +15,7 @@ const COPY = {
     title: "Hesabınızı nasıl kullanacağınızı seçin",
     body: "Bu seçim yalnızca doğru sürece yönlendirir. Yatırım uygunluğu, yerindelik veya partner yetkisi sağlamaz.",
     investor: "Yatırımcı",
-    investorBody: "Fonları inceleyin, ilginizi kaydedin ve Hunter North ekibiyle görüşün.",
+    investorBody: "Kanada’daki fırsatları inceleyin, ilginizi kaydedin ve Hunter Advisory ekibiyle görüşün.",
     professional: "Türkiye lisanslı profesyonel veya firma",
     professionalBody: "Mevcut SPL lisansı ve SPK firma doğrulama sürecine devam edin.",
     individual: "Bireysel",
@@ -25,7 +25,7 @@ const COPY = {
     objective: "Genel yatırım amacı",
     horizon: "Genel zaman ufku",
     risk: "Özel piyasa yatırımlarında sermaye kaybı, sınırlı likidite ve uzun elde tutma süresi olabileceğini anlıyorum.",
-    consent: "Hunter North'un bu talep hakkında benimle iletişim kurmasına izin veriyorum.",
+    consent: "Hunter Advisory’nin bu talep hakkında benimle iletişim kurmasına izin veriyorum.",
     submit: "Kurulumu tamamla",
     pending: "Kaydediliyor…",
     error: "Kurulum kaydedilemedi. Lütfen tekrar deneyin.",
@@ -36,7 +36,7 @@ const COPY = {
     title: "Choose how you will use your account",
     body: "This selection only routes you to the right process. It does not establish eligibility, suitability, or partner authorization.",
     investor: "Investor",
-    investorBody: "Review funds, record your interest, and speak with the Hunter North team.",
+    investorBody: "Review Canadian opportunities, record your interest, and speak with the Hunter Advisory team.",
     professional: "Türkiye-licensed professional or firm",
     professionalBody: "Continue into the existing SPL licence and SPK firm-verification process.",
     individual: "Individual",
@@ -46,7 +46,7 @@ const COPY = {
     objective: "General investment objective",
     horizon: "General time horizon",
     risk: "I understand that private-market investments may involve loss of capital, limited liquidity, and long holding periods.",
-    consent: "I consent to Hunter North contacting me about this request.",
+    consent: "I consent to Hunter Advisory contacting me about this request.",
     submit: "Complete setup",
     pending: "Saving…",
     error: "Setup could not be saved. Please try again.",
@@ -115,8 +115,7 @@ export function OnboardingFlow({
         <NorthBrand />
         <section className="mt-10 overflow-hidden rounded-lg border border-white/15 bg-[#f7f4ec] text-[#172b3a] shadow-2xl">
           <header className="border-b border-[#d9d4c7] bg-[#0a2539] px-6 py-8 text-white sm:px-10">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#d8bf7a]">{c.eyebrow}</p>
-            <h1 className="mt-3 max-w-2xl font-serif text-3xl font-semibold sm:text-4xl">{c.title}</h1>
+            <h1 className="max-w-2xl font-serif text-3xl font-semibold sm:text-4xl">{c.title}</h1>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-white/68">{c.body}</p>
           </header>
 

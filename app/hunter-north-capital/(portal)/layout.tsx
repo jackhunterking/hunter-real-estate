@@ -18,11 +18,11 @@ export default async function HunterNorthPortalLayout({ children }: { children: 
     process.env.HNC_REQUIRE_AUTH === "true";
   if (requireAuth && (!configured || !snapshot)) {
     const requestedPath = (await headers()).get("x-hnc-path");
-    const next = requestedPath?.startsWith("/hunter-north-capital/") ? `?next=${encodeURIComponent(requestedPath)}` : "";
-    redirect(`/hunter-north-capital/sign-in${next}`);
+    const next = requestedPath?.startsWith("/hunter-advisory/") ? `?next=${encodeURIComponent(requestedPath)}` : "";
+    redirect(`/hunter-advisory/sign-in${next}`);
   }
   if (snapshot?.user.onboardingStatus === "pending") {
-    redirect("/hunter-north-capital/onboarding");
+    redirect("/hunter-advisory/onboarding");
   }
 
   return (

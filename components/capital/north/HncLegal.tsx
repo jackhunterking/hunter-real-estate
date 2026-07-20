@@ -7,7 +7,7 @@ import { NORTH_BASE, NorthBrand } from "./NorthBrand";
 const COPY = {
   tr: {
     title: "Yasal bilgiler ve platform açıklamaları",
-    intro: "Hunter North Capital araştırma, hesap, ilgi kaydı ve insan destekli inceleme akışları sağlar. Platform çevrimiçi menkul kıymet alımı, ödeme veya abonelik işlemi gerçekleştirmez.",
+    intro: "Hunter Advisory, Kanada’daki özel gayrimenkul ve alternatif yatırım fırsatları için araştırma, hesap, ilgi kaydı ve insan destekli inceleme akışları sağlar. Platform yatırım danışmanlığı veya portföy yönetimi sunmaz ve çevrimiçi menkul kıymet alımı, ödeme veya abonelik işlemi gerçekleştirmez.",
     sections: [
       ["Teklif materyalleri", "Yayımlanmış fon sayfaları kontrollü teklif materyali olarak ele alınır. Her sürüm; kaynak, geçerlilik tarihi, yazar, inceleyen ve uyum sahibiyle onaylanır. Hedefler garanti değildir ve geri çekilen içerik kamu görünümünden çıkarılır."],
       ["Uygunluk ve suitability", "Hesap yolu, profil yanıtları veya ilgi talebi; akredite yatırımcı statüsü, muafiyet, suitability, fon izni veya yatırım tavsiyesi oluşturmaz. Bunlar ilgili lisanslı taraflarca doğrulanır."],
@@ -15,11 +15,11 @@ const COPY = {
       ["Gizlilik ve iletişim", "İlgi talepleri, seçilen iletişim kanalı ve açık izinle kaydedilir. WhatsApp bağlantıları yalnızca fon slug bilgisini içerir. Canlı sohbet sağlayıcısı seçilene ve gerekli izin alınana kadar üçüncü taraf sohbet betiği yüklenmez."],
     ],
     sources: "Düzenleyici kaynaklar",
-    back: "Fonlara dön",
+    back: "Keşfet'e dön",
   },
   en: {
     title: "Legal information and platform disclosures",
-    intro: "Hunter North Capital supports research, accounts, interest records, and human-assisted review. The platform does not execute an online securities purchase, payment, or subscription.",
+    intro: "Hunter Advisory supports research, accounts, interest records, and human-assisted review for Canadian private real estate and alternative investment opportunities. The platform does not provide investment advice or portfolio management, and it does not execute an online securities purchase, payment, or subscription.",
     sections: [
       ["Offering material", "Published fund pages are treated as controlled offering material. Each version is approved with its sources, effective date, author, reviewer, and compliance owner. Targets are not guarantees, and withdrawn content is removed from public view."],
       ["Eligibility and suitability", "An account path, profile response, or interest request does not establish accredited-investor status, an exemption, suitability, fund permission, or investment advice. Applicable licensed parties must verify these matters."],
@@ -27,7 +27,7 @@ const COPY = {
       ["Privacy and contact", "Interest requests record the selected channel and explicit contact consent. WhatsApp links contain only a fund slug. No third-party chat script loads until a provider is selected and the required consent is obtained."],
     ],
     sources: "Regulatory sources",
-    back: "Return to funds",
+    back: "Return to Discover",
   },
 } as const;
 

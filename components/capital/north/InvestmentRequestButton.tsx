@@ -9,22 +9,22 @@ import { usePortalAccess } from "./PortalAccessProvider";
 const COPY = {
   en: {
     open: "Start investment request", title: "Start an investment request",
-    intro: "Tell Hunter North which fund interests you and how you prefer to be contacted. Eligibility questions come later only if required.",
+    intro: "Tell Hunter Advisory which Canadian opportunity interests you and how you prefer to be contacted. Eligibility questions come later only if required.",
     fund: "Fund", amount: "Indicative amount (CAD)", account: "Investing as", individual: "Individual", entity: "Entity",
     contact: "Preferred contact method", email: "Email", phone: "Phone", whatsapp: "WhatsApp", note: "Optional note",
-    noteHint: "Anything you would like Hunter North to know", consent: "I consent to Hunter North contacting me about this request.",
+    noteHint: "Anything you would like Hunter Advisory to know", consent: "I consent to Hunter Advisory contacting me about this request.",
     cancel: "Close", submit: "Submit request", sending: "Submitting…",
-    success: "Your request was submitted. Hunter North will follow up using your preferred contact method.",
+    success: "Your request was submitted. Hunter Advisory will follow up using your preferred contact method.",
     error: "The request could not be submitted. Please review the form and try again.",
   },
   tr: {
     open: "Yatırım talebi başlat", title: "Yatırım talebi başlatın",
-    intro: "Hunter North'a hangi fonla ilgilendiğinizi ve sizinle nasıl iletişim kurulmasını istediğinizi bildirin. Uygunluk soruları yalnızca gerektiğinde daha sonra gelir.",
+    intro: "Hunter Advisory’ye hangi Kanada fırsatıyla ilgilendiğinizi ve sizinle nasıl iletişim kurulmasını istediğinizi bildirin. Uygunluk soruları yalnızca gerektiğinde daha sonra gelir.",
     fund: "Fon", amount: "Gösterge tutarı (CAD)", account: "Yatırımcı türü", individual: "Bireysel", entity: "Tüzel kişi",
     contact: "Tercih edilen iletişim yöntemi", email: "E-posta", phone: "Telefon", whatsapp: "WhatsApp", note: "İsteğe bağlı not",
-    noteHint: "Hunter North'un bilmesini istediğiniz herhangi bir bilgi", consent: "Hunter North'un bu taleple ilgili benimle iletişime geçmesine izin veriyorum.",
+    noteHint: "Hunter Advisory’nin bilmesini istediğiniz herhangi bir bilgi", consent: "Hunter Advisory’nin bu taleple ilgili benimle iletişime geçmesine izin veriyorum.",
     cancel: "Kapat", submit: "Talebi gönder", sending: "Gönderiliyor…",
-    success: "Talebiniz gönderildi. Hunter North tercih ettiğiniz iletişim yöntemiyle sizinle bağlantı kuracak.",
+    success: "Talebiniz gönderildi. Hunter Advisory tercih ettiğiniz iletişim yöntemiyle sizinle bağlantı kuracak.",
     error: "Talep gönderilemedi. Formu kontrol edip tekrar deneyin.",
   },
 } as const;

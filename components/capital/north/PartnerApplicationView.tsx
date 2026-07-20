@@ -6,13 +6,12 @@ import {
   AlertCircle,
   ArrowRight,
   BadgeCheck,
+  BriefcaseBusiness,
   CheckCircle2,
-  ChevronDown,
   Clock3,
   ExternalLink,
   LoaderCircle,
   ShieldCheck,
-  Sparkles,
 } from "lucide-react";
 import {
   Dialog,
@@ -23,6 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import {
   SPL_PUBLIC_SEARCH_URL,
   canUseWorkspace,
@@ -35,13 +35,12 @@ import { NORTH_BASE } from "./NorthBrand";
 
 const COPY = {
   tr: {
-    eyebrow: "Profesyonel erişim",
-    title: "Hunter North ile çalışın",
+    title: "Profesyonel erişim",
     modalTitle: "Profesyonel partner başvurusu",
     description:
-      "SPL lisans sahibi ve SPK yetkili bir firmayla ilişkili sermaye piyasası profesyonelleri Hunter North partner programına başvurabilir.",
+      "SPL lisansına sahip ve SPK yetkili bir firmayla ilişkili profesyoneller Hunter Advisory erişimine başvurabilir.",
     modalDescription:
-      "SPL sicilinizdeki bilgileri ve mevcut firma bağlantınızı girin. Hunter North bilgileri resmi kaynaklardan doğrular.",
+      "SPL sicilinizdeki bilgileri ve mevcut firma bağlantınızı girin. Hunter Advisory bilgileri resmi kaynaklardan doğrular.",
     status: "Başvuru durumu",
     firmGate: "Firma bağlantısı",
     licenceGate: "SPL doğrulaması",
@@ -56,7 +55,7 @@ const COPY = {
     firmHelp: "Firmanın yasal veya en yaygın kullanılan adını yazın.",
     firmWorkEmail: "Firma iş e-postası",
     titleLabel: "Mevcut mesleki unvan",
-    consentLookup: "Hunter North’un resmi SPL araması yapmasına ve sonucu kaydetmesine izin veriyorum.",
+    consentLookup: "Hunter Advisory’nin resmi SPL araması yapmasına ve sonucu kaydetmesine izin veriyorum.",
     consentAccuracy: "Verdiğim bilgilerin güncel ve doğru olduğunu beyan ederim.",
     submit: "Partner başvurusunu gönder",
     submitting: "Başvuru gönderiliyor",
@@ -64,19 +63,17 @@ const COPY = {
     official: "Resmi SPL sorgulamasını aç",
     active: "Aktif",
     pending: "Beklemede",
-    eligible: "Bizimle çalışmak için başvur",
+    eligible: "Profesyonel erişime başvur",
     revise: "Başvuruyu güncelle",
     cancel: "Vazgeç",
-    viewDetails: "Başvuru ayrıntılarını göster",
     openProfessional: "Profesyonel portalı aç",
-    submittedDetails: "Gönderilen profesyonel bilgiler",
+    submittedDetails: "Profesyonel bilgiler",
+    verifiedStatus: "Doğrulandı",
     registeredProfessional: "Kayıtlı profesyonel",
     maskedLicence: "Maskelenmiş lisans numarası",
     firmStatus: "Firma durumu",
     verificationDate: "Son SPL doğrulaması",
-    benefitOne: "Doğrulanmış fon materyalleri",
-    benefitTwo: "Müşteri tanıştırma araçları",
-    benefitThree: "Kademeli partner programı",
+    since: "Başlangıç",
     applicationStatus: {
       draft: "Taslak",
       submitted: "Gönderildi",
@@ -85,23 +82,30 @@ const COPY = {
       approved: "Onaylandı",
       rejected: "Reddedildi",
     },
+    stateLabels: {
+      not_applied: "Henüz başvuru yapılmadı",
+      in_review: "İnceleme devam ediyor",
+      action_required: "İşlem gerekiyor",
+      approved_pending_activation: "Aktivasyon bekleniyor",
+      active: "Profesyonel erişim aktif",
+      inactive: "Erişim devre dışı",
+    },
     stateCopy: {
-      not_applied: "Lisans ve firma bilgileriniz Hunter North tarafından incelenir.",
+      not_applied: "Lisans ve firma bilgileriniz Hunter Advisory tarafından incelenir.",
       in_review: "Başvurunuz inceleniyor; inceleme sırasında ikinci başvuru gönderilemez.",
       action_required: "Başvurunuzun güncellenmesi gerekiyor.",
       approved_pending_activation: "Başvurunuz onaylandı; kalan erişim adımları tamamlanıyor.",
       active: "Profesyonel erişiminiz aktif.",
-      inactive: "Profesyonel erişiminizin yeniden etkinleştirilmesi için Hunter North incelemesi gerekiyor.",
+      inactive: "Profesyonel erişiminizin yeniden etkinleştirilmesi için Hunter Advisory incelemesi gerekiyor.",
     },
   },
   en: {
-    eyebrow: "Professional access",
-    title: "Work with Hunter North",
+    title: "Professional access",
     modalTitle: "Professional partner application",
     description:
-      "SPL-licensed capital-markets professionals associated with an SPK-authorized firm can apply to the Hunter North partner program.",
+      "Professionals with an SPL licence and an association with an SPK-authorized firm can apply for Hunter Advisory access.",
     modalDescription:
-      "Enter the information shown in your SPL registry and your current firm association. Hunter North verifies the details through official sources.",
+      "Enter the information shown in your SPL registry and your current firm association. Hunter Advisory verifies the details through official sources.",
     status: "Application status",
     firmGate: "Firm association",
     licenceGate: "SPL verification",
@@ -116,7 +120,7 @@ const COPY = {
     firmHelp: "Enter the firm's legal or most commonly used name.",
     firmWorkEmail: "Firm work email",
     titleLabel: "Current professional title",
-    consentLookup: "I authorize Hunter North to perform and record an official public SPL lookup.",
+    consentLookup: "I authorize Hunter Advisory to perform and record an official public SPL lookup.",
     consentAccuracy: "I declare that the information submitted is current and accurate.",
     submit: "Submit partner application",
     submitting: "Submitting application",
@@ -124,19 +128,17 @@ const COPY = {
     official: "Open official SPL lookup",
     active: "Active",
     pending: "Pending",
-    eligible: "Apply to work with us",
+    eligible: "Apply for professional access",
     revise: "Revise application",
     cancel: "Cancel",
-    viewDetails: "View application details",
     openProfessional: "Open Professional Portal",
-    submittedDetails: "Submitted professional information",
+    submittedDetails: "Professional information",
+    verifiedStatus: "Verified",
     registeredProfessional: "Registered professional",
     maskedLicence: "Masked licence number",
     firmStatus: "Firm status",
     verificationDate: "Latest SPL verification",
-    benefitOne: "Verified fund materials",
-    benefitTwo: "Client introduction tools",
-    benefitThree: "Tiered partner program",
+    since: "Since",
     applicationStatus: {
       draft: "Draft",
       submitted: "Submitted",
@@ -145,22 +147,24 @@ const COPY = {
       approved: "Approved",
       rejected: "Rejected",
     },
+    stateLabels: {
+      not_applied: "No application yet",
+      in_review: "Review in progress",
+      action_required: "Action required",
+      approved_pending_activation: "Awaiting activation",
+      active: "Professional access active",
+      inactive: "Access inactive",
+    },
     stateCopy: {
-      not_applied: "Hunter North reviews your licence and firm information.",
+      not_applied: "Hunter Advisory reviews your licence and firm information.",
       in_review: "Your application is under review; a duplicate cannot be submitted.",
       action_required: "Your application needs updated information.",
       approved_pending_activation: "Approved; the remaining access steps are being completed.",
       active: "Your Professional access is active.",
-      inactive: "Hunter North review is required to restore your Professional access.",
+      inactive: "Hunter Advisory review is required to restore your Professional access.",
     },
   },
 } as const;
-
-function gateClass(active: boolean) {
-  return active
-    ? "border-[#b9d9c6] bg-[#edf7f1] text-[#326449]"
-    : "border-[#e5d8b6] bg-[#fbf6e9] text-[#735c20]";
-}
 
 const fieldClass =
   "mt-2 h-11 w-full rounded-lg border border-[#d4dde2] bg-white px-3 font-normal text-[#213746] outline-none transition-colors placeholder:text-[#9aa4ab] focus:border-[#0a4b72]";
@@ -186,7 +190,7 @@ export function PartnerApplicationView({
     dataset,
     submitPartnerApplication,
   } = usePortalAccess();
-  const c = COPY[lang];
+  const c = investorTerminology(COPY[lang]);
   const state = professionalProfileState(context);
   const canSubmit =
     canUseWorkspace(context, "investor") &&
@@ -238,6 +242,72 @@ export function PartnerApplicationView({
   const maskedLicence =
     currentMembership?.maskedLicenceNumber ??
     (currentApplication ? maskLicenceNumber(currentApplication.licenceDocumentNumber) : undefined);
+  const professionalFields = currentApplication
+    ? [
+        {
+          label: c.registeredProfessional,
+          value: `${currentApplication.registeredFirstNames} ${currentApplication.registryLastName}`.trim(),
+          badge: undefined,
+          valueClass: "",
+        },
+        {
+          label: c.firm,
+          value: applicationOrganization?.legalName ?? "—",
+          badge: undefined,
+          valueClass: "",
+        },
+        {
+          label: c.titleLabel,
+          value: currentApplication.professionalTitle,
+          badge: undefined,
+          valueClass: "",
+        },
+        {
+          label: c.firmWorkEmail,
+          value: currentApplication.firmWorkEmail,
+          badge: undefined,
+          valueClass: "break-all",
+        },
+        {
+          label: c.licenceType,
+          value: currentApplication.licenceType,
+          badge: licenceVerified ? (
+            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#326449]">
+              <CheckCircle2 className="size-3" />{c.verifiedStatus}
+            </span>
+          ) : undefined,
+          valueClass: "",
+        },
+        {
+          label: c.maskedLicence,
+          value: maskedLicence ?? "—",
+          badge: undefined,
+          valueClass: "tabular-nums",
+        },
+        {
+          label: c.verificationDate,
+          value: currentVerification ? shortDate(currentVerification.verifiedAt.slice(0, 10), lang) : "—",
+          badge: undefined,
+          valueClass: "",
+        },
+        {
+          label: c.since,
+          value: partnerAccount?.relationshipSince ? shortDate(partnerAccount.relationshipSince, lang) : "—",
+          badge: undefined,
+          valueClass: "",
+        },
+        {
+          label: c.firmStatus,
+          value: applicationOrganization?.status === "active"
+            ? c.active
+            : applicationOrganization?.status === "pending"
+              ? c.pending
+              : applicationOrganization?.status ?? "—",
+          badge: undefined,
+          valueClass: "",
+        },
+      ]
+    : [];
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -273,7 +343,7 @@ export function PartnerApplicationView({
   return (
     <section id="professional-access" className="scroll-mt-6" aria-labelledby="professional-access-heading">
       {!embedded && (
-        <PageHeader eyebrow={c.eyebrow} title={c.title} description={c.description} />
+        <PageHeader title={c.title} description={c.description} />
       )}
 
       {message && (
@@ -282,39 +352,34 @@ export function PartnerApplicationView({
         </p>
       )}
 
-      <Panel className="relative mb-5 overflow-hidden rounded-xl border-[#d6e0e5] shadow-[0_14px_42px_rgba(15,42,58,0.06)]">
-        <div className="absolute inset-y-0 left-0 w-1.5 bg-[#c5a34d]" />
-        <div className="grid gap-6 p-5 pl-7 sm:p-7 sm:pl-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
-          <div className="max-w-3xl">
-            <div className="flex items-center gap-3">
-              <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#eaf1f4] text-[#0a4b72]">
-                <Sparkles className="size-5" />
-              </span>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#77838c]">{c.eyebrow}</p>
-                <h2 id="professional-access-heading" className="mt-1 font-serif text-2xl font-semibold text-[#173246]">
-                  {c.title}
+      <Panel className="overflow-hidden">
+        <div className="flex flex-col gap-5 p-5 sm:p-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex min-w-0 items-start gap-3.5">
+            <span className="grid size-10 shrink-0 place-items-center rounded-md bg-[#eaf0f3] text-[#16445f]">
+              <BriefcaseBusiness className="size-[18px]" />
+            </span>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h2 id="professional-access-heading" className="text-base font-semibold text-[#1b3343]">
+                  {c.stateLabels[state]}
                 </h2>
+                <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${state === "active" ? "bg-[#e8f2ec] text-[#326449]" : state === "inactive" || state === "action_required" ? "bg-[#fbefed] text-[#87483f]" : state === "not_applied" ? "bg-[#eef2f4] text-[#5d6d78]" : "bg-[#f7efd9] text-[#735c20]"}`}>
+                  <span className="size-1.5 rounded-full bg-current opacity-70" />
+                  {state === "active" ? c.active : state === "not_applied" ? c.pending : c.applicationStatus[currentApplication?.status ?? "draft"]}
+                </span>
               </div>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-[#65737d]">
+                {state === "not_applied" ? c.description : c.stateCopy[state]}
+              </p>
             </div>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-[#63727d]">{c.description}</p>
-            <p className="mt-2 text-sm font-semibold text-[#344f60]">{c.stateCopy[state]}</p>
-            {state === "not_applied" && (
-              <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs font-semibold text-[#5f707b]">
-                {[c.benefitOne, c.benefitTwo, c.benefitThree].map((benefit) => (
-                  <span key={benefit} className="inline-flex items-center gap-1.5">
-                    <CheckCircle2 className="size-3.5 text-[#987724]" />{benefit}
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row lg:flex-col lg:items-stretch">
+
+          <div className="shrink-0">
             {canSubmit && (
               <button
                 type="button"
                 onClick={() => changeFormOpen(true)}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#0a2d46] px-5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#123f5e]"
+                className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#123f5e] sm:w-auto"
               >
                 {state === "action_required" ? c.revise : c.eligible}
                 <ArrowRight className="size-4" />
@@ -323,71 +388,77 @@ export function PartnerApplicationView({
             {state === "active" && (
               <Link
                 href={`${NORTH_BASE}/professional`}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#0a2d46] px-5 py-2 text-sm font-semibold text-white"
+                className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#123f5e] sm:w-auto"
               >
                 {c.openProfessional}<ArrowRight className="size-4" />
               </Link>
             )}
           </div>
         </div>
-      </Panel>
 
-      {currentApplication && (
-        <Panel className="mb-6 rounded-xl p-5 sm:p-6">
-          <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.11em] text-[#74808a]">{c.status}</p>
-              <p className="mt-2 text-lg font-semibold text-[#193143]">{c.applicationStatus[currentApplication.status]}</p>
-            </div>
-            {licenceVerified && currentVerification && (
-              <div className="text-sm text-[#326449] sm:text-right">
-                <p className="font-semibold">{c.verified} {shortDate(currentVerification.verifiedAt.slice(0, 10), lang)}</p>
-                <p className="mt-1 text-xs text-[#71808b]">{c.notLive}</p>
-              </div>
-            )}
+        {state === "not_applied" && (
+          <div className="flex gap-3 border-t border-[#e7ebee] bg-[#f8fafb] px-5 py-4 text-sm leading-6 text-[#536773] sm:px-6">
+            <ShieldCheck className="mt-0.5 size-[18px] shrink-0 text-[#315c73]" />
+            <p>{c.stateCopy.not_applied}</p>
           </div>
-          <div className="mt-5 grid gap-3 md:grid-cols-3">
-            {[
-              [c.firmGate, firmApproved],
-              [c.licenceGate, licenceVerified],
-              [c.accountGate, accountActive],
-            ].map(([label, active]) => (
-              <div key={String(label)} className={`flex items-center gap-3 rounded-lg border p-3.5 ${gateClass(Boolean(active))}`}>
-                {active ? <CheckCircle2 className="size-5" /> : <Clock3 className="size-5" />}
-                <div>
-                  <p className="text-xs font-semibold">{label as string}</p>
-                  <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.08em]">{active ? c.active : c.pending}</p>
+        )}
+
+        {currentApplication && state !== "active" && (
+          <div className="border-t border-[#e7ebee] px-5 py-5 sm:px-6">
+            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+              <div>
+                <p className="text-xs text-[#74808a]">{c.status}</p>
+                <p className="mt-1 text-sm font-semibold text-[#193143]">{c.applicationStatus[currentApplication.status]}</p>
+              </div>
+              {licenceVerified && currentVerification && (
+                <div className="text-sm text-[#326449] sm:text-right">
+                  <p className="font-semibold">{c.verified} {shortDate(currentVerification.verifiedAt.slice(0, 10), lang)}</p>
+                  <p className="mt-1 text-xs text-[#71808b]">{c.notLive}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-          <details className="group mt-5 border-t border-[#e4e8eb] pt-4">
-            <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-[#0a4b72]">
-              {c.viewDetails}<ChevronDown className="size-4 transition-transform group-open:rotate-180" />
-            </summary>
-            <div className="mt-4">
-              <p className="text-[10px] font-bold uppercase tracking-[0.09em] text-[#74808a]">{c.submittedDetails}</p>
-              <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
-                <div><dt className="text-xs text-[#75818b]">{c.registeredProfessional}</dt><dd className="mt-1 font-semibold text-[#2d414e]">{currentApplication.registeredFirstNames}</dd></div>
-                <div><dt className="text-xs text-[#75818b]">{c.licenceType}</dt><dd className="mt-1 font-semibold text-[#2d414e]">{currentApplication.licenceType}</dd></div>
-                <div><dt className="text-xs text-[#75818b]">{c.maskedLicence}</dt><dd className="mt-1 font-semibold text-[#2d414e]">{maskedLicence ?? "—"}</dd></div>
-                <div><dt className="text-xs text-[#75818b]">{c.firm}</dt><dd className="mt-1 font-semibold text-[#2d414e]">{applicationOrganization?.legalName ?? "—"}</dd></div>
-                <div><dt className="text-xs text-[#75818b]">{c.titleLabel}</dt><dd className="mt-1 font-semibold text-[#2d414e]">{currentApplication.professionalTitle}</dd></div>
-                <div><dt className="text-xs text-[#75818b]">{c.firmWorkEmail}</dt><dd className="mt-1 break-words font-semibold text-[#2d414e]">{currentApplication.firmWorkEmail}</dd></div>
-                <div><dt className="text-xs text-[#75818b]">{c.firmStatus}</dt><dd className="mt-1 font-semibold text-[#2d414e]">{applicationOrganization?.status ?? "—"}</dd></div>
-                <div><dt className="text-xs text-[#75818b]">{c.verificationDate}</dt><dd className="mt-1 font-semibold text-[#2d414e]">{currentVerification ? shortDate(currentVerification.verifiedAt.slice(0, 10), lang) : "—"}</dd></div>
-              </dl>
+              )}
             </div>
-          </details>
-        </Panel>
-      )}
+            <div className="mt-4 grid overflow-hidden rounded-md border border-[#e0e5e8] sm:grid-cols-3">
+              {[
+                [c.firmGate, firmApproved],
+                [c.licenceGate, licenceVerified],
+                [c.accountGate, accountActive],
+              ].map(([label, active], index) => (
+                <div key={String(label)} className={`flex items-center gap-3 px-4 py-3 ${index > 0 ? "border-t border-[#e0e5e8] sm:border-l sm:border-t-0" : ""}`}>
+                  {active ? <CheckCircle2 className="size-[18px] shrink-0 text-[#4f8063]" /> : <Clock3 className="size-[18px] shrink-0 text-[#9a7928]" />}
+                  <div>
+                    <p className="text-xs font-semibold text-[#394f5d]">{label as string}</p>
+                    <p className="mt-0.5 text-[11px] text-[#73808a]">{active ? c.active : c.pending}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-      {state === "inactive" && (
-        <div className="mb-6 flex gap-3 rounded-lg border border-[#e8c9c4] bg-[#fbefed] p-4 text-sm leading-6 text-[#87483f]">
-          <AlertCircle className="mt-0.5 size-5 shrink-0" />
-          <p>{c.stateCopy.inactive}</p>
-        </div>
-      )}
+        {currentApplication && (
+          <div className="border-t border-[#e7ebee] bg-[#f8fafb] px-5 py-5 sm:px-6">
+            <p className="text-sm font-semibold text-[#243b4a]">{c.submittedDetails}</p>
+            <dl className="mt-4 grid gap-px overflow-hidden rounded-md border border-[#e2e7ea] bg-[#e2e7ea] sm:grid-cols-2 lg:grid-cols-3">
+              {professionalFields.map(({ label, value, badge, valueClass }) => (
+                <div key={label} className="min-w-0 bg-white px-4 py-3.5">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <dt className="text-xs text-[#75818b]">{label}</dt>
+                    {badge}
+                  </div>
+                  <dd className={`mt-1.5 break-words text-sm font-semibold leading-5 text-[#2d414e] ${valueClass}`}>{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        )}
+
+        {state === "inactive" && (
+          <div className="flex gap-3 border-t border-[#eccfc9] bg-[#fbefed] px-5 py-4 text-sm leading-6 text-[#87483f] sm:px-6">
+            <AlertCircle className="mt-0.5 size-5 shrink-0" />
+            <p>{c.stateCopy.inactive}</p>
+          </div>
+        )}
+      </Panel>
 
       <Dialog open={canSubmit && formOpen} onOpenChange={changeFormOpen}>
         <DialogContent className="flex max-h-[92vh] flex-col gap-0 overflow-hidden border-[#dce3e7] bg-white p-0 sm:max-w-3xl">

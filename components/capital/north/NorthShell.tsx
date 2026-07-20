@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   BadgeCheck,
+  BookOpen,
   BriefcaseBusiness,
   ChevronDown,
   CircleDollarSign,
@@ -20,7 +21,7 @@ import {
   WalletCards,
   X,
 } from "lucide-react";
-import { canUseWorkspace, defaultPortalPath } from "@/lib/capital/portal-access";
+import { canUseWorkspace } from "@/lib/capital/portal-access";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { cn } from "@/lib/utils";
 import { usePortalAccess } from "./PortalAccessProvider";
@@ -33,28 +34,32 @@ type NavigationItem = {
 };
 
 type NavigationGroup = {
-  id: "investing" | "professional" | "operations" | "account";
+  id: "investing" | "professional" | "resources" | "operations" | "account";
   label: string;
   items: NavigationItem[];
 };
 
 const COPY = {
   tr: {
-    groups: { investing: "Yatırımlar", professional: "Profesyonel", operations: "Hunter North" },
+    groups: { investing: "Yatırımlar", professional: "Profesyonel", resources: "Kaynaklar", operations: "Hunter Advisory" },
     investing: [
       ["/portfolio", "Portföyüm", WalletCards],
-      ["/funds", "Fonları keşfet", Compass],
-      ["/requests", "Taleplerim", BriefcaseBusiness],
+      ["/funds", "Keşfet", Compass],
+      ["/requests", "İşlemlerim", BriefcaseBusiness],
     ],
-    investorReadiness: ["/resources/investor-readiness", "Yatırımcı öz kontrolü", BadgeCheck],
     professional: [
       ["/professional", "Profesyonel özet", LayoutDashboard],
-      ["/clients", "Müşteriler", UsersRound],
-      ["/resources/investor-readiness", "Yatırımcı yeterliliği", BadgeCheck],
-      ["/commissions", "Komisyonlar", CircleDollarSign],
+      ["/clients", "Yatırımcılar", UsersRound],
+      ["/commissions", "Ödemeler", CircleDollarSign],
     ],
+    learning: ["/resources/learning", "Bilgi merkezi", BookOpen],
+    investorReadiness: ["/resources/investor-readiness", "Yatırımcı öz kontrolü", BadgeCheck],
+    professionalReadiness: ["/resources/investor-readiness", "Yatırımcı yeterliliği", BadgeCheck],
     operations: [["/operations", "Operasyonlar", ShieldCheck]],
     account: "Hesap",
+    accountView: "Hesap görünümü",
+    accountViewInvestor: "Yatırımcı",
+    accountViewProfessional: "Profesyonel",
     profile: "Profil",
     signOut: "Güvenli çıkış",
     menu: "Menü",
@@ -65,21 +70,25 @@ const COPY = {
     returnHome: "Ana sayfama dön",
   },
   en: {
-    groups: { investing: "Investing", professional: "Professional", operations: "Hunter North" },
+    groups: { investing: "Investing", professional: "Professional", resources: "Resources", operations: "Hunter Advisory" },
     investing: [
       ["/portfolio", "My portfolio", WalletCards],
-      ["/funds", "Explore funds", Compass],
-      ["/requests", "My requests", BriefcaseBusiness],
+      ["/funds", "Discover", Compass],
+      ["/requests", "Transactions", BriefcaseBusiness],
     ],
-    investorReadiness: ["/resources/investor-readiness", "Investor self-check", BadgeCheck],
     professional: [
       ["/professional", "Professional overview", LayoutDashboard],
-      ["/clients", "Clients", UsersRound],
-      ["/resources/investor-readiness", "Investor qualification", BadgeCheck],
-      ["/commissions", "Commissions", CircleDollarSign],
+      ["/clients", "Investors", UsersRound],
+      ["/commissions", "Payments", CircleDollarSign],
     ],
+    learning: ["/resources/learning", "Learning centre", BookOpen],
+    investorReadiness: ["/resources/investor-readiness", "Investor self-check", BadgeCheck],
+    professionalReadiness: ["/resources/investor-readiness", "Investor qualification", BadgeCheck],
     operations: [["/operations", "Operations", ShieldCheck]],
     account: "Account",
+    accountView: "Account view",
+    accountViewInvestor: "Investor",
+    accountViewProfessional: "Professional",
     profile: "Profile",
     signOut: "Secure sign out",
     menu: "Menu",
@@ -95,7 +104,13 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
   const { lang, setLang } = useLang();
   const pathname = usePathname();
   const router = useRouter();
-  const { currentUser, context, canAccess } = usePortalAccess();
+  const {
+    currentUser,
+    context,
+    canAccess,
+    accountView,
+    setAccountView,
+  } = usePortalAccess();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
@@ -109,11 +124,18 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
     ...(investor ? [{
       id: "investing",
       label: c.groups.investing,
-      items: [...c.investing, ...(!professional ? [c.investorReadiness] : [])]
-        .map(([href, label, icon]) => ({ href, label, icon })),
+      items: c.investing.map(([href, label, icon]) => ({ href, label, icon })),
     } as NavigationGroup] : []),
-    ...(professional
+    ...(accountView === "professional" && professional
       ? [{ id: "professional" as const, label: c.groups.professional, items: c.professional.map(([href, label, icon]) => ({ href, label, icon })) }]
+      : []),
+    ...((investor || professional)
+      ? [{
+          id: "resources" as const,
+          label: c.groups.resources,
+          items: [c.learning, accountView === "professional" && professional ? c.professionalReadiness : c.investorReadiness]
+            .map(([href, label, icon]) => ({ href, label, icon })),
+        }]
       : []),
     ...(operations
       ? [{ id: "operations" as const, label: c.groups.operations, items: c.operations.map(([href, label, icon]) => ({ href, label, icon })) }]
@@ -133,6 +155,16 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  useEffect(() => {
+    if (
+      pathname.includes("/professional") ||
+      pathname.includes("/clients") ||
+      pathname.includes("/commissions")
+    ) {
+      setAccountView("professional");
+    }
+  }, [pathname, setAccountView]);
+
   if (/\/funds\/[^/]+\/present$/.test(pathname)) {
     return <>{children}</>;
   }
@@ -148,7 +180,16 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
   }
 
   function goHome() {
-    router.push(`${NORTH_BASE}${defaultPortalPath(context)}`);
+    router.push(`${NORTH_BASE}${accountView === "investor" ? "/portfolio" : "/professional"}`);
+  }
+
+  function switchAccountView(next: "investor" | "professional") {
+    if (next === accountView) return;
+
+    setAccountView(next);
+    setAccountOpen(false);
+    setMobileOpen(false);
+    router.push(`${NORTH_BASE}${next === "investor" ? "/portfolio" : "/professional"}`);
   }
 
   return (
@@ -179,7 +220,7 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-5" aria-label="Hunter North Capital">
+        <nav className="flex-1 overflow-y-auto px-3 py-5" aria-label="Hunter Advisory">
           <div className="space-y-7">
             {groups.map((group) => (
               <section key={group.id}>
@@ -213,6 +254,25 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className={cn("border-t border-white/10 p-3", desktopCollapsed && "lg:p-2")}>
+          <div className={cn("mb-3", desktopCollapsed && "lg:hidden")}>
+            <p className="mb-1.5 px-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white/50">{c.accountView}</p>
+            <div className="flex h-9 items-center rounded-md border border-white/10 bg-white/5 p-0.5" role="group" aria-label={c.accountView}>
+              {(["investor", "professional"] as const).map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => switchAccountView(item)}
+                  className={cn(
+                    "h-8 flex-1 rounded px-1 text-[10px] font-bold uppercase tracking-[0.04em] transition-colors",
+                    accountView === item ? "bg-white text-[#0a2d46]" : "text-white/55 hover:text-white",
+                  )}
+                  aria-pressed={accountView === item}
+                >
+                  {item === "investor" ? c.accountViewInvestor : c.accountViewProfessional}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className={cn("mb-2 flex h-9 items-center rounded-md border border-white/10 bg-white/5 p-0.5", desktopCollapsed && "lg:h-auto lg:flex-col lg:border-0 lg:bg-transparent lg:p-0")} role="group" aria-label="Language">
             {(["tr", "en"] as const).map((item) => (
               <button key={item} type="button" onClick={() => setLang(item)} className={cn("h-8 flex-1 rounded px-2 text-[11px] font-bold uppercase", desktopCollapsed && "lg:w-full lg:flex-none", lang === item ? "bg-white text-[#0a2d46]" : "text-white/55")} aria-pressed={lang === item}>{item}</button>
@@ -223,7 +283,7 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
               <span className="grid size-7 shrink-0 place-items-center rounded bg-[#e8edf1] text-[#0a2d46]"><UserRound className="size-3.5" /></span>
               <span className={cn("min-w-0", desktopCollapsed && "lg:hidden")}>
                 <span className="block truncate text-[11px] font-semibold">{currentUser.displayName}</span>
-                <span className="block truncate text-[9px] uppercase tracking-[0.08em] text-white/60">{operations ? c.groups.operations : professional ? c.groups.professional : c.groups.investing}</span>
+                <span className="block truncate text-[9px] uppercase tracking-[0.08em] text-white/60">{operations ? c.groups.operations : accountView === "professional" ? c.groups.professional : c.groups.investing}</span>
               </span>
               <ChevronDown className={cn("ml-auto size-3.5 text-white/60", desktopCollapsed && "lg:hidden")} />
             </button>
@@ -255,7 +315,7 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
         </main>
         <footer className="border-t border-[#dfe4e9] bg-white px-4 py-5 text-xs text-[#6b7680] sm:px-6 lg:px-8">
           <div className="mx-auto flex w-full max-w-[1500px] flex-col justify-between gap-2 md:flex-row">
-            <p>© 2026 Hunter North Capital.</p>
+            <p>© 2026 Hunter Advisory.</p>
             <p className="max-w-3xl md:text-right">Access, eligibility, suitability, and subscription remain subject to the applicable licensed process.</p>
           </div>
         </footer>

@@ -10,7 +10,7 @@ Prepared for Jack Hunter · Hunter Group Real Estate / Real Mortgage Associates
 
 - **One domain, one app.** Everything lives in the existing Next.js (App Router) project at `jackhunter.com`. Kredibaba's standalone brand retires; its content becomes a section.
 - **Mortgage is the hero.** The mortgage/borrowing side gets a top-level tab and the bulk of the attention, because that's where the volume and the Meta/WhatsApp funnel live.
-- **Hunter Group Capital is consolidated** as the canonical Capital experience at `/hunter-group-capital`; legacy `/hunter-x-capital` URLs redirect there.
+- **Hunter Advisory is consolidated** as the canonical Capital experience at `/hunter-group-capital`; legacy `/hunter-x-capital` URLs redirect there.
 - **Two regulated identities stay walled.** Real estate (RE/MAX Hallmark, RECO) and mortgage (Real Mortgage Associates, FSRA) share a domain but never blur — separate disclosures, separate brokerage identity per service.
 - **The kredibaba logged-in app is parked, not merged.** Dashboard/Documents/Properties/etc. are a separate future product, not part of this site.
 
@@ -53,7 +53,7 @@ app/
 
 ## 3. Navigation & homepage
 
-**Current nav:** Hakkımızda · Hizmetler · Hunter X Capital · Rehberler · İletişim
+**Current nav:** Hakkımızda · Hizmetler · Hunter Advisory · Rehberler · İletişim
 
 **New nav:**
 
@@ -147,7 +147,7 @@ Practical rules for the build:
 - **Per-service brokerage identity.** Real-estate sections carry the RE/MAX Hallmark identity; Mortgage carries the Real Mortgage Associates identity + FSRA licence. Don't let one brand label appear on the other's content.
 - **Separate disclosure blocks.** Footer (and relevant pages) show both, clearly attributed to the right service — not merged into one generic statement.
 - **No bleed in CTAs.** A mortgage-service CTA shouldn't sit inside a RE/MAX-branded block, and vice versa.
-- **Investor content stays on its own page.** Hunter X Capital "raise/partner" language lives only on its section, away from the consumer mortgage funnel (different regime again).
+- **Investor content stays on its own page.** Hunter Advisory "raise/partner" language lives only on its section, away from the consumer mortgage funnel (different regime again).
 
 Action: a single review pass with **both** your RE/MAX brokerage and your RMA principal broker before public launch. (This is structural guidance, not legal advice.)
 

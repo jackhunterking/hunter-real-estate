@@ -2,17 +2,19 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { OperationsInbox, type OperationsModule, type OperationsQueueItem } from "@/components/capital/north/OperationsInbox";
 import type { Json } from "@/lib/supabase/database.types";
 import { getPublishedOfferings } from "@/lib/capital/repository-server";
+import { getLearningResourceAdminRows } from "@/lib/capital/learning-admin-server";
 
-const MODULES = new Set<OperationsModule>(["requests", "professional", "licences", "firms", "payments", "fund-schedules", "leads", "audit"]);
+const MODULES = new Set<OperationsModule>(["requests", "professional", "licences", "firms", "payments", "fund-schedules", "content", "leads", "audit"]);
 
 export default async function HunterNorthOperationsPage({ searchParams }: { searchParams: Promise<{ module?: string }> }) {
   const { module } = await searchParams;
   const supabase = await createSupabaseServerClient();
-  const [queue, offerings] = await Promise.all([
+  const [queue, offerings, learningResources] = await Promise.all([
     supabase
       ? supabase.from("operations_queue").select("id,module,title,summary,status,occurred_at,payload").order("occurred_at", { ascending: false }).limit(250)
       : null,
     getPublishedOfferings(),
+    getLearningResourceAdminRows(),
   ]);
   const initialQueue: OperationsQueueItem[] = (queue?.data ?? []).map((item) => ({
     id: item.id,
@@ -30,6 +32,7 @@ export default async function HunterNorthOperationsPage({ searchParams }: { sear
       initialQueue={initialQueue}
       initialModule={module && MODULES.has(module as OperationsModule) ? module as OperationsModule : "all"}
       offerings={offerings.map((offering) => ({ id: offering.id, name: offering.name }))}
+      learningResources={learningResources}
       backendConfigured={Boolean(supabase)}
     />
   );

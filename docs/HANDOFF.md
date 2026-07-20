@@ -1,12 +1,12 @@
 # Project handoff
 
-Last updated: July 17, 2026
+Last updated: July 18, 2026
 
 ## Repository state
 
 - Canonical repository: `https://github.com/jackhunterking/hunter-real-estate.git`
 - Working branch: `main`
-- The Jack Hunter/Jack Vetara professional-site bridge and the Hunter North Capital fund, onboarding, interest-request, and partner-platform refactor are committed to `main`.
+- Hunter Advisory is the public brand for the Canadian private-real-estate and alternatives experience. `/hunter-advisory` is canonical; legacy Capital/Hunter North paths are compatibility redirects or internal implementation paths.
 - The legacy deletion manifest remains review-only. Do not delete its candidates until they are explicitly approved.
 
 ## Continue from another computer

@@ -15,7 +15,7 @@ export function OfferingCard({ offering }: { offering: OfferingBundle }) {
 
   return (
     <Link
-      href={`/hunter-group-capital/offerings/${offering.slug}`}
+      href={`/hunter-advisory/funds/${offering.slug}`}
       className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
     >
       <div

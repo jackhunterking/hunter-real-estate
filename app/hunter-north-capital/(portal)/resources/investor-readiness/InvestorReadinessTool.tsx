@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { usePostHog } from "posthog-js/react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -40,6 +41,7 @@ import { canUseWorkspace } from "@/lib/capital/portal-access";
 import { omContextForResult } from "@/lib/capital/ontario-investor-assessment";
 import { READINESS_RULESET } from "@/lib/capital/readiness";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { useClients } from "@/components/capital/north/ClientProvider";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider";
@@ -212,7 +214,7 @@ const COPY = {
     maximumNeedsBody: "Resolve every uncertain financial answer before relying on a category or preliminary investment ceiling.",
     maximumEntityTitle: "Entity maximum requires professional review",
     maximumEntityBody: "Entity limits depend on legal form, ownership, the exemption used, and the specific offering.",
-    exploreFunds: "Explore funds",
+    exploreFunds: "Discover",
     addClient: "Add as a client",
     addTitle: "Add this investor as a client",
     addBody: "Identity is collected only after the qualification result.",
@@ -360,7 +362,7 @@ const COPY = {
     maximumNeedsBody: "Bir kategoriye veya ön yatırım tavanına güvenmeden önce tüm belirsiz finansal yanıtları netleştirin.",
     maximumEntityTitle: "Kuruluş azami tutarı profesyonel inceleme gerektirir",
     maximumEntityBody: "Kuruluş limitleri hukuki yapıya, sahipliğe, kullanılan muafiyete ve belirli teklife bağlıdır.",
-    exploreFunds: "Fonları keşfet",
+    exploreFunds: "Keşfet",
     addClient: "Müşteri olarak ekle",
     addTitle: "Bu yatırımcıyı müşteri olarak ekle",
     addBody: "Kimlik bilgileri yalnızca sınıflandırma sonucundan sonra alınır.",
@@ -396,11 +398,13 @@ export function InvestorReadinessTool() {
   const router = useRouter();
   const params = useSearchParams();
   const { lang } = useLang();
-  const c = COPY[lang];
-  const { context } = usePortalAccess();
-  const professionalMode = canUseWorkspace(context, "professional");
-  const { clients, createProspect, saveInvestorAssessment } = useClients();
+  const posthog = usePostHog();
+  const c = investorTerminology(COPY[lang]);
+  const { context, accountView } = usePortalAccess();
   const referenceClientId = params.get("clientId") ?? "";
+  const professionalMode = canUseWorkspace(context, "professional")
+    && (accountView === "professional" || Boolean(referenceClientId));
+  const { clients, createProspect, saveInvestorAssessment } = useClients();
   const referenceClient = professionalMode
     ? clients.find((client) => client.id === referenceClientId)
     : undefined;
@@ -478,6 +482,7 @@ export function InvestorReadinessTool() {
   });
 
   function start() {
+    posthog?.capture("hnc_qualification_started", { mode: professionalMode ? "professional" : "investor", language: lang });
     setStage("questions");
     setQuestionIndex(0);
   }
@@ -514,6 +519,7 @@ export function InvestorReadinessTool() {
       ? questionIndex === 1
       : questionIndex === 6 ? !adviceQuestionRequired : questionIndex === 7;
     if (lastQuestion) {
+      posthog?.capture("hnc_qualification_completed", { mode: professionalMode ? "professional" : "investor", language: lang });
       setStage("result");
       return;
     }
@@ -558,7 +564,7 @@ export function InvestorReadinessTool() {
         region: selectedRegion?.[lang],
         jurisdiction,
       });
-      saveInvestorAssessment(clientId, {
+      await saveInvestorAssessment(clientId, {
         jurisdiction,
         accountType,
         answers: readinessAnswers,
@@ -603,7 +609,6 @@ export function InvestorReadinessTool() {
 
   return <div>
     <PageHeader
-      eyebrow={professionalMode ? c.eyebrow : c.selfEyebrow}
       title={professionalMode ? c.title : c.selfTitle}
       description={professionalMode ? c.description : c.selfDescription}
     />

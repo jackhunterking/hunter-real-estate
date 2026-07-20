@@ -2,7 +2,7 @@
 
 Production Next.js platform for Jack & Tara Hunter at `jackhunter.com`.
 
-This repository is now one deployable app at the repo root. It contains the real estate, mortgage, guide, and Hunter Group Capital experiences together.
+This repository is now one deployable app at the repo root. It contains the real estate, mortgage, guide, and Hunter Advisory experiences together.
 
 ## Stack
 
@@ -20,8 +20,9 @@ This repository is now one deployable app at the repo root. It contains the real
 - `/mortgage` - mortgage landing
 - `/mortgage/oranlar` - permanent redirect to `/mortgage` (legacy route)
 - `/mortgage/araclar` - redirects to `/mortgage`
-- `/hunter-group-capital` - canonical Capital experience
-- `/hunter-x-capital` - legacy redirect to `/hunter-group-capital`
+- `/investing` - bridge from the Jack Hunter site to Hunter Advisory
+- `/hunter-advisory` - canonical Hunter Advisory public and portal experience
+- `/hunter-north-capital`, `/hunter-group-capital`, and `/hunter-x-capital` - legacy aliases or redirects
 - `/gizlilik`, `/kullanim-kosullari`, `/reklam-aciklamasi` - legal pages
 
 ## Local Development
@@ -61,4 +62,5 @@ active.
 
 - Mortgage services are disclosed through Real Mortgage Associates, with Jack Hunter FSRA Licence `M26001258`.
 - Real estate brokerage identity remains separate from mortgage identity.
+- Hunter Advisory is positioned around Canadian private-real-estate research, education, interest records, and licensed-process coordination; it does not present itself as a portfolio manager or executing dealer.
 - Historical consolidation notes and archived content-ops materials live under `docs/archive/`.

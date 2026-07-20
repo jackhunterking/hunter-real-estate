@@ -6,9 +6,9 @@ import "./globals.css";
 import "./theme.css";
 
 // Vendored locally (variable fonts) so compile needs no network — see app/fonts/.
-const lora = localFont({
-  src: "./fonts/Lora.woff2",
-  weight: "400 700",
+const notoSerif = localFont({
+  src: "./fonts/NotoSerif.woff2",
+  weight: "400 900",
   style: "normal",
   variable: "--font-serif",
   display: "swap",
@@ -51,7 +51,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="tr" className={`${lora.variable} ${manrope.variable}`}>
+    <html lang="tr" className={`${notoSerif.variable} ${manrope.variable}`}>
       <body>
         <PostHogProvider>
           <LanguageProvider>{children}</LanguageProvider>

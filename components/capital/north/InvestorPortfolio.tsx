@@ -7,6 +7,7 @@ import type { OfferingBundle } from "@/lib/capital/types";
 import { buildMapProperties, formatMoneyCompact } from "@/lib/capital/present";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { FundMap } from "@/components/capital/map/FundMap";
+import { TrustStrip } from "@/components/capital/offering-ui";
 import { NORTH_BASE } from "./NorthBrand";
 import { PageHeader, Panel } from "./PortalUI";
 import { usePortalAccess } from "./PortalAccessProvider";
@@ -15,34 +16,36 @@ const COPY = {
   en: {
     eyebrow: "Your real-asset portfolio",
     title: "Portfolio",
-    description: "See the funds, buildings, and locations connected to your funded capital. Amounts shown are funded exposure—not live market value or direct property ownership.",
+    description: "See the offerings, buildings, and locations connected to your funded capital. Amounts shown are funded exposure—not live market value or direct property ownership.",
     funded: "Funded amount",
-    funds: "Funds held",
+    funds: "Offerings held",
     buildings: "Underlying buildings",
     locations: "Locations",
     mapTitle: "Where your funded exposure is located",
     mapHelp: "Select a marker or building card to see verified property information.",
     holdings: "Funded positions",
-    viewFund: "View fund",
+    viewFund: "View offering",
     emptyTitle: "Your portfolio map will appear here",
-    emptyBody: "Once an investment is funded, its fund and verified underlying buildings will be shown on this map.",
-    explore: "Explore funds",
+    emptyBody: "Once an investment is funded, its offering and verified underlying buildings will be shown on this map.",
+    explore: "Discover",
+    trust: "Independently verified", auditor: "Auditor", legalCounsel: "Legal counsel", appraiser: "Appraiser", verified: "Verified",
   },
   tr: {
     eyebrow: "Gayrimenkul varlık portföyünüz",
     title: "Portföy",
-    description: "Fonlanan sermayenizle bağlantılı fonları, binaları ve konumları görün. Gösterilen tutarlar canlı piyasa değeri veya doğrudan mülk sahipliği değil, fonlanan sermaye maruziyetidir.",
+    description: "Fonlanan sermayenizle bağlantılı yatırım seçeneklerini, binaları ve konumları görün. Gösterilen tutarlar canlı piyasa değeri veya doğrudan mülk sahipliği değil, fonlanan sermaye maruziyetidir.",
     funded: "Fonlanan tutar",
-    funds: "Sahip olunan fonlar",
+    funds: "Sahip olunan seçenekler",
     buildings: "Dayanak binalar",
     locations: "Konumlar",
     mapTitle: "Fonlanan maruziyetinizin konumları",
     mapHelp: "Doğrulanmış mülk bilgilerini görmek için bir işaretçi veya bina kartı seçin.",
     holdings: "Fonlanan pozisyonlar",
-    viewFund: "Fonu görüntüle",
+    viewFund: "Seçeneği görüntüle",
     emptyTitle: "Portföy haritanız burada görünecek",
-    emptyBody: "Bir yatırım fonlandığında fon ve doğrulanmış dayanak binalar bu haritada gösterilir.",
-    explore: "Fonları keşfet",
+    emptyBody: "Bir yatırım fonlandığında seçenek ve doğrulanmış dayanak binalar bu haritada gösterilir.",
+    explore: "Keşfet",
+    trust: "Bağımsız olarak doğrulandı", auditor: "Denetçi", legalCounsel: "Hukuk müşaviri", appraiser: "Değerleme uzmanı", verified: "Doğrulama tarihi",
   },
 } as const;
 
@@ -87,7 +90,7 @@ export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }
 
   return (
     <div>
-      <PageHeader eyebrow={c.eyebrow} title={c.title} description={c.description} />
+      <PageHeader title={c.title} description={c.description} />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map(({ label, value, icon: Icon }) => (
@@ -141,6 +144,21 @@ export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }
           </div>
         </section>
       )}
+
+      {(() => {
+        const trustFund = fundedFunds.find(({ fund }) => fund.serviceProviders)?.fund
+          ?? offerings.find((offering) => offering.serviceProviders);
+        if (!trustFund?.serviceProviders) return null;
+        return (
+          <section className="mt-8">
+            <TrustStrip
+              providers={trustFund.serviceProviders}
+              verifiedAt={trustFund.verifiedAt}
+              copy={{ heading: c.trust, auditor: c.auditor, legalCounsel: c.legalCounsel, appraiser: c.appraiser, verified: c.verified }}
+            />
+          </section>
+        );
+      })()}
     </div>
   );
 }

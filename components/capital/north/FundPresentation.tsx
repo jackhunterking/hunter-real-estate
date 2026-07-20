@@ -35,7 +35,7 @@ export function FundPresentation({ offering }: { offering: OfferingBundle }) {
   return <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#f5f7f8] text-[#193143]">
     <header className="sticky top-0 z-30 border-b border-white/10 bg-[#09283d] text-white shadow-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-8">
-        <div><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/55">Hunter North Capital · {labels.presentation}</p><p className="mt-1 text-sm font-semibold">{offering.shortName[lang]}</p></div>
+        <div><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/55">Hunter Advisory · {labels.presentation}</p><p className="mt-1 text-sm font-semibold">{offering.shortName[lang]}</p></div>
         <div className="flex items-center gap-2"><button type="button" onClick={copyLink} className="inline-flex h-9 items-center gap-2 rounded-md border border-white/20 px-3 text-xs font-semibold hover:bg-white/10">{copied ? <Check className="size-4" /> : <Copy className="size-4" />}<span className="hidden sm:inline">{copied ? labels.copied : labels.copy}</span></button><Link href={`${NORTH_BASE}/funds/${offering.slug}`} aria-label={labels.close} className="grid size-9 place-items-center rounded-md border border-white/20 hover:bg-white/10"><X className="size-4" /></Link></div>
       </div>
     </header>

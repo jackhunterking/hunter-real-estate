@@ -73,14 +73,14 @@ export function OfferingDetail({ offering }: { offering: OfferingBundle }) {
 
   const vm = buildFundDetailViewModel(offering, lang);
   const share = primaryShareClass(offering);
-  const profileHref = `/hunter-group-capital/investor-profile?offering=${offering.slug}${share ? `&shareClass=${share.id}` : ""}`;
+  const profileHref = `/hunter-advisory/sign-up?offering=${offering.slug}${share ? `&shareClass=${share.id}` : ""}`;
   const whatsappHref = `${WHATSAPP}?text=${encodeURIComponent(`Hi, I would like to learn more about ${offering.name[lang]}.`)}`;
   const whatsappLabel = lang === "tr" ? "WhatsApp'tan Yaz" : "Message on WhatsApp";
   const tabs = d.tabs as Record<(typeof TAB_LABEL)[TabKey], string>;
 
   return (
     <div className="flex flex-col gap-4">
-      <Link href="/hunter-group-capital" className="inline-flex items-center gap-1.5 self-start text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+      <Link href="/hunter-advisory" className="inline-flex items-center gap-1.5 self-start text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
         <ArrowLeft className="size-4" /> {d.back}
       </Link>
 

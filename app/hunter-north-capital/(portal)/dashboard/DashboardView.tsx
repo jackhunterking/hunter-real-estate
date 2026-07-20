@@ -16,12 +16,12 @@ const COPY = {
   tr: {
     eyebrow: "Profesyonel merkezi",
     title: "Profesyonel Genel Bakış",
-    desc: "Müşteri süreci, fon sunumları, bireysel komisyonlar ve yıllık profesyonel ilerleme tek görünümde.",
-    newReferral: "Yeni müşteri",
+    desc: "Yatırımcı süreci, fon sunumları, bireysel komisyonlar ve yıllık profesyonel ilerleme tek görünümde.",
+    newReferral: "Yeni yatırımcı",
     cleared: "Yıllık kabul edilen sermaye",
     tier: "Profesyonel seviye",
     commission: "Bireysel komisyon payı",
-    referrals: "Müşteriler",
+    referrals: "Yatırımcılar",
     products: "Aktif fonlar",
     tierLabels: {
       associate: "Associate",
@@ -30,7 +30,7 @@ const COPY = {
     } as Record<PartnerTier, string>,
     next: (tier: string) => `Bir sonraki kademe: ${tier}`,
     remaining: "kaldı",
-    latestReferrals: "Son müşteri kayıtları",
+    latestReferrals: "Son yatırımcı kayıtları",
     all: "Tümünü gör",
     investor: "Yatırımcı",
     status: "Durum",
@@ -48,12 +48,12 @@ const COPY = {
   en: {
     eyebrow: "Professional centre",
     title: "Professional Overview",
-    desc: "Client pipeline, fund presentations, individual commissions, and annual professional progress in one view.",
-    newReferral: "New client",
+    desc: "Investor pipeline, fund presentations, individual commissions, and annual professional progress in one view.",
+    newReferral: "New investor",
     cleared: "Annual accepted capital",
     tier: "Professional level",
     commission: "Individual commission allocation",
-    referrals: "Clients",
+    referrals: "Investors",
     products: "Active funds",
     tierLabels: {
       associate: "Associate",
@@ -62,7 +62,7 @@ const COPY = {
     } as Record<PartnerTier, string>,
     next: (tier: string) => `Progress to ${tier}`,
     remaining: "remaining",
-    latestReferrals: "Recent client records",
+    latestReferrals: "Recent investor records",
     all: "View all",
     investor: "Investor",
     status: "Status",
@@ -106,7 +106,6 @@ export function DashboardView({ offerings }: { offerings: OfferingBundle[] }) {
   return (
     <div>
       <PageHeader
-        eyebrow={c.eyebrow}
         title={c.title}
         description={c.desc}
         action={

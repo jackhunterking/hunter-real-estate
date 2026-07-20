@@ -133,7 +133,7 @@ test("commission visibility follows the beneficiary instead of the firm associat
   );
 });
 
-test("Hunter North administrators start in Operations and require separate investing or professional approval", () => {
+test("Hunter Advisory administrators start in Operations and require separate investing or professional approval", () => {
   const admin = context("hnc-admin");
   assert.deepEqual(availableWorkspaces(admin), ["operations"]);
   assert.equal(canAccessPath(admin, "/hunter-north-capital/admin/license-verifications"), true);
@@ -147,6 +147,12 @@ test("investor qualification is available to verified investors and active profe
   assert.equal(canAccessPath(context("investor"), "/hunter-north-capital/resources/investor-readiness"), true);
   assert.equal(canAccessPath(context("applicant"), "/hunter-north-capital/resources/investor-readiness"), true);
   assert.equal(canAccessPath(context("hnc-admin"), "/hunter-north-capital/resources/investor-readiness"), false);
+});
+
+test("all resource routes are shared by investors and active professionals", () => {
+  assert.equal(canAccessPath(context("investor"), "/hunter-north-capital/resources/learning"), true);
+  assert.equal(canAccessPath(context("partner"), "/hunter-north-capital/resources/learning/core-strategies"), true);
+  assert.equal(canAccessPath(context("hnc-admin"), "/hunter-north-capital/resources/learning"), false);
 });
 
 test("registry surnames retain submitted text while duplicate matching uses Turkish normalization", () => {

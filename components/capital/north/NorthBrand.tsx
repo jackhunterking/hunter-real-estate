@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export const NORTH_BASE = "/hunter-north-capital";
+/** Canonical public path. The legacy HNC implementation path remains an internal alias. */
+export const NORTH_BASE = "/hunter-advisory";
 
 export function NorthBrand({
   compact = false,
@@ -16,7 +17,7 @@ export function NorthBrand({
     <Link
       href={NORTH_BASE}
       className="inline-flex min-w-0 items-center gap-3"
-      aria-label="Hunter North Capital"
+      aria-label="Hunter Advisory"
     >
       <Image
         src="/logos/HUNTER_Brandmark_Gold.png"
@@ -30,11 +31,11 @@ export function NorthBrand({
         className={markOnlyOnDesktop ? "min-w-0 leading-none lg:hidden" : "min-w-0 leading-none"}
       >
         <span className={`block truncate text-[15px] font-semibold ${dark ? "text-[#0a2d46]" : "text-white"}`}>
-          Hunter North
+          Hunter
         </span>
         {!compact && (
           <span className="mt-1 block text-[10px] font-semibold uppercase tracking-[0.16em] text-[#d8bf7a]">
-            Capital
+            Advisory
           </span>
         )}
       </span>

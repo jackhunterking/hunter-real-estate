@@ -6,6 +6,7 @@ import {
   type PortalUser,
 } from "./portal-access";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { InvestorReadinessAssessment } from "./types";
 
 type PortalSnapshot = {
   user: PortalUser;
@@ -41,6 +42,7 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
     investmentsResult,
     legacyInterestsResult,
     referralsResult,
+    qualificationAssessmentsResult,
     documentsResult,
     auditResult,
   ] = await Promise.all([
@@ -87,6 +89,9 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
     supabase
       .from("referrals")
       .select("id,owner_user_id,firm_id,client_account_type,client_first_name,client_last_name,client_display_name,client_organization,client_email,client_phone,country,region,city,offering_id,indicative_amount,status,contact_consent_at,accuracy_consent_at,created_at,updated_at"),
+    supabase
+      .from("referral_qualification_assessments")
+      .select("id,referral_id,assessor_user_id,jurisdiction,account_type,answers,result,financial_result,jurisdiction_review,residence_country_code,residence_region_code,qualifying_criteria,om_context,candidate_routes,review_reasons,om_calculation,assessment_input,ruleset_id,source_urls,reassessment_triggers,acknowledgement_at,created_at"),
     supabase
       .from("document_records")
       .select("id,owner_user_id,organization_id,partner_application_id,referral_id,bucket_id,storage_path,filename,document_category,mime_type,byte_size,access,created_at"),
@@ -299,6 +304,30 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
       accuracyConsentAt: referral.accuracy_consent_at,
       createdAt: referral.created_at,
       updatedAt: referral.updated_at,
+    })),
+    qualificationAssessments: rows(qualificationAssessmentsResult).map((assessment) => ({
+      id: assessment.id,
+      clientId: assessment.referral_id,
+      jurisdiction: assessment.jurisdiction as InvestorReadinessAssessment["jurisdiction"],
+      accountType: assessment.account_type as InvestorReadinessAssessment["accountType"],
+      answers: assessment.answers as unknown as InvestorReadinessAssessment["answers"],
+      result: assessment.result as InvestorReadinessAssessment["result"],
+      financialResult: assessment.financial_result as InvestorReadinessAssessment["financialResult"],
+      jurisdictionReview: assessment.jurisdiction_review as InvestorReadinessAssessment["jurisdictionReview"],
+      residenceCountryCode: assessment.residence_country_code ?? undefined,
+      residenceRegionCode: assessment.residence_region_code ?? undefined,
+      qualifyingCriteria: assessment.qualifying_criteria as unknown as InvestorReadinessAssessment["qualifyingCriteria"],
+      omContext: assessment.om_context as unknown as InvestorReadinessAssessment["omContext"],
+      candidateRoutes: assessment.candidate_routes as unknown as InvestorReadinessAssessment["candidateRoutes"],
+      reviewReasons: assessment.review_reasons as unknown as InvestorReadinessAssessment["reviewReasons"],
+      omCalculation: assessment.om_calculation as unknown as InvestorReadinessAssessment["omCalculation"],
+      assessmentInput: assessment.assessment_input as unknown as InvestorReadinessAssessment["assessmentInput"],
+      rulesetId: assessment.ruleset_id,
+      sourceUrls: assessment.source_urls as unknown as string[],
+      reassessmentTriggers: assessment.reassessment_triggers as unknown as InvestorReadinessAssessment["reassessmentTriggers"],
+      assessor: users.find((user) => user.id === assessment.assessor_user_id)?.displayName ?? "Partner professional",
+      acknowledgementAt: assessment.acknowledgement_at,
+      assessedAt: assessment.created_at,
     })),
     documents: rows(documentsResult).map((document) => ({
       id: document.id,

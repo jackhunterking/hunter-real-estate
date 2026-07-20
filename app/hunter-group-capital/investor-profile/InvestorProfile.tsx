@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import type { ClientQualificationCriterion, OfferingBundle } from "@/lib/capital/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -103,7 +104,8 @@ export function InvestorProfile({ offerings }: { offerings: OfferingBundle[] }) 
   const params = useSearchParams();
   const { lang, t } = useLang();
   const p = t.capitalApp.profile;
-  const resultCopy = PUBLIC_RESULT_COPY[lang];
+  const resultCopy = investorTerminology(PUBLIC_RESULT_COPY[lang]);
+  const qualificationCopy = investorTerminology(QUALIFICATION_COPY[lang]);
   const opt = (value: string) => p.options[value] ?? value;
 
   const initialOffering = offerings.find((o) => o.slug === params.get("offering")) ?? offerings[0];
@@ -229,16 +231,16 @@ export function InvestorProfile({ offerings }: { offerings: OfferingBundle[] }) 
 
           {step === 3 && (
             <section className="flex flex-col gap-4">
-              <p className="text-[15px] leading-relaxed text-muted-foreground">{form.jurisdiction === "ontario" ? QUALIFICATION_COPY[lang].intro : p.crossBorderIntro}</p>
+              <p className="text-[15px] leading-relaxed text-muted-foreground">{form.jurisdiction === "ontario" ? qualificationCopy.intro : p.crossBorderIntro}</p>
               {form.jurisdiction === "ontario" ? (
                 <div className="flex flex-col gap-2.5">
                   {INDIVIDUAL_CRITERIA.map((criterion) => (
                     <label key={criterion} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3.5", form.qualificationCriteria.includes(criterion) ? "border-primary bg-secondary/60" : "border-border bg-muted/40")}>
                       <Checkbox checked={form.qualificationCriteria.includes(criterion)} onCheckedChange={() => toggleCriterion(criterion)} className="mt-0.5" />
-                      <span className="text-sm leading-snug text-foreground">{QUALIFICATION_COPY[lang].criteria[criterion]}</span>
+                      <span className="text-sm leading-snug text-foreground">{qualificationCopy.criteria[criterion]}</span>
                     </label>
                   ))}
-                  <p className="rounded-lg border border-border bg-muted/40 p-3.5 text-sm leading-relaxed text-muted-foreground">{QUALIFICATION_COPY[lang].reviewNote}</p>
+                  <p className="rounded-lg border border-border bg-muted/40 p-3.5 text-sm leading-relaxed text-muted-foreground">{qualificationCopy.reviewNote}</p>
                 </div>
               ) : (
                 <div className="rounded-xl border border-border bg-secondary/50 p-5">

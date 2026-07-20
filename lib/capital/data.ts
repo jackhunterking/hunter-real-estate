@@ -138,6 +138,11 @@ export const offerings: Offering[] = [
       { period: { en: "Year 3", tr: "3 yıl" }, value: "10.61%" },
       { period: { en: "Since inception", tr: "Kuruluştan bu yana" }, value: "11.89%" },
     ],
+    serviceProviders: {
+      auditor: { name: "BDO Canada LLP", url: "https://www.bdo.ca/" },
+      legalCounsel: { name: "Borden Ladner Gervais LLP (BLG)", url: "https://www.blg.com/en" },
+      appraiser: { name: "Avison Young", url: "https://www.avisonyoung.com/" },
+    },
     lastUpdated: "2026-01-30",
     risks: [{ en: "Private securities may be illiquid and redemption rights are governed by offering documents.", tr: "Özel menkul kıymetler likit olmayabilir; itfa hakları teklif belgelerine tabidir." }], verifiedAt: "2026-07-12",
   },

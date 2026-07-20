@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function PartnerProgramPage() {
-  redirect("/hunter-north-capital/profile#partner-program");
+  redirect("/hunter-advisory/profile#professional-access");
 }

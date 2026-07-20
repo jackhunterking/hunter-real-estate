@@ -12,6 +12,7 @@ import type {
 } from "@/lib/capital/types";
 import { initialClients } from "@/lib/capital/partner-data";
 import { hasPlatformRole } from "@/lib/capital/portal-access";
+import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { uploadInvestorDocument } from "@/lib/supabase/storage";
 import { usePortalAccess } from "./PortalAccessProvider";
 import { portalRequest } from "@/lib/capital/portal-client";
@@ -44,7 +45,7 @@ type ClientContextValue = {
   clients: ClientRecord[];
   createClient: (client: NewClientRecord) => Promise<string>;
   createProspect: (client: NewProspectRecord) => Promise<string>;
-  saveInvestorAssessment: (clientId: string, assessment: NewInvestorReadinessAssessment) => string;
+  saveInvestorAssessment: (clientId: string, assessment: NewInvestorReadinessAssessment) => Promise<string>;
   addFundInterest: (clientId: string, interest: NewFundInterest) => void;
   uploadDocument: (clientId: string, documentId: string, file: File) => Promise<boolean>;
   removeDocument: (clientId: string, documentId: string) => boolean;
@@ -58,7 +59,7 @@ function now() {
 }
 
 function activityText(en: string, tr: string): LocalizedText {
-  return { en, tr };
+  return investorTerminology({ en, tr });
 }
 
 function locked(document: ClientDocument) {
@@ -68,6 +69,7 @@ function locked(document: ClientDocument) {
 function referralClient(
   referral: ReturnType<typeof usePortalAccess>["dataset"]["referrals"][number],
   documents: ReturnType<typeof usePortalAccess>["dataset"]["documents"],
+  qualificationAssessments: ReturnType<typeof usePortalAccess>["dataset"]["qualificationAssessments"],
 ): ClientRecord {
   const createdAt = referral.createdAt;
   return {
@@ -112,7 +114,9 @@ function referralClient(
             createdAt,
           }]
         : [],
-    investorReadinessAssessments: [],
+    investorReadinessAssessments: qualificationAssessments
+      .filter((assessment) => assessment.clientId === referral.id)
+      .sort((a, b) => Date.parse(b.assessedAt) - Date.parse(a.assessedAt)),
     documents: documents
       .filter((document) => document.referralId === referral.id)
       .map((document) => ({
@@ -148,7 +152,7 @@ export function ClientProvider({ children }: { children: React.ReactNode }) {
   } = usePortalAccess();
   const [allClients, setClients] = useState<ClientRecord[]>(() =>
     backendConfigured
-      ? dataset.referrals.map((referral) => referralClient(referral, dataset.documents))
+      ? dataset.referrals.map((referral) => referralClient(referral, dataset.documents, dataset.qualificationAssessments))
       : initialClients,
   );
   const clients = useMemo(
@@ -259,9 +263,15 @@ export function ClientProvider({ children }: { children: React.ReactNode }) {
     return id;
   }
 
-  function saveInvestorAssessment(clientId: string, input: NewInvestorReadinessAssessment) {
+  async function saveInvestorAssessment(clientId: string, input: NewInvestorReadinessAssessment) {
     const assessedAt = input.assessedAt ?? now();
-    const id = `${clientId}-readiness-${Date.now()}`;
+    const persistedId = backendConfigured
+      ? await portalMutation("saveReferralQualificationAssessment", {
+          referralId: clientId,
+          assessment: { ...input, assessedAt: undefined },
+        })
+      : undefined;
+    const id = typeof persistedId === "string" ? persistedId : `${clientId}-readiness-${Date.now()}`;
     const assessment: InvestorReadinessAssessment = { ...input, id, clientId, assessedAt };
     setClients((current) => current.map((client) => client.id === clientId ? {
       ...client,

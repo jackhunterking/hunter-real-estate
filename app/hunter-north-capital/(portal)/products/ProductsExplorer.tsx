@@ -1,31 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import type { OfferingBundle } from "@/lib/capital/types";
 import { useLang } from "@/lib/i18n/LanguageProvider";
-import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { PageHeader, Panel } from "@/components/capital/north/PortalUI";
 
 const COPY = {
   tr: {
-    eyebrow: "Yatırım çözümleri",
-    title: "Fonlar",
-    desc: "Onaylı koşulları, dayanak binaları ve fon belgelerini geniş resimden kaynağa doğru inceleyin.",
+    title: "Keşfet",
+    desc: "Mevcut yatırım seçeneklerini, dayanak varlıklarını, koşullarını ve belgelerini inceleyin.",
     review: "Detayları incele",
     manager: "Yönetici",
-    strategy: "Strateji",
-    noResults: "Şu anda görüntülenecek fon bulunmuyor.",
+    audited: "Bağımsız denetimli",
+    noResults: "Şu anda görüntülenecek yatırım seçeneği bulunmuyor.",
   },
   en: {
-    eyebrow: "Investment solutions",
-    title: "Funds",
-    desc: "Review approved conditions, underlying buildings, and fund documents from the broad picture down to the source.",
+    title: "Discover",
+    desc: "Explore available investment options, their underlying assets, terms, and documents.",
     review: "Review details",
     manager: "Manager",
-    strategy: "Strategy",
-    noResults: "There are no funds to show right now.",
+    audited: "Independently audited",
+    noResults: "There are no investment options to show right now.",
   },
 } as const;
 
@@ -52,32 +49,28 @@ export function ProductsExplorer({ offerings }: { offerings: OfferingBundle[] })
 
   return (
     <div>
-      <PageHeader eyebrow={c.eyebrow} title={c.title} description={c.desc} />
+      <PageHeader title={c.title} description={c.desc} />
 
       {offerings.length ? (
         <div className="grid gap-5 xl:grid-cols-2">
-          {offerings.map((offering) => {
-            return (
-              <article key={offering.id} className="flex flex-col overflow-hidden rounded-md border border-[#dbe1e5] bg-white shadow-[0_1px_2px_rgba(10,28,43,0.04)]">
-                <ProductVisual offering={offering} lang={lang} />
-                <div className="flex flex-1 flex-col px-4 py-4 sm:px-5">
-                  <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
-                    <div className="min-w-0">
-                      <h2 className="text-lg font-semibold text-[#152b3b]">{offering.shortName[lang]}</h2>
-                      <p className="mt-1 text-xs text-[#75818a]">{offering.manager.name[lang]}</p>
-                    </div>
-                    <span className="inline-flex shrink-0 rounded border border-[#dbe1e5] bg-[#f5f7f8] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#64727d]">
-                      {c.strategy} · {taxonomyLabel(strategies, offering.strategyIds[0], lang)}
-                    </span>
-                  </div>
-                  <div className="mt-3 flex flex-1 flex-col justify-between gap-4 sm:min-h-12 sm:flex-row sm:items-end">
-                    <p className="max-w-2xl text-sm leading-5 text-[#5f6d78]">{offering.summary[lang]}</p>
-                    <Link href={`${NORTH_BASE}/funds/${offering.slug}`} className="inline-flex h-9 shrink-0 self-start items-center gap-1.5 rounded-md bg-[#0a2d46] px-3.5 text-xs font-semibold text-white transition-colors hover:bg-[#123f5e] sm:self-auto">{c.review}<ArrowRight className="size-3.5" /></Link>
-                  </div>
+          {offerings.map((offering) => (
+            <article key={offering.id} className="flex flex-col overflow-hidden rounded-md border border-[#dbe1e5] bg-white shadow-[0_1px_2px_rgba(10,28,43,0.04)]">
+              <ProductVisual offering={offering} lang={lang} />
+              <div className="flex flex-1 flex-col px-4 py-4 sm:px-5">
+                <div className="min-w-0">
+                  <h2 className="text-lg font-semibold text-[#152b3b]">{offering.name[lang]}</h2>
+                  <p className="mt-1 text-xs text-[#75818a]">{offering.manager.name[lang]}</p>
                 </div>
-              </article>
-            );
-          })}
+                <div className="mt-3 flex flex-1 flex-col justify-between gap-4 sm:min-h-12 sm:flex-row sm:items-end">
+                  <p className="max-w-2xl text-sm leading-5 text-[#5f6d78]">{offering.summary[lang]}</p>
+                  <Link href={`${NORTH_BASE}/funds/${offering.slug}`} className="inline-flex h-9 shrink-0 self-start items-center gap-1.5 rounded-md bg-[#0a2d46] px-3.5 text-xs font-semibold text-white transition-colors hover:bg-[#123f5e] sm:self-auto">{c.review}<ArrowRight className="size-3.5" /></Link>
+                </div>
+                {offering.serviceProviders?.auditor && (
+                  <p className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#3f7a58]"><ShieldCheck className="size-3.5" />{c.audited}</p>
+                )}
+              </div>
+            </article>
+          ))}
         </div>
       ) : (
         <Panel className="p-12 text-center text-sm text-[#6e7a84]">{c.noResults}</Panel>

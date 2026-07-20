@@ -2,8 +2,8 @@ export const HNC_WHATSAPP_NUMBER = "16473913311";
 
 export function buildHncWhatsAppUrl(context?: string) {
   const message = context
-    ? `Hunter North Capital: ${context}`
-    : "Hunter North Capital hakkında görüşmek istiyorum.";
+    ? `Hunter Advisory: ${context}`
+    : "Hunter Advisory hakkında görüşmek istiyorum.";
   return `https://wa.me/${HNC_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 

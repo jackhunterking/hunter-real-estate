@@ -21,7 +21,7 @@
   --wa-ink: #0a0a0a;
 
   /* Typography */
-  --serif: var(--font-serif), "Lora", Georgia, serif;
+  --serif: var(--font-serif), "Noto Serif", Georgia, serif;
   --sans: var(--font-sans), -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
   /* Layout */
@@ -42,7 +42,10 @@
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  /* Clip horizontal overflow without creating a scroll container. Using
+     `hidden` here prevents descendant `position: sticky` elements from
+     sticking to the viewport. */
+  overflow-x: clip;
 }
 
 body {
@@ -51,7 +54,7 @@ body {
   background: var(--paper);
   font-weight: 400;
   line-height: 1.5;
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100%;
 }
 

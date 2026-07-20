@@ -1,4 +1,5 @@
 import type {
+  InvestorReadinessAssessment,
   PartnerCommissionAllocationPercentage,
   PartnerTier,
 } from "./types";
@@ -290,6 +291,7 @@ export type PortalDataset = {
   commissions: CommissionEntry[];
   investments: InvestmentApplication[];
   referrals: ReferralRecord[];
+  qualificationAssessments: InvestorReadinessAssessment[];
   documents: PortalDocumentRecord[];
   auditEvents: AuditEvent[];
 };
@@ -313,6 +315,7 @@ export const emptyPortalDataset: PortalDataset = {
   commissions: [],
   investments: [],
   referrals: [],
+  qualificationAssessments: [],
   documents: [],
   auditEvents: [],
 };
@@ -448,14 +451,13 @@ export function canAccessPath(context: PortalAccessContext, pathname: string) {
   if (pathname.includes("/operations") || pathname.includes("/admin")) {
     return canUseWorkspace(context, "operations");
   }
-  if (pathname.includes("/resources/investor-readiness")) {
+  if (pathname.includes("/resources")) {
     return canUseWorkspace(context, "investor") || canUseWorkspace(context, "professional");
   }
   if (
     pathname.includes("/clients") ||
     pathname.includes("/commissions") ||
     pathname.includes("/professional") ||
-    pathname.includes("/resources/") ||
     pathname.includes("/partner-program") ||
     (pathname.includes("/partner") && !pathname.includes("/partner/apply"))
   ) {

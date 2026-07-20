@@ -22,7 +22,7 @@ export default async function HunterNorthReferralsPage({
   if (params.new === "1") {
     const { new: _new, ...rest } = params;
     void _new;
-    redirect(`/hunter-north-capital/clients/new${toQueryString(rest)}`);
+    redirect(`/hunter-advisory/clients/new${toQueryString(rest)}`);
   }
-  redirect(`/hunter-north-capital/clients${toQueryString(params)}`);
+  redirect(`/hunter-advisory/clients${toQueryString(params)}`);
 }

@@ -5,14 +5,16 @@ import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react";
 
-const HUNTER_NORTH_HOSTS = new Set([
+const HUNTER_ADVISORY_HOSTS = new Set([
   "hunternorthcapital.com",
   "www.hunternorthcapital.com",
 ]);
 
-function isHunterNorthRoute(pathname: string, hostname: string) {
+function isHunterAdvisoryRoute(pathname: string, hostname: string) {
   return (
-    HUNTER_NORTH_HOSTS.has(hostname.toLowerCase()) ||
+    HUNTER_ADVISORY_HOSTS.has(hostname.toLowerCase()) ||
+    pathname === "/hunter-advisory" ||
+    pathname.startsWith("/hunter-advisory/") ||
     pathname === "/hunter-north-capital" ||
     pathname.startsWith("/hunter-north-capital/")
   );
@@ -26,7 +28,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       process.env.NEXT_PUBLIC_POSTHOG_KEY ??
       "phc_na55KbvucPk2mkBLzJhZLepgSNqF7bwTGTXXEhDTE972";
 
-    const sensitivePortal = isHunterNorthRoute(
+    const sensitivePortal = isHunterAdvisoryRoute(
       window.location.pathname,
       window.location.hostname,
     );
@@ -68,7 +70,7 @@ function PostHogPageView() {
 
   useEffect(() => {
     if (!pathname || !ph) return;
-    const sensitivePortal = isHunterNorthRoute(pathname, window.location.hostname);
+    const sensitivePortal = isHunterAdvisoryRoute(pathname, window.location.hostname);
     ph.set_config({
       autocapture: !sensitivePortal,
       disable_session_recording: sensitivePortal,

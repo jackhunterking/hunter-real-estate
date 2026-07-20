@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { NORTH_BASE, NorthBrand } from "./NorthBrand";
@@ -12,8 +13,8 @@ const COPY = {
   tr: {
     signIn: "Giriş yap",
     signUp: "Hesap oluştur",
-    signInTitle: "Hunter North hesabınıza giriş yapın",
-    signUpTitle: "Hunter North hesabınızı oluşturun",
+    signInTitle: "Hunter Advisory hesabınıza giriş yapın",
+    signUpTitle: "Hunter Advisory hesabınızı oluşturun",
     signInBody: "Yatırımlarınızı ve onaylanmış çalışma alanlarınızı güvenli şekilde görüntüleyin.",
     signUpBody: "E-posta doğrulamasından sonra Yatırımcı veya Türkiye lisanslı profesyonel/firma yolunu seçin.",
     firstName: "Ad",
@@ -33,8 +34,8 @@ const COPY = {
   en: {
     signIn: "Sign in",
     signUp: "Create account",
-    signInTitle: "Sign in to Hunter North",
-    signUpTitle: "Create your Hunter North account",
+    signInTitle: "Sign in to Hunter Advisory",
+    signUpTitle: "Create your Hunter Advisory account",
     signInBody: "Securely access your investments and approved workspaces.",
     signUpBody: "After verifying your email, choose the Investor or Türkiye-licensed professional/firm path.",
     firstName: "First name",
@@ -55,7 +56,7 @@ const COPY = {
 
 export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
   const { lang } = useLang();
-  const c = COPY[lang];
+  const c = investorTerminology(COPY[lang]);
   const configured = isSupabaseConfigured();
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
@@ -134,7 +135,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
         <div className="mb-10 flex items-center justify-between">
           <NorthBrand />
           <Link href={NORTH_BASE} className="text-xs font-semibold text-white/65 hover:text-white">
-            Hunter North Capital
+            Hunter Advisory
           </Link>
         </div>
         <div className="grid overflow-hidden rounded-lg border border-white/15 bg-white shadow-2xl lg:grid-cols-[0.85fr_1.15fr]">

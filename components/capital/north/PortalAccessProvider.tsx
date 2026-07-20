@@ -9,6 +9,7 @@ import {
 } from "react";
 import {
   canAccessPath,
+  canUseWorkspace,
   latestLicenseVerification,
   latestPartnerApplication,
   maskLicenceNumber,
@@ -73,6 +74,8 @@ export type NewCommissionInput = Omit<
   status?: CommissionEntry["status"];
 };
 
+export type PortalAccountView = "investor" | "professional";
+
 type PortalAccessValue = {
   dataset: PortalDataset;
   currentUser: PortalUser;
@@ -87,6 +90,8 @@ type PortalAccessValue = {
   activationIssues: string[];
   commissions: CommissionEntry[];
   memberDirectory: ReturnType<typeof visibleMemberDirectory>;
+  accountView: PortalAccountView;
+  setAccountView: (view: PortalAccountView) => void;
   setPreviewPersona: (persona: PreviewPersona) => void;
   canAccess: (pathname: string) => boolean;
   submitPartnerApplication: (input: PartnerApplicationInput) => Promise<string>;
@@ -138,6 +143,7 @@ function copyDataset(dataset: PortalDataset): PortalDataset {
     commissions: [...dataset.commissions],
     investments: [...dataset.investments],
     referrals: [...dataset.referrals],
+    qualificationAssessments: [...dataset.qualificationAssessments],
     documents: [...dataset.documents],
     auditEvents: [...dataset.auditEvents],
   };
@@ -158,6 +164,7 @@ export function PortalAccessProvider({
 }) {
   const [dataset, setDataset] = useState<PortalDataset>(() => copyDataset(initialDataset));
   const [previewPersona, setPreviewPersonaState] = useState<PreviewPersona>("partner");
+  const [accountView, setAccountViewState] = useState<PortalAccountView>("professional");
 
   useEffect(() => {
     if (!previewEnabled) return;
@@ -172,6 +179,26 @@ export function PortalAccessProvider({
   const currentUser = initialUser ?? demoUserForPersona(previewPersona);
   const context = useMemo(() => ({ user: currentUser, dataset }), [currentUser, dataset]);
 
+  useEffect(() => {
+    if (previewEnabled) {
+      setAccountViewState(previewPersona === "investor" ? "investor" : "professional");
+      return;
+    }
+
+    let saved: PortalAccountView | null = null;
+    try {
+      const stored = window.localStorage.getItem("hnc-account-view");
+      if (stored === "investor" || stored === "professional") saved = stored;
+    } catch {
+      // Use the authorized default when storage is unavailable.
+    }
+    if (saved && canUseWorkspace(context, saved)) {
+      setAccountViewState(saved);
+      return;
+    }
+    setAccountViewState(canUseWorkspace(context, "professional") ? "professional" : "investor");
+  }, [context, previewEnabled, previewPersona]);
+
   function setPreviewPersona(persona: PreviewPersona) {
     if (!previewEnabled) return;
     setPreviewPersonaState(persona);
@@ -179,6 +206,21 @@ export function PortalAccessProvider({
       window.localStorage.setItem("hnc-preview-persona", persona);
     } catch {
       // Preview still changes for the active visit.
+    }
+  }
+
+  function setAccountView(view: PortalAccountView) {
+    if (previewEnabled) {
+      setAccountViewState(view);
+      setPreviewPersona(view === "investor" ? "investor" : "partner");
+    } else {
+      if (!canUseWorkspace(context, view)) return;
+      setAccountViewState(view);
+    }
+    try {
+      window.localStorage.setItem("hnc-account-view", view);
+    } catch {
+      // The selection remains active for this visit.
     }
   }
 
@@ -354,7 +396,7 @@ export function PortalAccessProvider({
         entityType: "organization_membership",
         entityId: membershipId,
         summary: fallbackReason
-          ? `Hunter North fallback approval recorded: ${fallbackReason}`
+          ? `Hunter Advisory fallback approval recorded: ${fallbackReason}`
           : `Firm membership ${decision} decision recorded.`,
         occurredAt: now,
       });
@@ -679,6 +721,8 @@ export function PortalAccessProvider({
       activationIssues: partnerActivationIssues(context),
       commissions: visibleCommissions(context),
       memberDirectory: visibleMemberDirectory(context),
+      accountView,
+      setAccountView,
       setPreviewPersona,
       canAccess: (pathname) => canAccessPath(context, pathname),
       submitPartnerApplication,
@@ -694,6 +738,7 @@ export function PortalAccessProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       backendConfigured,
+      accountView,
       context,
       currentUser,
       dataset,

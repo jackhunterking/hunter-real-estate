@@ -13,12 +13,9 @@ const nextConfig = {
         destination: '/#kaynaklar',
         permanent: true,
       },
-      // Retired capital sub-pages — the funds-first dashboard is the single entry
-      // point; the map and documents now live inside each fund.
-      { source: '/hunter-group-capital/offerings', destination: '/hunter-group-capital', permanent: false },
-      { source: '/hunter-group-capital/map', destination: '/hunter-group-capital', permanent: false },
-      { source: '/hunter-group-capital/learn', destination: '/hunter-group-capital', permanent: false },
-      { source: '/hunter-group-capital/investment-process', destination: '/hunter-group-capital', permanent: false },
+      // Legacy Capital routes now resolve to the Hunter Advisory experience.
+      { source: '/hunter-group-capital/:path*', destination: '/hunter-advisory', permanent: true },
+      { source: '/hunter-x-capital/:path*', destination: '/hunter-advisory', permanent: true },
     ];
   },
   // Reverse proxy for PostHog so analytics + session replay survive ad-blockers.

@@ -4,24 +4,24 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 
-const HNC_URL = process.env.NEXT_PUBLIC_HNC_SITE_URL ?? "/hunter-north-capital";
+const HNC_URL = process.env.NEXT_PUBLIC_HNC_SITE_URL ?? "/hunter-advisory";
 
 const COPY = {
   tr: {
     eyebrow: "Özel piyasalar geçişi",
-    title: "Hunter North Capital ayrı bir platformdur.",
-    body: "Jack Hunter sitesi gayrimenkul ve mortgage danışmanlığına odaklanır. Fon araştırması, hesap oluşturma ve ilgi talepleri kontrollü Hunter North Capital ortamında sunulur.",
+    title: "Hunter Advisory ayrı bir platformdur.",
+    body: "Jack Hunter sitesi gayrimenkul ve mortgage danışmanlığına odaklanır. Kanada’daki özel gayrimenkul ve alternatif yatırım fırsatlarına ilişkin araştırma, hesap ve ilgi kayıtları kontrollü Hunter Advisory ortamında sunulur.",
     points: ["Yalnızca onaylanmış ve yayımlanmış fon bilgileri", "Avantajlarla birlikte riskler, likidite ve kaynak tarihleri", "Çevrimiçi satın alma veya ödeme yok; sonraki adım insan destekli inceleme"],
-    continue: "Hunter North Capital'a devam et",
+    continue: "Hunter Advisory’ye devam et",
     back: "Jack Hunter'a dön",
     disclosure: "Devam ettiğinizde farklı bir marka ve platforma geçersiniz. Hesap açmak uygunluk, yerindelik veya yatırım onayı oluşturmaz.",
   },
   en: {
     eyebrow: "Private-markets transition",
-    title: "Hunter North Capital is a separate platform.",
-    body: "The Jack Hunter site focuses on real estate and mortgage guidance. Fund research, account creation, and interest requests are provided in the controlled Hunter North Capital environment.",
+    title: "Hunter Advisory is a separate platform.",
+    body: "The Jack Hunter site focuses on real estate and mortgage guidance. Research, accounts, and interest records for Canadian private real estate and alternative investment opportunities are provided in the controlled Hunter Advisory environment.",
     points: ["Only approved and published fund information", "Risks, liquidity, and source dates presented alongside potential advantages", "No online purchase or payment; the next step is a human-assisted review"],
-    continue: "Continue to Hunter North Capital",
+    continue: "Continue to Hunter Advisory",
     back: "Return to Jack Hunter",
     disclosure: "You are continuing to a separate brand and platform. Creating an account does not establish eligibility, suitability, or investment approval.",
   },

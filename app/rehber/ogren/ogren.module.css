@@ -129,7 +129,7 @@
 }
 
 .termWord {
-  font-family: var(--sans);
+  font-family: var(--serif);
   font-size: 16px;
   font-weight: 700;
   color: var(--navy-deep);
@@ -233,7 +233,7 @@
 }
 
 .faqQ {
-  font-family: var(--sans);
+  font-family: var(--serif);
   font-size: 15.5px;
   font-weight: 700;
   color: var(--navy-deep);

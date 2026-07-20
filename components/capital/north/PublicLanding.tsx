@@ -3,38 +3,39 @@
 import Link from "next/link";
 import { ArrowRight, Building2, MapPinned, ShieldCheck, UsersRound, WalletCards } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
+import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { NORTH_BASE, NorthBrand } from "./NorthBrand";
 
 const COPY = {
   en: {
-    signIn: "Access portal", create: "Create account", eyebrow: "Private real estate, made tangible",
-    title: "Know the funds. See the buildings. Understand where your capital goes.",
-    body: "Hunter North gives authenticated investors a visual, source-led view of their funded exposure—and gives approved professionals a separate workspace for helping clients.",
+    signIn: "Access portal", create: "Create account", eyebrow: "Canada · Private real estate · Alternatives",
+    title: "A clearer view of Canadian private real estate and alternative investments.",
+    body: "Hunter Advisory helps investors in Türkiye discover and understand selected Canadian private-market opportunities through source-led research, tangible asset context, and a human-supported path to licensed review.",
     primary: "Create your account", secondary: "Sign in",
-    trust: ["Real buildings and locations", "Fund-approved terms and documents", "Human-supported investment requests"],
-    mapLabel: "Portfolio view", mapTitle: "Your funded exposure, placed on a real map", mapBody: "Fund and building information becomes available after you sign in. Portfolio amounts represent funded capital, not live market value or direct property ownership.",
-    investor: "For investors", investorBody: "Explore available funds, start an investment request, and see the verified buildings connected to funded positions.",
-    professional: "For licensed professionals", professionalBody: "Present approved fund content, manage client journeys, and review individual commissions in a dedicated professional workspace.",
-    transparent: "Clear from overview to source", transparentBody: "Each experience starts with the broad picture, then reveals fund terms, property facts, risks, and source dates as you go deeper.",
-    final: "A simpler way to understand private real assets.", finalBody: "Create an account to explore approved funds and begin the right conversation with Hunter North.", legal: "The portal supports research and investment requests. It does not complete subscription, signature, or funding, and it does not provide a live market valuation.",
+    trust: ["Canadian opportunities", "Fund-approved sources and documents", "Human-supported licensed process"],
+    mapLabel: "Real-asset view", mapTitle: "See the buildings behind the investment story", mapBody: "Move from a fund-level overview to the Canadian buildings, markets, source documents, and material terms beneath it. Portfolio figures represent funded capital—not live market value or direct property ownership.",
+    investor: "Understand before you proceed", investorBody: "Compare published opportunities, terms, risks, liquidity, and source dates in one bilingual experience built for clarity.",
+    professional: "A separate professional workspace", professionalBody: "Approved professionals can present controlled content, support investor journeys, and coordinate next steps without blurring licensed responsibilities.",
+    transparent: "From overview to source", transparentBody: "Every opportunity begins with the broad picture and leads to property facts, controlling documents, risks, and the date each material detail was verified.",
+    final: "Canadian private markets, made clearer.", finalBody: "Create an account to explore approved opportunities and begin the right conversation with Hunter Advisory.", legal: "Hunter Advisory supports research, education, interest records, and licensed-process coordination. The portal does not provide investment advice, portfolio management, securities execution, subscription, payment, or live market valuation.",
   },
   tr: {
-    signIn: "Portala eriş", create: "Hesap oluştur", eyebrow: "Somutlaştırılmış özel gayrimenkul",
-    title: "Fonları tanıyın. Binaları görün. Sermayenizin nereye gittiğini anlayın.",
-    body: "Hunter North, giriş yapmış yatırımcılara fonlanan maruziyetlerinin görsel ve kaynaklı bir görünümünü; onaylı profesyonellere ise müşterilere yardımcı olmak için ayrı bir çalışma alanı sunar.",
+    signIn: "Portala eriş", create: "Hesap oluştur", eyebrow: "Kanada · Özel gayrimenkul · Alternatif yatırımlar",
+    title: "Kanada’daki özel gayrimenkul ve alternatif yatırımlara daha şeffaf bir bakış.",
+    body: "Hunter Advisory, Türkiye’deki yatırımcıların seçili Kanada özel piyasa fırsatlarını kaynaklara dayalı araştırma, somut varlık bilgileri ve lisanslı incelemeye uzanan insan destekli bir süreçle keşfetmesine ve anlamasına yardımcı olur.",
     primary: "Hesabınızı oluşturun", secondary: "Giriş yapın",
-    trust: ["Gerçek binalar ve konumlar", "Fon onaylı koşullar ve belgeler", "İnsan destekli yatırım talepleri"],
-    mapLabel: "Portföy görünümü", mapTitle: "Fonlanan maruziyetiniz gerçek bir haritada", mapBody: "Fon ve bina bilgileri giriş yaptıktan sonra kullanılabilir. Portföy tutarları canlı piyasa değeri veya doğrudan mülk sahipliği değil, fonlanan sermayeyi temsil eder.",
-    investor: "Yatırımcılar için", investorBody: "Mevcut fonları keşfedin, yatırım talebi başlatın ve fonlanan pozisyonlarla bağlantılı doğrulanmış binaları görün.",
-    professional: "Lisanslı profesyoneller için", professionalBody: "Onaylı fon içeriğini sunun, müşteri yolculuklarını yönetin ve bireysel komisyonları ayrı bir profesyonel çalışma alanında inceleyin.",
-    transparent: "Genel bakıştan kaynağa kadar açık", transparentBody: "Her deneyim geniş resimle başlar; derine indikçe fon koşulları, mülk bilgileri, riskler ve kaynak tarihleri açılır.",
-    final: "Özel gayrimenkul varlıklarını anlamanın daha sade yolu.", finalBody: "Onaylı fonları keşfetmek ve Hunter North ile doğru görüşmeyi başlatmak için hesap oluşturun.", legal: "Portal araştırma ve yatırım taleplerini destekler. Abonelik, imza veya fonlamayı tamamlamaz ve canlı piyasa değerlemesi sunmaz.",
+    trust: ["Kanada’daki fırsatlar", "Fon onaylı kaynaklar ve belgeler", "İnsan destekli lisanslı süreç"],
+    mapLabel: "Reel varlık görünümü", mapTitle: "Yatırım hikâyesinin arkasındaki binaları görün", mapBody: "Fon düzeyindeki genel bakıştan Kanada’daki binalara, pazarlara, kaynak belgelere ve önemli koşullara ilerleyin. Portföy tutarları canlı piyasa değeri veya doğrudan mülk sahipliği değil, fonlanan sermayeyi temsil eder.",
+    investor: "İlerlemeden önce anlayın", investorBody: "Yayımlanmış fırsatları, koşulları, riskleri, likiditeyi ve kaynak tarihlerini açıklık için tasarlanmış iki dilli tek bir deneyimde karşılaştırın.",
+    professional: "Ayrı bir profesyonel çalışma alanı", professionalBody: "Onaylı profesyoneller, lisanslı sorumlulukları birbirine karıştırmadan kontrollü içerik sunabilir, yatırımcı süreçlerini destekleyebilir ve sonraki adımları koordine edebilir.",
+    transparent: "Genel bakıştan kaynağa", transparentBody: "Her fırsat geniş resimle başlar; mülk bilgilerine, belirleyici belgelere, risklere ve her önemli bilginin doğrulama tarihine kadar ilerler.",
+    final: "Kanada özel piyasaları, daha anlaşılır.", finalBody: "Onaylı fırsatları keşfetmek ve Hunter Advisory ile doğru görüşmeyi başlatmak için hesap oluşturun.", legal: "Hunter Advisory araştırma, eğitim, ilgi kaydı ve lisanslı süreç koordinasyonunu destekler. Portal yatırım danışmanlığı, portföy yönetimi, menkul kıymet işlemi, abonelik, ödeme veya canlı piyasa değerlemesi sunmaz.",
   },
 } as const;
 
 export function PublicLanding() {
   const { lang, setLang } = useLang();
-  const c = COPY[lang];
+  const c = investorTerminology(COPY[lang]);
   const audienceCards = [
     { Icon: WalletCards, title: c.investor, body: c.investorBody },
     { Icon: UsersRound, title: c.professional, body: c.professionalBody },
@@ -52,6 +53,6 @@ export function PublicLanding() {
 
       <section className="bg-[#dfe9eb]"><div className="mx-auto max-w-5xl px-4 py-20 text-center sm:px-8"><h2 className="text-3xl font-semibold sm:text-4xl">{c.final}</h2><p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-[#5a6c77]">{c.finalBody}</p><Link href={`${NORTH_BASE}/sign-up`} className="mt-7 inline-flex h-11 items-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white">{c.primary}<ArrowRight className="size-4" /></Link></div></section>
     </main>
-    <footer className="bg-[#071c2c] px-4 py-8 text-xs leading-5 text-white/55 sm:px-8"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-3 md:flex-row"><p>© 2026 Hunter North Capital.</p><p className="max-w-3xl md:text-right">{c.legal}</p></div></footer>
+    <footer className="bg-[#071c2c] px-4 py-8 text-xs leading-5 text-white/55 sm:px-8"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-3 md:flex-row"><p>© 2026 Hunter Advisory.</p><p className="max-w-3xl md:text-right">{c.legal}</p></div></footer>
   </div>;
 }

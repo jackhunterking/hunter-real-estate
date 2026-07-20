@@ -23,7 +23,7 @@ const appSender =
   process.env.RESEND_FROM_EMAIL ?? "Hunter Group <hello@updates.jackhunter.com>";
 const capitalSender =
   process.env.RESEND_CAPITAL_FROM_EMAIL ??
-  "Hunter North Capital <capital@updates.jackhunter.com>";
+  "Hunter Advisory <advisory@updates.jackhunter.com>";
 const replyTo = process.env.RESEND_REPLY_TO ?? "hello@jackhunter.com";
 
 function escapeHtml(value: unknown) {
@@ -113,13 +113,13 @@ export function renderEmailJob(job: EmailJobTemplate): RenderedEmail {
     title: isReadiness ? "New investor-readiness submission" : "New capital intake",
     body: `A new submission (${reference}) is ready for review. Sign in to the protected portal to view the details.`,
     actionLabel: "Open lead inbox",
-    actionUrl: `${siteUrl}/hunter-north-capital/admin/leads`,
+    actionUrl: `${siteUrl}/hunter-advisory/admin/leads`,
   });
   return {
     from: capitalSender,
     replyTo,
     to: job.recipient,
-    subject: `New Hunter North intake · ${reference}`,
+    subject: `New Hunter Advisory intake · ${reference}`,
     ...content,
   };
 }

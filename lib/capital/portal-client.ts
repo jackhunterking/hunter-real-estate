@@ -11,6 +11,7 @@ const routes: Record<string, { url: string; method: "POST" | "PATCH" }> = {
   createReferral: { url: "/api/hnc-referrals", method: "POST" },
   markReferralContacted: { url: "/api/hnc-referrals", method: "PATCH" },
   registerReferralDocument: { url: "/api/hnc-referral-documents", method: "POST" },
+  saveReferralQualificationAssessment: { url: "/api/hnc-referral-qualification-assessments", method: "POST" },
 };
 
 export async function portalRequest(action: string, payload: Record<string, unknown>) {

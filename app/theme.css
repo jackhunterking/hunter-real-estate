@@ -53,6 +53,18 @@
     color: var(--muted-foreground);
     opacity: 1;
   }
+
+  /* Keep display typography consistent across legacy CSS modules, Tailwind
+     screens, and future semantic headings. UI labels and body copy continue
+     to inherit the sans family. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--serif);
+  }
 }
 
 :root {
@@ -157,7 +169,7 @@
   --color-warn-bg: var(--warn-bg);
 
   --font-sans: var(--font-sans), -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --font-serif: var(--font-serif), "Lora", Georgia, serif;
+  --font-serif: var(--font-serif), "Noto Serif", Georgia, serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

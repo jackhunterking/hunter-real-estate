@@ -38,24 +38,35 @@ export function FundMap({
 
   useEffect(() => {
     let cancelled = false;
+    let invalidateTimer: ReturnType<typeof setTimeout> | undefined;
     loadLeaflet()
       .then((L) => {
         if (cancelled || !containerRef.current) return;
         leafletRef.current = L;
-        const map = L.map(containerRef.current, { scrollWheelZoom: false, zoomControl: false });
+        const map = L.map(containerRef.current, {
+          scrollWheelZoom: false,
+          zoomControl: false,
+          zoomAnimation: false,
+          fadeAnimation: false,
+          markerZoomAnimation: false,
+        });
         mapRef.current = map;
         L.control.zoom({ position: "topright" }).addTo(map);
         L.tileLayer(TILE_URL, { attribution: TILE_ATTR, subdomains: "abcd", maxZoom: 19 }).addTo(map);
         map.setView([56, -96], 3);
         setStatus("ready");
-        setTimeout(() => map.invalidateSize(), 0);
+        invalidateTimer = setTimeout(() => {
+          if (mapRef.current === map) map.invalidateSize();
+        }, 0);
       })
       .catch(() => {
         if (!cancelled) setStatus("error");
       });
     return () => {
       cancelled = true;
+      if (invalidateTimer) clearTimeout(invalidateTimer);
       try {
+        mapRef.current?.stop();
         mapRef.current?.remove();
       } catch {
         /* ignore */
@@ -90,9 +101,12 @@ export function FundMap({
     });
 
     markersRef.current = markers;
-    if (latlngs.length === 1) map.setView(latlngs[0], 12);
-    else if (latlngs.length > 1) map.fitBounds(latlngs, { padding: [44, 44], maxZoom: 12 });
-    setTimeout(() => map.invalidateSize(), 0);
+    if (latlngs.length === 1) map.setView(latlngs[0], 12, { animate: false });
+    else if (latlngs.length > 1) map.fitBounds(latlngs, { padding: [44, 44], maxZoom: 12, animate: false });
+    const invalidateTimer = setTimeout(() => {
+      if (mapRef.current === map) map.invalidateSize();
+    }, 0);
+    return () => clearTimeout(invalidateTimer);
   }, [status, properties]);
 
   useEffect(() => {
@@ -107,7 +121,7 @@ export function FundMap({
     });
     if (selectedId && map) {
       const p = properties.find((x) => x.id === selectedId);
-      if (p) map.setView([p.latitude, p.longitude], 14, { animate: true });
+      if (p) map.setView([p.latitude, p.longitude], 14, { animate: false });
     }
   }, [status, selectedId, properties]);
 
@@ -115,8 +129,8 @@ export function FundMap({
     const map = mapRef.current;
     if (!map || !properties.length) return;
     const latlngs = properties.map((p) => [p.latitude, p.longitude] as [number, number]);
-    if (latlngs.length === 1) map.setView(latlngs[0], 12);
-    else map.fitBounds(latlngs, { padding: [44, 44], maxZoom: 12 });
+    if (latlngs.length === 1) map.setView(latlngs[0], 12, { animate: false });
+    else map.fitBounds(latlngs, { padding: [44, 44], maxZoom: 12, animate: false });
   }
 
   const selected = properties.find((p) => p.id === selectedId) ?? null;

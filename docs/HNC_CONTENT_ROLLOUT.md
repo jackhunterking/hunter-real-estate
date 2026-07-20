@@ -1,4 +1,4 @@
-# Hunter North Capital controlled-content rollout
+# Hunter Advisory controlled-content rollout
 
 The application now reads public and authenticated fund screens from the server-side `api.published_offerings` repository. Static fund records are permitted only outside production when Supabase is not configured, or when `HNC_USE_FIXTURE_DATA=true` is explicitly set for local development. Production never falls back to fixtures.
 

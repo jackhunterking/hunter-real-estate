@@ -10,7 +10,7 @@ export const tr = {
     about: "Hakkımızda",
     services: "Hizmetler",
     mortgage: "Mortgage",
-    capital: "Capital",
+    capital: "Advisory",
     guides: "Rehberler",
     resources: "Kaynaklar",
     servicesMenu: {
@@ -66,10 +66,10 @@ export const tr = {
         cta: "Mortgage seçenekleri",
       },
       invest: {
-        tag: "Hunter North Capital",
+        tag: "Hunter Advisory",
         title: "Özel Piyasalar",
-        desc: "Yayımlanmış fonları ayrı Hunter North Capital platformunda inceleyin; süreç insan destekli ve lisanslı incelemeye tabidir.",
-        cta: "Hunter North Capital'a geçiş",
+        desc: "Kanada’daki özel gayrimenkul ve alternatif yatırım fırsatlarını kaynakları, riskleri ve dayanak varlıklarıyla inceleyin.",
+        cta: "Hunter Advisory’ye geçiş",
       },
     },
     guides: {
@@ -90,7 +90,7 @@ export const tr = {
   },
 
   capital: {
-    metaTitle: "Hunter North Capital, Kanada Özel Piyasa Erişimi",
+    metaTitle: "Hunter Advisory, Kanada Özel Piyasa Erişimi",
     metaDesc:
       "Ontario'da çoklu konut projeleri için operasyon ve geliştirme ortağı. Sermaye sizin, proje sizin, biz yürütme ekibinizyiz.",
     hero: {
@@ -177,7 +177,7 @@ export const tr = {
       cta: "WhatsApp ile Yazın",
     },
     compliance:
-      "Hunter North Capital, exempt-market ürünler ve Kanada çok konutlu yatırım seçenekleri hakkında eğitim, ön hazırlık ve lisanslı süreç koordinasyonu sağlar.",
+      "Hunter Advisory, exempt-market ürünler ve Kanada çok konutlu yatırım seçenekleri hakkında eğitim, ön hazırlık ve lisanslı süreç koordinasyonu sağlar.",
   },
 
   alici: {
@@ -236,15 +236,15 @@ export const tr = {
   },
 
   capitalTeaser: {
-    eyebrow: "Hunter North Capital",
-    title: "Kanada apartman portföylerini",
-    titleEm: "Türkçe anlayın.",
-    sub: "Toronto ve Istanbul arasında, exempt-market ürünleri, private REIT'ler ve gelir odaklı multifamily yatırım fırsatları için lisanslı süreç desteği.",
+    eyebrow: "Hunter Advisory",
+    title: "Kanada’daki özel gayrimenkul ve alternatif yatırımlara",
+    titleEm: "daha şeffaf bir bakış.",
+    sub: "Fonları, riskleri, dayanak varlıkları ve kaynak belgeleri Türkçe inceleyin; sonraki adımlar ilgili lisanslı tarafların kontrolündeki süreçte ilerler.",
     path1Label: "Legacy / Epiphany",
     path1Min: "Western Canada REIT",
     path2Label: "Lankin Apartment REIT",
     path2Min: "Canadian multifamily",
-    cta: "Hunter North Capital'ı Keşfedin",
+    cta: "Hunter Advisory’yi Keşfedin",
   },
 
   mortgage: {
@@ -485,10 +485,10 @@ export const tr = {
   },
 
   capitalApp: {
-    brand: { name: "Hunter North Capital", tagline: "Kanada özel piyasalarına kurumsal erişim" },
+    brand: { name: "Hunter Advisory", tagline: "Kanada’daki özel gayrimenkul ve alternatif yatırımlara daha şeffaf bir bakış" },
     nav: {
       dashboard: "Fırsatlar",
-      offerings: "Tüm Fonlar",
+      offerings: "Keşfet",
       map: "Harita",
       learn: "Öğren",
       process: "Süreç",
@@ -515,7 +515,7 @@ export const tr = {
       properties: "mülk",
     },
     dashboard: {
-      eyebrow: "Yatırım Fırsatları",
+      eyebrow: "Keşfet",
       title: "Gerçek binalardan oluşan bir portföyün ortağı olun",
       intro:
         "Her fon, gerçek apartman binaları ve topluluklardan oluşan bir portföydür. Bir fon seçin, portföyü keşfedin, dilediğiniz kadar derine inin.",
@@ -792,14 +792,14 @@ export const tr = {
         { title: "Strateji ve mülkleri inceleyin", text: "Fon düzeyindeki tezden altındaki binaların ve pazarların doğrulanmış örneklerine geçin." },
         { title: "Pay sınıflarını karşılaştırın", text: "Minimumları, hesap uygunluğunu, dağıtımları, likiditeyi ve her koşulun kaynak tarihini anlayın." },
         { title: "Yatırımcı hazırlığını tamamlayın", text: "Kısa bir Ontario veya Türkiye yolunu yanıtlayın. Sonuç ön niteliktedir, asla onay değildir." },
-        { title: "Hunter North Capital ile görüşün", text: "Hedefleri, soruları, dil tercihini ve bir sonraki lisanslı adımı konuşun." },
+        { title: "Hunter Advisory ile görüşün", text: "Hedefleri, soruları, dil tercihini ve bir sonraki lisanslı adımı konuşun." },
         { title: "Lisanslı incelemeyi tamamlayın", text: "Denetleyen süreç kimliği, muafiyet uygunluğunu, KYC, KYP ve uygunluğu doğrular." },
         { title: "Resmi belgeleri inceleyin", text: "Belirleyici teklif belgelerini, risk beyanlarını ve bağımsız tavsiyeyi okuyun." },
         { title: "Onaylı süreçle abone olun", text: "Yalnızca inceleme sonrası, ilgili aracı veya ihraççı akışıyla belgeleri imzalayın ve fonlayın." },
       ],
       ctaTitle: "Kâğıt işiyle değil, fırsatla başlayın.",
       ctaText: "Anlamak istediğiniz fonu seçin. Seçiminiz hazırlık profiline taşınır.",
-      ctaButton: "Fonları keşfet",
+      ctaButton: "Keşfet",
     },
     profile: {
       eyebrow: "Yatırımcı Hazırlık Profili",
@@ -820,7 +820,7 @@ export const tr = {
       submit: "Profili incelemeye gönder",
       submitting: "Gönderiliyor…",
       error: "Gönderilemedi. Lütfen formu kontrol edip tekrar deneyin.",
-      contactConsent: "Hunter North Capital'ın bu profil hakkında benimle iletişime geçmesini kabul ediyorum.",
+      contactConsent: "Hunter Advisory’nin bu profil hakkında benimle iletişime geçmesini kabul ediyorum.",
       accuracyConsent: "Bunun ön değerlendirme olduğunu, onay veya yatırım talimatı olmadığını anlıyorum.",
       labels: {
         shareClass: "Pay sınıfı",
@@ -889,7 +889,7 @@ export const en: Dictionary = {
     about: "About",
     services: "Services",
     mortgage: "Mortgage",
-    capital: "Capital",
+    capital: "Advisory",
     guides: "Guides",
     resources: "Resources",
     servicesMenu: {
@@ -945,10 +945,10 @@ export const en: Dictionary = {
         cta: "Mortgage options",
       },
       invest: {
-        tag: "Hunter North Capital",
+        tag: "Hunter Advisory",
         title: "Private Markets",
-        desc: "Review published funds on the separate Hunter North Capital platform; the process is human-assisted and subject to licensed review.",
-        cta: "Continue to Hunter North Capital",
+        desc: "Explore Canadian private real estate and alternative investment opportunities with their sources, risks, and underlying assets.",
+        cta: "Continue to Hunter Advisory",
       },
     },
     guides: {
@@ -969,7 +969,7 @@ export const en: Dictionary = {
   },
 
   capital: {
-    metaTitle: "Hunter North Capital, Canadian Private Markets Access",
+    metaTitle: "Hunter Advisory, Canadian Private Markets Access",
     metaDesc:
       "Operations and development partner for multifamily projects in Ontario. The capital is yours, the project is yours, we're your execution team.",
     hero: {
@@ -1056,7 +1056,7 @@ export const en: Dictionary = {
       cta: "Message on WhatsApp",
     },
     compliance:
-      "Hunter North Capital provides education, preliminary readiness, and licensed-process coordination for exempt-market products and Canadian multifamily investment opportunities.",
+      "Hunter Advisory provides education, preliminary readiness, and licensed-process coordination for exempt-market products and Canadian multifamily investment opportunities.",
   },
 
   alici: {
@@ -1115,15 +1115,15 @@ export const en: Dictionary = {
   },
 
   capitalTeaser: {
-    eyebrow: "Hunter North Capital",
-    title: "Understand Canadian apartment portfolios",
-    titleEm: "in Turkish.",
-    sub: "Toronto and Istanbul connected for licensed-process support around exempt-market products, private REITs, and income-focused multifamily opportunities.",
+    eyebrow: "Hunter Advisory",
+    title: "A clearer view of Canadian private real estate and",
+    titleEm: "alternative investments.",
+    sub: "Review funds, risks, underlying assets, and source documents in a bilingual experience; next steps proceed through the applicable licensed parties.",
     path1Label: "Legacy / Epiphany",
     path1Min: "Western Canada REIT",
     path2Label: "Lankin Apartment REIT",
     path2Min: "Canadian multifamily",
-    cta: "Explore Hunter North Capital",
+    cta: "Explore Hunter Advisory",
   },
 
   mortgage: {
@@ -1364,10 +1364,10 @@ export const en: Dictionary = {
   },
 
   capitalApp: {
-    brand: { name: "Hunter North Capital", tagline: "Institutional access to Canadian private markets" },
+    brand: { name: "Hunter Advisory", tagline: "A clearer view of Canadian private real estate and alternative investments" },
     nav: {
       dashboard: "Opportunities",
-      offerings: "All Funds",
+      offerings: "Discover",
       map: "Map",
       learn: "Learn",
       process: "Process",
@@ -1394,7 +1394,7 @@ export const en: Dictionary = {
       properties: "properties",
     },
     dashboard: {
-      eyebrow: "Investment Opportunities",
+      eyebrow: "Discover",
       title: "Own part of a portfolio of real buildings",
       intro:
         "Each fund is a portfolio of real apartment buildings and communities. Pick a fund, explore the portfolio, and go as deep as you like.",
@@ -1671,14 +1671,14 @@ export const en: Dictionary = {
         { title: "Review strategy and properties", text: "Move from the fund-level thesis to verified examples of the buildings and markets underneath it." },
         { title: "Compare share classes", text: "Understand minimums, account eligibility, distributions, liquidity, and the source date for every material term." },
         { title: "Complete investor readiness", text: "Answer a short Ontario or Turkey path. The result is preliminary and never an approval." },
-        { title: "Speak with Hunter North Capital", text: "Discuss objectives, questions, language preference, and the next licensed step." },
+        { title: "Speak with Hunter Advisory", text: "Discuss objectives, questions, language preference, and the next licensed step." },
         { title: "Complete licensed review", text: "The supervising process verifies identity, exemption eligibility, KYC, KYP, and suitability." },
         { title: "Review official documents", text: "Read the controlling offering documents, risk acknowledgements, and independent advice." },
         { title: "Subscribe through the approved process", text: "Only after review, execute documents and fund through the applicable dealer or issuer workflow." },
       ],
       ctaTitle: "Begin with the opportunity, not the paperwork.",
       ctaText: "Choose the fund you want to understand. Your selection carries into the readiness profile.",
-      ctaButton: "Explore funds",
+      ctaButton: "Discover",
     },
     profile: {
       eyebrow: "Investor readiness profile",
@@ -1699,7 +1699,7 @@ export const en: Dictionary = {
       submit: "Submit for review",
       submitting: "Submitting…",
       error: "Unable to submit. Please review the form and try again.",
-      contactConsent: "I consent to Hunter North Capital contacting me about this profile.",
+      contactConsent: "I consent to Hunter Advisory contacting me about this profile.",
       accuracyConsent: "I understand this is preliminary, not an approval or investment instruction.",
       labels: {
         shareClass: "Share class",
