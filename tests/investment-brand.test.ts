@@ -15,7 +15,7 @@ test("investment brand configuration carries the approved bilingual dealer relat
   assert.match(brand, /Dealing Representative/);
   assert.match(brand, /Parvis Investment Services Inc\./);
   assert.match(brand, /nrdNumber: "74000"/);
-  assert.match(brand, /https:\/\/www\.parvisinvest\.com\/legal\/disclosures/);
+  assert.doesNotMatch(brand, /parvisinvest\.com/);
   assert.match(brand, /compensationDisclosure: \{ en: "", tr: "" \}/);
 });
 
@@ -27,6 +27,7 @@ test("all four disclosure levels use the shared bilingual source", () => {
   assert.match(component, /copy\.transactionalDisclosure/);
   assert.match(component, /copy\.legalParagraphs/);
   assert.match(component, /PARVIS_RELATIONSHIP\.compensationDisclosure/);
+  assert.doesNotMatch(component, /<(?:a|Link)\b/);
 });
 
 test("Parvis co-brand assets are local and auth emails use the minority lockup", () => {
@@ -41,7 +42,8 @@ test("Parvis co-brand assets are local and auth emails use the minority lockup",
     assert.match(html, /PARVIS/);
     assert.doesNotMatch(html, /<img/);
     assert.match(html, /NRD #74000/);
-    assert.match(html, /www\.parvisinvest\.com\/legal\/disclosures/);
+    assert.match(html, /Parvis disclosures/);
+    assert.doesNotMatch(html, /parvisinvest\.com/);
     assert.doesNotMatch(html, /Hunter Advisory|Hunter North Capital/);
     // Confirmation links must carry a real /auth/confirm path, never a bare
     // Site URL with a dangling &token_hash (the malformed-link regression).

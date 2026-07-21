@@ -51,7 +51,7 @@ function shell(params: {
        <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16);color:#9eabb3;font-size:8px;letter-spacing:.1em;text-transform:uppercase">Powered by <span style="margin-left:7px;color:#e7ecef;font-size:12px;font-weight:700;letter-spacing:.16em">PARVIS</span></div>`
     : "Hunter Group";
   const footer = params.investmentBrand
-    ? `${params.language === "tr" ? "Menkul kıymet hizmetleri Parvis Investment Services Inc. aracılığıyla sunulur" : "Securities services through Parvis Investment Services Inc."} · NRD #74000.<br><a href="${siteUrl}/hunter-advisory/legal" style="color:#315f79">${investmentName}</a> · <a href="https://www.parvisinvest.com/legal/disclosures" style="color:#315f79">${params.language === "tr" ? "Parvis açıklamaları" : "Parvis disclosures"}</a>`
+    ? `${params.language === "tr" ? "Menkul kıymet hizmetleri Parvis Investment Services Inc. aracılığıyla sunulur" : "Securities services through Parvis Investment Services Inc."} · NRD #74000.<br>${investmentName} · ${params.language === "tr" ? "Parvis açıklamaları" : "Parvis disclosures"}`
     : "Questions? Reply to this email or contact hello@jackhunter.com.";
   const html = `<!doctype html>
 <html lang="${params.language}">
@@ -73,7 +73,7 @@ function shell(params: {
     </td></tr>
   </table>
 </body></html>`;
-  const text = `${params.investmentBrand ? `${investmentName}\nPowered by Parvis\n\n` : ""}${params.eyebrow}\n\n${params.title}\n\n${params.body}\n\n${params.actionLabel}: ${params.actionUrl}${params.investmentBrand ? "\n\nSecurities services through Parvis Investment Services Inc. · NRD #74000.\nhttps://www.parvisinvest.com/legal/disclosures" : ""}`;
+  const text = `${params.investmentBrand ? `${investmentName}\nPowered by Parvis\n\n` : ""}${params.eyebrow}\n\n${params.title}\n\n${params.body}\n\n${params.actionLabel}: ${params.actionUrl}${params.investmentBrand ? "\n\nSecurities services through Parvis Investment Services Inc. · NRD #74000.\nParvis disclosures" : ""}`;
   return { html, text };
 }
 

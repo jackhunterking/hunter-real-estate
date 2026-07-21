@@ -94,8 +94,6 @@ const CANADIAN_REGIONS = [
   { code: "YT", en: "Yukon", tr: "Yukon" },
 ] as const;
 
-const PARVIS_GUIDE_URL = "https://www.parvisinvest.com/insights/what-is-a-non-accredited-investor";
-
 const COPY = {
   en: {
     eyebrow: "Professional resource",
@@ -932,7 +930,7 @@ function QualificationGuide({ open, onOpenChange, copy }: { open: boolean; onOpe
       <p className="rounded-md border border-[#e2e7ea] bg-[#f8fafb] p-4 text-xs leading-5 text-[#5d717d]">{copy.guideNote}</p>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[#e4e8eb] pt-4 text-xs">
         <span className="font-semibold text-[#425762]">{copy.sources}:</span>
-        <a href={PARVIS_GUIDE_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-[#0a4b72]">{copy.parvis}<ExternalLink className="size-3" /></a>
+        <span className="text-[#5d717d]">{copy.parvis}</span>
         <a href={READINESS_RULESET.sources[0]} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-[#0a4b72]">{copy.instrument}<ExternalLink className="size-3" /></a>
         <a href={READINESS_RULESET.sources[1]} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-[#0a4b72]">{copy.policy}<ExternalLink className="size-3" /></a>
       </div>

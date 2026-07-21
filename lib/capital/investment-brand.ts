@@ -10,7 +10,6 @@ export const PARVIS_RELATIONSHIP = {
   representativeName: "Jack Hunter",
   representativeCategory: "Dealing Representative",
   representativeJurisdiction: "Ontario",
-  disclosuresUrl: "https://www.parvisinvest.com/legal/disclosures",
   // Publish only exact language supplied by Parvis compliance.
   compensationDisclosure: { en: "", tr: "" } satisfies { tr: string; en: string },
 } as const;

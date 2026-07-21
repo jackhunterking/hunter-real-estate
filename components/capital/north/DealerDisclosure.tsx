@@ -1,10 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { tx } from "@/lib/i18n/localize";
 import {
-  INVESTMENT_BASE_PATH,
   PARVIS_RELATIONSHIP,
   investmentBrandFor,
 } from "@/lib/capital/investment-brand";
@@ -23,7 +21,6 @@ export function DealerDisclosure({
   const { lang } = useLang();
   const copy = investmentBrandFor(lang);
   const textClass = tone === "dark" ? "text-white/62" : "text-[#64737d]";
-  const linkClass = tone === "dark" ? "text-[#e2ca86] hover:text-white" : "text-[#0a4b72] hover:text-[#072f49]";
   const text = level === "micro"
     ? copy.microDisclosure
     : level === "transactional"
@@ -41,9 +38,9 @@ export function DealerDisclosure({
           {copy.legalParagraphs.map((paragraph: string) => <p key={paragraph}>{paragraph}</p>)}
           {compensation && <p>{compensation}</p>}
         </div>
-        <a href={PARVIS_RELATIONSHIP.disclosuresUrl} target="_blank" rel="noreferrer" className="mt-6 inline-flex text-sm font-semibold text-[#0a4b72] hover:underline">
+        <p className="mt-6 text-sm text-[#64737d]">
           {copy.parvisLink}
-        </a>
+        </p>
       </section>
     );
   }
@@ -51,9 +48,9 @@ export function DealerDisclosure({
   return (
     <aside className={`text-xs leading-5 ${textClass} ${className}`} aria-label={copy.legalTitle}>
       <p>{text}</p>
-      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-semibold">
-        <Link href={`${INVESTMENT_BASE_PATH}/legal`} className={linkClass}>{copy.disclosuresLink}</Link>
-        <a href={PARVIS_RELATIONSHIP.disclosuresUrl} target="_blank" rel="noreferrer" className={linkClass}>{copy.parvisLink}</a>
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-current">
+        <span>{copy.disclosuresLink}</span>
+        <span>{copy.parvisLink}</span>
       </div>
     </aside>
   );

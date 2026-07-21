@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import {
   INVESTMENT_BASE_PATH,
-  PARVIS_RELATIONSHIP,
   investmentBrandFor,
 } from "@/lib/capital/investment-brand";
 
@@ -24,11 +23,8 @@ export function ParvisCoBrand({
   const { lang } = useLang();
   const copy = investmentBrandFor(lang);
   return (
-    <a
-      href={PARVIS_RELATIONSHIP.disclosuresUrl}
-      target="_blank"
-      rel="noreferrer"
-      aria-label={`${copy.poweredBy} ${PARVIS_RELATIONSHIP.brandName} · ${copy.parvisLink}`}
+    <span
+      aria-label={`${copy.poweredBy} Parvis`}
       className={`inline-flex shrink-0 items-center gap-2 ${compact ? "lg:size-9 lg:justify-center lg:gap-0 lg:overflow-hidden lg:!p-0" : ""} ${className}`}
     >
       <span className={`text-[7px] font-bold uppercase tracking-[0.13em] ${dark ? "text-[#71808a]" : "text-white/48"} ${compact ? "lg:hidden" : ""}`}>
@@ -44,7 +40,7 @@ export function ParvisCoBrand({
           className={`absolute left-0 top-0 h-full w-auto max-w-none ${dark ? "" : "brightness-0 invert"}`}
         />
       </span>
-    </a>
+    </span>
   );
 }
 
