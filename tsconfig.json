@@ -24,6 +24,6 @@
     "node_modules",
     ".next/types/**/* 2.ts",
     ".next/types/app/api/hnc-portal/**",
-    ".next/types/app/hunter-north-capital/api/portal/**"
+    ".next/types/app/hunter-advisory/api/portal/**"
   ]
 }

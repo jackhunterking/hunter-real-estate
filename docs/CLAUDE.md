@@ -14,7 +14,7 @@ Folding the old Kredibaba mortgage site into this one as a new **Mortgage** tab 
 
 - `app/page.tsx` — single-page homepage composed of section components
 - `components/` — `Nav`, `Footer`, `HomeHero`, `ServicesSection`, `CapitalTeaser`, `ContactSection`, etc.
-- `/hunter-advisory` — canonical Hunter & Hunter Investment Advisors public and portal path; the `app/hunter-north-capital/` directory remains the internal implementation path for migration compatibility
+- `/hunter-advisory` — canonical Hunter & Hunter Investment Advisors public and portal path, implemented directly by `app/hunter-advisory/`
 - `app/rehber/alici`, `app/rehber/satici` — guide lead-capture funnels (+ `/tesekkur`)
 - `app/api/lead-capture/route.ts` — Resend email handler. **Reuse this for Mortgage leads.**
 - i18n: copy is keyed via a `t.*` translation object (see `Nav.tsx`). Match this pattern; do not hardcode Turkish strings in components.

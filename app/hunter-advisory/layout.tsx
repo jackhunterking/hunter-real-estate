@@ -19,6 +19,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HunterNorthLayout({ children }: { children: React.ReactNode }) {
+export default function HunterAdvisoryLayout({ children }: { children: React.ReactNode }) {
   return <div className="hnc-root min-h-screen bg-[#f4f6f8]">{children}</div>;
 }

@@ -10,9 +10,7 @@ function isHunterAdvisoryRoute(pathname: string, hostname: string) {
   return (
     HUNTER_ADVISORY_HOSTS.has(hostname.toLowerCase()) ||
     pathname === "/hunter-advisory" ||
-    pathname.startsWith("/hunter-advisory/") ||
-    pathname === "/hunter-north-capital" ||
-    pathname.startsWith("/hunter-north-capital/")
+    pathname.startsWith("/hunter-advisory/")
   );
 }
 

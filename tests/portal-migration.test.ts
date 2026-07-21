@@ -22,6 +22,14 @@ const partnerRedesignMigration = readFileSync(
   "utf8",
 );
 
+test("advisory application uses the canonical route tree only", () => {
+  assert.equal(existsSync(resolve(root, "app/hunter-advisory/page.tsx")), true);
+  assert.equal(existsSync(resolve(root, "app/hunter-north-capital")), false);
+  const middleware = readFileSync(resolve(root, "middleware.ts"), "utf8");
+  assert.match(middleware, /const ADVISORY_PREFIX = "\/hunter-advisory"/);
+  assert.doesNotMatch(middleware, /hunter-north-capital/);
+});
+
 test("every exposed privacy-domain table enables row level security", () => {
   const tables = [
     "profiles",
@@ -141,7 +149,7 @@ test("firm access never becomes referral ownership permission", () => {
   assert.match(referralPolicy, /owner_user_id = \(select auth\.uid\(\)\)/);
   assert.doesNotMatch(referralPolicy, /has_org_role/);
   assert.equal(
-    existsSync(resolve(root, "app/hunter-north-capital/(portal)/firm/clients")),
+    existsSync(resolve(root, "app/hunter-advisory/(portal)/firm/clients")),
     false,
   );
 });

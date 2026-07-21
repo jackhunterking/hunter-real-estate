@@ -200,6 +200,42 @@ export type OfferingBundle = Offering & {
   documents: OfferingDocument[];
 };
 
+/**
+ * Deliberately small projection used by the unauthenticated marketing page.
+ * Full offering bundles must stay inside authenticated portal surfaces.
+ */
+export type PublicOfferingPropertyPreview = {
+  id: string;
+  name: LocalizedText;
+  city: string;
+  province: string;
+  latitude: number;
+  longitude: number;
+  assetClassId: string;
+  status: Property["status"];
+  media?: Pick<MediaSet, "card" | "gallery">;
+};
+
+export type PublicOfferingPreview = {
+  id: string;
+  slug: string;
+  shortName: LocalizedText;
+  managerName: LocalizedText;
+  summary: LocalizedText;
+  status: Offering["status"];
+  media?: Pick<MediaSet, "card" | "banner" | "logo">;
+  strategyIds: string[];
+  assetClassIds: string[];
+  regionIds: string[];
+  minimumInvestment?: SourcedValue<number>;
+  targetDistribution?: SourcedValue<string>;
+  portfolioFacts: SourcedValue<string>[];
+  aum?: SourcedValue<string>;
+  term?: SourcedValue<string>;
+  properties: PublicOfferingPropertyPreview[];
+  verifiedAt: string;
+};
+
 export type PartnerTier = "associate" | "principal" | "managingPartner";
 export type PartnerCommissionAllocationPercentage = 30 | 40 | 50;
 

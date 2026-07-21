@@ -22,7 +22,7 @@ This repository is now one deployable app at the repo root. It contains the real
 - `/mortgage/araclar` - redirects to `/mortgage`
 - `/investing` - bridge from the Jack Hunter site to Hunter & Hunter Investment Advisors
 - `/hunter-advisory` - canonical Hunter & Hunter Investment Advisors public and portal experience
-- `/hunter-north-capital`, `/hunter-group-capital`, and `/hunter-x-capital` - legacy aliases or redirects
+- `/hunter-group-capital` and `/hunter-x-capital` - legacy redirects
 - `/gizlilik`, `/kullanim-kosullari`, `/reklam-aciklamasi` - legal pages
 
 ## Local Development

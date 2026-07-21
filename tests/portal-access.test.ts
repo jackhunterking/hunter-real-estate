@@ -106,9 +106,9 @@ test("firm records remain internal and firm administrators receive no firm works
   const firmAdmin = context("firm-admin");
   const directory = visibleMemberDirectory(firmAdmin);
   assert.deepEqual(directory, []);
-  assert.equal(canAccessPath(firmAdmin, "/hunter-north-capital/firm/members"), true);
-  assert.equal(canAccessPath(firmAdmin, "/hunter-north-capital/clients"), false);
-  assert.equal(canAccessPath(firmAdmin, "/hunter-north-capital/partner-program"), false);
+  assert.equal(canAccessPath(firmAdmin, "/hunter-advisory/firm/members"), true);
+  assert.equal(canAccessPath(firmAdmin, "/hunter-advisory/clients"), false);
+  assert.equal(canAccessPath(firmAdmin, "/hunter-advisory/partner-program"), false);
 });
 
 test("commission visibility follows the beneficiary instead of the firm association", () => {
@@ -136,23 +136,23 @@ test("commission visibility follows the beneficiary instead of the firm associat
 test("Hunter & Hunter Investment Advisors administrators start in Operations and require separate investing or professional approval", () => {
   const admin = context("hnc-admin");
   assert.deepEqual(availableWorkspaces(admin), ["operations"]);
-  assert.equal(canAccessPath(admin, "/hunter-north-capital/admin/license-verifications"), true);
-  assert.equal(canAccessPath(admin, "/hunter-north-capital/operations"), true);
-  assert.equal(canAccessPath(admin, "/hunter-north-capital/portfolio"), false);
-  assert.equal(canAccessPath(admin, "/hunter-north-capital/clients"), false);
+  assert.equal(canAccessPath(admin, "/hunter-advisory/admin/license-verifications"), true);
+  assert.equal(canAccessPath(admin, "/hunter-advisory/operations"), true);
+  assert.equal(canAccessPath(admin, "/hunter-advisory/portfolio"), false);
+  assert.equal(canAccessPath(admin, "/hunter-advisory/clients"), false);
 });
 
 test("investor qualification is available to verified investors and active professionals", () => {
-  assert.equal(canAccessPath(context("partner"), "/hunter-north-capital/resources/investor-readiness"), true);
-  assert.equal(canAccessPath(context("investor"), "/hunter-north-capital/resources/investor-readiness"), true);
-  assert.equal(canAccessPath(context("applicant"), "/hunter-north-capital/resources/investor-readiness"), true);
-  assert.equal(canAccessPath(context("hnc-admin"), "/hunter-north-capital/resources/investor-readiness"), false);
+  assert.equal(canAccessPath(context("partner"), "/hunter-advisory/resources/investor-readiness"), true);
+  assert.equal(canAccessPath(context("investor"), "/hunter-advisory/resources/investor-readiness"), true);
+  assert.equal(canAccessPath(context("applicant"), "/hunter-advisory/resources/investor-readiness"), true);
+  assert.equal(canAccessPath(context("hnc-admin"), "/hunter-advisory/resources/investor-readiness"), false);
 });
 
 test("all resource routes are shared by investors and active professionals", () => {
-  assert.equal(canAccessPath(context("investor"), "/hunter-north-capital/resources/learning"), true);
-  assert.equal(canAccessPath(context("partner"), "/hunter-north-capital/resources/learning/core-strategies"), true);
-  assert.equal(canAccessPath(context("hnc-admin"), "/hunter-north-capital/resources/learning"), false);
+  assert.equal(canAccessPath(context("investor"), "/hunter-advisory/resources/learning"), true);
+  assert.equal(canAccessPath(context("partner"), "/hunter-advisory/resources/learning/core-strategies"), true);
+  assert.equal(canAccessPath(context("hnc-admin"), "/hunter-advisory/resources/learning"), false);
 });
 
 test("registry surnames retain submitted text while duplicate matching uses Turkish normalization", () => {

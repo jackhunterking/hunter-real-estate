@@ -9,7 +9,7 @@ import {
   investmentBrandFor,
 } from "@/lib/capital/investment-brand";
 
-/** Canonical public path. The legacy HNC implementation path remains an internal alias. */
+/** Canonical public path for the advisory application. */
 export const NORTH_BASE = INVESTMENT_BASE_PATH;
 
 export function ParvisCoBrand({

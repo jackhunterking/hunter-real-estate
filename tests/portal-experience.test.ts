@@ -8,14 +8,14 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (path: string) => readFileSync(resolve(root, path), "utf8");
 
 test("fund detail exposes Performance immediately after Overview", () => {
-  const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
   const tabIds = [...detail.matchAll(/id: "(overview|performance|buildings|documents)"/g)].map((match) => match[1]);
   assert.deepEqual(tabIds, ["overview", "performance", "buildings", "documents"]);
   assert.doesNotMatch(detail, /id: "(?:money|risk|contact)"/);
 });
 
 test("historical returns live in a dedicated compact Performance view", () => {
-  const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
   const overview = detail.match(/function Overview[\s\S]*?\n}\n\ntype LocalizedPerformanceRow/)?.[0] ?? "";
   const performance = detail.match(/function Performance\([\s\S]*?\n}\n\nfunction Buildings/)?.[0] ?? "";
 
@@ -29,7 +29,7 @@ test("historical returns live in a dedicated compact Performance view", () => {
 });
 
 test("fund terms remain verbatim and early exit conditions live in Overview", () => {
-  const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
   assert.match(detail, /fundDefinedFacts/);
   assert.match(detail, /tx\(fact\.value, lang\)/);
   assert.match(detail, /tx\(share\?\.redemptionTerms, lang\)/);
@@ -38,7 +38,7 @@ test("fund terms remain verbatim and early exit conditions live in Overview", ()
 });
 
 test("fund overview replaces oversized metric cards with a lean, trust-oriented flow", () => {
-  const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
   const overview = detail.match(/function Overview[\s\S]*?\n}\n\ntype LocalizedPerformanceRow/)?.[0] ?? "";
 
   assert.doesNotMatch(overview, /summaryCards|<StatCard/);
@@ -48,7 +48,7 @@ test("fund overview replaces oversized metric cards with a lean, trust-oriented 
 });
 
 test("fund manager context appears immediately before independent verification", () => {
-  const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
   const overview = detail.match(/function Overview[\s\S]*?\n}\n\ntype LocalizedPerformanceRow/)?.[0] ?? "";
   const managerIndex = overview.indexOf("<SectionTitle title={c.aboutManager}");
   const trustIndex = overview.indexOf("<TrustStrip");
@@ -62,8 +62,8 @@ test("fund manager context appears immediately before independent verification",
 
 test("fund cards keep financial and portfolio facts on detail pages only", () => {
   const cardSources = [
-    read("app/hunter-north-capital/(portal)/products/ProductsExplorer.tsx"),
-    read("app/hunter-north-capital/(portal)/dashboard/DashboardView.tsx"),
+    read("app/hunter-advisory/(portal)/products/ProductsExplorer.tsx"),
+    read("app/hunter-advisory/(portal)/dashboard/DashboardView.tsx"),
     read("components/capital/OfferingCard.tsx"),
   ];
 
@@ -74,13 +74,13 @@ test("fund cards keep financial and portfolio facts on detail pages only", () =>
     );
   }
 
-  const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
   assert.match(detail, /minimumInvestment/);
   assert.match(detail, /targetReturn/);
 });
 
 test("Discover cards show the exact offering name, company, and an audited trust cue (no categories)", () => {
-  const discover = read("app/hunter-north-capital/(portal)/products/ProductsExplorer.tsx");
+  const discover = read("app/hunter-advisory/(portal)/products/ProductsExplorer.tsx");
   assert.match(discover, /tx\(offering\.name, lang\)/);
   assert.match(discover, /tx\(offering\.manager\.name, lang\)/);
   // Discover is deliberately uncategorized — no strategy/type badge or filter.
@@ -89,9 +89,16 @@ test("Discover cards show the exact offering name, company, and an audited trust
   assert.doesNotMatch(discover, /offering\.fundType|issuerLegalType|Vehicle|Yatırım aracı/);
 });
 
-test("public landing does not load fund data and global documents route returns to funds", () => {
-  assert.doesNotMatch(read("app/hunter-north-capital/page.tsx"), /getPublishedOfferings/);
-  assert.match(read("app/hunter-north-capital/(portal)/documents/page.tsx"), /hunter-advisory\/funds/);
+test("public landing receives only approved offering previews and global documents route returns to funds", () => {
+  const page = read("app/hunter-advisory/page.tsx");
+  const landing = read("components/capital/north/PublicLanding.tsx");
+  const projection = read("lib/capital/public-preview.ts");
+  assert.match(page, /buildPublicOfferingPreviews\(await getPublishedOfferings\(\)\)/);
+  assert.match(page, /<PublicLanding offerings=\{offerings\}/);
+  assert.doesNotMatch(landing, /getPublishedOfferings|OfferingBundle|repository-server/);
+  assert.match(projection, /approval === "approved-public"/);
+  assert.doesNotMatch(projection, /targetReturn|trailingReturns|documents|risks|serviceProviders|complianceProfile/);
+  assert.match(read("app/hunter-advisory/(portal)/documents/page.tsx"), /hunter-advisory\/funds/);
 });
 
 test("profile is a permanent sidebar destination instead of an account-popover action", () => {
@@ -126,7 +133,7 @@ test("partner payment page uses payment terminology in both languages", () => {
 
 test("account view is shared by the sidebar and qualification tool", () => {
   const provider = read("components/capital/north/PortalAccessProvider.tsx");
-  const readiness = read("app/hunter-north-capital/(portal)/resources/investor-readiness/InvestorReadinessTool.tsx");
+  const readiness = read("app/hunter-advisory/(portal)/resources/investor-readiness/InvestorReadinessTool.tsx");
   assert.match(provider, /accountView: PortalAccountView/);
   assert.match(provider, /hnc-account-view/);
   assert.match(readiness, /accountView === "professional"/);
@@ -144,7 +151,7 @@ test("professional account view remains active across personal investing routes"
 });
 
 test("active professionals retain personal investment actions in Discover", () => {
-  const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
   assert.match(detail, /const investor = canUseWorkspace\(context, "investor"\)/);
   assert.match(detail, /const professional = accountView === "professional"/);
   assert.match(detail, /\{investor && <InvestmentRequestButton/);
@@ -167,11 +174,11 @@ test("learning centre ships a bilingual sourced flagship guide", () => {
 
 test("legacy professional profile routes redirect into the unified profile", () => {
   assert.match(
-    read("app/hunter-north-capital/(portal)/partner/apply/page.tsx"),
+    read("app/hunter-advisory/(portal)/partner/apply/page.tsx"),
     /profile\?apply=1#professional-access/,
   );
   assert.match(
-    read("app/hunter-north-capital/(portal)/partner-program/page.tsx"),
+    read("app/hunter-advisory/(portal)/partner-program/page.tsx"),
     /profile#professional-access/,
   );
 });
@@ -205,7 +212,7 @@ test("unified profile uses an account workspace and state-aware modal profession
 });
 
 test("fund pages show only the published gross schedule to active professionals", () => {
-  const detail = read("app/hunter-north-capital/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
   const route = read("app/api/hnc-fund-commission-schedules/route.ts");
   assert.match(detail, /usePublishedFundCommissionValue\(offering\.id, professional, lang\)/);
   assert.match(detail, /if \(professional && commission\) facts\.push\(\{ label: c\.commission, value: commission \}\)/);
