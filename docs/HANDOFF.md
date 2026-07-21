@@ -6,7 +6,7 @@ Last updated: July 18, 2026
 
 - Canonical repository: `https://github.com/jackhunterking/hunter-real-estate.git`
 - Working branch: `main`
-- Hunter & Hunter Investment Advisory is the public brand for the Canadian private-real-estate and alternatives experience. `/hunter-advisory` is canonical; legacy Capital/Hunter North paths are compatibility redirects or internal implementation paths.
+- Hunter & Hunter Investment Advisors is the public brand for the Canadian private-real-estate and alternatives experience. `/hunter-advisory` is canonical; legacy Capital/Hunter North paths are compatibility redirects or internal implementation paths.
 - The legacy deletion manifest remains review-only. Do not delete its candidates until they are explicitly approved.
 
 ## Continue from another computer

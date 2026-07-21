@@ -249,23 +249,23 @@ host = "smtp.resend.com"
 port = 465
 user = "resend"
 pass = "env(RESEND_SUPABASE_AUTH_API_KEY)"
-admin_email = "auth@updates.hunterhunteradvisors.com"
+admin_email = "auth@noreply.hunterhunteradvisors.com"
 sender_name = "Hunter & Hunter Account Security"
 
 [auth.email.template.invite]
-subject = "Your Hunter & Hunter Investment Advisory invitation"
+subject = "Your Hunter & Hunter Investment Advisors invitation"
 content_path = "./supabase/templates/invite.html"
 
 [auth.email.template.confirmation]
-subject = "Confirm your Hunter & Hunter Investment Advisory account"
+subject = "Confirm your Hunter & Hunter Investment Advisors account"
 content_path = "./supabase/templates/confirmation.html"
 
 [auth.email.template.recovery]
-subject = "Reset your Hunter & Hunter Investment Advisory password"
+subject = "Reset your Hunter & Hunter Investment Advisors password"
 content_path = "./supabase/templates/recovery.html"
 
 [auth.email.template.email_change]
-subject = "Confirm your new Hunter & Hunter Investment Advisory email"
+subject = "Confirm your new Hunter & Hunter Investment Advisors email"
 content_path = "./supabase/templates/email-change.html"
 
 [auth.email.notification.password_changed]

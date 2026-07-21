@@ -17,9 +17,9 @@ export const PARVIS_RELATIONSHIP = {
 
 export const INVESTMENT_BRAND = {
   en: {
-    name: "Hunter & Hunter Investment Advisory",
+    name: "Hunter & Hunter Investment Advisors",
     primary: "Hunter & Hunter",
-    descriptor: "Investment Advisory",
+    descriptor: "Investment Advisors",
     poweredBy: "Powered by",
     microDisclosure:
       "Securities services through Parvis Investment Services Inc. · NRD #74000.",
@@ -29,7 +29,7 @@ export const INVESTMENT_BRAND = {
       "Jack Hunter is registered in Ontario as a Dealing Representative with Parvis Investment Services Inc. Securities-related activities are conducted through and supervised by Parvis. Submitting information or recording interest does not establish eligibility or suitability and does not complete a transaction.",
     legalTitle: "Registration and relationship disclosure",
     legalParagraphs: [
-      "Hunter & Hunter Investment Advisory is Jack Hunter’s Parvis-approved marketing and trade name. It provides investment education, opportunity information, account access, preliminary tools, and investor-relationship support.",
+      "Hunter & Hunter Investment Advisors is Jack Hunter’s Parvis-approved marketing and trade name. It provides investment education, opportunity information, account access, preliminary tools, and investor-relationship support.",
       "Parvis Investment Services Inc. (Parvis) is registered as an Exempt Market Dealer in each Canadian province (NRD #74000). Jack Hunter is registered in Ontario as a Dealing Representative with Parvis. All activities that require securities registration are conducted through and supervised by Parvis.",
       "Portal information, preliminary classifications, and interest records do not establish investor eligibility or suitability and are not an offer, prospectus, subscription, or completed transaction. Applicable offering documents govern each investment opportunity.",
       "Private-market securities can be speculative and illiquid and may result in the loss of the entire investment. Services are available only where permitted. Access by residents of Türkiye and any further activity are subject to separate jurisdictional and Parvis compliance review; no Turkish registration is represented or implied.",
@@ -38,9 +38,9 @@ export const INVESTMENT_BRAND = {
     parvisLink: "Parvis disclosures",
   },
   tr: {
-    name: "Hunter & Hunter Yatırım Danışmanlığı",
+    name: "Hunter & Hunter Investment Advisors",
     primary: "Hunter & Hunter",
-    descriptor: "Yatırım Danışmanlığı",
+    descriptor: "Investment Advisors",
     poweredBy: "Powered by",
     microDisclosure:
       "Menkul kıymet hizmetleri Parvis Investment Services Inc. aracılığıyla sunulur · NRD No. 74000.",
@@ -50,7 +50,7 @@ export const INVESTMENT_BRAND = {
       "Jack Hunter, Ontario’da Parvis Investment Services Inc. bünyesinde kayıtlı bir Dealing Representative olarak faaliyet göstermektedir. Menkul kıymetlere ilişkin kayıtlı faaliyetler Parvis aracılığıyla ve Parvis gözetiminde yürütülür. Bilgi göndermek veya ilgi kaydı oluşturmak, yatırımcı uygunluğu ya da yerindeliğini kesinleştirmez ve bir işlemi tamamlamaz.",
     legalTitle: "Kayıt ve ilişki açıklaması",
     legalParagraphs: [
-      "Hunter & Hunter Yatırım Danışmanlığı, Jack Hunter’ın Parvis tarafından onaylanan tanıtım ve ticari markasıdır. Yatırım eğitimi, fırsat bilgileri, hesap erişimi, ön değerlendirme araçları ve yatırımcı ilişkileri desteği sunar.",
+      "Hunter & Hunter Investment Advisors, Jack Hunter’ın Parvis tarafından onaylanan tanıtım ve ticari markasıdır. Yatırım eğitimi, fırsat bilgileri, hesap erişimi, ön değerlendirme araçları ve yatırımcı ilişkileri desteği sunar.",
       "Parvis Investment Services Inc. (Parvis), Kanada’nın tüm eyaletlerinde Exempt Market Dealer olarak kayıtlıdır (NRD No. 74000). Jack Hunter, Ontario’da Parvis bünyesinde kayıtlı bir Dealing Representative olarak faaliyet göstermektedir. Menkul kıymet kaydı gerektiren tüm faaliyetler Parvis aracılığıyla ve Parvis gözetiminde yürütülür.",
       "Portal bilgileri, ön sınıflandırmalar ve ilgi kayıtları yatırımcı uygunluğu veya yerindeliğini kesinleştirmez ve teklif, izahname, abonelik ya da tamamlanmış işlem niteliğinde değildir. Her yatırım fırsatında ilgili teklif belgeleri esas alınır.",
       "Özel piyasa menkul kıymetleri spekülatif ve likit olmayan yatırımlar olabilir ve sermayenin tamamının kaybına yol açabilir. Hizmetler yalnızca izin verilen yerlerde sunulur. Türkiye’de ikamet eden kişilerin erişimi ve sonraki tüm faaliyetleri ayrıca yetki alanı ve Parvis uyum incelemesine tabidir; herhangi bir Türkiye kaydı beyan veya ima edilmez.",

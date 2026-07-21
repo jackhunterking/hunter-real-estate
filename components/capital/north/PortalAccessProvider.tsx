@@ -396,7 +396,7 @@ export function PortalAccessProvider({
         entityType: "organization_membership",
         entityId: membershipId,
         summary: fallbackReason
-          ? `Hunter & Hunter Investment Advisory fallback approval recorded: ${fallbackReason}`
+          ? `Hunter & Hunter Investment Advisors fallback approval recorded: ${fallbackReason}`
           : `Firm membership ${decision} decision recorded.`,
         occurredAt: now,
       });

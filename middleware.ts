@@ -3,7 +3,7 @@ import { refreshSupabaseSession } from "@/lib/supabase/middleware";
 import { HUNTER_ADVISORY_HOSTS } from "@/lib/capital/advisory-domain";
 
 // Keep the existing dedicated-domain aliases working while the public brand and
-// canonical application path move to Hunter & Hunter Investment Advisory.
+// canonical application path move to Hunter & Hunter Investment Advisors.
 const JACK_HOSTS = new Set([
   "jackhunter.com",
   "www.jackhunter.com",

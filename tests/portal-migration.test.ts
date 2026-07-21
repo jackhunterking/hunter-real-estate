@@ -210,7 +210,7 @@ test("new commission entries retain an optional matching fund-schedule reference
   assert.match(attachment, /schedule\.effective_to is null or schedule\.effective_to >= new\.funded_at/);
 });
 
-test("Hunter & Hunter Investment Advisory privileged functions require MFA-aware database permissions", () => {
+test("Hunter & Hunter Investment Advisors privileged functions require MFA-aware database permissions", () => {
   assert.match(migration, /create or replace function private\.has_mfa/);
   assert.match(migration, /auth\.jwt\(\).*'aal'.*'aal2'/s);
   assert.match(migration, /revoke execute on function app\.record_license_verification/);

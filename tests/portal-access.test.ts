@@ -133,7 +133,7 @@ test("commission visibility follows the beneficiary instead of the firm associat
   );
 });
 
-test("Hunter & Hunter Investment Advisory administrators start in Operations and require separate investing or professional approval", () => {
+test("Hunter & Hunter Investment Advisors administrators start in Operations and require separate investing or professional approval", () => {
   const admin = context("hnc-admin");
   assert.deepEqual(availableWorkspaces(admin), ["operations"]);
   assert.equal(canAccessPath(admin, "/hunter-north-capital/admin/license-verifications"), true);

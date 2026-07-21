@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
+import { ArrowRight, CheckCircle2, Eye, EyeOff, Lock, ShieldCheck } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
-import { investmentBrandFor } from "@/lib/capital/investment-brand";
 import {
   advisoryAuthRedirectUrl,
   advisoryPublicPath,
@@ -16,73 +15,82 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { TurnstileField } from "@/components/TurnstileField";
 import { DealerDisclosure } from "./DealerDisclosure";
-import { NORTH_BASE, NorthBrand } from "./NorthBrand";
+import { NORTH_BASE, NorthBrand, ParvisCoBrand } from "./NorthBrand";
 
 const COPY = {
   tr: {
     signIn: "Giriş yap",
     signUp: "Hesap oluştur",
-    signInTitle: "Hunter & Hunter Yatırım Danışmanlığı hesabınıza giriş yapın",
-    signUpTitle: "Hunter & Hunter Yatırım Danışmanlığı hesabınızı oluşturun",
-    signInBody: "Yatırımlarınızı ve onaylanmış çalışma alanlarınızı güvenli şekilde görüntüleyin.",
-    signUpBody: "E-posta doğrulamasından sonra Yatırımcı veya Türkiye lisanslı profesyonel/firma yolunu seçin.",
+    signInEyebrow: "Üye erişimi",
+    signUpEyebrow: "Özel piyasa erişimi",
+    signInTitle: "Tekrar hoş geldiniz",
+    signUpTitle: "Hesabınızı oluşturun",
+    signInBody: "Yatırımlarınıza ve onaylanmış çalışma alanlarınıza erişin.",
+    signUpBody: "Halka açık borsaların dışındaki özel piyasa fırsatlarına erişin — seçili Kanada gayrimenkul, özel sermaye ve alternatif yatırımlar.",
+    secured: "Şifreli bağlantı · E-posta doğrulamalı",
+    showPassword: "Şifreyi göster",
+    hidePassword: "Şifreyi gizle",
     firstName: "Ad",
     lastName: "Soyad",
     email: "E-posta",
     password: "Şifre",
     submitSignIn: "Giriş yap",
     submitSignUp: "Hesap oluştur",
-    switchToSignUp: "Yeni hesap oluştur",
-    switchToSignIn: "Zaten hesabınız var mı?",
+    switchToSignUp: "Yeni misiniz? Hesap oluşturun",
+    switchToSignIn: "Zaten hesabınız var mı? Giriş yapın",
     forgotPassword: "Şifrenizi mi unuttunuz?",
-    verification: "E-posta doğrulama bağlantısı gönderildi. Doğruladıktan sonra giriş yapabilirsiniz.",
+    verification: "Doğrulama bağlantısı için e-postanızı kontrol edin, ardından giriş yapın.",
     resent: "Yeni bir doğrulama bağlantısı gönderildi.",
     resend: "Doğrulama e-postasını yeniden gönder",
     resendWait: (seconds: number) => `${seconds} saniye sonra yeniden gönderin`,
     passwordUpdated: "Şifreniz güncellendi. Yeni şifrenizle giriş yapabilirsiniz.",
     confirmationFailed: "Doğrulama bağlantısı geçersiz veya süresi dolmuş. Lütfen yeniden deneyin.",
-    signInFailed: "E-posta veya şifre doğrulanamadı ya da e-posta henüz onaylanmadı.",
+    signInFailed: "E-posta veya şifre hatalı ya da e-postanız henüz doğrulanmadı.",
     security: "Devam etmek için güvenlik doğrulamasını tamamlayın.",
     preview: "Yerel portal önizlemesini aç",
     notConfigured: "Supabase bilgileri henüz bağlanmadığı için yerel önizleme kullanılabilir.",
-    error: "İşlem tamamlanamadı.",
-    benefits: ["Önce yatırımcı erişimi", "Ayrı lisanslı profesyonel onayı", "Gizlilik açısından ayrılmış müşteri kayıtları"],
+    error: "İşlem tamamlanamadı. Lütfen tekrar deneyin.",
+    benefits: ["Halka açık olmayan özel piyasa fırsatları", "Şifreli, e-posta doğrulamalı giriş", "Lisanslı, insan destekli süreç"],
   },
   en: {
     signIn: "Sign in",
     signUp: "Create account",
-    signInTitle: "Sign in to Hunter & Hunter Investment Advisory",
-    signUpTitle: "Create your Hunter & Hunter Investment Advisory account",
-    signInBody: "Securely access your investments and approved workspaces.",
-    signUpBody: "After verifying your email, choose the Investor or Türkiye-licensed professional/firm path.",
+    signInEyebrow: "Member access",
+    signUpEyebrow: "Private-market access",
+    signInTitle: "Welcome back",
+    signUpTitle: "Create your account",
+    signInBody: "Access your investments and approved workspaces.",
+    signUpBody: "Access non-public private-market opportunities — curated Canadian real estate, private equity, and alternatives.",
+    secured: "Encrypted connection · Email verified",
+    showPassword: "Show password",
+    hidePassword: "Hide password",
     firstName: "First name",
     lastName: "Last name",
     email: "Email",
     password: "Password",
     submitSignIn: "Sign in",
     submitSignUp: "Create account",
-    switchToSignUp: "Create a new account",
-    switchToSignIn: "Already have an account?",
-    forgotPassword: "Forgot your password?",
-    verification: "A verification link was sent. Confirm your email, then sign in.",
+    switchToSignUp: "New here? Create an account",
+    switchToSignIn: "Already have an account? Sign in",
+    forgotPassword: "Forgot password?",
+    verification: "Check your email for a verification link, then sign in.",
     resent: "A new verification link was sent.",
     resend: "Resend verification email",
     resendWait: (seconds: number) => `Resend in ${seconds} seconds`,
-    passwordUpdated: "Your password was updated. You can now sign in with the new password.",
+    passwordUpdated: "Your password was updated. Sign in with your new password.",
     confirmationFailed: "That confirmation link is invalid or expired. Please try again.",
-    signInFailed: "The email or password was not recognized, or the email has not been verified.",
-    security: "Complete the security verification to continue.",
+    signInFailed: "The email or password is incorrect, or your email isn't verified yet.",
+    security: "Complete the security check to continue.",
     preview: "Open local portal preview",
     notConfigured: "Supabase credentials are not connected yet, so the local preview remains available.",
-    error: "The request could not be completed.",
-    benefits: ["Investor-first access", "Separate licensed-professional approval", "Privacy-isolated client records"],
+    error: "The request could not be completed. Please try again.",
+    benefits: ["Non-public private-market opportunities", "Encrypted, email-verified sign-in", "Licensed, human-supported process"],
   },
 } as const;
 
 export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
   const { lang } = useLang();
   const c = investorTerminology(pick(COPY, lang));
-  const brand = investmentBrandFor(lang);
   const configured = isSupabaseConfigured();
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
@@ -95,6 +103,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
     redirectTo: string;
   }>();
   const [resending, setResending] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [resendAvailableAt, setResendAvailableAt] = useState(0);
   const [resendSeconds, setResendSeconds] = useState(0);
   const turnstileRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
@@ -136,12 +145,15 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
     event.preventDefault();
     setMessage("");
     setError("");
+    // Capture the form element synchronously: React nulls `event.currentTarget`
+    // after the handler returns, so it is unavailable past the first `await`.
+    const formElement = event.currentTarget;
     const client = createSupabaseBrowserClient();
     if (!client) {
       setError(c.notConfigured);
       return;
     }
-    const form = new FormData(event.currentTarget);
+    const form = new FormData(formElement);
     const email = String(form.get("email") ?? "").trim();
     const password = String(form.get("password") ?? "");
     if (turnstileRequired && !captchaToken) {
@@ -201,7 +213,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
       setMessage(c.verification);
       setPendingConfirmation({ email, redirectTo: emailRedirectTo });
       setResendAvailableAt(Date.now() + 60_000);
-      event.currentTarget.reset();
+      formElement.reset();
     } catch (caught) {
       setError(mappedError(caught));
     } finally {
@@ -244,35 +256,52 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
     }
   }
 
+  const inputClass =
+    "mt-2 h-11 w-full rounded-md border border-[#d6dde2] bg-white px-3 font-normal text-[#17202b] outline-none transition-colors placeholder:text-[#9aa5ad] focus:border-[#0a4b72] focus:ring-2 focus:ring-[#0a4b72]/15";
+
   return (
-    <main className="min-h-screen bg-[#071c2c] px-5 py-8 text-white">
-      <div className="mx-auto w-full max-w-5xl">
-        <div className="mb-10 flex items-center justify-between">
-          <NorthBrand />
-          <Link href={NORTH_BASE} className="hidden max-w-44 text-right text-xs font-semibold text-white/65 hover:text-white sm:block">
-            {brand.descriptor}
-          </Link>
+    <main className="relative min-h-screen overflow-hidden bg-[#071c2c] px-5 py-8 text-white sm:py-12">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-40"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 85% 8%, rgba(197,163,77,0.22), transparent 42%), radial-gradient(circle at 5% 92%, rgba(47,113,148,0.28), transparent 40%)",
+        }}
+      />
+      <div className="relative mx-auto w-full max-w-5xl">
+        <div className="mb-8 flex items-center justify-between gap-4 sm:mb-10">
+          <NorthBrand showCoBrand={false} />
+          <ParvisCoBrand className="shrink-0" />
         </div>
-        <div className="grid overflow-hidden rounded-lg border border-white/15 bg-white shadow-2xl lg:grid-cols-[0.85fr_1.15fr]">
-          <section className="bg-[#0a2539] p-7 text-white sm:p-10">
-            <ShieldCheck className="size-8 text-[#d8bf7a]" />
-            <p className="mt-7 text-xs font-bold uppercase tracking-[0.14em] text-white/60">
-              {mode === "sign-in" ? c.signIn : c.signUp}
+        <div className="grid overflow-hidden rounded-2xl border border-white/12 bg-white shadow-[0_40px_80px_-40px_rgba(0,0,0,0.7)] lg:grid-cols-[0.85fr_1.15fr]">
+          <section className="relative flex flex-col justify-between bg-[#0a2539] p-7 text-white sm:p-10">
+            <div>
+              <span className="grid size-11 place-items-center rounded-xl bg-white/5 text-[#d8bf7a] ring-1 ring-white/10">
+                <ShieldCheck className="size-6" />
+              </span>
+              <p className="mt-7 text-xs font-bold uppercase tracking-[0.14em] text-[#d8bf7a]">
+                {mode === "sign-in" ? c.signInEyebrow : c.signUpEyebrow}
+              </p>
+              <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight">
+                {mode === "sign-in" ? c.signInTitle : c.signUpTitle}
+              </h1>
+              <p className="mt-4 text-sm leading-7 text-white/62">
+                {mode === "sign-in" ? c.signInBody : c.signUpBody}
+              </p>
+              <ul className="mt-8 space-y-3 text-sm text-white/72">
+                {c.benefits.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5">
+                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#d8bf7a]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <p className="mt-10 inline-flex items-center gap-2 text-xs font-semibold text-white/55">
+              <Lock className="size-3.5 text-[#d8bf7a]" />
+              {c.secured}
             </p>
-            <h1 className="mt-3 font-serif text-3xl font-semibold">
-              {mode === "sign-in" ? c.signInTitle : c.signUpTitle}
-            </h1>
-            <p className="mt-4 text-sm leading-7 text-white/62">
-              {mode === "sign-in" ? c.signInBody : c.signUpBody}
-            </p>
-            <ul className="mt-8 space-y-3 text-sm text-white/70">
-              {c.benefits.map((item) => (
-                <li key={item} className="flex items-center gap-2">
-                  <CheckCircle2 className="size-4 text-[#d8bf7a]" />
-                  {item}
-                </li>
-              ))}
-            </ul>
           </section>
 
           <section className="p-7 text-[#17202b] sm:p-10">
@@ -281,21 +310,38 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="text-sm font-semibold">
                     {c.firstName}
-                    <input name="firstName" required autoComplete="given-name" className="mt-2 h-11 w-full rounded-md border border-[#d6dde2] px-3 font-normal outline-none focus:border-[#0a4b72]" />
+                    <input name="firstName" required autoComplete="given-name" className={inputClass} />
                   </label>
                   <label className="text-sm font-semibold">
                     {c.lastName}
-                    <input name="lastName" required autoComplete="family-name" className="mt-2 h-11 w-full rounded-md border border-[#d6dde2] px-3 font-normal outline-none focus:border-[#0a4b72]" />
+                    <input name="lastName" required autoComplete="family-name" className={inputClass} />
                   </label>
                 </div>
               )}
               <label className="block text-sm font-semibold">
                 {c.email}
-                <input name="email" required type="email" autoComplete="email" className="mt-2 h-11 w-full rounded-md border border-[#d6dde2] px-3 font-normal outline-none focus:border-[#0a4b72]" />
+                <input name="email" required type="email" autoComplete="email" placeholder="name@email.com" className={inputClass} />
               </label>
               <label className="block text-sm font-semibold">
                 {c.password}
-                <input name="password" required minLength={8} type="password" autoComplete={mode === "sign-in" ? "current-password" : "new-password"} className="mt-2 h-11 w-full rounded-md border border-[#d6dde2] px-3 font-normal outline-none focus:border-[#0a4b72]" />
+                <div className="relative">
+                  <input
+                    name="password"
+                    required
+                    minLength={8}
+                    type={showPassword ? "text" : "password"}
+                    autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
+                    className={`${inputClass} pr-11`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((value) => !value)}
+                    aria-label={showPassword ? c.hidePassword : c.showPassword}
+                    className="absolute right-1 top-2 grid size-9 place-items-center rounded-md text-[#7a8790] hover:text-[#0a4b72]"
+                  >
+                    {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  </button>
+                </div>
               </label>
               {mode === "sign-in" && (
                 <div className="-mt-2 text-right">
@@ -307,7 +353,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
               <TurnstileField onToken={setCaptchaToken} resetSignal={captchaResetSignal} />
               {message && <p role="status" className="rounded-md border border-[#b8d8c5] bg-[#edf7f1] p-3 text-sm text-[#316247]">{message}</p>}
               {error && <p role="alert" className="rounded-md border border-[#eccdc8] bg-[#fbefed] p-3 text-sm text-[#98463c]">{error}</p>}
-              <button disabled={pending || (turnstileRequired && !captchaToken)} className="flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white disabled:opacity-60">
+              <button disabled={pending || (turnstileRequired && !captchaToken)} className="flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#123f5e] disabled:opacity-60">
                 {mode === "sign-in" ? c.submitSignIn : c.submitSignUp}
                 <ArrowRight className="size-4" />
               </button>
@@ -328,7 +374,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
                 {mode === "sign-in" ? c.switchToSignUp : c.switchToSignIn}
               </Link>
               {!configured && (
-                <div className="mt-5 rounded-md bg-[#f4f6f8] p-4">
+                <div className="mt-5 rounded-md border border-[#e4e8eb] bg-[#f4f6f8] p-4">
                   <p className="text-xs leading-5 text-[#6b7680]">{c.notConfigured}</p>
                   <Link href={`${NORTH_BASE}/home`} className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#0a4b72]">
                     {c.preview}<ArrowRight className="size-3.5" />

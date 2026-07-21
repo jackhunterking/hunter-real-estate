@@ -44,7 +44,7 @@ type NavigationGroup = {
 
 const COPY = {
   tr: {
-    groups: { investing: "Yatırımlar", professional: "Profesyonel", resources: "Kaynaklar", operations: "Hunter & Hunter Yatırım Danışmanlığı" },
+    groups: { investing: "Yatırımlar", professional: "Profesyonel", resources: "Kaynaklar", operations: "Hunter & Hunter Investment Advisors" },
     investing: [
       ["/portfolio", "Portföyüm", WalletCards],
       ["/funds", "Keşfet", Compass],
@@ -73,7 +73,7 @@ const COPY = {
     returnHome: "Ana sayfama dön",
   },
   en: {
-    groups: { investing: "Investing", professional: "Professional", resources: "Resources", operations: "Hunter & Hunter Investment Advisory" },
+    groups: { investing: "Investing", professional: "Professional", resources: "Resources", operations: "Hunter & Hunter Investment Advisors" },
     investing: [
       ["/portfolio", "My portfolio", WalletCards],
       ["/funds", "Discover", Compass],

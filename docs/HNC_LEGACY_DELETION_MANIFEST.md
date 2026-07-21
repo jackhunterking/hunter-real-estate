@@ -1,4 +1,4 @@
-# Hunter & Hunter Investment Advisory legacy deletion manifest
+# Hunter & Hunter Investment Advisors legacy deletion manifest
 
 Status: **Awaiting explicit owner approval. Nothing in this manifest has been deleted.**
 

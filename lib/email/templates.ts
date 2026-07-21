@@ -23,7 +23,7 @@ const appSender =
   process.env.RESEND_FROM_EMAIL ?? "Hunter Group <hello@updates.jackhunter.com>";
 const capitalSender =
   process.env.RESEND_CAPITAL_FROM_EMAIL ??
-  "Hunter & Hunter Investment Advisory <advisory@updates.jackhunter.com>";
+  "Hunter & Hunter Investment Advisors <advisors@noreply.hunterhunteradvisors.com>";
 const replyTo = process.env.RESEND_REPLY_TO ?? "hello@jackhunter.com";
 
 function escapeHtml(value: unknown) {
@@ -44,13 +44,11 @@ function shell(params: {
   actionUrl: string;
   investmentBrand?: boolean;
 }) {
-  const investmentName = params.language === "tr"
-    ? "Hunter & Hunter Yatırım Danışmanlığı"
-    : "Hunter & Hunter Investment Advisory";
+  const investmentName = "Hunter & Hunter Investment Advisors";
   const brandHeader = params.investmentBrand
     ? `<div style="color:#fff;font-size:15px;font-weight:700">Hunter &amp; Hunter</div>
-       <div style="margin-top:5px;color:#d7b86b;font-size:9px;letter-spacing:.12em;text-transform:uppercase">${params.language === "tr" ? "Yatırım Danışmanlığı" : "Investment Advisory"}</div>
-       <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16);color:#9eabb3;font-size:8px;letter-spacing:.1em;text-transform:uppercase">Powered by <img src="${siteUrl}/logos/parvis-wordmark-white.svg" width="64" alt="Parvis" style="display:inline-block;width:64px;height:auto;margin-left:7px;vertical-align:middle"></div>`
+       <div style="margin-top:5px;color:#d7b86b;font-size:9px;letter-spacing:.12em;text-transform:uppercase">Investment Advisors</div>
+       <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16);color:#9eabb3;font-size:8px;letter-spacing:.1em;text-transform:uppercase">Powered by <span style="margin-left:7px;color:#e7ecef;font-size:12px;font-weight:700;letter-spacing:.16em">PARVIS</span></div>`
     : "Hunter Group";
   const footer = params.investmentBrand
     ? `${params.language === "tr" ? "Menkul kıymet hizmetleri Parvis Investment Services Inc. aracılığıyla sunulur" : "Securities services through Parvis Investment Services Inc."} · NRD #74000.<br><a href="${siteUrl}/hunter-advisory/legal" style="color:#315f79">${investmentName}</a> · <a href="https://www.parvisinvest.com/legal/disclosures" style="color:#315f79">${params.language === "tr" ? "Parvis açıklamaları" : "Parvis disclosures"}</a>`
@@ -132,7 +130,7 @@ export function renderEmailJob(job: EmailJobTemplate): RenderedEmail {
     from: capitalSender,
     replyTo,
     to: job.recipient,
-    subject: `New Hunter & Hunter Investment Advisory intake · ${reference}`,
+    subject: `New Hunter & Hunter Investment Advisors intake · ${reference}`,
     ...content,
   };
 }

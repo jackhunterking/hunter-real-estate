@@ -46,14 +46,24 @@ Remaining account-level actions:
 
 ## 2. Resend transactional account
 
-- Verify `updates.hunterhunteradvisors.com`.
+Resend-verified state (confirmed via Resend MCP 2026-07-21):
+
+- Domain: `noreply.hunterhunteradvisors.com` — status `verified`, sending
+  `enabled`, region `us-east-1`.
+- DKIM (`resend._domainkey.noreply`) and SPF (`send.noreply`) both verified.
+- This is the sending domain used by `lib/email/templates.ts`
+  (`RESEND_CAPITAL_FROM_EMAIL`) and `supabase/config.toml`
+  (`auth.email.smtp.admin_email`). It intentionally differs from
+  `updates.jackhunter.com`, which remains the sender for the unrelated
+  Hunter Group real-estate site (`RESEND_FROM_EMAIL`).
+
 - Publish and validate SPF, DKIM, and DMARC records.
 - Create `resend-web-app` for application email and
   `resend-supabase-auth` for Auth SMTP. Do not reuse either key.
 - Configure senders:
   - `Hunter Group <hello@updates.jackhunter.com>`
-  - `Hunter & Hunter Investment Advisory <advisory@updates.jackhunter.com>`
-  - `Hunter & Hunter Account Security <auth@updates.hunterhunteradvisors.com>`
+  - `Hunter & Hunter Investment Advisors <advisors@noreply.hunterhunteradvisors.com>`
+  - `Hunter & Hunter Account Security <auth@noreply.hunterhunteradvisors.com>`
 - Keep `hello@jackhunter.com` as reply-to.
 - Disable open/click tracking for Auth and sensitive operational categories.
 - Configure Supabase Auth SMTP with `smtp.resend.com`, port `465`, username
@@ -69,10 +79,13 @@ Remaining account-level actions:
 - Never expose `SUPABASE_WEB_SECRET_KEY`, Resend keys, webhook secret,
   Turnstile secret, cron secret, access token, or database password to browser
   code.
-- Set the Auth Site URL to `https://www.hunterhunteradvisors.com`. Allow the
-  exact `/auth/confirm` callback on the dedicated apex and `www` domains, and
-  the exact `/hunter-advisory/auth/confirm` callback on localhost and
-  `jackhunter.com`.
+- Set the Auth Site URL to `https://www.hunterhunteradvisors.com` (the real
+  dedicated domain — matches `HUNTER_ADVISORY_HOSTS` in
+  `lib/capital/advisory-domain.ts`). A misconfigured Site URL is what produced
+  the malformed confirmation link (`…com&token_hash=…` with no `/auth/confirm`
+  path). Allow the exact `/auth/confirm` callback on the dedicated apex and
+  `www` domains, and the exact `/hunter-advisory/auth/confirm` callback on
+  localhost and `jackhunter.com`.
 - Keep `hunternorthcapital.com` only as a legacy Vercel alias during migration;
   do not use it as the Auth Site URL.
 - Configure Cloudflare Turnstile and set both site and secret keys.

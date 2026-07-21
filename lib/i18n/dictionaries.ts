@@ -10,7 +10,7 @@ export const tr = {
     about: "Hakkımızda",
     services: "Hizmetler",
     mortgage: "Mortgage",
-    capital: "Advisory",
+    capital: "Advisors",
     guides: "Rehberler",
     resources: "Kaynaklar",
     servicesMenu: {
@@ -68,10 +68,10 @@ export const tr = {
         cta: "Mortgage seçenekleri",
       },
       invest: {
-        tag: "Hunter & Hunter Yatırım Danışmanlığı",
+        tag: "Hunter & Hunter Investment Advisors",
         title: "Özel Piyasalar",
         desc: "Kanada’daki özel gayrimenkul ve alternatif yatırım fırsatlarını kaynakları, riskleri ve dayanak varlıklarıyla inceleyin.",
-        cta: "Hunter & Hunter Yatırım Danışmanlığı’na geçiş",
+        cta: "Hunter & Hunter Investment Advisors’a geçiş",
       },
     },
     guides: {
@@ -92,7 +92,7 @@ export const tr = {
   },
 
   capital: {
-    metaTitle: "Hunter & Hunter Yatırım Danışmanlığı, Kanada Özel Piyasa Erişimi",
+    metaTitle: "Hunter & Hunter Investment Advisors, Kanada Özel Piyasa Erişimi",
     metaDesc:
       "Ontario'da çoklu konut projeleri için operasyon ve geliştirme ortağı. Sermaye sizin, proje sizin, biz yürütme ekibinizyiz.",
     hero: {
@@ -179,7 +179,7 @@ export const tr = {
       cta: "WhatsApp ile Yazın",
     },
     compliance:
-      "Hunter & Hunter Yatırım Danışmanlığı, exempt-market ürünler ve Kanada çok konutlu yatırım seçenekleri hakkında eğitim, ön hazırlık ve lisanslı süreç koordinasyonu sağlar.",
+      "Hunter & Hunter Investment Advisors, exempt-market ürünler ve Kanada çok konutlu yatırım seçenekleri hakkında eğitim, ön hazırlık ve lisanslı süreç koordinasyonu sağlar.",
   },
 
   alici: {
@@ -238,7 +238,7 @@ export const tr = {
   },
 
   capitalTeaser: {
-    eyebrow: "Hunter & Hunter Yatırım Danışmanlığı",
+    eyebrow: "Hunter & Hunter Investment Advisors",
     title: "Kanada’daki özel gayrimenkul ve alternatif yatırımlara",
     titleEm: "daha şeffaf bir bakış.",
     sub: "Fonları, riskleri, dayanak varlıkları ve kaynak belgeleri Türkçe inceleyin; sonraki adımlar ilgili lisanslı tarafların kontrolündeki süreçte ilerler.",
@@ -246,7 +246,7 @@ export const tr = {
     path1Min: "Western Canada REIT",
     path2Label: "Lankin Apartment REIT",
     path2Min: "Canadian multifamily",
-    cta: "Hunter & Hunter Yatırım Danışmanlığı’nı Keşfedin",
+    cta: "Hunter & Hunter Investment Advisors’ı Keşfedin",
   },
 
   mortgage: {
@@ -487,7 +487,7 @@ export const tr = {
   },
 
   capitalApp: {
-    brand: { name: "Hunter & Hunter Yatırım Danışmanlığı", tagline: "Kanada’daki özel gayrimenkul ve alternatif yatırımlara daha şeffaf bir bakış" },
+    brand: { name: "Hunter & Hunter Investment Advisors", tagline: "Kanada’daki özel gayrimenkul ve alternatif yatırımlara daha şeffaf bir bakış" },
     nav: {
       dashboard: "Fırsatlar",
       offerings: "Keşfet",
@@ -794,7 +794,7 @@ export const tr = {
         { title: "Strateji ve mülkleri inceleyin", text: "Fon düzeyindeki tezden altındaki binaların ve pazarların doğrulanmış örneklerine geçin." },
         { title: "Pay sınıflarını karşılaştırın", text: "Minimumları, hesap uygunluğunu, dağıtımları, likiditeyi ve her koşulun kaynak tarihini anlayın." },
         { title: "Yatırımcı hazırlığını tamamlayın", text: "Kısa bir Ontario veya Türkiye yolunu yanıtlayın. Sonuç ön niteliktedir, asla onay değildir." },
-        { title: "Hunter & Hunter Yatırım Danışmanlığı ile görüşün", text: "Hedefleri, soruları, dil tercihini ve bir sonraki lisanslı adımı konuşun." },
+        { title: "Hunter & Hunter Investment Advisors ile görüşün", text: "Hedefleri, soruları, dil tercihini ve bir sonraki lisanslı adımı konuşun." },
         { title: "Lisanslı incelemeyi tamamlayın", text: "Denetleyen süreç kimliği, muafiyet uygunluğunu, KYC, KYP ve uygunluğu doğrular." },
         { title: "Resmi belgeleri inceleyin", text: "Belirleyici teklif belgelerini, risk beyanlarını ve bağımsız tavsiyeyi okuyun." },
         { title: "Onaylı süreçle abone olun", text: "Yalnızca inceleme sonrası, ilgili aracı veya ihraççı akışıyla belgeleri imzalayın ve fonlayın." },
@@ -822,7 +822,7 @@ export const tr = {
       submit: "Profili incelemeye gönder",
       submitting: "Gönderiliyor…",
       error: "Gönderilemedi. Lütfen formu kontrol edip tekrar deneyin.",
-      contactConsent: "Hunter & Hunter Yatırım Danışmanlığı’nın bu profil hakkında benimle iletişime geçmesini kabul ediyorum.",
+      contactConsent: "Hunter & Hunter Investment Advisors’ın bu profil hakkında benimle iletişime geçmesini kabul ediyorum.",
       accuracyConsent: "Bunun ön değerlendirme olduğunu, onay veya yatırım talimatı olmadığını anlıyorum.",
       labels: {
         shareClass: "Pay sınıfı",
@@ -891,7 +891,7 @@ export const en: Dictionary = {
     about: "About",
     services: "Services",
     mortgage: "Mortgage",
-    capital: "Advisory",
+    capital: "Advisors",
     guides: "Guides",
     resources: "Resources",
     servicesMenu: {
@@ -949,10 +949,10 @@ export const en: Dictionary = {
         cta: "Mortgage options",
       },
       invest: {
-        tag: "Hunter & Hunter Investment Advisory",
+        tag: "Hunter & Hunter Investment Advisors",
         title: "Private Markets",
         desc: "Explore Canadian private real estate and alternative investment opportunities with their sources, risks, and underlying assets.",
-        cta: "Continue to Hunter & Hunter Investment Advisory",
+        cta: "Continue to Hunter & Hunter Investment Advisors",
       },
     },
     guides: {
@@ -973,7 +973,7 @@ export const en: Dictionary = {
   },
 
   capital: {
-    metaTitle: "Hunter & Hunter Investment Advisory, Canadian Private Markets Access",
+    metaTitle: "Hunter & Hunter Investment Advisors, Canadian Private Markets Access",
     metaDesc:
       "Operations and development partner for multifamily projects in Ontario. The capital is yours, the project is yours, we're your execution team.",
     hero: {
@@ -1060,7 +1060,7 @@ export const en: Dictionary = {
       cta: "Message on WhatsApp",
     },
     compliance:
-      "Hunter & Hunter Investment Advisory provides education, preliminary readiness, and licensed-process coordination for exempt-market products and Canadian multifamily investment opportunities.",
+      "Hunter & Hunter Investment Advisors provides education, preliminary readiness, and licensed-process coordination for exempt-market products and Canadian multifamily investment opportunities.",
   },
 
   alici: {
@@ -1119,7 +1119,7 @@ export const en: Dictionary = {
   },
 
   capitalTeaser: {
-    eyebrow: "Hunter & Hunter Investment Advisory",
+    eyebrow: "Hunter & Hunter Investment Advisors",
     title: "A clearer view of Canadian private real estate and",
     titleEm: "alternative investments.",
     sub: "Review funds, risks, underlying assets, and source documents in a bilingual experience; next steps proceed through the applicable licensed parties.",
@@ -1127,7 +1127,7 @@ export const en: Dictionary = {
     path1Min: "Western Canada REIT",
     path2Label: "Lankin Apartment REIT",
     path2Min: "Canadian multifamily",
-    cta: "Explore Hunter & Hunter Investment Advisory",
+    cta: "Explore Hunter & Hunter Investment Advisors",
   },
 
   mortgage: {
@@ -1368,7 +1368,7 @@ export const en: Dictionary = {
   },
 
   capitalApp: {
-    brand: { name: "Hunter & Hunter Investment Advisory", tagline: "A clearer view of Canadian private real estate and alternative investments" },
+    brand: { name: "Hunter & Hunter Investment Advisors", tagline: "A clearer view of Canadian private real estate and alternative investments" },
     nav: {
       dashboard: "Opportunities",
       offerings: "Discover",
@@ -1675,7 +1675,7 @@ export const en: Dictionary = {
         { title: "Review strategy and properties", text: "Move from the fund-level thesis to verified examples of the buildings and markets underneath it." },
         { title: "Compare share classes", text: "Understand minimums, account eligibility, distributions, liquidity, and the source date for every material term." },
         { title: "Complete investor readiness", text: "Answer a short Ontario or Turkey path. The result is preliminary and never an approval." },
-        { title: "Speak with Hunter & Hunter Investment Advisory", text: "Discuss objectives, questions, language preference, and the next licensed step." },
+        { title: "Speak with Hunter & Hunter Investment Advisors", text: "Discuss objectives, questions, language preference, and the next licensed step." },
         { title: "Complete licensed review", text: "The supervising process verifies identity, exemption eligibility, KYC, KYP, and suitability." },
         { title: "Review official documents", text: "Read the controlling offering documents, risk acknowledgements, and independent advice." },
         { title: "Subscribe through the approved process", text: "Only after review, execute documents and fund through the applicable dealer or issuer workflow." },
@@ -1703,7 +1703,7 @@ export const en: Dictionary = {
       submit: "Submit for review",
       submitting: "Submitting…",
       error: "Unable to submit. Please review the form and try again.",
-      contactConsent: "I consent to Hunter & Hunter Investment Advisory contacting me about this profile.",
+      contactConsent: "I consent to Hunter & Hunter Investment Advisors contacting me about this profile.",
       accuracyConsent: "I understand this is preliminary, not an approval or investment instruction.",
       labels: {
         shareClass: "Share class",
@@ -1802,10 +1802,10 @@ export const fr: Dictionary = {
         cta: "Options hypothécaires",
       },
       invest: {
-        tag: "Hunter & Hunter Investment Advisory",
+        tag: "Hunter & Hunter Investment Advisors",
         title: "Marchés privés",
         desc: "Explorez les occasions d'immobilier privé et d'investissement alternatif au Canada, avec leurs sources, leurs risques et leurs actifs sous-jacents.",
-        cta: "Continuer vers Hunter & Hunter Investment Advisory",
+        cta: "Continuer vers Hunter & Hunter Investment Advisors",
       },
     },
     guides: {
@@ -1826,7 +1826,7 @@ export const fr: Dictionary = {
   },
 
   capital: {
-    metaTitle: "Hunter & Hunter Investment Advisory, accès aux marchés privés canadiens",
+    metaTitle: "Hunter & Hunter Investment Advisors, accès aux marchés privés canadiens",
     metaDesc:
       "Partenaire d'exploitation et de développement pour les projets multifamiliaux en Ontario. Le capital est le vôtre, le projet est le vôtre, nous sommes votre équipe d'exécution.",
     hero: {
@@ -1913,7 +1913,7 @@ export const fr: Dictionary = {
       cta: "Écrire sur WhatsApp",
     },
     compliance:
-      "Hunter & Hunter Investment Advisory offre de l'éducation, une préparation préliminaire et la coordination du processus licencié pour les produits du marché dispensé et les occasions d'investissement multifamilial canadien.",
+      "Hunter & Hunter Investment Advisors offre de l'éducation, une préparation préliminaire et la coordination du processus licencié pour les produits du marché dispensé et les occasions d'investissement multifamilial canadien.",
   },
 
   alici: {
@@ -1972,7 +1972,7 @@ export const fr: Dictionary = {
   },
 
   capitalTeaser: {
-    eyebrow: "Hunter & Hunter Investment Advisory",
+    eyebrow: "Hunter & Hunter Investment Advisors",
     title: "Une vision plus claire de l'immobilier privé canadien et des",
     titleEm: "investissements alternatifs.",
     sub: "Examinez les fonds, les risques, les actifs sous-jacents et les documents sources dans une expérience multilingue ; les prochaines étapes se déroulent avec les parties licenciées concernées.",
@@ -1980,7 +1980,7 @@ export const fr: Dictionary = {
     path1Min: "Western Canada REIT",
     path2Label: "Lankin Apartment REIT",
     path2Min: "Multifamilial canadien",
-    cta: "Découvrir Hunter & Hunter Investment Advisory",
+    cta: "Découvrir Hunter & Hunter Investment Advisors",
   },
 
   mortgage: {
@@ -2221,7 +2221,7 @@ export const fr: Dictionary = {
   },
 
   capitalApp: {
-    brand: { name: "Hunter & Hunter Investment Advisory", tagline: "Une vision plus claire de l'immobilier privé canadien et des investissements alternatifs" },
+    brand: { name: "Hunter & Hunter Investment Advisors", tagline: "Une vision plus claire de l'immobilier privé canadien et des investissements alternatifs" },
     nav: {
       dashboard: "Occasions",
       offerings: "Découvrir",
@@ -2528,7 +2528,7 @@ export const fr: Dictionary = {
         { title: "Examiner la stratégie et les propriétés", text: "Passez de la thèse au niveau du fonds à des exemples vérifiés des immeubles et des marchés sous-jacents." },
         { title: "Comparer les catégories de parts", text: "Comprenez les minimums, l'admissibilité des comptes, les distributions, la liquidité et la date de source de chaque condition importante." },
         { title: "Compléter la préparation de l'investisseur", text: "Répondez à un court parcours de l'Ontario ou de la Turquie. Le résultat est préliminaire et n'est jamais une approbation." },
-        { title: "Parler avec Hunter & Hunter Investment Advisory", text: "Discutez des objectifs, des questions, de la préférence linguistique et de la prochaine étape licenciée." },
+        { title: "Parler avec Hunter & Hunter Investment Advisors", text: "Discutez des objectifs, des questions, de la préférence linguistique et de la prochaine étape licenciée." },
         { title: "Compléter l'examen licencié", text: "Le processus de supervision vérifie l'identité, l'admissibilité à la dispense, la connaissance du client, la connaissance du produit et la convenance." },
         { title: "Examiner les documents officiels", text: "Lisez les documents d'offre déterminants, les reconnaissances de risque et les conseils indépendants." },
         { title: "Souscrire par le processus approuvé", text: "Seulement après l'examen, signez les documents et financez par le flux du courtier ou de l'émetteur concerné." },
@@ -2556,7 +2556,7 @@ export const fr: Dictionary = {
       submit: "Soumettre pour examen",
       submitting: "Envoi en cours…",
       error: "Impossible de soumettre. Veuillez vérifier le formulaire et réessayer.",
-      contactConsent: "Je consens à ce que Hunter & Hunter Investment Advisory me contacte au sujet de ce profil.",
+      contactConsent: "Je consens à ce que Hunter & Hunter Investment Advisors me contacte au sujet de ce profil.",
       accuracyConsent: "Je comprends qu'il s'agit d'une évaluation préliminaire, non d'une approbation ni d'une instruction d'investissement.",
       labels: {
         shareClass: "Catégorie de parts",
@@ -2685,10 +2685,10 @@ export const es: Dictionary = {
         cta: "Opciones hipotecarias",
       },
       invest: {
-        tag: "Hunter & Hunter Investment Advisory",
+        tag: "Hunter & Hunter Investment Advisors",
         title: "Mercados privados",
         desc: "Explora las oportunidades de bienes raíces privados e inversión alternativa en Canadá, con sus fuentes, riesgos y activos subyacentes.",
-        cta: "Continuar a Hunter & Hunter Investment Advisory",
+        cta: "Continuar a Hunter & Hunter Investment Advisors",
       },
     },
     guides: {
@@ -2709,7 +2709,7 @@ export const es: Dictionary = {
   },
 
   capital: {
-    metaTitle: "Hunter & Hunter Investment Advisory, acceso a los mercados privados canadienses",
+    metaTitle: "Hunter & Hunter Investment Advisors, acceso a los mercados privados canadienses",
     metaDesc:
       "Socio de operaciones y desarrollo para proyectos multifamiliares en Ontario. El capital es tuyo, el proyecto es tuyo, nosotros somos tu equipo de ejecución.",
     hero: {
@@ -2796,7 +2796,7 @@ export const es: Dictionary = {
       cta: "Escríbenos por WhatsApp",
     },
     compliance:
-      "Hunter & Hunter Investment Advisory ofrece educación, preparación preliminar y coordinación del proceso con licencia para productos del mercado exento y oportunidades de inversión multifamiliar canadiense.",
+      "Hunter & Hunter Investment Advisors ofrece educación, preparación preliminar y coordinación del proceso con licencia para productos del mercado exento y oportunidades de inversión multifamiliar canadiense.",
   },
 
   alici: {
@@ -2855,7 +2855,7 @@ export const es: Dictionary = {
   },
 
   capitalTeaser: {
-    eyebrow: "Hunter & Hunter Investment Advisory",
+    eyebrow: "Hunter & Hunter Investment Advisors",
     title: "Una visión más clara de los bienes raíces privados canadienses y las",
     titleEm: "inversiones alternativas.",
     sub: "Revisa fondos, riesgos, activos subyacentes y documentos fuente en una experiencia multilingüe; los siguientes pasos avanzan a través de las partes con licencia correspondientes.",
@@ -2863,7 +2863,7 @@ export const es: Dictionary = {
     path1Min: "Western Canada REIT",
     path2Label: "Lankin Apartment REIT",
     path2Min: "Multifamiliar canadiense",
-    cta: "Descubre Hunter & Hunter Investment Advisory",
+    cta: "Descubre Hunter & Hunter Investment Advisors",
   },
 
   mortgage: {
@@ -3104,7 +3104,7 @@ export const es: Dictionary = {
   },
 
   capitalApp: {
-    brand: { name: "Hunter & Hunter Investment Advisory", tagline: "Una visión más clara de los bienes raíces privados canadienses y las inversiones alternativas" },
+    brand: { name: "Hunter & Hunter Investment Advisors", tagline: "Una visión más clara de los bienes raíces privados canadienses y las inversiones alternativas" },
     nav: {
       dashboard: "Oportunidades",
       offerings: "Descubrir",
@@ -3411,7 +3411,7 @@ export const es: Dictionary = {
         { title: "Revisa la estrategia y las propiedades", text: "Pasa de la tesis a nivel de fondo a ejemplos verificados de los edificios y mercados que la sustentan." },
         { title: "Compara las clases de participación", text: "Comprende los mínimos, la elegibilidad de las cuentas, las distribuciones, la liquidez y la fecha de fuente de cada condición importante." },
         { title: "Completa la preparación del inversionista", text: "Responde un breve recorrido de Ontario o Turquía. El resultado es preliminar y nunca una aprobación." },
-        { title: "Habla con Hunter & Hunter Investment Advisory", text: "Habla de objetivos, preguntas, preferencia de idioma y el siguiente paso con licencia." },
+        { title: "Habla con Hunter & Hunter Investment Advisors", text: "Habla de objetivos, preguntas, preferencia de idioma y el siguiente paso con licencia." },
         { title: "Completa la revisión con licencia", text: "El proceso de supervisión verifica la identidad, la elegibilidad de exención, el conocimiento del cliente, el conocimiento del producto y la idoneidad." },
         { title: "Revisa los documentos oficiales", text: "Lee los documentos de oferta determinantes, los reconocimientos de riesgo y la asesoría independiente." },
         { title: "Suscribe a través del proceso aprobado", text: "Solo después de la revisión, firma los documentos y financia a través del flujo del distribuidor o emisor correspondiente." },
@@ -3439,7 +3439,7 @@ export const es: Dictionary = {
       submit: "Enviar para revisión",
       submitting: "Enviando…",
       error: "No se pudo enviar. Revisa el formulario e inténtalo de nuevo.",
-      contactConsent: "Consiento que Hunter & Hunter Investment Advisory me contacte sobre este perfil.",
+      contactConsent: "Consiento que Hunter & Hunter Investment Advisors me contacte sobre este perfil.",
       accuracyConsent: "Entiendo que esto es preliminar, no una aprobación ni una instrucción de inversión.",
       labels: {
         shareClass: "Clase de participación",
