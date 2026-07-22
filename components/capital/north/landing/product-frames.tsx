@@ -132,9 +132,11 @@ function TabStrip({ tabs, active }: { tabs: string[]; active: number }) {
 export function DashboardFrame({
   offerings,
   c,
+  isPreview = false,
 }: {
   offerings: PublicOfferingPreview[];
   c: LandingCopy;
+  isPreview?: boolean;
 }) {
   const { lang } = useLang();
 
@@ -142,7 +144,7 @@ export function DashboardFrame({
     <BrowserFrame label={c.frames.portfolio}>
       <div className="bg-[#eef3f4] p-3 sm:p-4">
         <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
-          {c.frames.availableFunds}
+          {isPreview ? c.frames.exampleFunds : c.frames.availableFunds}
         </p>
         <div className="space-y-3">
           {offerings.slice(0, 2).map((offering) => (

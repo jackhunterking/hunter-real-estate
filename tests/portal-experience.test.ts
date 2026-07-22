@@ -94,8 +94,13 @@ test("public landing receives only approved offering previews and global documen
   const landing = read("components/capital/north/PublicLanding.tsx");
   const projection = read("lib/capital/public-preview.ts");
   assert.match(page, /buildPublicOfferingPreviews\(await getPublishedOfferings\(\)\)/);
-  assert.match(page, /<PublicLanding offerings=\{offerings\}/);
+  assert.match(page, /buildPublicOfferingPreviews\(getProductDemoOfferings\(\)\)/);
+  assert.match(page, /productDemoOfferings=\{productDemoOfferings\}/);
   assert.doesNotMatch(landing, /getPublishedOfferings|OfferingBundle|repository-server/);
+  assert.match(landing, /productDemoOfferings\.length > 0/);
+  assert.match(landing, /isPreview=\{!data\.hasOfferings\}/);
+  assert.match(landing, /data\.hasOfferings && <FeaturedOpportunities/);
+  assert.match(landing, /hasOfferings=\{data\.hasOfferings\}/);
   assert.match(projection, /approval === "approved-public"/);
   assert.match(projection, /targetReturn: approved\(shareClass\?\.targetReturn\)/);
   assert.match(projection, /performance: offering\.trailingReturns\?\.map/);

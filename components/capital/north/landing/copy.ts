@@ -33,6 +33,7 @@ export interface LandingCopy {
     eyebrow: string;
     title: string;
     caption: string;
+    previewCaption: string;
     items: { title: string; body: string }[];
   };
   final: { eyebrow: string; title: string; body: string };
@@ -45,6 +46,7 @@ export interface LandingCopy {
     openFunds: string;
     targetReturn: string;
     availableFunds: string;
+    exampleFunds: string;
     historical: string;
     historicalTag: string;
     tabs: string[];
@@ -161,6 +163,7 @@ const en: LandingCopy = {
     eyebrow: "Ways to invest",
     title: "Use the accounts you already have.",
     caption: "Both open funds are eligible for Canadian registered accounts.",
+    previewCaption: "Account eligibility and minimums are confirmed for each available offering.",
     items: [
       { title: "Cash account", body: "Start from $2,508 in a personal or corporate account." },
       { title: "RRSP & RRIF", body: "Grow retirement savings tax-deferred with private real estate." },
@@ -187,6 +190,7 @@ const en: LandingCopy = {
     openFunds: "Open for investment",
     targetReturn: "Target return",
     availableFunds: "Available funds",
+    exampleFunds: "Product examples",
     historical: "Historical performance",
     historicalTag: "Historical—not a forecast",
     tabs: ["Overview", "Performance", "Buildings", "Documents"],

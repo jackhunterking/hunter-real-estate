@@ -25,7 +25,13 @@ import {
   TrustBar,
 } from "./landing/sections";
 
-export function PublicLanding({ offerings }: { offerings: PublicOfferingPreview[] }) {
+export function PublicLanding({
+  offerings,
+  productDemoOfferings,
+}: {
+  offerings: PublicOfferingPreview[];
+  productDemoOfferings: PublicOfferingPreview[];
+}) {
   const { lang } = useLang();
   const c = pick(LANDING_COPY, lang);
   const data = deriveLandingData(offerings);
@@ -43,9 +49,19 @@ export function PublicLanding({ offerings }: { offerings: PublicOfferingPreview[
           backdrop={data.heroBackdrop}
         />
         <TrustBar c={c} />
-        {data.hasOfferings && <PlatformTabs c={c} offerings={offerings.slice(0, 2)} />}
+        {productDemoOfferings.length > 0 && (
+          <PlatformTabs
+            c={c}
+            offerings={productDemoOfferings.slice(0, 2)}
+            isPreview={!data.hasOfferings}
+          />
+        )}
         {data.hasOfferings && <FeaturedOpportunities c={c} offerings={offerings} />}
-        <BenefitsAndWays c={c} images={data.galleryItems} />
+        <BenefitsAndWays
+          c={c}
+          images={data.galleryItems}
+          hasOfferings={data.hasOfferings}
+        />
         <FinalCta c={c} />
       </main>
       <LandingFooter c={c} />

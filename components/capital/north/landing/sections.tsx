@@ -189,9 +189,11 @@ export function TrustBar({ c }: { c: LandingCopy }) {
 export function PlatformTabs({
   c,
   offerings,
+  isPreview = false,
 }: {
   c: LandingCopy;
   offerings: PublicOfferingPreview[];
+  isPreview?: boolean;
 }) {
   const [active, setActive] = useState(0);
   const primary = offerings[0];
@@ -201,7 +203,7 @@ export function PlatformTabs({
     offerings.find((o) => (o.media?.gallery?.length ?? 0) > 0) ?? primary;
 
   const frames = [
-    <DashboardFrame key="dash" offerings={offerings} c={c} />,
+    <DashboardFrame key="dash" offerings={offerings} c={c} isPreview={isPreview} />,
     <OfferingDetailFrame key="detail" offering={primary} c={c} />,
     <PerformanceFrame key="perf" offering={performanceOffering} c={c} />,
     <BuildingsFrame key="build" offering={buildingsOffering} c={c} />,
@@ -210,11 +212,11 @@ export function PlatformTabs({
   return (
     <SectionShell id="platform" variant="navy">
       <SectionHeader eyebrow={c.platform.eyebrow} title={c.platform.title} body={c.platform.body} tone="gold" invert />
-      <div className="mt-10 grid items-start gap-10 lg:grid-cols-[0.42fr_0.58fr]">
+      <div className="mt-10 grid min-w-0 grid-cols-1 items-start gap-10 lg:grid-cols-[0.42fr_0.58fr]">
         <div
           role="tablist"
           aria-label={c.platform.eyebrow}
-          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1"
+          className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-1"
         >
           {c.platform.tabs.map((tab, index) => {
             const selected = index === active;
@@ -244,9 +246,9 @@ export function PlatformTabs({
             );
           })}
         </div>
-        <div className="relative">
+        <div className="relative min-w-0">
           <div aria-hidden className="absolute -inset-4 rounded-[2rem] bg-[#2f7194]/14 blur-2xl" />
-          <Reveal key={active} className="relative">
+          <Reveal key={active} className="relative min-w-0">
             {frames[active]}
           </Reveal>
         </div>
@@ -289,9 +291,11 @@ export function FeaturedOpportunities({
 export function BenefitsAndWays({
   c,
   images,
+  hasOfferings,
 }: {
   c: LandingCopy;
   images: FootprintImage[];
+  hasOfferings: boolean;
 }) {
   const benefitIcons: LucideIcon[] = [Layers, Umbrella, HandCoins, ShieldCheck];
   const wayIcons: LucideIcon[] = [Wallet, PiggyBank, Banknote, GraduationCap];
@@ -334,7 +338,11 @@ export function BenefitsAndWays({
       </div>
 
       <div className="mt-16">
-        <SectionHeader eyebrow={c.ways.eyebrow} title={c.ways.title} body={c.ways.caption} />
+        <SectionHeader
+          eyebrow={c.ways.eyebrow}
+          title={c.ways.title}
+          body={hasOfferings ? c.ways.caption : c.ways.previewCaption}
+        />
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {c.ways.items.map((item, i) => {
             const Icon = wayIcons[i] ?? Wallet;
