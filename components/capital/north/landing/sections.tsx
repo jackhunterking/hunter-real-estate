@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import type { PublicOfferingPreview } from "@/lib/capital/types";
 import { DealerDisclosure } from "../DealerDisclosure";
-import { NORTH_BASE, NorthBrand } from "../NorthBrand";
+import { NORTH_BASE, NorthBrand, ParvisCoBrand } from "../NorthBrand";
 import type { LandingCopy } from "./copy";
 import {
   Reveal,
@@ -55,7 +55,7 @@ export function LandingHeader({ c, hasOfferings }: { c: LandingCopy; hasOffering
   return (
     <header className="sticky top-0 z-40 border-b border-[#e0e6ea] bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-5 px-4 sm:px-8">
-        <NorthBrand dark />
+        <NorthBrand dark showCoBrand={false} />
         <nav aria-label="Landing" className="hidden items-center gap-6 lg:flex">
           {hasOfferings && (
             <a href="#opportunities" className="text-xs font-semibold text-[#52636f] transition-colors hover:text-[#0a2d46]">
@@ -140,6 +140,10 @@ export function Hero({
               {c.actions.seeOpportunities}
             </Link>
           </div>
+
+          <div className="mt-8 border-t border-white/12 pt-5">
+            <ParvisCoBrand />
+          </div>
         </div>
 
         <div className="relative mx-auto w-full max-w-xl">
@@ -210,7 +214,7 @@ export function PlatformTabs({
         <div
           role="tablist"
           aria-label={c.platform.eyebrow}
-          className="flex gap-3 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0"
+          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1"
         >
           {c.platform.tabs.map((tab, index) => {
             const selected = index === active;
@@ -221,7 +225,7 @@ export function PlatformTabs({
                 role="tab"
                 aria-selected={selected}
                 onClick={() => setActive(index)}
-                className={`min-w-64 shrink-0 rounded-2xl border p-5 text-left transition-colors lg:min-w-0 ${
+                className={`w-full min-w-0 rounded-2xl border p-5 text-left transition-colors ${
                   selected
                     ? "border-[#d6b96e]/60 bg-white/8"
                     : "border-white/10 bg-white/4 hover:bg-white/6"
@@ -386,7 +390,10 @@ export function LandingFooter({ c }: { c: LandingCopy }) {
   return (
     <footer className="bg-[#071c2c] px-4 py-10 text-xs leading-5 text-white/55 sm:px-8">
       <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-[auto_1fr] md:items-start">
-        <p>{c.footer.rights}</p>
+        <div>
+          <p>{c.footer.rights}</p>
+          <ParvisCoBrand className="mt-4" />
+        </div>
         <div className="max-w-3xl md:justify-self-end md:text-right">
           <p>{c.footer.legal}</p>
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 md:justify-end">

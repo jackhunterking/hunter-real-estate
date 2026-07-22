@@ -187,7 +187,7 @@ export function OpenFundsFrame({
         {offerings.map((offering) => (
           <div
             key={offering.id}
-            className="flex items-center gap-4 rounded-xl border border-border bg-card p-4 sm:p-5"
+            className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-x-4 sm:p-5"
           >
             {offering.media?.logo?.src ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -202,15 +202,15 @@ export function OpenFundsFrame({
               </span>
             )}
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-foreground">
+              <p className="text-sm font-semibold leading-5 text-foreground sm:truncate">
                 {tx(offering.shortName, lang)}
               </p>
-              <p className="mt-0.5 truncate text-xs text-muted-foreground">
+              <p className="mt-0.5 text-xs leading-4 text-muted-foreground sm:truncate">
                 {tx(offering.managerName, lang)}
               </p>
             </div>
             {offering.targetReturn && (
-              <div className="shrink-0 text-right">
+              <div className="col-start-2 text-left sm:col-auto sm:text-right">
                 <p className="font-serif text-2xl font-semibold leading-none text-foreground">
                   {shortRange(offering.targetReturn.value)}
                 </p>
