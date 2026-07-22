@@ -18,6 +18,37 @@ import { NORTH_BASE, NorthBrand, ParvisCoBrand } from "./NorthBrand";
 type InvestorCategory = "accredited" | "eligible" | "entity";
 type AccountType = "individual" | "entity";
 
+// Canada and the United States are pinned to the top; the rest are alphabetical.
+const COUNTRIES = [
+  "Canada",
+  "United States",
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina",
+  "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados",
+  "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana",
+  "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Cape Verde",
+  "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo (Brazzaville)",
+  "Congo (Kinshasa)", "Costa Rica", "Côte d’Ivoire", "Croatia", "Cuba", "Cyprus", "Czechia", "Denmark",
+  "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea",
+  "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia",
+  "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana",
+  "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel",
+  "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait",
+  "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein",
+  "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta",
+  "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco",
+  "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal",
+  "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia",
+  "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru",
+  "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis",
+  "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "São Tomé and Príncipe",
+  "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia",
+  "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan", "Spain",
+  "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan",
+  "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Türkiye",
+  "Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "Uruguay",
+  "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe",
+] as const;
+
 const COPY = {
   tr: {
     eyebrow: "Güvenli hesap kurulumu",
@@ -77,11 +108,11 @@ const COPY = {
     changeAnswers: "Yanıtlarımı değiştir",
     // Final details
     detailsHeading: "Son birkaç ayrıntı",
-    jurisdiction: "İkamet / yetki alanı",
-    objective: "Genel yatırım amacı",
-    horizon: "Genel zaman ufku",
-    risk: "Özel piyasa yatırımlarında sermaye kaybı, sınırlı likidite ve uzun elde tutma süresi olabileceğini anlıyorum.",
-    consent: "Hunter & Hunter Investment Advisors’ın bu talep hakkında benimle iletişim kurmasına izin veriyorum.",
+    jurisdiction: "İkamet ettiğiniz ülke",
+    countryPlaceholder: "Ülkenizi seçin",
+    agreeBefore: "Hunter & Hunter’ın ",
+    agreeLink: "koşullarını ve gizlilik politikasını",
+    agreeAfter: " kabul ediyorum.",
     submit: "Hesap oluştur",
     pending: "Kaydediliyor…",
     error: "Kurulum kaydedilemedi. Lütfen tekrar deneyin.",
@@ -146,11 +177,11 @@ const COPY = {
     changeAnswers: "Change my answers",
     // Final details
     detailsHeading: "A few final details",
-    jurisdiction: "Residence / jurisdiction",
-    objective: "General investment objective",
-    horizon: "General time horizon",
-    risk: "I understand that private-market investments may involve loss of capital, limited liquidity, and long holding periods.",
-    consent: "I consent to Hunter & Hunter Investment Advisors contacting me about this request.",
+    jurisdiction: "Country of residence",
+    countryPlaceholder: "Select your country",
+    agreeBefore: "I agree to Hunter & Hunter’s ",
+    agreeLink: "terms and privacy policy",
+    agreeAfter: ".",
     submit: "Create account",
     pending: "Saving…",
     error: "Setup could not be saved. Please try again.",
@@ -252,6 +283,7 @@ export function OnboardingFlow({
     setPending(true);
     setError("");
     const form = new FormData(event.currentTarget);
+    const agreed = form.get("agree") === "on";
     const result = await fetch("/api/hnc-onboarding", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -259,10 +291,7 @@ export function OnboardingFlow({
         accountIntent: "investor",
         investorAccountType: accountType === "entity" ? "entity" : "individual",
         residenceJurisdiction: form.get("jurisdiction"),
-        investmentObjective: form.get("objective"),
-        timeHorizon: form.get("horizon"),
-        riskAcknowledged: form.get("risk") === "on",
-        contactConsent: form.get("consent") === "on",
+        agreed,
       }),
     });
     setPending(false);
@@ -606,29 +635,28 @@ function ResultStep({
       <form onSubmit={onSubmit} className="mt-6 space-y-4 border-t border-[#e2e6e8] pt-6">
         <label className="block text-sm font-medium text-[#283640]">
           {copy.jurisdiction}
-          <input name="jurisdiction" required maxLength={120} placeholder="Ontario, Canada" className={inputClass} />
+          <select name="jurisdiction" required defaultValue="" className={`${inputClass} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2024%2024%22%20fill=%22none%22%20stroke=%22%2366747e%22%20stroke-width=%222%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%3E%3Cpolyline%20points=%226%209%2012%2015%2018%209%22/%3E%3C/svg%3E')] bg-[length:18px] bg-[right_0.9rem_center] bg-no-repeat pr-11`}>
+            <option value="" disabled>
+              {copy.countryPlaceholder}
+            </option>
+            {COUNTRIES.map((country) => (
+              <option key={country} value={country}>
+                {country}
+              </option>
+            ))}
+          </select>
         </label>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="block text-sm font-medium text-[#283640]">
-            {copy.objective}
-            <input name="objective" required maxLength={160} placeholder={lang === "tr" ? "Uzun vadeli büyüme" : "Long-term growth"} className={inputClass} />
-          </label>
-          <label className="block text-sm font-medium text-[#283640]">
-            {copy.horizon}
-            <input name="horizon" required maxLength={120} placeholder={lang === "tr" ? "5–10 yıl" : "5–10 years"} className={inputClass} />
-          </label>
-        </div>
 
-        <div className="space-y-2.5 pt-1">
-          <label className="flex items-start gap-2.5 text-xs leading-5 text-[#5a6772]">
-            <input name="risk" required type="checkbox" className="mt-0.5 accent-[#173b57]" />
-            {copy.risk}
-          </label>
-          <label className="flex items-start gap-2.5 text-xs leading-5 text-[#5a6772]">
-            <input name="consent" required type="checkbox" className="mt-0.5 accent-[#173b57]" />
-            {copy.consent}
-          </label>
-        </div>
+        <label className="flex items-start gap-2.5 pt-1 text-xs leading-5 text-[#5a6772]">
+          <input name="agree" required type="checkbox" className="mt-0.5 accent-[#173b57]" />
+          <span>
+            {copy.agreeBefore}
+            <Link href={`${NORTH_BASE}/legal`} target="_blank" className="font-semibold text-[#173b57] underline underline-offset-2">
+              {copy.agreeLink}
+            </Link>
+            {copy.agreeAfter}
+          </span>
+        </label>
 
         {error && (
           <p role="alert" className="rounded-md border border-[#eccdc8] bg-[#fbefed] p-3 text-sm text-[#98463c]">

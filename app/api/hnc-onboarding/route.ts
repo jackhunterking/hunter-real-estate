@@ -6,19 +6,13 @@ const Body = z.discriminatedUnion("accountIntent", [
     accountIntent: z.literal("investor"),
     investorAccountType: z.enum(["individual", "entity"]),
     residenceJurisdiction: z.string().trim().min(2).max(120),
-    investmentObjective: z.string().trim().min(2).max(160),
-    timeHorizon: z.string().trim().min(2).max(120),
-    riskAcknowledged: z.literal(true),
-    contactConsent: z.literal(true),
+    agreed: z.literal(true),
   }),
   z.object({
     accountIntent: z.literal("turkiye_licensed_professional_or_firm"),
     investorAccountType: z.null().optional(),
     residenceJurisdiction: z.string().trim().min(2).max(120),
-    investmentObjective: z.string().trim().min(2).max(160),
-    timeHorizon: z.string().trim().min(2).max(120),
-    riskAcknowledged: z.literal(true),
-    contactConsent: z.literal(true),
+    agreed: z.literal(true),
   }),
 ]);
 
@@ -32,9 +26,9 @@ export async function POST(request: Request) {
     p_account_intent: input.accountIntent,
     p_investor_account_type: input.investorAccountType ?? null,
     p_residence_jurisdiction: input.residenceJurisdiction,
-    p_investment_objective: input.investmentObjective,
-    p_time_horizon: input.timeHorizon,
-    p_risk_acknowledged: input.riskAcknowledged,
-    p_contact_consent: input.contactConsent,
+    p_investment_objective: "",
+    p_time_horizon: "",
+    p_risk_acknowledged: input.agreed,
+    p_contact_consent: input.agreed,
   });
 }
