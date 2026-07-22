@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff, LockKeyhole } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, MailCheck } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
@@ -50,6 +50,12 @@ const COPY = {
     preview: "Yerel portal önizlemesini aç",
     notConfigured: "Supabase bilgileri henüz bağlanmadığı için yerel önizleme kullanılabilir.",
     error: "İşlem tamamlanamadı. Lütfen tekrar deneyin.",
+    checkEmailEyebrow: "E-postanızı doğrulayın",
+    checkEmailTitle: "E-postanızı kontrol edin",
+    checkEmailBody: (email: string) =>
+      `${email} adresine bir doğrulama bağlantısı gönderdik. Hesabınızı etkinleştirmek için bağlantıyı açın, ardından giriş yapın.`,
+    checkEmailHint: "Bağlantıyı görmüyor musunuz? Spam klasörünü kontrol edin veya aşağıdan yeniden gönderin.",
+    backToSignIn: "Giriş sayfasına dön",
   },
   en: {
     signIn: "Sign in",
@@ -83,6 +89,12 @@ const COPY = {
     preview: "Open local portal preview",
     notConfigured: "Supabase credentials are not connected yet, so the local preview remains available.",
     error: "The request could not be completed. Please try again.",
+    checkEmailEyebrow: "Verify your email",
+    checkEmailTitle: "Check your email",
+    checkEmailBody: (email: string) =>
+      `We sent a verification link to ${email}. Open it to activate your account, then sign in.`,
+    checkEmailHint: "Don't see it? Check your spam folder, or resend the link below.",
+    backToSignIn: "Back to sign in",
   },
 } as const;
 
@@ -110,6 +122,9 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
     redirectTo: string;
   }>();
   const [resending, setResending] = useState(false);
+  const [awaitingConfirmation, setAwaitingConfirmation] = useState(false);
+  const [devConfirming, setDevConfirming] = useState(false);
+  const devConfirmEnabled = process.env.NODE_ENV !== "production";
   const [showPassword, setShowPassword] = useState(false);
   const [resendAvailableAt, setResendAvailableAt] = useState(0);
   const [resendSeconds, setResendSeconds] = useState(0);
@@ -218,8 +233,8 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
         },
       });
       if (result.error) throw result.error;
-      setMessage(c.verification);
       setPendingConfirmation({ email, redirectTo: emailRedirectTo });
+      setAwaitingConfirmation(true);
       setResendAvailableAt(Date.now() + 60_000);
       formElement.reset();
     } catch (caught) {
@@ -233,6 +248,29 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
     } finally {
       setPending(false);
       resetCaptcha();
+    }
+  }
+
+  async function devConfirm() {
+    if (!pendingConfirmation || devConfirming) return;
+    setMessage("");
+    setError("");
+    setDevConfirming(true);
+    try {
+      const response = await fetch("/api/dev/confirm-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: pendingConfirmation.email }),
+      });
+      if (!response.ok) {
+        const data = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(data?.error ?? "confirm_failed");
+      }
+      setMessage("Account confirmed (dev). You can sign in now.");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "confirm_failed");
+    } finally {
+      setDevConfirming(false);
     }
   }
 
@@ -284,6 +322,54 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
 
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-5 py-10 sm:px-8 sm:py-14">
         <section className="w-full max-w-[460px] rounded-lg border border-[#d9dee2] bg-white px-6 py-8 shadow-[0_8px_24px_rgba(20,38,52,0.05)] sm:px-9 sm:py-9" aria-labelledby="auth-title">
+          {awaitingConfirmation ? (
+            <div className="flex flex-col items-center text-center">
+              <span className="grid size-14 place-items-center rounded-full bg-[#eef4f0] text-[#2f7150]">
+                <MailCheck className="size-7" aria-hidden />
+              </span>
+              <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.14em] text-[#53636f]">
+                {c.checkEmailEyebrow}
+              </p>
+              <h1 id="auth-title" className="mt-2.5 text-2xl font-semibold tracking-[-0.025em] text-[#102638] sm:text-[1.7rem]">
+                {c.checkEmailTitle}
+              </h1>
+              <p className="mt-3 text-sm leading-6 text-[#66747e]">
+                {c.checkEmailBody(pendingConfirmation?.email ?? "")}
+              </p>
+              <p className="mt-4 text-xs leading-5 text-[#8b969f]">{c.checkEmailHint}</p>
+              {turnstileRequired && (
+                <div className="mt-6 w-full">
+                  <TurnstileField onToken={setCaptchaToken} resetSignal={captchaResetSignal} />
+                </div>
+              )}
+              {message && <p role="status" className="mt-6 w-full rounded-md border border-[#b8d8c5] bg-[#edf7f1] p-3 text-sm text-[#316247]">{message}</p>}
+              {error && <p role="alert" className="mt-6 w-full rounded-md border border-[#eccdc8] bg-[#fbefed] p-3 text-sm text-[#98463c]">{error}</p>}
+              <button
+                type="button"
+                onClick={resendConfirmation}
+                disabled={resending || resendSeconds > 0 || (turnstileRequired && !captchaToken)}
+                className="mt-7 flex h-12 w-full items-center justify-center rounded-md border border-[#c9d2d8] bg-white px-4 text-sm font-semibold text-[#173b57] transition-colors hover:border-[#173b57] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-[#c9d2d8]"
+              >
+                {resendSeconds > 0 ? c.resendWait(resendSeconds) : c.resend}
+              </button>
+              {devConfirmEnabled && (
+                <button
+                  type="button"
+                  onClick={devConfirm}
+                  disabled={devConfirming}
+                  className="mt-3 w-full rounded-md border border-dashed border-[#c9d2d8] px-4 py-2.5 text-xs font-semibold text-[#6b7680] transition-colors hover:border-[#173b57] hover:text-[#173b57] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {devConfirming ? "Confirming…" : "Confirm now (dev only)"}
+                </button>
+              )}
+              <div className="mt-7 w-full border-t border-[#e2e6e8] pt-6">
+                <Link href={`${NORTH_BASE}/sign-in`} className="text-sm font-semibold text-[#173b57] hover:underline">
+                  {c.backToSignIn}
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <>
           <div className="mb-8">
             <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#53636f]">
               {mode === "sign-in" ? c.signInEyebrow : c.signUpEyebrow}
@@ -372,6 +458,8 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
               </div>
             )}
           </div>
+            </>
+          )}
         </section>
 
         <p className="mt-6 inline-flex items-center gap-2 text-xs font-medium text-[#5f6d77]">

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Eye, EyeOff, LockKeyhole } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, LockKeyhole, MailCheck } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 import {
@@ -37,6 +37,8 @@ const COPY = {
     security: "Devam etmek için güvenlik doğrulamasını tamamlayın.",
     wait: "Çok fazla istek gönderildi. Lütfen bir dakika sonra yeniden deneyin.",
     error: "İşlem tamamlanamadı.",
+    sentEyebrow: "Gelen kutunuzu kontrol edin",
+    sentTitle: "E-postanızı kontrol edin",
   },
   en: {
     eyebrow: "Account security",
@@ -60,6 +62,8 @@ const COPY = {
     security: "Complete the security verification to continue.",
     wait: "Too many requests were sent. Try again in one minute.",
     error: "The request could not be completed.",
+    sentEyebrow: "Check your inbox",
+    sentTitle: "Check your email",
   },
 } as const;
 
@@ -70,6 +74,7 @@ export function PasswordRecoveryScreen({ mode }: { mode: "forgot" | "reset" }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [resetSessionReady, setResetSessionReady] = useState(mode !== "reset");
+  const [linkSent, setLinkSent] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string>();
   const [captchaResetSignal, setCaptchaResetSignal] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
@@ -118,7 +123,7 @@ export function PasswordRecoveryScreen({ mode }: { mode: "forgot" | "reset" }) {
           captchaToken,
         });
         if (result.error) throw result.error;
-        setMessage(c.sent);
+        setLinkSent(true);
         formElement.reset();
         return;
       }
@@ -138,7 +143,8 @@ export function PasswordRecoveryScreen({ mode }: { mode: "forgot" | "reset" }) {
         : "";
       if (code.includes("captcha")) setError(c.security);
       else if (code.includes("rate_limit")) setError(c.wait);
-      else setError(mode === "forgot" ? c.sent : c.error);
+      else if (mode === "forgot") setLinkSent(true);
+      else setError(c.error);
     } finally {
       setPending(false);
       if (mode === "forgot") {
@@ -164,6 +170,22 @@ export function PasswordRecoveryScreen({ mode }: { mode: "forgot" | "reset" }) {
 
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-5 py-10 sm:px-8 sm:py-14">
         <section className="w-full max-w-[460px] rounded-lg border border-[#d9dee2] bg-white px-6 py-8 shadow-[0_8px_24px_rgba(20,38,52,0.05)] sm:px-9 sm:py-9" aria-labelledby="password-recovery-title">
+          {mode === "forgot" && linkSent ? (
+            <div className="flex flex-col items-center text-center">
+              <span className="grid size-14 place-items-center rounded-full bg-[#eef4f0] text-[#2f7150]">
+                <MailCheck className="size-7" aria-hidden />
+              </span>
+              <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.14em] text-[#53636f]">{c.sentEyebrow}</p>
+              <h1 id="password-recovery-title" className="mt-2.5 text-2xl font-semibold tracking-[-0.025em] text-[#102638] sm:text-[1.7rem]">{c.sentTitle}</h1>
+              <p className="mt-3 text-sm leading-6 text-[#66747e]">{c.sent}</p>
+              <div className="mt-7 w-full border-t border-[#e2e6e8] pt-6">
+                <Link href={`${NORTH_BASE}/sign-in`} className="text-sm font-semibold text-[#173b57] hover:underline">
+                  {c.back}
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <>
           <div className="mb-8">
             <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#53636f]">{c.eyebrow}</p>
             <h1 id="password-recovery-title" className="mt-2.5 text-2xl font-semibold tracking-[-0.025em] text-[#102638] sm:text-[1.7rem]">
@@ -242,6 +264,8 @@ export function PasswordRecoveryScreen({ mode }: { mode: "forgot" | "reset" }) {
               {c.back}
             </Link>
           </div>
+            </>
+          )}
         </section>
 
         <p className="mt-6 inline-flex items-center gap-2 text-xs font-medium text-[#5f6d77]">
