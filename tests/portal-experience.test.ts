@@ -97,9 +97,10 @@ test("public landing receives only approved offering previews and global documen
   assert.match(page, /buildPublicOfferingPreviews\(getProductDemoOfferings\(\)\)/);
   assert.match(page, /productDemoOfferings=\{productDemoOfferings\}/);
   assert.doesNotMatch(landing, /getPublishedOfferings|OfferingBundle|repository-server/);
-  assert.match(landing, /productDemoOfferings\.length > 0/);
-  assert.match(landing, /isPreview=\{!data\.hasOfferings\}/);
-  assert.match(landing, /data\.hasOfferings && <FeaturedOpportunities/);
+  assert.match(landing, /const displayOfferings = offerings\.length > 0 \? offerings : productDemoOfferings/);
+  assert.match(landing, /offerings=\{displayOfferings\.slice\(0, 2\)\}/);
+  assert.match(landing, /isPreview=\{isPreview\}/);
+  assert.match(landing, /data\.hasOfferings && <FeaturedOpportunities c=\{c\} offerings=\{displayOfferings\}/);
   assert.match(landing, /hasOfferings=\{data\.hasOfferings\}/);
   assert.match(read("components/capital/north/landing/sections.tsx"), /snap-x snap-mandatory/);
   assert.match(read("components/capital/north/landing/sections.tsx"), /scrollIntoView/);

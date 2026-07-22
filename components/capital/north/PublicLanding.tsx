@@ -34,7 +34,9 @@ export function PublicLanding({
 }) {
   const { lang } = useLang();
   const c = pick(LANDING_COPY, lang);
-  const data = deriveLandingData(offerings);
+  const displayOfferings = offerings.length > 0 ? offerings : productDemoOfferings;
+  const data = deriveLandingData(displayOfferings);
+  const isPreview = offerings.length === 0;
 
   return (
     // English-first marketing surface: pin lang so CSS uppercase casing doesn't
@@ -44,19 +46,19 @@ export function PublicLanding({
       <main>
         <Hero
           c={c}
-          offerings={offerings.slice(0, 2)}
+          offerings={displayOfferings.slice(0, 2)}
           hasOfferings={data.hasOfferings}
           backdrop={data.heroBackdrop}
         />
         <TrustBar c={c} />
-        {productDemoOfferings.length > 0 && (
+        {displayOfferings.length > 0 && (
           <PlatformTabs
             c={c}
-            offerings={productDemoOfferings.slice(0, 2)}
-            isPreview={!data.hasOfferings}
+            offerings={displayOfferings.slice(0, 2)}
+            isPreview={isPreview}
           />
         )}
-        {data.hasOfferings && <FeaturedOpportunities c={c} offerings={offerings} />}
+        {data.hasOfferings && <FeaturedOpportunities c={c} offerings={displayOfferings} />}
         <BenefitsAndWays
           c={c}
           images={data.galleryItems}
