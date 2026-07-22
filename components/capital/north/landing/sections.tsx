@@ -9,7 +9,7 @@
  * product mockups are the REAL portal components fed with real offering data.
  */
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -196,7 +196,18 @@ export function PlatformTabs({
   isPreview?: boolean;
 }) {
   const [active, setActive] = useState(0);
+  const activeRef = useRef(0);
   const frameRef = useRef<HTMLDivElement>(null);
+  const railRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const revealTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (revealTimerRef.current) window.clearTimeout(revealTimerRef.current);
+    };
+  }, []);
+
   const primary = offerings[0];
   if (!primary) return null;
   const performanceOffering = offerings.find((o) => o.performance?.length) ?? primary;
@@ -210,18 +221,64 @@ export function PlatformTabs({
     <BuildingsFrame key="build" offering={buildingsOffering} c={c} />,
   ];
 
-  function selectView(index: number) {
-    setActive(index);
-    if (!window.matchMedia("(max-width: 1023px)").matches) return;
+  function isMobileView() {
+    return window.matchMedia("(max-width: 1023px)").matches;
+  }
 
-    window.requestAnimationFrame(() => {
+  function motionBehavior(): ScrollBehavior {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "auto"
+      : "smooth";
+  }
+
+  function setActiveView(index: number) {
+    if (activeRef.current === index) return;
+    activeRef.current = index;
+    setActive(index);
+  }
+
+  function revealActiveFrame(delay = 150) {
+    if (revealTimerRef.current) window.clearTimeout(revealTimerRef.current);
+    revealTimerRef.current = window.setTimeout(() => {
       frameRef.current?.scrollIntoView({
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "auto"
-          : "smooth",
+        behavior: motionBehavior(),
         block: "start",
       });
+    }, delay);
+  }
+
+  function selectView(index: number) {
+    setActiveView(index);
+    if (!isMobileView()) return;
+
+    tabRefs.current[index]?.scrollIntoView({
+      behavior: motionBehavior(),
+      block: "nearest",
+      inline: "center",
     });
+    revealActiveFrame();
+  }
+
+  function syncViewFromRail() {
+    const rail = railRef.current;
+    if (!rail || !isMobileView()) return;
+
+    const railCenter = rail.scrollLeft + rail.clientWidth / 2;
+    let closestIndex = activeRef.current;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    tabRefs.current.forEach((tab, index) => {
+      if (!tab) return;
+      const tabCenter = tab.offsetLeft + tab.offsetWidth / 2;
+      const distance = Math.abs(tabCenter - railCenter);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    setActiveView(closestIndex);
+    revealActiveFrame();
   }
 
   return (
@@ -229,23 +286,25 @@ export function PlatformTabs({
       <SectionHeader eyebrow={c.platform.eyebrow} title={c.platform.title} body={c.platform.body} tone="gold" invert />
       <div className="mt-10 grid min-w-0 grid-cols-1 items-start gap-10 lg:grid-cols-[0.42fr_0.58fr]">
         <div className="min-w-0">
-          <div className="mb-3 flex items-center justify-between gap-3 lg:hidden">
-            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#d6b96e]">
-              {c.platform.mobileHint}
-            </p>
-            <p className="shrink-0 text-xs font-semibold tabular-nums text-white/55">
+          <div className="mb-3 flex justify-end lg:hidden">
+            <p className="text-xs font-semibold tabular-nums text-white/55">
               {active + 1} / {c.platform.tabs.length}
             </p>
           </div>
           <div
+            ref={railRef}
             role="tablist"
             aria-label={c.platform.eyebrow}
+            onScroll={syncViewFromRail}
             className="flex min-w-0 snap-x snap-mandatory gap-3 overflow-x-auto pb-2 pr-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:flex-col lg:overflow-visible lg:pb-0 lg:pr-0"
           >
             {c.platform.tabs.map((tab, index) => {
               const selected = index === active;
               return (
                 <button
+                  ref={(node) => {
+                    tabRefs.current[index] = node;
+                  }}
                   key={tab.label}
                   id={`platform-tab-${index}`}
                   type="button"
