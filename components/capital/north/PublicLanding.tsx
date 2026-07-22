@@ -22,7 +22,6 @@ import {
   LandingFooter,
   LandingHeader,
   PlatformTabs,
-  TrustBar,
 } from "./landing/sections";
 
 export function PublicLanding({
@@ -50,7 +49,6 @@ export function PublicLanding({
           hasOfferings={data.hasOfferings}
           backdrop={data.heroBackdrop}
         />
-        <TrustBar c={c} />
         {displayOfferings.length > 0 && (
           <PlatformTabs
             c={c}

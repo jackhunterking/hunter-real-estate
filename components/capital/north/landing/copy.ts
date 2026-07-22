@@ -116,22 +116,22 @@ const en: LandingCopy = {
     body: "The same workspace our investors sign into — real funds, real figures.",
     tabs: [
       {
-        label: "Effortless access",
+        label: "Frictionless access",
         title: "Your portfolio on one calm screen",
         body: "The funds you hold, their terms, and your distributions — no paperwork chase.",
       },
       {
-        label: "Curated, not crowded",
+        label: "Exclusive opportunities",
         title: "Only what passes review makes the shelf",
         body: "Every offering arrives with source-verified key facts, down to the fact sheet and page.",
       },
       {
-        label: "Real growth, on record",
+        label: "Capital growth",
         title: "Published performance, not promises",
         body: "Historical returns shown exactly as the fund publishes them.",
       },
       {
-        label: "Assets you can point to",
+        label: "Tangible assets",
         title: "The actual buildings behind your money",
         body: "Real photos, cities, and verification for the properties in the portfolio.",
       },
@@ -166,15 +166,15 @@ const en: LandingCopy = {
     ],
   },
   ways: {
-    eyebrow: "Ways to invest",
-    title: "Use the accounts you already have.",
-    caption: "Both open funds are eligible for Canadian registered accounts.",
-    previewCaption: "Account eligibility and minimums are confirmed for each available offering.",
+    eyebrow: "How to invest",
+    title: "From first look to first distribution.",
+    caption: "A guided path to becoming a partner — with a licensed advisory team beside you at every step.",
+    previewCaption: "A guided path to becoming a partner — with a licensed advisory team beside you at every step.",
     items: [
-      { title: "Cash account", body: "Start from $2,508 in a personal or corporate account." },
-      { title: "RRSP & RRIF", body: "Grow retirement savings tax-deferred with private real estate." },
-      { title: "TFSA", body: "Target distributions and growth, tax-free inside your TFSA." },
-      { title: "RESP & LIRA", body: "Education and locked-in accounts are eligible too." },
+      { title: "Find the opportunity", body: "Browse a short, curated shelf of vetted private real estate offerings." },
+      { title: "Review the details", body: "Open the full terms, documents, and the numbers behind each fund." },
+      { title: "Become a partner", body: "Commit through a simple, dealer-supervised onboarding with your advisor." },
+      { title: "Get paid", body: "Distributions are paid straight to your account on each fund's schedule." },
     ],
   },
   final: {

@@ -16,14 +16,12 @@ import {
   BadgeCheck,
   Banknote,
   Building2,
-  GraduationCap,
   HandCoins,
   KeyRound,
   Layers,
   PiggyBank,
   ShieldCheck,
   Umbrella,
-  Wallet,
   type LucideIcon,
 } from "lucide-react";
 import type { PublicOfferingPreview } from "@/lib/capital/types";
@@ -389,7 +387,7 @@ export function BenefitsAndWays({
   hasOfferings: boolean;
 }) {
   const benefitIcons: LucideIcon[] = [Layers, Umbrella, HandCoins, ShieldCheck];
-  const wayIcons: LucideIcon[] = [Wallet, PiggyBank, Banknote, GraduationCap];
+  const wayIcons: LucideIcon[] = [Building2, BadgeCheck, HandCoins, Banknote];
 
   return (
     <SectionShell id="why" variant="white">
@@ -436,13 +434,18 @@ export function BenefitsAndWays({
         />
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {c.ways.items.map((item, i) => {
-            const Icon = wayIcons[i] ?? Wallet;
+            const Icon = wayIcons[i] ?? Building2;
             return (
               <Reveal key={item.title} delay={i * 70}>
-                <article className="h-full rounded-2xl border border-[#dbe1e5] bg-[#fbfcfc] p-6">
-                  <span className="grid size-11 place-items-center rounded-xl bg-[#0a2d46] text-[#d6b96e]">
-                    <Icon className="size-5" />
-                  </span>
+                <article className="flex h-full flex-col rounded-2xl border border-[#dbe1e5] bg-[#fbfcfc] p-6">
+                  <div className="flex items-center justify-between">
+                    <span className="grid size-11 place-items-center rounded-xl bg-[#0a2d46] text-[#d6b96e]">
+                      <Icon className="size-5" />
+                    </span>
+                    <span className="font-serif text-2xl font-semibold tabular-nums text-[#d6b96e]">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </div>
                   <h3 className="mt-4 text-base font-semibold text-[#152b3b]">{item.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-[#63737d]">{item.body}</p>
                 </article>
