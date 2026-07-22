@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Building2, Check, CheckCircle2, LockKeyhole, RotateCcw, UserRound } from "lucide-react";
+import { ArrowLeft, ArrowRight, Building2, Check, LockKeyhole, RotateCcw, UserRound } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 import {
@@ -21,7 +21,7 @@ type AccountType = "individual" | "entity";
 const COPY = {
   tr: {
     eyebrow: "Güvenli hesap kurulumu",
-    title: "Yatırımcı hesabınızı kurun",
+    title: "Hesabınızı kurun",
     body: "Birkaç kısa soruyla hangi Kanada yatırımcı kategorisine girdiğinizi belirleyelim. Kendinizi sınıflandırmanıza gerek yok — yanıtlarınızdan biz belirleriz. Bu bir ön göstergedir; uygunluk Hunter & Hunter Investment Advisors ekibiyle teyit edilir.",
     stepLabel: (a: number, b: number) => `Soru ${a} / ${b}`,
     restart: "Yeniden başla",
@@ -30,21 +30,21 @@ const COPY = {
     seeResult: "Sonucu göster",
     // Questions
     accountTitle: "Yatırımı kim yapacak?",
-    accountBody: "Bu formu dolduran kişiyi değil, yasal alıcıyı seçin.",
+    accountBody: "Bu formu dolduran kişi değil, yasal alıcı.",
     individual: "Bireysel",
     individualHelp: "Kişisel olarak veya eşinizle birlikte yatırım yapıyorsunuz.",
     entity: "Şirket veya aile ofisi",
     entityHelp: "Bir şirket, tröst veya aile ofisi aracılığıyla yatırım yapıyorsunuz.",
     registrationTitle: "Uygun bir Kanada menkul kıymet kaydınız var mı?",
-    registrationBody: "Kanadalı bir dealer veya adviser temsilcisi olarak mevcut veya belirli uygun eski kayıt.",
+    registrationBody: "Kanadalı bir dealer veya adviser temsilcisi olarak — mevcut veya belirli eski kayıt.",
     financialAssetsTitle: "Net finansal varlıklarınız ne kadar?",
-    financialAssetsBody: "Tek başına veya eşinizle sahip olduğunuz finansal varlıklardan borçları çıkarın. Gayrimenkul hariç.",
+    financialAssetsBody: "Nakit ve yatırımlardan ilgili borçları çıkarın. Gayrimenkul hariç.",
     incomeTitle: "Vergi öncesi bireysel net geliriniz ne kadardı?",
-    incomeBody: "Son iki takvim yılında aşılan ve bu yıl da beklenen aralığı seçin.",
+    incomeBody: "Son iki yılın her birinde aştığınız ve bu yıl da beklediğiniz tutar.",
     spouseTitle: "Eşinizle birleşik net geliriniz ne kadardı?",
-    spouseBody: "Aynı iki önceki yıl ve cari yıl beklentisi testini kullanın.",
+    spouseBody: "Aynı iki yıllık test, eşinizle birlikte.",
     netAssetsTitle: "Toplam net varlıklarınız ne kadar?",
-    netAssetsBody: "Tek başına veya eşinizle toplam varlıklardan borçları çıkarın. Gayrimenkul dahil edilebilir.",
+    netAssetsBody: "Sahip olduklarınızdan borçlarınızı çıkarın. Gayrimenkul dahil olabilir.",
     yes: "Evet",
     no: "Hayır",
     bands: {
@@ -90,7 +90,7 @@ const COPY = {
   },
   en: {
     eyebrow: "Secure account setup",
-    title: "Set up your investor account",
+    title: "Set up your account",
     body: "A few short questions tell us which Canadian investor category you fall into — you don’t have to classify yourself. This is a preliminary indicator; eligibility is confirmed with the Hunter & Hunter Investment Advisors team.",
     stepLabel: (a: number, b: number) => `Question ${a} of ${b}`,
     restart: "Start over",
@@ -99,21 +99,21 @@ const COPY = {
     seeResult: "See result",
     // Questions
     accountTitle: "Who is investing?",
-    accountBody: "Choose the legal purchaser, not the person filling out this form.",
+    accountBody: "The legal purchaser — not whoever is filling this out.",
     individual: "Individual",
     individualHelp: "You’re investing personally or jointly with a spouse.",
     entity: "Entity or family office",
     entityHelp: "You’re investing through a corporation, trust, or family office.",
     registrationTitle: "Do you hold qualifying Canadian securities registration?",
-    registrationBody: "Current registration as a representative of a Canadian dealer or adviser, or certain qualifying former registration.",
+    registrationBody: "As a representative of a Canadian dealer or adviser — current or certain former.",
     financialAssetsTitle: "What are your net financial assets?",
-    financialAssetsBody: "Financial assets owned alone or with a spouse, after related liabilities. Do not include real estate.",
+    financialAssetsBody: "Cash and investments minus related debt. Excludes real estate.",
     incomeTitle: "What was your individual net income before tax?",
-    incomeBody: "Choose the band exceeded in each of the last two calendar years and reasonably expected this year.",
+    incomeBody: "The amount you passed in each of the last two years, and expect this year.",
     spouseTitle: "What was your combined net income with a spouse?",
-    spouseBody: "Use the same two-prior-years and current-year expectation test.",
+    spouseBody: "The same two-year test, combined with your spouse.",
     netAssetsTitle: "What are your total net assets?",
-    netAssetsBody: "Total assets minus total liabilities, alone or with a spouse. Real estate may be included.",
+    netAssetsBody: "Everything you own minus what you owe. Real estate can be included.",
     yes: "Yes",
     no: "No",
     bands: {
@@ -288,12 +288,10 @@ export function OnboardingFlow({
 
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-5 py-10 sm:px-8 sm:py-14">
         <section className="w-full max-w-[560px] rounded-lg border border-[#d9dee2] bg-white px-6 py-8 shadow-[0_8px_24px_rgba(20,38,52,0.05)] sm:px-9 sm:py-9" aria-labelledby="onboarding-title">
-          <div className="mb-8">
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#53636f]">{c.eyebrow}</p>
-            <h1 id="onboarding-title" className="mt-2.5 text-2xl font-semibold tracking-[-0.025em] text-[#102638] sm:text-[1.7rem]">
+          <div className="mb-7">
+            <h1 id="onboarding-title" className="text-2xl font-semibold tracking-[-0.025em] text-[#102638] sm:text-[1.7rem]">
               {c.title}
             </h1>
-            <p className="mt-2.5 text-sm leading-6 text-[#66747e]">{c.body}</p>
           </div>
 
           {stage === "questions" ? (
@@ -565,72 +563,47 @@ function ResultStep({
   inputClass: string;
   lang: string;
 }) {
-  const headline =
+  const categoryTitle =
     matchedCategory === "accredited"
-      ? copy.resultAccredited
+      ? lang === "tr" ? "Akredite yatırımcı" : "Accredited investor"
       : matchedCategory === "eligible"
-        ? copy.resultEligible
+        ? lang === "tr" ? "Uygun yatırımcı" : "Eligible investor"
         : matchedCategory === "entity"
-          ? copy.resultEntity
-          : copy.resultNone;
-  const subhead =
-    matchedCategory === "entity"
-      ? copy.resultBodyEntity
-      : matchedCategory
-        ? copy.resultBodyMatch
-        : copy.resultBodyNone;
-
-  const cards: Array<{ key: InvestorCategory; icon: React.ReactNode; title: string; body: string }> = [
-    { key: "accredited", icon: <UserRound className="size-5" />, title: lang === "tr" ? "Akredite yatırımcı" : "Accredited investor", body: copy.accreditedBody },
-    { key: "eligible", icon: <UserRound className="size-5" />, title: lang === "tr" ? "Uygun yatırımcı" : "Eligible investor", body: copy.eligibleBody },
-    { key: "entity", icon: <Building2 className="size-5" />, title: lang === "tr" ? "Şirket veya aile ofisi" : "Entity or family office", body: copy.entityBody },
-  ];
+          ? lang === "tr" ? "Şirket veya aile ofisi" : "Entity or family office"
+          : lang === "tr" ? "İncelenecek" : "To be reviewed";
+  const categoryBody =
+    matchedCategory === "accredited"
+      ? copy.accreditedBody
+      : matchedCategory === "eligible"
+        ? copy.eligibleBody
+        : matchedCategory === "entity"
+          ? copy.entityBody
+          : copy.resultBodyNone;
+  const CategoryIcon = matchedCategory === "entity" ? Building2 : UserRound;
 
   return (
     <div>
-      <div className="rounded-md border border-[#cfe0d4] bg-[#f0f7f2] p-4">
-        <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#4c755c]">{copy.resultEyebrow}</p>
-        <p className="mt-1.5 text-sm font-semibold text-[#274b37]">{headline}</p>
-        <p className="mt-1.5 text-sm leading-6 text-[#4d6656]">{subhead}</p>
-      </div>
-
-      <p className="mt-6 text-sm font-medium text-[#283640]">{copy.yourCategory}</p>
-      <div className="mt-3 space-y-2.5">
-        {cards.map((card) => {
-          const active = matchedCategory === card.key;
-          return (
-            <div
-              key={card.key}
-              className={`flex items-start gap-3 rounded-md border p-4 transition ${
-                active ? "border-[#173b57] bg-[#f2f6f9] ring-2 ring-[#173b57]/12" : "border-[#e2e6e8] bg-white opacity-70"
-              }`}
-            >
-              <span className={active ? "text-[#173b57]" : "text-[#9aa6ad]"}>{card.icon}</span>
-              <div className="min-w-0 flex-1">
-                <p className={`text-sm font-semibold ${active ? "text-[#102638]" : "text-[#5a6772]"}`}>{card.title}</p>
-                <p className="mt-1 text-xs leading-5 text-[#66747e]">{card.body}</p>
-              </div>
-              {active && (
-                <span className="grid size-6 shrink-0 place-items-center rounded-full bg-[#173b57] text-white" aria-label="Selected">
-                  <Check className="size-3.5" />
-                </span>
-              )}
-            </div>
-          );
-        })}
+      <div className="flex items-start gap-3 rounded-lg border border-[#173b57] bg-[#f2f6f9] p-4">
+        <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#173b57] text-white">
+          <CategoryIcon className="size-4" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#53636f]">{copy.resultEyebrow}</p>
+          <p className="mt-0.5 text-base font-semibold text-[#102638]">{categoryTitle}</p>
+          <p className="mt-1 text-sm leading-6 text-[#66747e]">{categoryBody}</p>
+        </div>
       </div>
 
       <button
         type="button"
         onClick={onChangeAnswers}
-        className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#173b57] transition-colors hover:underline"
+        className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[#173b57] transition-colors hover:underline"
       >
         <ArrowLeft className="size-4" />
         {copy.changeAnswers}
       </button>
 
-      <form onSubmit={onSubmit} className="mt-7 space-y-5 border-t border-[#e2e6e8] pt-7">
-        <p className="text-sm font-medium text-[#283640]">{copy.detailsHeading}</p>
+      <form onSubmit={onSubmit} className="mt-6 space-y-4 border-t border-[#e2e6e8] pt-6">
         <label className="block text-sm font-medium text-[#283640]">
           {copy.jurisdiction}
           <input name="jurisdiction" required maxLength={120} placeholder="Ontario, Canada" className={inputClass} />
@@ -646,13 +619,13 @@ function ResultStep({
           </label>
         </div>
 
-        <div className="space-y-3">
-          <label className="flex items-start gap-3 text-sm leading-6 text-[#475569]">
-            <input name="risk" required type="checkbox" className="mt-1 accent-[#173b57]" />
+        <div className="space-y-2.5 pt-1">
+          <label className="flex items-start gap-2.5 text-xs leading-5 text-[#5a6772]">
+            <input name="risk" required type="checkbox" className="mt-0.5 accent-[#173b57]" />
             {copy.risk}
           </label>
-          <label className="flex items-start gap-3 text-sm leading-6 text-[#475569]">
-            <input name="consent" required type="checkbox" className="mt-1 accent-[#173b57]" />
+          <label className="flex items-start gap-2.5 text-xs leading-5 text-[#5a6772]">
+            <input name="consent" required type="checkbox" className="mt-0.5 accent-[#173b57]" />
             {copy.consent}
           </label>
         </div>
@@ -670,11 +643,6 @@ function ResultStep({
           {pending ? copy.pending : copy.submit}
           <ArrowRight className="size-4" />
         </button>
-
-        <p className="flex items-start gap-2 text-xs leading-5 text-[#66747e]">
-          <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-[#8a97a0]" />
-          {copy.privacy}
-        </p>
       </form>
     </div>
   );
