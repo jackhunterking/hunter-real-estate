@@ -26,21 +26,21 @@ Before changing production data, read:
 - `docs/HNC_CONTENT_ROLLOUT.md`
 - `docs/HNC_LEGACY_DELETION_MANIFEST.md`
 
-## Current deployment blocker
+## Deployment configuration
 
-Vercel receives new GitHub commits but rejects them before a build starts. The project is on the Hobby plan while `vercel.json` schedules `/api/cron/email-jobs` every five minutes:
+Vercel automatically deploys new commits from `main`. The project is on the
+Hobby plan, so `vercel.json` keeps the email-retry job within the plan's
+once-per-day Cron limit:
 
 ```json
-"schedule": "*/5 * * * *"
+"schedule": "0 13 * * *"
 ```
 
-Vercel Hobby permits cron jobs only once per day. Resolve this before expecting a new deployment by choosing one of these paths:
-
-1. Change the Vercel cron schedule to a daily expression.
-2. Upgrade the Vercel project to Pro and retain the five-minute schedule.
-3. Move frequent scheduling to an approved external scheduler, such as a reviewed Supabase Cron implementation.
-
-Do not treat the missing deployment row as a Next.js build failure. GitHub verification passed; Vercel rejected the deployment configuration before build creation.
+The schedule runs daily at 13:00 UTC (with Hobby's documented hourly timing
+precision). New emails still send immediately from their submission routes;
+this job only recovers queued deliveries whose initial Resend attempt failed.
+Do not increase this schedule above once per day while the project remains on
+Hobby: Vercel rejects the deployment configuration before creating a build.
 
 ## Data and launch status
 
