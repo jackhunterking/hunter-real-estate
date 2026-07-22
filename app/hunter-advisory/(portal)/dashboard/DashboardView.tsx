@@ -9,6 +9,7 @@ import { pick, tx } from "@/lib/i18n/localize";
 import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { PageHeader, Panel, SectionHeader, money } from "@/components/capital/north/PortalUI";
+import { FundBannerCard } from "@/components/capital/FundBannerCard";
 import { useClients } from "@/components/capital/north/ClientProvider";
 import { StageIndicator } from "@/components/capital/north/StageIndicator";
 import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider";
@@ -179,39 +180,19 @@ export function DashboardView({ offerings }: { offerings: OfferingBundle[] }) {
       <div className="mt-8">
         <SectionHeader title={c.availableProducts} action={<Link href={`${NORTH_BASE}/funds`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#0a4b72] hover:underline">{c.all}<ArrowRight className="size-3.5" /></Link>} />
         <div className="grid gap-4 md:grid-cols-2">
-            {offerings.map((offering) => {
-              const image = offering.media?.card?.src;
-              return (
-                <article key={offering.id} className="overflow-hidden rounded-md border border-[#dbe1e5] bg-white shadow-[0_1px_2px_rgba(10,28,43,0.04)]">
-                  <div className="relative aspect-[60/13] overflow-hidden bg-[#0d2d43]">
-                    {image && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={image} alt={tx(offering.media?.card?.alt, lang) ?? tx(offering.shortName, lang)} className="h-full w-full object-cover" />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#071c2c]/75 via-[#071c2c]/15 to-transparent" />
-                    {offering.media?.logo?.src && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={offering.media.logo.src} alt="" className="absolute bottom-3 left-3 h-9 max-w-24 rounded bg-white object-contain p-1.5 shadow-sm" />
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <div className="mb-3 flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
-                      <div className="min-w-0">
-                        <h3 className="text-base font-semibold text-[#152b3b]">{tx(offering.shortName, lang)}</h3>
-                        <p className="mt-1 text-xs text-[#75818a]">{tx(offering.manager.name, lang)}</p>
-                      </div>
-                      <span className="inline-flex shrink-0 rounded border border-[#dbe1e5] bg-[#f5f7f8] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#64727d]">
-                        {c.strategy} · {taxonomyLabel(strategies, offering.strategyIds[0], lang)}
-                      </span>
-                    </div>
-                    <p className="mt-3 line-clamp-2 min-h-10 text-xs leading-5 text-[#5f6d78]">{tx(offering.summary, lang)}</p>
-                    <div className="mt-3 flex items-center justify-end gap-3">
-                      <Link href={`${NORTH_BASE}/funds/${offering.slug}/present`} className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-[#0a2d46] px-3 text-xs font-semibold text-white hover:bg-[#123f5e]">{c.review}<ArrowRight className="size-3.5" /></Link>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
+            {offerings.map((offering) => (
+              <FundBannerCard
+                key={offering.id}
+                image={offering.media?.card?.src}
+                imageAlt={tx(offering.media?.card?.alt, lang) ?? tx(offering.shortName, lang)}
+                logo={offering.media?.logo?.src}
+                name={tx(offering.shortName, lang)}
+                manager={tx(offering.manager.name, lang)}
+                strategyLabel={`${c.strategy} · ${taxonomyLabel(strategies, offering.strategyIds[0], lang)}`}
+                summary={tx(offering.summary, lang)}
+                cta={{ href: `${NORTH_BASE}/funds/${offering.slug}/present`, label: c.review }}
+              />
+            ))}
         </div>
       </div>
     </div>

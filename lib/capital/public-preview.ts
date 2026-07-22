@@ -25,6 +25,10 @@ export function buildPublicOfferingPreviews(
       const targetDistribution = approved(
         shareClass?.targetDistribution ?? shareClass?.distributionPerUnit,
       );
+      // Only source-attributed, verified photography may leave the portal.
+      const offeringGallery = offering.media?.gallery?.filter((image) =>
+        Boolean(verifiedPropertyImage(image)),
+      );
 
       return {
         id: offering.id,
@@ -38,18 +42,30 @@ export function buildPublicOfferingPreviews(
               card: offering.media.card,
               banner: offering.media.banner,
               logo: offering.media.logo,
+              gallery: offeringGallery?.length ? offeringGallery : undefined,
             }
           : undefined,
         strategyIds: offering.strategyIds,
         assetClassIds: offering.assetClassIds,
         regionIds: offering.regionIds,
         minimumInvestment: approved(shareClass?.minimumInvestment),
+        targetReturn: approved(shareClass?.targetReturn),
         targetDistribution,
         portfolioFacts: offering.portfolioFacts
           .filter((fact) => fact.approval === "approved-public")
           .slice(0, 3),
         aum: approved(offering.aum),
         term: approved(shareClass?.term),
+        riskProfile: offering.riskProfile,
+        registeredAccountTypes: shareClass?.registeredAccountTypes,
+        // Published fact-sheet figures only; rendered pre-auth with the
+        // "historical, not a forecast" framing. Remove this block to pull
+        // historical performance back behind authentication.
+        performance: offering.trailingReturns?.map((row) => ({
+          period: row.period,
+          value: row.value,
+        })),
+        performanceNote: offering.trailingReturnsNote,
         properties: offering.properties
           .filter((property) => property.verificationStatus === "verified")
           .map((property) => {

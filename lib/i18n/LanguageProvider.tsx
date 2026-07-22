@@ -23,13 +23,24 @@ const LanguageContext = createContext<LanguageContextValue>({
 
 const STORAGE_KEY = "hunter-lang";
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("tr");
+export function LanguageProvider({
+  children,
+  defaultLang = "tr",
+  storageKey = STORAGE_KEY,
+}: {
+  children: React.ReactNode;
+  /** Initial language before any persisted preference loads. */
+  defaultLang?: Lang;
+  /** localStorage key for the persisted preference. Use a distinct key to
+   *  scope a section's language independently (e.g. English-first advisory). */
+  storageKey?: string;
+}) {
+  const [lang, setLangState] = useState<Lang>(defaultLang);
 
   // Read persisted language on mount
   useEffect(() => {
     try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
+      const stored = window.localStorage.getItem(storageKey);
       if (stored && Object.prototype.hasOwnProperty.call(dictionaries, stored)) {
         setLangState(stored as Lang);
         document.documentElement.lang = stored;
@@ -37,17 +48,20 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     } catch {
       /* ignore storage errors */
     }
-  }, []);
+  }, [storageKey]);
 
-  const setLang = useCallback((next: Lang) => {
-    setLangState(next);
-    try {
-      window.localStorage.setItem(STORAGE_KEY, next);
-      document.documentElement.lang = next;
-    } catch {
-      /* ignore */
-    }
-  }, []);
+  const setLang = useCallback(
+    (next: Lang) => {
+      setLangState(next);
+      try {
+        window.localStorage.setItem(storageKey, next);
+        document.documentElement.lang = next;
+      } catch {
+        /* ignore */
+      }
+    },
+    [storageKey],
+  );
 
   const t = dictionaries[lang];
 

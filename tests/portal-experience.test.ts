@@ -97,7 +97,9 @@ test("public landing receives only approved offering previews and global documen
   assert.match(page, /<PublicLanding offerings=\{offerings\}/);
   assert.doesNotMatch(landing, /getPublishedOfferings|OfferingBundle|repository-server/);
   assert.match(projection, /approval === "approved-public"/);
-  assert.doesNotMatch(projection, /targetReturn|trailingReturns|documents|risks|serviceProviders|complianceProfile/);
+  assert.match(projection, /targetReturn: approved\(shareClass\?\.targetReturn\)/);
+  assert.match(projection, /performance: offering\.trailingReturns\?\.map/);
+  assert.doesNotMatch(projection, /documents|risks|serviceProviders|complianceProfile/);
   assert.match(read("app/hunter-advisory/(portal)/documents/page.tsx"), /hunter-advisory\/funds/);
 });
 

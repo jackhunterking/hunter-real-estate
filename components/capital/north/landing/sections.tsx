@@ -1,0 +1,402 @@
+"use client";
+
+/**
+ * Marketing sections for the Hunter & Hunter landing page. Each takes the
+ * resolved `c: LandingCopy` (+ offering/derived data where needed) and composes
+ * primitives + product frames. `PublicLanding` orchestrates them.
+ *
+ * Layout intent (Parvis-style): image-first, card-heavy, minimal prose. The
+ * product mockups are the REAL portal components fed with real offering data.
+ */
+
+import { useState } from "react";
+import Link from "next/link";
+import {
+  ArrowRight,
+  BadgeCheck,
+  Banknote,
+  Building2,
+  GraduationCap,
+  HandCoins,
+  KeyRound,
+  Layers,
+  PiggyBank,
+  ShieldCheck,
+  Umbrella,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
+import type { PublicOfferingPreview } from "@/lib/capital/types";
+import { DealerDisclosure } from "../DealerDisclosure";
+import { NORTH_BASE, NorthBrand } from "../NorthBrand";
+import type { LandingCopy } from "./copy";
+import {
+  Reveal,
+  SectionHeader,
+  SectionShell,
+  type FootprintImage,
+} from "./primitives";
+import { OpportunityCard } from "./mockups";
+import {
+  BuildingsFrame,
+  DashboardFrame,
+  OfferingDetailFrame,
+  OpenFundsFrame,
+  PerformanceFrame,
+} from "./product-frames";
+
+const SIGN_UP = `${NORTH_BASE}/sign-up?path=investor`;
+
+/* ------------------------------------------------------------------ */
+/* Header                                                              */
+/* ------------------------------------------------------------------ */
+
+export function LandingHeader({ c, hasOfferings }: { c: LandingCopy; hasOfferings: boolean }) {
+  return (
+    <header className="sticky top-0 z-40 border-b border-[#e0e6ea] bg-white/95 backdrop-blur">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-5 px-4 sm:px-8">
+        <NorthBrand dark />
+        <nav aria-label="Landing" className="hidden items-center gap-6 lg:flex">
+          {hasOfferings && (
+            <a href="#opportunities" className="text-xs font-semibold text-[#52636f] transition-colors hover:text-[#0a2d46]">
+              {c.nav.opportunities}
+            </a>
+          )}
+          <a href="#platform" className="text-xs font-semibold text-[#52636f] transition-colors hover:text-[#0a2d46]">
+            {c.nav.platform}
+          </a>
+          <a href="#why" className="text-xs font-semibold text-[#52636f] transition-colors hover:text-[#0a2d46]">
+            {c.nav.why}
+          </a>
+        </nav>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`${NORTH_BASE}/sign-in`}
+            className="hidden h-10 items-center rounded-md px-3 text-sm font-semibold text-[#0a2d46] hover:bg-[#eef2f4] sm:inline-flex"
+          >
+            {c.actions.signIn}
+          </Link>
+          <Link
+            href={SIGN_UP}
+            className="inline-flex h-10 items-center gap-1.5 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#123f5e]"
+          >
+            {c.actions.getAccess}
+            <ArrowRight className="size-4" />
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Hero — full-bleed photo + floating real-product composition         */
+/* ------------------------------------------------------------------ */
+
+export function Hero({
+  c,
+  offerings,
+  hasOfferings,
+  backdrop,
+}: {
+  c: LandingCopy;
+  offerings: PublicOfferingPreview[];
+  hasOfferings: boolean;
+  backdrop?: string;
+}) {
+  return (
+    <section className="relative overflow-hidden bg-[#071c2c] text-white">
+      {backdrop && (
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-cover bg-center opacity-25"
+          style={{ backgroundImage: `url(${backdrop})` }}
+        />
+      )}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[linear-gradient(105deg,rgba(7,28,44,0.96)_30%,rgba(7,28,44,0.72)_60%,rgba(7,28,44,0.55)),radial-gradient(circle_at_88%_12%,rgba(197,163,77,0.2),transparent_34%)]"
+      />
+      <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.02fr_0.98fr]">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#d6b96e]">{c.hero.eyebrow}</p>
+          <h1 className="mt-5 max-w-2xl font-serif text-4xl font-semibold leading-[1.05] sm:text-[3.5rem]">
+            {c.hero.title}
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-7 text-white/70 sm:text-lg">{c.hero.body}</p>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href={SIGN_UP}
+              className="inline-flex h-12 items-center gap-2 rounded-md bg-white px-6 text-sm font-semibold text-[#0a2d46] transition-transform hover:-translate-y-0.5"
+            >
+              {c.actions.getAccess}
+              <ArrowRight className="size-4" />
+            </Link>
+            <Link
+              href={hasOfferings ? "#opportunities" : SIGN_UP}
+              className="inline-flex h-12 items-center rounded-md border border-white/24 px-6 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+            >
+              {c.actions.seeOpportunities}
+            </Link>
+          </div>
+        </div>
+
+        <div className="relative mx-auto w-full max-w-xl">
+          <div aria-hidden className="absolute -inset-5 rounded-[2rem] bg-[#2f7194]/18 blur-2xl" />
+          <div className="relative">
+            {hasOfferings && <OpenFundsFrame offerings={offerings} c={c} />}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Trust bar — product-agnostic credibility, no fund figures           */
+/* ------------------------------------------------------------------ */
+
+export function TrustBar({ c }: { c: LandingCopy }) {
+  const icons: LucideIcon[] = [Building2, BadgeCheck, PiggyBank, ShieldCheck];
+  return (
+    <section className="border-b border-white/10 bg-[#09283d] text-white">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-4 px-4 py-7 sm:grid-cols-2 sm:px-8 lg:grid-cols-4">
+        {c.trustBar.items.map((item, i) => {
+          const Icon = icons[i] ?? ShieldCheck;
+          return (
+            <div key={item} className="flex items-center gap-3 text-sm font-semibold text-white/80">
+              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-white/5 text-[#d6b96e] ring-1 ring-white/10">
+                <Icon className="size-4.5" />
+              </span>
+              {item}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Platform tabs — Parvis-style tab rail + floating product frames     */
+/* ------------------------------------------------------------------ */
+
+export function PlatformTabs({
+  c,
+  offerings,
+}: {
+  c: LandingCopy;
+  offerings: PublicOfferingPreview[];
+}) {
+  const [active, setActive] = useState(0);
+  const primary = offerings[0];
+  if (!primary) return null;
+  const performanceOffering = offerings.find((o) => o.performance?.length) ?? primary;
+  const buildingsOffering =
+    offerings.find((o) => (o.media?.gallery?.length ?? 0) > 0) ?? primary;
+
+  const frames = [
+    <DashboardFrame key="dash" offerings={offerings} c={c} />,
+    <OfferingDetailFrame key="detail" offering={primary} c={c} />,
+    <PerformanceFrame key="perf" offering={performanceOffering} c={c} />,
+    <BuildingsFrame key="build" offering={buildingsOffering} c={c} />,
+  ];
+
+  return (
+    <SectionShell id="platform" variant="navy">
+      <SectionHeader eyebrow={c.platform.eyebrow} title={c.platform.title} body={c.platform.body} tone="gold" invert />
+      <div className="mt-10 grid items-start gap-10 lg:grid-cols-[0.42fr_0.58fr]">
+        <div
+          role="tablist"
+          aria-label={c.platform.eyebrow}
+          className="flex gap-3 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0"
+        >
+          {c.platform.tabs.map((tab, index) => {
+            const selected = index === active;
+            return (
+              <button
+                key={tab.label}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => setActive(index)}
+                className={`min-w-64 shrink-0 rounded-2xl border p-5 text-left transition-colors lg:min-w-0 ${
+                  selected
+                    ? "border-[#d6b96e]/60 bg-white/8"
+                    : "border-white/10 bg-white/4 hover:bg-white/6"
+                }`}
+              >
+                <p className={`text-sm font-bold ${selected ? "text-white" : "text-white/75"}`}>
+                  {tab.label}
+                </p>
+                <p className="mt-1.5 text-xs leading-5 text-white/55">{tab.body}</p>
+                <span
+                  className={`mt-4 block h-0.5 rounded-full transition-all ${
+                    selected ? "w-full bg-[#d6b96e]" : "w-8 bg-white/15"
+                  }`}
+                />
+              </button>
+            );
+          })}
+        </div>
+        <div className="relative">
+          <div aria-hidden className="absolute -inset-4 rounded-[2rem] bg-[#2f7194]/14 blur-2xl" />
+          <Reveal key={active} className="relative">
+            {frames[active]}
+          </Reveal>
+        </div>
+      </div>
+    </SectionShell>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Featured opportunities                                              */
+/* ------------------------------------------------------------------ */
+
+export function FeaturedOpportunities({
+  c,
+  offerings,
+}: {
+  c: LandingCopy;
+  offerings: PublicOfferingPreview[];
+}) {
+  return (
+    <SectionShell id="opportunities" variant="light" className="border-b border-[#dfe5e8]">
+      <SectionHeader eyebrow={c.featured.eyebrow} title={c.featured.title} body={c.featured.body} />
+      <div
+        className={`mt-10 grid gap-6 ${offerings.length === 1 ? "mx-auto max-w-2xl" : "lg:grid-cols-2"}`}
+      >
+        {offerings.map((offering, i) => (
+          <Reveal key={offering.id} delay={(i % 2) * 80}>
+            <OpportunityCard offering={offering} c={c} />
+          </Reveal>
+        ))}
+      </div>
+    </SectionShell>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Benefits + ways to invest                                           */
+/* ------------------------------------------------------------------ */
+
+export function BenefitsAndWays({
+  c,
+  images,
+}: {
+  c: LandingCopy;
+  images: FootprintImage[];
+}) {
+  const benefitIcons: LucideIcon[] = [Layers, Umbrella, HandCoins, ShieldCheck];
+  const wayIcons: LucideIcon[] = [Wallet, PiggyBank, Banknote, GraduationCap];
+
+  return (
+    <SectionShell id="why" variant="white">
+      <SectionHeader eyebrow={c.benefits.eyebrow} title={c.benefits.title} center />
+      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {c.benefits.items.map((item, i) => {
+          const Icon = benefitIcons[i] ?? Layers;
+          const image = images[i % Math.max(images.length, 1)];
+          return (
+            <Reveal key={item.title} delay={i * 70}>
+              <article className="h-full overflow-hidden rounded-2xl border border-[#dbe1e5] bg-white">
+                <div className="relative h-24 overflow-hidden bg-[#0a2d46]">
+                  {image?.src ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={image.src}
+                      alt=""
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-full bg-[radial-gradient(circle_at_78%_20%,rgba(197,163,77,0.3),transparent_40%),linear-gradient(135deg,#071c2c,#0a4b72)]" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#071c2c]/55 to-transparent" />
+                  <span className="absolute bottom-3 left-4 grid size-10 place-items-center rounded-lg bg-white text-[#0a2d46] shadow-md">
+                    <Icon className="size-5" />
+                  </span>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-base font-semibold text-[#152b3b]">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-[#63737d]">{item.body}</p>
+                </div>
+              </article>
+            </Reveal>
+          );
+        })}
+      </div>
+
+      <div className="mt-16">
+        <SectionHeader eyebrow={c.ways.eyebrow} title={c.ways.title} body={c.ways.caption} />
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {c.ways.items.map((item, i) => {
+            const Icon = wayIcons[i] ?? Wallet;
+            return (
+              <Reveal key={item.title} delay={i * 70}>
+                <article className="h-full rounded-2xl border border-[#dbe1e5] bg-[#fbfcfc] p-6">
+                  <span className="grid size-11 place-items-center rounded-xl bg-[#0a2d46] text-[#d6b96e]">
+                    <Icon className="size-5" />
+                  </span>
+                  <h3 className="mt-4 text-base font-semibold text-[#152b3b]">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-[#63737d]">{item.body}</p>
+                </article>
+              </Reveal>
+            );
+          })}
+        </div>
+      </div>
+    </SectionShell>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Final CTA                                                           */
+/* ------------------------------------------------------------------ */
+
+export function FinalCta({ c }: { c: LandingCopy }) {
+  return (
+    <section className="bg-[#09283d] text-white">
+      <div className="mx-auto max-w-5xl px-4 py-20 text-center sm:px-8">
+        <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[#d6b96e]">
+          <KeyRound className="size-3.5" />
+          {c.final.eyebrow}
+        </span>
+        <h2 className="mt-6 font-serif text-3xl font-semibold sm:text-4xl">{c.final.title}</h2>
+        <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-white/70">{c.final.body}</p>
+        <Link
+          href={SIGN_UP}
+          className="mt-8 inline-flex h-12 items-center gap-2 rounded-md bg-white px-6 text-sm font-semibold text-[#0a2d46] transition-transform hover:-translate-y-0.5"
+        >
+          {c.actions.getAccess}
+          <ArrowRight className="size-4" />
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Footer (minimal required disclosure only)                           */
+/* ------------------------------------------------------------------ */
+
+export function LandingFooter({ c }: { c: LandingCopy }) {
+  return (
+    <footer className="bg-[#071c2c] px-4 py-10 text-xs leading-5 text-white/55 sm:px-8">
+      <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-[auto_1fr] md:items-start">
+        <p>{c.footer.rights}</p>
+        <div className="max-w-3xl md:justify-self-end md:text-right">
+          <p>{c.footer.legal}</p>
+          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 md:justify-end">
+            <Link href={`${NORTH_BASE}/legal`} className="font-semibold text-white/70 hover:text-white">
+              {c.footer.disclosuresLink}
+            </Link>
+          </div>
+          <DealerDisclosure level="micro" tone="dark" className="mt-3 md:[&_div]:justify-end" />
+        </div>
+      </div>
+    </footer>
+  );
+}

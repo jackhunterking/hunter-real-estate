@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Eye, EyeOff, Lock, ShieldCheck } from "lucide-react";
+import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
@@ -16,17 +16,18 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { TurnstileField } from "@/components/TurnstileField";
 import { DealerDisclosure } from "./DealerDisclosure";
 import { NORTH_BASE, NorthBrand, ParvisCoBrand } from "./NorthBrand";
+import { MembershipPanel } from "./landing/primitives";
 
 const COPY = {
   tr: {
     signIn: "Giriş yap",
     signUp: "Hesap oluştur",
     signInEyebrow: "Üye erişimi",
-    signUpEyebrow: "Özel piyasa erişimi",
+    signUpEyebrow: "Özel gayrimenkul · Erişimle",
     signInTitle: "Tekrar hoş geldiniz",
-    signUpTitle: "Hesabınızı oluşturun",
-    signInBody: "Yatırımlarınıza ve onaylanmış çalışma alanlarınıza erişin.",
-    signUpBody: "Halka açık borsaların dışındaki özel piyasa fırsatlarına erişin — seçili Kanada gayrimenkul, özel sermaye ve alternatif yatırımlar.",
+    signUpTitle: "Erişiminizi alın",
+    signInBody: "Yatırımlarınıza ve portföyünüze erişin.",
+    signUpBody: "Seçili Kanada özel gayrimenkulüne erişin — gerçek binalar, gerçek rakamlar ve size yol gösterecek kişisel bir danışman.",
     secured: "Şifreli bağlantı · E-posta doğrulamalı",
     showPassword: "Şifreyi göster",
     hidePassword: "Şifreyi gizle",
@@ -50,17 +51,18 @@ const COPY = {
     preview: "Yerel portal önizlemesini aç",
     notConfigured: "Supabase bilgileri henüz bağlanmadığı için yerel önizleme kullanılabilir.",
     error: "İşlem tamamlanamadı. Lütfen tekrar deneyin.",
-    benefits: ["Halka açık olmayan özel piyasa fırsatları", "Şifreli, e-posta doğrulamalı giriş", "Lisanslı, insan destekli süreç"],
+    benefits: ["Seçili Kanada özel gayrimenkulü", "Yanınızda kişisel bir danışman", "Şifreli, e-posta doğrulamalı giriş"],
+    mockLabel: "Portföyünüzün içi",
   },
   en: {
     signIn: "Sign in",
     signUp: "Create account",
     signInEyebrow: "Member access",
-    signUpEyebrow: "Private-market access",
+    signUpEyebrow: "Private real estate · By access",
     signInTitle: "Welcome back",
-    signUpTitle: "Create your account",
-    signInBody: "Access your investments and approved workspaces.",
-    signUpBody: "Access non-public private-market opportunities — curated Canadian real estate, private equity, and alternatives.",
+    signUpTitle: "Get your access",
+    signInBody: "Access your investments and portfolio.",
+    signUpBody: "Get access to curated Canadian private real estate — the tangible buildings, the real numbers, and a personal advisor to guide you.",
     secured: "Encrypted connection · Email verified",
     showPassword: "Show password",
     hidePassword: "Hide password",
@@ -84,9 +86,19 @@ const COPY = {
     preview: "Open local portal preview",
     notConfigured: "Supabase credentials are not connected yet, so the local preview remains available.",
     error: "The request could not be completed. Please try again.",
-    benefits: ["Non-public private-market opportunities", "Encrypted, email-verified sign-in", "Licensed, human-supported process"],
+    benefits: ["Curated Canadian private real estate", "A personal advisor in your corner", "Encrypted, email-verified sign-in"],
+    mockLabel: "Inside your portfolio",
   },
 } as const;
+
+function isEmailConfirmationError(caught: unknown) {
+  if (!caught || typeof caught !== "object") return false;
+  const error = caught as { code?: unknown; message?: unknown };
+  const code = typeof error.code === "string" ? error.code.toLowerCase() : "";
+  const message = typeof error.message === "string" ? error.message.toLowerCase() : "";
+
+  return code === "email_not_confirmed" || message.includes("email not confirmed");
+}
 
 export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
   const { lang } = useLang();
@@ -145,6 +157,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
     event.preventDefault();
     setMessage("");
     setError("");
+    setPendingConfirmation(undefined);
     // Capture the form element synchronously: React nulls `event.currentTarget`
     // after the handler returns, so it is unavailable past the first `await`.
     const formElement = event.currentTarget;
@@ -215,6 +228,12 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
       setResendAvailableAt(Date.now() + 60_000);
       formElement.reset();
     } catch (caught) {
+      if (mode === "sign-in" && isEmailConfirmationError(caught)) {
+        setPendingConfirmation({
+          email,
+          redirectTo: advisoryAuthRedirectUrl(window.location, "/onboarding"),
+        });
+      }
       setError(mappedError(caught));
     } finally {
       setPending(false);
@@ -260,7 +279,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
     "mt-2 h-11 w-full rounded-md border border-[#d6dde2] bg-white px-3 font-normal text-[#17202b] outline-none transition-colors placeholder:text-[#9aa5ad] focus:border-[#0a4b72] focus:ring-2 focus:ring-[#0a4b72]/15";
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#071c2c] px-5 py-8 text-white sm:py-12">
+    <main lang="en" className="relative min-h-screen overflow-hidden bg-[#071c2c] px-5 py-8 text-white sm:py-12">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-40"
@@ -275,33 +294,15 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
           <ParvisCoBrand className="shrink-0" />
         </div>
         <div className="grid overflow-hidden rounded-2xl border border-white/12 bg-white shadow-[0_40px_80px_-40px_rgba(0,0,0,0.7)] lg:grid-cols-[0.85fr_1.15fr]">
-          <section className="relative flex flex-col justify-between bg-[#0a2539] p-7 text-white sm:p-10">
-            <div>
-              <span className="grid size-11 place-items-center rounded-xl bg-white/5 text-[#d8bf7a] ring-1 ring-white/10">
-                <ShieldCheck className="size-6" />
-              </span>
-              <p className="mt-7 text-xs font-bold uppercase tracking-[0.14em] text-[#d8bf7a]">
-                {mode === "sign-in" ? c.signInEyebrow : c.signUpEyebrow}
-              </p>
-              <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight">
-                {mode === "sign-in" ? c.signInTitle : c.signUpTitle}
-              </h1>
-              <p className="mt-4 text-sm leading-7 text-white/62">
-                {mode === "sign-in" ? c.signInBody : c.signUpBody}
-              </p>
-              <ul className="mt-8 space-y-3 text-sm text-white/72">
-                {c.benefits.map((item) => (
-                  <li key={item} className="flex items-start gap-2.5">
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#d8bf7a]" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <p className="mt-10 inline-flex items-center gap-2 text-xs font-semibold text-white/55">
-              <Lock className="size-3.5 text-[#d8bf7a]" />
-              {c.secured}
-            </p>
+          <section className="relative bg-[#0a2539] p-7 text-white sm:p-10">
+            <MembershipPanel
+              eyebrow={mode === "sign-in" ? c.signInEyebrow : c.signUpEyebrow}
+              title={mode === "sign-in" ? c.signInTitle : c.signUpTitle}
+              body={mode === "sign-in" ? c.signInBody : c.signUpBody}
+              benefits={[...c.benefits]}
+              secured={c.secured}
+              mockLabel={c.mockLabel}
+            />
           </section>
 
           <section className="p-7 text-[#17202b] sm:p-10">
@@ -357,7 +358,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
                 {mode === "sign-in" ? c.submitSignIn : c.submitSignUp}
                 <ArrowRight className="size-4" />
               </button>
-              {mode === "sign-up" && pendingConfirmation && (
+              {pendingConfirmation && (
                 <button
                   type="button"
                   onClick={resendConfirmation}

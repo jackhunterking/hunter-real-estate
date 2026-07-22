@@ -154,6 +154,13 @@ export const offerings: Offering[] = [
       card: { src: "/lankinCardBG.png", alt: { en: "Lankin Apartment REIT", tr: "Lankin Apartment REIT" } },
       banner: { src: "/lankinBG.png", alt: { en: "Lankin Apartment REIT", tr: "Lankin Apartment REIT" } },
       logo: { src: "/lankinLogo.png", alt: { en: "Lankin Investments logo", tr: "Lankin Investments logosu" } },
+      // Portfolio photography extracted from the published fund fact sheets
+      // (scripts/extract-fact-sheet-photos.py). Deliberately not attributed to
+      // named buildings — the fact sheets do not caption them.
+      gallery: [
+        { src: "/capital/photos/lankin-apartment-reit/portfolio-1.jpg", alt: { en: "Lankin Apartment REIT portfolio property", tr: "Lankin Apartment REIT portföy mülkü" }, kind: "photo", sourceId: "lankin-fact-2026-q1", verifiedAt: "2026-07-21" },
+        { src: "/capital/photos/lankin-apartment-reit/portfolio-2.jpg", alt: { en: "Lankin Apartment REIT portfolio community", tr: "Lankin Apartment REIT portföy topluluğu" }, kind: "photo", sourceId: "lankin-fact-2025-q2", verifiedAt: "2026-07-21" },
+      ],
     },
     summary: { en: "Institutional-grade Canadian multi-family real estate with tax-efficient monthly cash distributions.", tr: "Vergi açısından verimli aylık nakit dağıtımlı, kurumsal nitelikte Kanada çok konutlu gayrimenkulü." },
     thesis: { en: "Lankin Apartment REIT is a real estate investment trust designed to provide investors with consistent monthly cash distributions and long-term capital appreciation. The fund targets newly constructed and stabilized properties within strategic rental markets across Canada, generating steady cash flow through active management in high-growth, resilient rental markets.", tr: "Lankin Apartment REIT, yatırımcılara istikrarlı aylık nakit dağıtımları ve uzun vadeli sermaye artışı sağlamak üzere tasarlanmış bir gayrimenkul yatırım ortaklığıdır. Fon, Kanada genelindeki stratejik kiralama pazarlarında yeni inşa edilmiş ve stabilize mülkleri hedefler." },
