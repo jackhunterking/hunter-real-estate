@@ -42,10 +42,18 @@ const COPY = {
     verification: "Doğrulama bağlantısı için e-postanızı kontrol edin, ardından giriş yapın.",
     resent: "Yeni bir doğrulama bağlantısı gönderildi.",
     resend: "Doğrulama e-postasını yeniden gönder",
+    resendPrompt: "Doğrulama e-postasını almadınız mı?",
+    resendCta: "Yeniden gönder",
+    enterEmail: "Yeniden göndermek için önce e-posta adresinizi girin.",
+    resendNeutral: "Hesabınızın doğrulanması gerekiyorsa yeni bir bağlantı gönderdik. Gelen kutunuzu ve spam klasörünü kontrol edin.",
     resendWait: (seconds: number) => `${seconds} saniye sonra yeniden gönderin`,
     passwordUpdated: "Şifreniz güncellendi. Yeni şifrenizle giriş yapabilirsiniz.",
     confirmationFailed: "Doğrulama bağlantısı geçersiz veya süresi dolmuş. Lütfen yeniden deneyin.",
     signInFailed: "E-posta veya şifre hatalı ya da e-postanız henüz doğrulanmadı.",
+    noAccount: "Bu e-posta ile bir hesap bulunamadı. Devam etmek için bir hesap oluşturun.",
+    passwordIncorrect: "Şifre hatalı. Tekrar deneyin veya şifrenizi sıfırlayın.",
+    emailUnverified: "E-postanız henüz doğrulanmadı. Doğrulama bağlantısını yeniden gönderebiliriz.",
+    createAccountCta: "Hesap oluşturun",
     security: "Devam etmek için güvenlik doğrulamasını tamamlayın.",
     preview: "Yerel portal önizlemesini aç",
     notConfigured: "Supabase bilgileri henüz bağlanmadığı için yerel önizleme kullanılabilir.",
@@ -81,10 +89,18 @@ const COPY = {
     verification: "Check your email for a verification link, then sign in.",
     resent: "A new verification link was sent.",
     resend: "Resend verification email",
+    resendPrompt: "Didn't get the confirmation email?",
+    resendCta: "Resend it",
+    enterEmail: "Enter your email address above first, then resend.",
+    resendNeutral: "If your account still needs verifying, we've sent a new link. Check your inbox and spam folder.",
     resendWait: (seconds: number) => `Resend in ${seconds} seconds`,
     passwordUpdated: "Your password was updated. Sign in with your new password.",
     confirmationFailed: "That confirmation link is invalid or expired. Please try again.",
     signInFailed: "The email or password is incorrect, or your email isn't verified yet.",
+    noAccount: "We couldn't find an account for that email. Create one to continue.",
+    passwordIncorrect: "The password is incorrect. Try again or reset it.",
+    emailUnverified: "Your email isn't verified yet. We can resend the verification link.",
+    createAccountCta: "Create your account",
     security: "Complete the security check to continue.",
     preview: "Open local portal preview",
     notConfigured: "Supabase credentials are not connected yet, so the local preview remains available.",
@@ -126,6 +142,8 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
   const [devConfirming, setDevConfirming] = useState(false);
   const devConfirmEnabled = process.env.NODE_ENV !== "production";
   const [showPassword, setShowPassword] = useState(false);
+  const [emailInput, setEmailInput] = useState("");
+  const [accountMissing, setAccountMissing] = useState(false);
   const [resendAvailableAt, setResendAvailableAt] = useState(0);
   const [resendSeconds, setResendSeconds] = useState(0);
   const turnstileRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
@@ -163,10 +181,32 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
     return mode === "sign-in" ? c.signInFailed : c.error;
   }
 
+  // Supabase returns the same "invalid_credentials" error for a wrong password
+  // and a non-existent account. Ask the server which case it is so we can guide
+  // the person to create an account instead of guessing at their password.
+  async function lookupAccountStatus(email: string): Promise<"none" | "unverified" | "active" | "unknown"> {
+    try {
+      const response = await fetch("/api/auth/account-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!response.ok) return "unknown";
+      const data = (await response.json()) as { status?: string };
+      if (data.status === "none" || data.status === "unverified" || data.status === "active") {
+        return data.status;
+      }
+      return "unknown";
+    } catch {
+      return "unknown";
+    }
+  }
+
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage("");
     setError("");
+    setAccountMissing(false);
     setPendingConfirmation(undefined);
     // Capture the form element synchronously: React nulls `event.currentTarget`
     // after the handler returns, so it is unavailable past the first `await`.
@@ -238,13 +278,36 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
       setResendAvailableAt(Date.now() + 60_000);
       formElement.reset();
     } catch (caught) {
-      if (mode === "sign-in" && isEmailConfirmationError(caught)) {
-        setPendingConfirmation({
-          email,
-          redirectTo: advisoryAuthRedirectUrl(window.location, "/onboarding"),
-        });
+      if (mode !== "sign-in") {
+        setError(mappedError(caught));
+        return;
       }
-      setError(mappedError(caught));
+      const redirectTo = advisoryAuthRedirectUrl(window.location, "/onboarding");
+      // Account exists but isn't verified — offer to resend the link.
+      if (isEmailConfirmationError(caught)) {
+        setPendingConfirmation({ email, redirectTo });
+        setError(c.emailUnverified);
+        return;
+      }
+      const code = typeof caught === "object" && caught && "code" in caught ? String(caught.code) : "";
+      if (code.includes("captcha")) {
+        setError(c.security);
+        return;
+      }
+      // Otherwise it's "invalid_credentials": distinguish no-account from a
+      // wrong password so we can point new people to sign-up.
+      const status = await lookupAccountStatus(email);
+      if (status === "none") {
+        setAccountMissing(true);
+        setError(c.noAccount);
+      } else if (status === "unverified") {
+        setPendingConfirmation({ email, redirectTo });
+        setError(c.emailUnverified);
+      } else if (status === "active") {
+        setError(c.passwordIncorrect);
+      } else {
+        setError(mappedError(caught));
+      }
     } finally {
       setPending(false);
       resetCaptcha();
@@ -271,6 +334,55 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
       setError(caught instanceof Error ? caught.message : "confirm_failed");
     } finally {
       setDevConfirming(false);
+    }
+  }
+
+  // Always-available path from the sign-in screen: someone who never received
+  // the confirmation email (or can't get past "email isn't verified") can
+  // request a fresh link using the email they typed. Responses stay neutral so
+  // we never reveal whether an account exists for that address.
+  async function requestConfirmationForTyped() {
+    setMessage("");
+    setError("");
+    const email = emailInput.trim();
+    if (!email || !email.includes("@")) {
+      setError(c.enterEmail);
+      return;
+    }
+    if (turnstileRequired && !captchaToken) {
+      setError(c.security);
+      return;
+    }
+    const client = createSupabaseBrowserClient();
+    if (!client) {
+      setError(c.notConfigured);
+      return;
+    }
+    const redirectTo = advisoryAuthRedirectUrl(window.location, "/onboarding");
+    setResending(true);
+    try {
+      const result = await client.auth.resend({
+        type: "signup",
+        email,
+        options: { emailRedirectTo: redirectTo, captchaToken },
+      });
+      const code = result.error && "code" in result.error ? String(result.error.code) : "";
+      if (code.includes("captcha")) {
+        setError(c.security);
+        return;
+      }
+      // For any other outcome (sent, already-confirmed, unknown address) show
+      // the same neutral "check your email" screen.
+      setPendingConfirmation({ email, redirectTo });
+      setAwaitingConfirmation(true);
+      setResendAvailableAt(Date.now() + 60_000);
+    } catch {
+      setPendingConfirmation({ email, redirectTo });
+      setAwaitingConfirmation(true);
+      setResendAvailableAt(Date.now() + 60_000);
+    } finally {
+      setResending(false);
+      resetCaptcha();
     }
   }
 
@@ -397,7 +509,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
             )}
             <label className="block text-sm font-medium text-[#283640]">
               {c.email}
-              <input name="email" required type="email" autoComplete="email" placeholder="name@email.com" className={inputClass} />
+              <input name="email" required type="email" autoComplete="email" placeholder="name@email.com" value={emailInput} onChange={(event) => setEmailInput(event.target.value)} className={inputClass} />
             </label>
             <label className="block text-sm font-medium text-[#283640]">
               <span className="flex items-center justify-between gap-4">
@@ -442,6 +554,27 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
               >
                 {resendSeconds > 0 ? c.resendWait(resendSeconds) : c.resend}
               </button>
+            )}
+            {accountMissing && (
+              <Link
+                href={`${NORTH_BASE}/sign-up${continuationSearch}`}
+                className="flex h-12 w-full items-center justify-center rounded-md border border-[#173b57] bg-white px-4 text-sm font-semibold text-[#173b57] transition-colors hover:bg-[#f2f6f9]"
+              >
+                {c.createAccountCta}
+              </Link>
+            )}
+            {mode === "sign-in" && !pendingConfirmation && !accountMissing && (
+              <p className="text-center text-xs leading-5 text-[#66747e]">
+                {c.resendPrompt}{" "}
+                <button
+                  type="button"
+                  onClick={requestConfirmationForTyped}
+                  disabled={resending || resendSeconds > 0}
+                  className="font-semibold text-[#173b57] hover:underline disabled:cursor-not-allowed disabled:text-[#87949c] disabled:no-underline"
+                >
+                  {resendSeconds > 0 ? c.resendWait(resendSeconds) : c.resendCta}
+                </button>
+              </p>
             )}
           </form>
 
