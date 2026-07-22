@@ -27,7 +27,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { PublicOfferingPreview } from "@/lib/capital/types";
-import { DealerDisclosure } from "../DealerDisclosure";
 import { NORTH_BASE, NorthBrand, ParvisCoBrand } from "../NorthBrand";
 import type { LandingCopy } from "./copy";
 import {
@@ -488,20 +487,31 @@ export function FinalCta({ c }: { c: LandingCopy }) {
 
 export function LandingFooter({ c }: { c: LandingCopy }) {
   return (
-    <footer className="bg-[#071c2c] px-4 py-10 text-xs leading-5 text-white/55 sm:px-8">
-      <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-[auto_1fr] md:items-start">
+    <footer className="bg-[#071c2c] px-4 py-8 text-xs leading-5 text-white/55 sm:px-8">
+      <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-[auto_minmax(0,54rem)] md:items-start md:justify-between">
         <div>
           <p>{c.footer.rights}</p>
-          <ParvisCoBrand className="mt-4" />
+          <ParvisCoBrand className="mt-3" />
         </div>
-        <div className="max-w-3xl md:justify-self-end md:text-right">
-          <p>{c.footer.legal}</p>
-          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 md:justify-end">
-            <Link href={`${NORTH_BASE}/legal`} className="font-semibold text-white/70 hover:text-white">
-              {c.footer.disclosuresLink}
+        <div className="md:text-right">
+          <p className="text-white/70">{c.footer.risk}</p>
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 md:justify-end">
+            <span>{c.footer.dealer}</span>
+            <Link href={`${NORTH_BASE}/legal`} className="font-semibold text-white/75 transition-colors hover:text-white">
+              {c.footer.legalLink}
             </Link>
+            <span className="inline-flex items-center gap-3">
+              <span aria-hidden="true" className="text-white/25">·</span>
+              <a
+                href="https://www.parvisinvest.com/legal/disclosures"
+                target="_blank"
+                rel="noreferrer"
+                className="font-semibold text-white/75 transition-colors hover:text-white"
+              >
+                {c.footer.parvisLink}
+              </a>
+            </span>
           </div>
-          <DealerDisclosure level="micro" tone="dark" className="mt-3 md:[&_div]:justify-end" />
         </div>
       </div>
     </footer>

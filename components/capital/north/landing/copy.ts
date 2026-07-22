@@ -37,7 +37,13 @@ export interface LandingCopy {
     items: { title: string; body: string }[];
   };
   final: { eyebrow: string; title: string; body: string };
-  footer: { rights: string; legal: string; disclosuresLink: string };
+  footer: {
+    rights: string;
+    risk: string;
+    dealer: string;
+    legalLink: string;
+    parvisLink: string;
+  };
   frames: {
     portfolio: string;
     detail: string;
@@ -178,9 +184,12 @@ const en: LandingCopy = {
   },
   footer: {
     rights: "© 2026 Hunter & Hunter Investment Advisors.",
-    legal:
-      "Hunter & Hunter supports research, education, and investor relationships. Registrable securities activity is conducted through and supervised by Parvis.",
-    disclosuresLink: "Registration and disclosures",
+    risk:
+      "Target returns and IRRs are not guaranteed. Past performance does not predict future results, and every investment carries risk, including possible loss of principal. Review the applicable offering documents before investing.",
+    dealer:
+      "Securities services are provided through Parvis Investment Services Inc., an Exempt Market Dealer · NRD #74000.",
+    legalLink: "Legal & privacy",
+    parvisLink: "Parvis disclosures",
   },
   frames: {
     portfolio: "Your portfolio",
