@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
@@ -16,19 +16,18 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { TurnstileField } from "@/components/TurnstileField";
 import { DealerDisclosure } from "./DealerDisclosure";
 import { NORTH_BASE, NorthBrand, ParvisCoBrand } from "./NorthBrand";
-import { MembershipPanel } from "./landing/primitives";
 
 const COPY = {
   tr: {
     signIn: "Giriş yap",
     signUp: "Hesap oluştur",
-    signInEyebrow: "Üye erişimi",
-    signUpEyebrow: "Özel gayrimenkul · Erişimle",
-    signInTitle: "Tekrar hoş geldiniz",
-    signUpTitle: "Erişiminizi alın",
-    signInBody: "Yatırımlarınıza ve portföyünüze erişin.",
-    signUpBody: "Seçili Kanada özel gayrimenkulüne erişin — gerçek binalar, gerçek rakamlar ve size yol gösterecek kişisel bir danışman.",
-    secured: "Şifreli bağlantı · E-posta doğrulamalı",
+    signInEyebrow: "Güvenli hesap erişimi",
+    signUpEyebrow: "Güvenli kayıt",
+    signInTitle: "Hesabınıza giriş yapın",
+    signUpTitle: "Hesabınızı oluşturun",
+    signInBody: "Portföyünüze ve yatırım belgelerinize erişin.",
+    signUpBody: "Güvenli hesap erişiminizi oluşturmak için bilgilerinizi girin.",
+    secured: "Bağlantınız şifrelenmiştir",
     showPassword: "Şifreyi göster",
     hidePassword: "Şifreyi gizle",
     firstName: "Ad",
@@ -51,19 +50,17 @@ const COPY = {
     preview: "Yerel portal önizlemesini aç",
     notConfigured: "Supabase bilgileri henüz bağlanmadığı için yerel önizleme kullanılabilir.",
     error: "İşlem tamamlanamadı. Lütfen tekrar deneyin.",
-    benefits: ["Seçili Kanada özel gayrimenkulü", "Yanınızda kişisel bir danışman", "Şifreli, e-posta doğrulamalı giriş"],
-    mockLabel: "Portföyünüzün içi",
   },
   en: {
     signIn: "Sign in",
     signUp: "Create account",
-    signInEyebrow: "Member access",
-    signUpEyebrow: "Private real estate · By access",
-    signInTitle: "Welcome back",
-    signUpTitle: "Get your access",
-    signInBody: "Access your investments and portfolio.",
-    signUpBody: "Get access to curated Canadian private real estate — the tangible buildings, the real numbers, and a personal advisor to guide you.",
-    secured: "Encrypted connection · Email verified",
+    signInEyebrow: "Secure account access",
+    signUpEyebrow: "Secure registration",
+    signInTitle: "Sign in to your account",
+    signUpTitle: "Create your account",
+    signInBody: "Access your portfolio and investment documents.",
+    signUpBody: "Enter your details to set up secure account access.",
+    secured: "Your connection is encrypted",
     showPassword: "Show password",
     hidePassword: "Hide password",
     firstName: "First name",
@@ -86,8 +83,6 @@ const COPY = {
     preview: "Open local portal preview",
     notConfigured: "Supabase credentials are not connected yet, so the local preview remains available.",
     error: "The request could not be completed. Please try again.",
-    benefits: ["Curated Canadian private real estate", "A personal advisor in your corner", "Encrypted, email-verified sign-in"],
-    mockLabel: "Inside your portfolio",
   },
 } as const;
 
@@ -276,116 +271,114 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
   }
 
   const inputClass =
-    "mt-2 h-11 w-full rounded-md border border-[#d6dde2] bg-white px-3 font-normal text-[#17202b] outline-none transition-colors placeholder:text-[#9aa5ad] focus:border-[#0a4b72] focus:ring-2 focus:ring-[#0a4b72]/15";
+    "mt-2 h-12 w-full rounded-md border border-[#cfd5da] bg-white px-3.5 font-normal text-[#18232d] outline-none transition placeholder:text-[#8b969f] hover:border-[#aeb8bf] focus:border-[#173b57] focus:ring-2 focus:ring-[#173b57]/12";
 
   return (
-    <main lang="en" className="relative min-h-screen overflow-hidden bg-[#071c2c] px-5 py-8 text-white sm:py-12">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-40"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 85% 8%, rgba(197,163,77,0.22), transparent 42%), radial-gradient(circle at 5% 92%, rgba(47,113,148,0.28), transparent 40%)",
-        }}
-      />
-      <div className="relative mx-auto w-full max-w-5xl">
-        <div className="mb-8 flex items-center justify-between gap-4 sm:mb-10">
-          <NorthBrand showCoBrand={false} />
-          <ParvisCoBrand className="shrink-0" />
+    <main lang={lang} className="min-h-screen bg-[#f3f5f6] text-[#18232d]">
+      <header className="border-b border-[#dfe3e6] bg-white">
+        <div className="mx-auto flex h-[72px] w-full max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
+          <NorthBrand dark showCoBrand={false} />
+          <ParvisCoBrand dark className="shrink-0" />
         </div>
-        <div className="grid overflow-hidden rounded-2xl border border-white/12 bg-white shadow-[0_40px_80px_-40px_rgba(0,0,0,0.7)] lg:grid-cols-[0.85fr_1.15fr]">
-          <section className="relative bg-[#0a2539] p-7 text-white sm:p-10">
-            <MembershipPanel
-              eyebrow={mode === "sign-in" ? c.signInEyebrow : c.signUpEyebrow}
-              title={mode === "sign-in" ? c.signInTitle : c.signUpTitle}
-              body={mode === "sign-in" ? c.signInBody : c.signUpBody}
-              benefits={[...c.benefits]}
-              secured={c.secured}
-              mockLabel={c.mockLabel}
-            />
-          </section>
+      </header>
 
-          <section className="p-7 text-[#17202b] sm:p-10">
-            <form onSubmit={submit} className="space-y-5">
-              {mode === "sign-up" && (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="text-sm font-semibold">
-                    {c.firstName}
-                    <input name="firstName" required autoComplete="given-name" className={inputClass} />
-                  </label>
-                  <label className="text-sm font-semibold">
-                    {c.lastName}
-                    <input name="lastName" required autoComplete="family-name" className={inputClass} />
-                  </label>
-                </div>
-              )}
-              <label className="block text-sm font-semibold">
-                {c.email}
-                <input name="email" required type="email" autoComplete="email" placeholder="name@email.com" className={inputClass} />
-              </label>
-              <label className="block text-sm font-semibold">
-                {c.password}
-                <div className="relative">
-                  <input
-                    name="password"
-                    required
-                    minLength={8}
-                    type={showPassword ? "text" : "password"}
-                    autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
-                    className={`${inputClass} pr-11`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((value) => !value)}
-                    aria-label={showPassword ? c.hidePassword : c.showPassword}
-                    className="absolute right-1 top-2 grid size-9 place-items-center rounded-md text-[#7a8790] hover:text-[#0a4b72]"
-                  >
-                    {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                  </button>
-                </div>
-              </label>
-              {mode === "sign-in" && (
-                <div className="-mt-2 text-right">
-                  <Link href={`${NORTH_BASE}/forgot-password`} className="text-xs font-semibold text-[#0a4b72] hover:underline">
+      <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-5 py-10 sm:px-8 sm:py-14">
+        <section className="w-full max-w-[460px] rounded-lg border border-[#d9dee2] bg-white px-6 py-8 shadow-[0_8px_24px_rgba(20,38,52,0.05)] sm:px-9 sm:py-9" aria-labelledby="auth-title">
+          <div className="mb-8">
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#53636f]">
+              {mode === "sign-in" ? c.signInEyebrow : c.signUpEyebrow}
+            </p>
+            <h1 id="auth-title" className="mt-2.5 text-2xl font-semibold tracking-[-0.025em] text-[#102638] sm:text-[1.7rem]">
+              {mode === "sign-in" ? c.signInTitle : c.signUpTitle}
+            </h1>
+            <p className="mt-2.5 text-sm leading-6 text-[#66747e]">
+              {mode === "sign-in" ? c.signInBody : c.signUpBody}
+            </p>
+          </div>
+
+          <form onSubmit={submit} className="space-y-5">
+            {mode === "sign-up" && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="text-sm font-medium text-[#283640]">
+                  {c.firstName}
+                  <input name="firstName" required autoComplete="given-name" className={inputClass} />
+                </label>
+                <label className="text-sm font-medium text-[#283640]">
+                  {c.lastName}
+                  <input name="lastName" required autoComplete="family-name" className={inputClass} />
+                </label>
+              </div>
+            )}
+            <label className="block text-sm font-medium text-[#283640]">
+              {c.email}
+              <input name="email" required type="email" autoComplete="email" placeholder="name@email.com" className={inputClass} />
+            </label>
+            <label className="block text-sm font-medium text-[#283640]">
+              <span className="flex items-center justify-between gap-4">
+                <span>{c.password}</span>
+                {mode === "sign-in" && (
+                  <Link href={`${NORTH_BASE}/forgot-password`} className="text-xs font-semibold text-[#173b57] hover:underline">
                     {c.forgotPassword}
                   </Link>
-                </div>
-              )}
-              <TurnstileField onToken={setCaptchaToken} resetSignal={captchaResetSignal} />
-              {message && <p role="status" className="rounded-md border border-[#b8d8c5] bg-[#edf7f1] p-3 text-sm text-[#316247]">{message}</p>}
-              {error && <p role="alert" className="rounded-md border border-[#eccdc8] bg-[#fbefed] p-3 text-sm text-[#98463c]">{error}</p>}
-              <button disabled={pending || (turnstileRequired && !captchaToken)} className="flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#123f5e] disabled:opacity-60">
-                {mode === "sign-in" ? c.submitSignIn : c.submitSignUp}
-                <ArrowRight className="size-4" />
-              </button>
-              {pendingConfirmation && (
+                )}
+              </span>
+              <div className="relative">
+                <input
+                  name="password"
+                  required
+                  minLength={8}
+                  type={showPassword ? "text" : "password"}
+                  autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
+                  className={`${inputClass} pr-11`}
+                />
                 <button
                   type="button"
-                  onClick={resendConfirmation}
-                  disabled={resending || resendSeconds > 0 || (turnstileRequired && !captchaToken)}
-                  className="w-full text-center text-xs font-semibold text-[#0a4b72] hover:underline disabled:cursor-not-allowed disabled:text-[#87949c] disabled:no-underline"
+                  onClick={() => setShowPassword((value) => !value)}
+                  aria-label={showPassword ? c.hidePassword : c.showPassword}
+                  className="absolute right-1.5 top-2.5 grid size-9 place-items-center rounded-md text-[#74818a] transition-colors hover:bg-[#f1f3f4] hover:text-[#173b57]"
                 >
-                  {resendSeconds > 0 ? c.resendWait(resendSeconds) : c.resend}
+                  {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
-              )}
-            </form>
+              </div>
+            </label>
+            <TurnstileField onToken={setCaptchaToken} resetSignal={captchaResetSignal} />
+            {message && <p role="status" className="rounded-md border border-[#b8d8c5] bg-[#edf7f1] p-3 text-sm text-[#316247]">{message}</p>}
+            {error && <p role="alert" className="rounded-md border border-[#eccdc8] bg-[#fbefed] p-3 text-sm text-[#98463c]">{error}</p>}
+            <button disabled={pending || (turnstileRequired && !captchaToken)} className="flex h-12 w-full items-center justify-center rounded-md bg-[#102f46] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#173f5c] disabled:cursor-not-allowed disabled:opacity-60">
+              {mode === "sign-in" ? c.submitSignIn : c.submitSignUp}
+            </button>
+            {pendingConfirmation && (
+              <button
+                type="button"
+                onClick={resendConfirmation}
+                disabled={resending || resendSeconds > 0 || (turnstileRequired && !captchaToken)}
+                className="w-full text-center text-xs font-semibold text-[#173b57] hover:underline disabled:cursor-not-allowed disabled:text-[#87949c] disabled:no-underline"
+              >
+                {resendSeconds > 0 ? c.resendWait(resendSeconds) : c.resend}
+              </button>
+            )}
+          </form>
 
-            <div className="mt-7 border-t border-[#e4e8eb] pt-5">
-              <Link href={`${NORTH_BASE}/${mode === "sign-in" ? "sign-up" : "sign-in"}${continuationSearch}`} className="text-sm font-semibold text-[#0a4b72] hover:underline">
-                {mode === "sign-in" ? c.switchToSignUp : c.switchToSignIn}
-              </Link>
-              {!configured && (
-                <div className="mt-5 rounded-md border border-[#e4e8eb] bg-[#f4f6f8] p-4">
-                  <p className="text-xs leading-5 text-[#6b7680]">{c.notConfigured}</p>
-                  <Link href={`${NORTH_BASE}/home`} className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#0a4b72]">
-                    {c.preview}<ArrowRight className="size-3.5" />
-                  </Link>
-                </div>
-              )}
-              <DealerDisclosure level="short" className="mt-6 border-t border-[#e4e8eb] pt-5" />
-            </div>
-          </section>
-        </div>
+          <div className="mt-7 border-t border-[#e2e6e8] pt-6 text-center">
+            <Link href={`${NORTH_BASE}/${mode === "sign-in" ? "sign-up" : "sign-in"}${continuationSearch}`} className="text-sm font-semibold text-[#173b57] hover:underline">
+              {mode === "sign-in" ? c.switchToSignUp : c.switchToSignIn}
+            </Link>
+            {!configured && (
+              <div className="mt-5 text-xs leading-5 text-[#6b7680]">
+                <p>{c.notConfigured}</p>
+                <Link href={`${NORTH_BASE}/home`} className="mt-2 inline-block font-semibold text-[#173b57] hover:underline">
+                  {c.preview}
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <p className="mt-6 inline-flex items-center gap-2 text-xs font-medium text-[#5f6d77]">
+          <LockKeyhole className="size-3.5" aria-hidden />
+          {c.secured}
+        </p>
+        <DealerDisclosure level="short" className="mt-6 max-w-[560px] text-center" />
       </div>
     </main>
   );
