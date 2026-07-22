@@ -53,6 +53,7 @@ const COPY = {
     noAccount: "Bu e-posta ile bir hesap bulunamadı. Devam etmek için bir hesap oluşturun.",
     passwordIncorrect: "Şifre hatalı. Tekrar deneyin veya şifrenizi sıfırlayın.",
     emailUnverified: "E-postanız henüz doğrulanmadı. Doğrulama bağlantısını yeniden gönderebiliriz.",
+    alreadyVerified: "Bu e-posta zaten doğrulanmış. Şifrenizle giriş yapabilirsiniz.",
     createAccountCta: "Hesap oluşturun",
     security: "Devam etmek için güvenlik doğrulamasını tamamlayın.",
     preview: "Yerel portal önizlemesini aç",
@@ -100,6 +101,7 @@ const COPY = {
     noAccount: "We couldn't find an account for that email. Create one to continue.",
     passwordIncorrect: "The password is incorrect. Try again or reset it.",
     emailUnverified: "Your email isn't verified yet. We can resend the verification link.",
+    alreadyVerified: "This email is already verified. You can sign in with your password.",
     createAccountCta: "Create your account",
     security: "Complete the security check to continue.",
     preview: "Open local portal preview",
@@ -361,6 +363,18 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
     const redirectTo = advisoryAuthRedirectUrl(window.location, "/onboarding");
     setResending(true);
     try {
+      // Don't send people to "check your email" if there's nothing to confirm.
+      // When we can determine the account state, act on it precisely.
+      const status = await lookupAccountStatus(email);
+      if (status === "none") {
+        setAccountMissing(true);
+        setError(c.noAccount);
+        return;
+      }
+      if (status === "active") {
+        setError(c.alreadyVerified);
+        return;
+      }
       const result = await client.auth.resend({
         type: "signup",
         email,
@@ -371,8 +385,8 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
         setError(c.security);
         return;
       }
-      // For any other outcome (sent, already-confirmed, unknown address) show
-      // the same neutral "check your email" screen.
+      // status was "unverified" or "unknown" (e.g. lookup unavailable): show the
+      // neutral "check your email" screen.
       setPendingConfirmation({ email, redirectTo });
       setAwaitingConfirmation(true);
       setResendAvailableAt(Date.now() + 60_000);
