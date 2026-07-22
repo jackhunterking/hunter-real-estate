@@ -101,6 +101,8 @@ test("public landing receives only approved offering previews and global documen
   assert.match(landing, /isPreview=\{!data\.hasOfferings\}/);
   assert.match(landing, /data\.hasOfferings && <FeaturedOpportunities/);
   assert.match(landing, /hasOfferings=\{data\.hasOfferings\}/);
+  assert.match(read("components/capital/north/landing/sections.tsx"), /snap-x snap-mandatory/);
+  assert.match(read("components/capital/north/landing/sections.tsx"), /scrollIntoView/);
   assert.match(projection, /approval === "approved-public"/);
   assert.match(projection, /targetReturn: approved\(shareClass\?\.targetReturn\)/);
   assert.match(projection, /performance: offering\.trailingReturns\?\.map/);

@@ -21,6 +21,7 @@ export interface LandingCopy {
     eyebrow: string;
     title: string;
     body: string;
+    mobileHint: string;
     tabs: { label: string; title: string; body: string }[];
   };
   featured: { eyebrow: string; title: string; body: string; open: string };
@@ -108,6 +109,7 @@ const en: LandingCopy = {
     eyebrow: "Inside the platform",
     title: "This is what your money looks like from the inside.",
     body: "The same workspace our investors sign into — real funds, real figures.",
+    mobileHint: "Swipe or tap a product view",
     tabs: [
       {
         label: "Effortless access",

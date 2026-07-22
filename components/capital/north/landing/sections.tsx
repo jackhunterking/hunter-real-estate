@@ -9,7 +9,7 @@
  * product mockups are the REAL portal components fed with real offering data.
  */
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -196,6 +196,7 @@ export function PlatformTabs({
   isPreview?: boolean;
 }) {
   const [active, setActive] = useState(0);
+  const frameRef = useRef<HTMLDivElement>(null);
   const primary = offerings[0];
   if (!primary) return null;
   const performanceOffering = offerings.find((o) => o.performance?.length) ?? primary;
@@ -209,44 +210,76 @@ export function PlatformTabs({
     <BuildingsFrame key="build" offering={buildingsOffering} c={c} />,
   ];
 
+  function selectView(index: number) {
+    setActive(index);
+    if (!window.matchMedia("(max-width: 1023px)").matches) return;
+
+    window.requestAnimationFrame(() => {
+      frameRef.current?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+        block: "start",
+      });
+    });
+  }
+
   return (
     <SectionShell id="platform" variant="navy">
       <SectionHeader eyebrow={c.platform.eyebrow} title={c.platform.title} body={c.platform.body} tone="gold" invert />
       <div className="mt-10 grid min-w-0 grid-cols-1 items-start gap-10 lg:grid-cols-[0.42fr_0.58fr]">
-        <div
-          role="tablist"
-          aria-label={c.platform.eyebrow}
-          className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-1"
-        >
-          {c.platform.tabs.map((tab, index) => {
-            const selected = index === active;
-            return (
-              <button
-                key={tab.label}
-                type="button"
-                role="tab"
-                aria-selected={selected}
-                onClick={() => setActive(index)}
-                className={`w-full min-w-0 rounded-2xl border p-5 text-left transition-colors ${
-                  selected
-                    ? "border-[#d6b96e]/60 bg-white/8"
-                    : "border-white/10 bg-white/4 hover:bg-white/6"
-                }`}
-              >
-                <p className={`text-sm font-bold ${selected ? "text-white" : "text-white/75"}`}>
-                  {tab.label}
-                </p>
-                <p className="mt-1.5 text-xs leading-5 text-white/55">{tab.body}</p>
-                <span
-                  className={`mt-4 block h-0.5 rounded-full transition-all ${
-                    selected ? "w-full bg-[#d6b96e]" : "w-8 bg-white/15"
+        <div className="min-w-0">
+          <div className="mb-3 flex items-center justify-between gap-3 lg:hidden">
+            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#d6b96e]">
+              {c.platform.mobileHint}
+            </p>
+            <p className="shrink-0 text-xs font-semibold tabular-nums text-white/55">
+              {active + 1} / {c.platform.tabs.length}
+            </p>
+          </div>
+          <div
+            role="tablist"
+            aria-label={c.platform.eyebrow}
+            className="flex min-w-0 snap-x snap-mandatory gap-3 overflow-x-auto pb-2 pr-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:flex-col lg:overflow-visible lg:pb-0 lg:pr-0"
+          >
+            {c.platform.tabs.map((tab, index) => {
+              const selected = index === active;
+              return (
+                <button
+                  key={tab.label}
+                  id={`platform-tab-${index}`}
+                  type="button"
+                  role="tab"
+                  aria-controls="platform-frame"
+                  aria-selected={selected}
+                  onClick={() => selectView(index)}
+                  className={`w-[84%] max-w-sm flex-none snap-start rounded-2xl border p-5 text-left transition-colors lg:w-full lg:max-w-none ${
+                    selected
+                      ? "border-[#d6b96e]/60 bg-white/8"
+                      : "border-white/10 bg-white/4 hover:bg-white/6"
                   }`}
-                />
-              </button>
-            );
-          })}
+                >
+                  <p className={`text-sm font-bold ${selected ? "text-white" : "text-white/75"}`}>
+                    {tab.label}
+                  </p>
+                  <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-white/55">{tab.body}</p>
+                  <span
+                    className={`mt-4 block h-0.5 rounded-full transition-all ${
+                      selected ? "w-full bg-[#d6b96e]" : "w-8 bg-white/15"
+                    }`}
+                  />
+                </button>
+              );
+            })}
+          </div>
         </div>
-        <div className="relative min-w-0">
+        <div
+          ref={frameRef}
+          id="platform-frame"
+          role="tabpanel"
+          aria-labelledby={`platform-tab-${active}`}
+          className="relative min-w-0 scroll-mt-24"
+        >
           <div aria-hidden className="absolute -inset-4 rounded-[2rem] bg-[#2f7194]/14 blur-2xl" />
           <Reveal key={active} className="relative min-w-0">
             {frames[active]}
