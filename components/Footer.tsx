@@ -18,7 +18,7 @@ export default function Footer() {
     { href: "/#hizmetler", label: n.services },
     { href: "/mortgage", label: n.mortgage },
     { href: "/rehber/ogren", label: t.ogren.label },
-    { href: "/investing", label: n.capital },
+    { href: "/hunter-advisory", label: n.capital },
     { href: "/#kaynaklar", label: n.resources },
     { href: "/#iletisim", label: n.contact },
   ];

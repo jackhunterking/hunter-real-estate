@@ -40,7 +40,7 @@ export default function ServicesSection() {
             <span className={styles.cardCta}>{s.mortgage.cta} →</span>
           </Link>
 
-          <Link href="/investing" className={styles.card}>
+          <Link href="/hunter-advisory" className={styles.card}>
             <span className={styles.cardTag}>{s.invest.tag}</span>
             <h3 className={styles.cardTitle}>{s.invest.title}</h3>
             <p className={styles.cardDesc}>{s.invest.desc}</p>

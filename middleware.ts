@@ -29,11 +29,12 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname === "/hunter-x-capital" ||
     request.nextUrl.pathname.startsWith("/hunter-x-capital/");
 
+  // The advisory portal landing page (/hunter-advisory) is the canonical
+  // marketing entry point. Any legacy /investing link redirects there so the
+  // old interstitial route no longer surfaces.
   if (investingRequest) {
-    const destination = JACK_HOSTS.has(host)
-      ? new URL(ADVISORY_HOME_URL)
-      : request.nextUrl.clone();
-    destination.pathname = "/";
+    const destination = request.nextUrl.clone();
+    destination.pathname = ADVISORY_PREFIX;
     destination.search = "";
     return NextResponse.redirect(destination, 301);
   }

@@ -85,7 +85,7 @@ export default function CapitalTeaser() {
             </div>
           </div>
 
-          <Link href="/investing" className={styles.cta}>
+          <Link href="/hunter-advisory" className={styles.cta}>
             {c.cta}
             <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
               <path

@@ -100,7 +100,7 @@ export default function Nav({ overlayHero = false }: NavProps) {
     { href: "/rehber/alici", label: t.nav.servicesMenu.buy },
     { href: "/rehber/satici", label: t.nav.servicesMenu.sell },
     { href: "/mortgage", label: t.nav.servicesMenu.mortgage },
-    { href: "/investing", label: t.nav.servicesMenu.invest },
+    { href: "/hunter-advisory", label: t.nav.servicesMenu.invest },
   ];
 
   useEffect(() => {
