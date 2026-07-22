@@ -27,6 +27,8 @@ test("advisory application uses the canonical route tree only", () => {
   assert.equal(existsSync(resolve(root, "app/hunter-north-capital")), false);
   const middleware = readFileSync(resolve(root, "middleware.ts"), "utf8");
   assert.match(middleware, /const ADVISORY_PREFIX = "\/hunter-advisory"/);
+  assert.match(middleware, /const ADVISORY_HOME_URL = "https:\/\/hunterhunteradvisors\.com\/"/);
+  assert.match(middleware, /request\.nextUrl\.pathname === "\/investing"/);
   assert.doesNotMatch(middleware, /hunter-north-capital/);
 });
 

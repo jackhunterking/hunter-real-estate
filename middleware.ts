@@ -11,10 +11,14 @@ const JACK_HOSTS = new Set([
   "www.jackvetara.com",
 ]);
 const ADVISORY_PREFIX = "/hunter-advisory";
+const ADVISORY_HOME_URL = "https://hunterhunteradvisors.com/";
 
 export async function middleware(request: NextRequest) {
   const host = (request.headers.get("host") ?? "").split(":")[0].toLowerCase();
   const dedicatedHost = HUNTER_ADVISORY_HOSTS.has(host);
+  const investingRequest =
+    request.nextUrl.pathname === "/investing" ||
+    request.nextUrl.pathname.startsWith("/investing/");
   const advisoryPortalRequest =
     request.nextUrl.pathname === ADVISORY_PREFIX ||
     request.nextUrl.pathname.startsWith(`${ADVISORY_PREFIX}/`);
@@ -24,10 +28,18 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/hunter-group-capital/") ||
     request.nextUrl.pathname === "/hunter-x-capital" ||
     request.nextUrl.pathname.startsWith("/hunter-x-capital/");
-  if (!dedicatedHost && JACK_HOSTS.has(host) && legacyCapitalRequest) {
-    const destination = request.nextUrl.clone();
-    destination.pathname = "/investing";
+
+  if (investingRequest) {
+    const destination = JACK_HOSTS.has(host)
+      ? new URL(ADVISORY_HOME_URL)
+      : request.nextUrl.clone();
+    destination.pathname = "/";
     destination.search = "";
+    return NextResponse.redirect(destination, 301);
+  }
+
+  if (!dedicatedHost && JACK_HOSTS.has(host) && legacyCapitalRequest) {
+    const destination = new URL(ADVISORY_HOME_URL);
     return NextResponse.redirect(destination, 301);
   }
 
