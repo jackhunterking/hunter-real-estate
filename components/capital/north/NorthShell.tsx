@@ -107,7 +107,7 @@ const COPY = {
 } as const;
 
 export function NorthShell({ children }: { children: React.ReactNode }) {
-  const { lang, setLang } = useLang();
+  const { lang } = useLang();
   const pathname = usePathname();
   const router = useRouter();
   const {
@@ -279,11 +279,6 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
                 </button>
               ))}
             </div>
-          </div>
-          <div className={cn("mb-2 flex h-9 items-center rounded-md border border-white/10 bg-white/5 p-0.5", desktopCollapsed && "lg:h-auto lg:flex-col lg:border-0 lg:bg-transparent lg:p-0")} role="group" aria-label="Language">
-            {(["tr", "en"] as const).map((item) => (
-              <button key={item} type="button" onClick={() => setLang(item)} className={cn("h-8 flex-1 rounded px-2 text-[11px] font-bold uppercase", desktopCollapsed && "lg:w-full lg:flex-none", lang === item ? "bg-white text-[#0a2d46]" : "text-white/55")} aria-pressed={lang === item}>{item}</button>
-            ))}
           </div>
           <div className={cn("relative rounded-md border border-white/10 bg-white/5", desktopCollapsed && "lg:border-0 lg:bg-transparent")}>
             <button type="button" onClick={() => setAccountOpen((open) => !open)} className={cn("flex w-full items-center gap-2 px-2.5 py-2 text-left text-white", desktopCollapsed && "lg:justify-center lg:px-0")} aria-expanded={accountOpen}>

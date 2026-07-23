@@ -65,7 +65,7 @@ function initials(name: string) {
 }
 
 export function ProfileView() {
-  const { lang } = useLang();
+  const { lang, setLang } = useLang();
   const { currentUser } = usePortalAccess();
   const c = pick(COPY, lang);
   const accountType = currentUser.investorAccountType === "individual"
@@ -96,12 +96,6 @@ export function ProfileView() {
       label: c.residence,
       value: currentUser.residenceJurisdiction ?? c.notProvided,
       icon: MapPin,
-      badge: undefined,
-    },
-    {
-      label: c.language,
-      value: currentUser.locale === "tr" ? c.turkish : c.english,
-      icon: Globe2,
       badge: undefined,
     },
   ];
@@ -147,6 +141,32 @@ export function ProfileView() {
                 </div>
               </div>
             ))}
+            {/* Language is changed right here in the profile (no menu-bar switch). */}
+            <div className="flex min-w-0 gap-3.5 bg-white px-5 py-4 sm:px-6">
+              <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[#eef2f4] text-[#31546a]">
+                <Globe2 className="size-[17px]" />
+              </span>
+              <div className="min-w-0">
+                <dt className="text-xs text-[#77838c]">{c.language}</dt>
+                <dd className="mt-1.5">
+                  <div className="inline-flex rounded-md border border-[#d5dde2] p-0.5" role="group" aria-label={c.language}>
+                    {(["tr", "en"] as const).map((item) => (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() => setLang(item)}
+                        aria-pressed={lang === item}
+                        className={`rounded px-2.5 py-1 text-xs font-semibold transition ${
+                          lang === item ? "bg-[#0a2d46] text-white" : "text-[#5a6b76] hover:text-[#0a2d46]"
+                        }`}
+                      >
+                        {item === "tr" ? c.turkish : c.english}
+                      </button>
+                    ))}
+                  </div>
+                </dd>
+              </div>
+            </div>
           </dl>
         </Panel>
       </section>

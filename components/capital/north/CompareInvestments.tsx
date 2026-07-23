@@ -31,8 +31,9 @@ const COPY = {
     reset: "Reset",
     noFunds: "No fund is available to compare right now.",
     investLabel: "How much to invest",
-    investHelp: "Property price — everything below is pre-filled with typical GTA figures.",
+    investHelp: "The property price — applied to both the fund and the rental below.",
     adjustDetails: "Adjust details",
+    showPerformance: "Historical return by year",
     fields: {
       purchasePrice: "Purchase price",
       downPaymentPct: "Down payment",
@@ -81,8 +82,9 @@ const COPY = {
     reset: "Sıfırla",
     noFunds: "Şu anda karşılaştırılacak bir fon yok.",
     investLabel: "Ne kadar yatırım",
-    investHelp: "Mülk fiyatı — aşağıdaki her şey tipik GTA değerleriyle dolduruldu.",
+    investHelp: "Mülk fiyatı — aşağıdaki hem fona hem de kiralığa uygulanır.",
     adjustDetails: "Detayları düzenle",
+    showPerformance: "Yıla göre geçmiş getiri",
     fields: {
       purchasePrice: "Satın alma fiyatı",
       downPaymentPct: "Peşinat",
@@ -178,6 +180,7 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
   const [propertyType, setPropertyType] = useState<PropertyType>("condo");
   const [values, setValues] = useState<Inputs>(DEFAULTS_BY_TYPE.condo);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [perfOpen, setPerfOpen] = useState(false);
   const [fundId, setFundId] = useState(funds[0]?.id ?? "");
   const [periodKey, setPeriodKey] = useState(funds[0]?.periods[0]?.key ?? "");
 
@@ -225,6 +228,11 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
       ) : (
         <div className="space-y-4">
           <Panel className="overflow-hidden">
+            {/* ── Shared invest amount — sits above both cards and drives them together ── */}
+            <div className="border-b border-[#e2e8eb] bg-[#f8fafb] px-5 py-4">
+              <PrimaryAmountField label={c.investLabel} help={c.investHelp} value={values.purchasePrice} step={10000} onChange={set("purchasePrice")} />
+            </div>
+
             {/* ── Two aligned columns: investment/fund (left · top) | house · condo (right · bottom) ── */}
             <div className="grid gap-px bg-[#e6ebee] md:grid-cols-2">
               {/* Investment / Fund — leads on the left and on top so the inputs below read as the property's */}
@@ -245,8 +253,20 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   metricLabel={periodLabel(period, c)}
                 />
                 <div className="mt-4 border-t border-[#eef2f4] pt-3">
-                  <p className="mb-2.5 text-[11px] font-medium text-[#93a0a9]">{c.pickYear}</p>
-                  <PerformanceTable fund={fund} selectedKey={period.key} onSelect={setPeriodKey} initialCash={cf.initialCash} lang={lang} c={c} />
+                  <button
+                    type="button"
+                    onClick={() => setPerfOpen((open) => !open)}
+                    aria-expanded={perfOpen}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#40515e] hover:text-[#0a2d46]"
+                  >
+                    <ChevronDown className={`size-4 transition-transform ${perfOpen ? "rotate-180" : ""}`} />
+                    {c.showPerformance}
+                  </button>
+                  {perfOpen && (
+                    <div className="mt-3">
+                      <PerformanceTable fund={fund} selectedKey={period.key} onSelect={setPeriodKey} initialCash={cf.initialCash} lang={lang} c={c} />
+                    </div>
+                  )}
                 </div>
                 <div className="mt-auto flex justify-end pt-4">
                   <Link href={`${NORTH_BASE}/funds/${fund.slug}`} className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0a4b72]">
@@ -279,12 +299,7 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   <TypeChoice active={propertyType === "house"} onClick={() => selectType("house")} icon={<Home className="size-4" />} title={c.house} />
                 </div>
 
-                {/* Primary input — the one number most people set; the rest is pre-filled and tucked away */}
-                <div className="mt-4">
-                  <PrimaryAmountField label={c.investLabel} help={c.investHelp} value={values.purchasePrice} step={10000} onChange={set("purchasePrice")} />
-                </div>
-
-                {/* Everything else defaults to GTA norms and stays collapsed until the user wants to fine-tune */}
+                {/* Every default (down payment, rent, rate, fee) stays collapsed until the user wants to fine-tune */}
                 <div className="mt-4 border-t border-[#eef2f4] pt-3">
                   <div className="flex items-center justify-between">
                     <button
