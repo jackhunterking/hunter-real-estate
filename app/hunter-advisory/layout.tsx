@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 import { TaxonomyProvider } from "@/components/capital/north/TaxonomyProvider";
+import { LangBoundary } from "@/components/capital/north/LangBoundary";
 import { getTaxonomies } from "@/lib/capital/taxonomies-server";
 import "./north.css";
 
@@ -32,7 +33,7 @@ export default async function HunterAdvisoryLayout({ children }: { children: Rea
   return (
     <LanguageProvider defaultLang="en" storageKey="hunter-advisory-lang">
       <TaxonomyProvider value={taxonomies}>
-        <div className="hnc-root min-h-screen bg-[#f4f6f8]">{children}</div>
+        <LangBoundary>{children}</LangBoundary>
       </TaxonomyProvider>
     </LanguageProvider>
   );
