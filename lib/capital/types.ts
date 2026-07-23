@@ -19,6 +19,14 @@ export type MetricClassification = "historical" | "current" | "target" | "illust
  */
 export type ImageSlot = {
   src?: string;
+  /**
+   * Supabase Storage reference. When present, the server read layer
+   * (lib/capital/repository-server.ts) resolves `{bucket,path}` to a public
+   * `src` URL. `src` may still carry a legacy /public path during migration;
+   * a resolved Storage URL takes precedence.
+   */
+  bucket?: string;
+  path?: string;
   alt?: LocalizedText;
   kind?: "photo" | "render";
   sourceId?: string;
@@ -121,7 +129,19 @@ export type OfferingDocument = {
   version: string;
   sourceId?: string;
   visibility: "public" | "approved-investor" | "private";
+  /**
+   * Direct URL for a public document. For public-bucket files the server read
+   * layer overrides this with a resolved Supabase public URL; it may also carry
+   * a legacy /public path or an external link during migration.
+   */
   href?: string;
+  /**
+   * Supabase Storage reference. Public-bucket docs resolve to a public `href`;
+   * private-bucket docs keep `{bucket,path}` (no href) and are opened via a
+   * short-lived signed URL from /api/hnc-offering-documents.
+   */
+  bucket?: "offering-public" | "offering-private";
+  path?: string;
 };
 
 export type TrailingReturn = {

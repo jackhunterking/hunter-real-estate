@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { resolveBundleAssets } from "./asset-url";
 import { parseOfferingBundle } from "./schema";
 import type { OfferingBundle } from "./types";
 
@@ -23,7 +24,8 @@ export async function getPublishedOfferings(): Promise<OfferingBundle[]> {
   return (result.data ?? [])
     .map((row) => {
       const bundle = parseOfferingBundle(row.content_snapshot);
-      return bundle ? { ...bundle, id: row.id, slug: row.slug } : null;
+      // Resolve Supabase Storage references (images, public docs) to live URLs.
+      return bundle ? resolveBundleAssets({ ...bundle, id: row.id, slug: row.slug }) : null;
     })
     .filter((offering): offering is OfferingBundle => Boolean(offering));
 }

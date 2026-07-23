@@ -135,6 +135,16 @@ export type Database = {
   api: {
     Tables: { [_ in never]: never };
     Views: {
+      offering_admin: ApiView<{
+        id: string;
+        slug: string;
+        status: Database["app"]["Enums"]["publication_status"];
+        market_status: string | null;
+        current_version_id: string | null;
+        latest_version: string | null;
+        draft_content: Json;
+        updated_at: string;
+      }>;
       admin_leads: ApiView<{
         id: string;
         submission_type: Database["app"]["Enums"]["lead_submission_type"];
@@ -526,6 +536,10 @@ export type Database = {
       };
       seed_offering: {
         Args: { p_bundle: Json; p_actor?: string | null };
+        Returns: string;
+      };
+      save_offering_draft: {
+        Args: { p_bundle: Json };
         Returns: string;
       };
       complete_hnc_onboarding: {

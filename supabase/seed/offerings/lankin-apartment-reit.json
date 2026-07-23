@@ -16,21 +16,27 @@
       "alt": {
         "en": "Lankin Apartment REIT",
         "tr": "Lankin Apartment REIT"
-      }
+      },
+      "bucket": "offering-public",
+      "path": "lankin-apartment-reit/media/lankinCardBG.png"
     },
     "banner": {
       "src": "/lankinBG.png",
       "alt": {
         "en": "Lankin Apartment REIT",
         "tr": "Lankin Apartment REIT"
-      }
+      },
+      "bucket": "offering-public",
+      "path": "lankin-apartment-reit/media/lankinBG.png"
     },
     "logo": {
       "src": "/lankinLogo.png",
       "alt": {
         "en": "Lankin Investments logo",
         "tr": "Lankin Investments logosu"
-      }
+      },
+      "bucket": "offering-public",
+      "path": "lankin-apartment-reit/media/lankinLogo.png"
     },
     "gallery": [
       {
@@ -41,7 +47,9 @@
         },
         "kind": "photo",
         "sourceId": "lankin-fact-2026-q1",
-        "verifiedAt": "2026-07-21"
+        "verifiedAt": "2026-07-21",
+        "bucket": "offering-public",
+        "path": "lankin-apartment-reit/media/portfolio-1.jpg"
       },
       {
         "src": "/capital/photos/lankin-apartment-reit/portfolio-2.jpg",
@@ -51,7 +59,9 @@
         },
         "kind": "photo",
         "sourceId": "lankin-fact-2025-q2",
-        "verifiedAt": "2026-07-21"
+        "verifiedAt": "2026-07-21",
+        "bucket": "offering-public",
+        "path": "lankin-apartment-reit/media/portfolio-2.jpg"
       }
     ]
   },
@@ -521,7 +531,9 @@
       "version": "2026.Q1",
       "sourceId": "lankin-fact-2026-q1",
       "visibility": "public",
-      "href": "/capital/docs/lankin-apartment-reit-fact-sheet-q1-2026-class-a.pdf"
+      "href": "/capital/docs/lankin-apartment-reit-fact-sheet-q1-2026-class-a.pdf",
+      "bucket": "offering-public",
+      "path": "lankin-apartment-reit/docs/fact-sheet-q1-2026-class-a.pdf"
     },
     {
       "id": "lankin-om",

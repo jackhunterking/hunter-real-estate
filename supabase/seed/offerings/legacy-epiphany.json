@@ -16,21 +16,27 @@
       "alt": {
         "en": "Legacy Investment background",
         "tr": "Legacy Investment arka planı"
-      }
+      },
+      "bucket": "offering-public",
+      "path": "legacy-epiphany/media/legacyBG.png"
     },
     "banner": {
       "src": "/legacyBG.png",
       "alt": {
         "en": "Legacy Investment background",
         "tr": "Legacy Investment arka planı"
-      }
+      },
+      "bucket": "offering-public",
+      "path": "legacy-epiphany/media/legacyBG.png"
     },
     "logo": {
       "src": "/legacyLogo.png",
       "alt": {
         "en": "Legacy Investment logo",
         "tr": "Legacy Investment logosu"
-      }
+      },
+      "bucket": "offering-public",
+      "path": "legacy-epiphany/media/legacyLogo.png"
     }
   },
   "summary": {
@@ -439,7 +445,9 @@
       "version": "2026.01",
       "sourceId": "legacy-fact-2026-01",
       "visibility": "public",
-      "href": "/capital/docs/legacy-class-a-fact-sheet-2026-01-30.pdf"
+      "href": "/capital/docs/legacy-class-a-fact-sheet-2026-01-30.pdf",
+      "bucket": "offering-public",
+      "path": "legacy-epiphany/docs/fact-sheet-2026-01-30.pdf"
     },
     {
       "id": "legacy-om",

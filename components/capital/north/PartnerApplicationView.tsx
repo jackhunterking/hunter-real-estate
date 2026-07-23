@@ -37,7 +37,7 @@ const COPY = {
     title: "Profesyonel erişim",
     modalTitle: "Profesyonel partner başvurusu",
     description:
-      "Yatırım danışmanlığı lisansınız varsa — Türkiye'de ya da başka bir ülkede — nerede lisanslı olduğunuzu bize bildirin; Hunter & Hunter Investment Advisors erişimini ayrıntılı konuşmak için sizinle iletişime geçelim.",
+      "Herhangi bir ülkede danışmanlık lisansınız mı var? Danışman ağımıza katılın; gerisini birlikte konuşuruz.",
     modalDescription:
       "Nerede lisanslı olduğunuzu ve mevcut firma bağlantınızı paylaşın. Ekibimiz bilgileri ilgili düzenleyici kaynaklardan doğrular ve ayrıntıları konuşmak için sizinle iletişime geçer.",
     status: "Başvuru durumu",
@@ -65,7 +65,7 @@ const COPY = {
     official: "Resmi SPL sorgulamasını aç",
     active: "Aktif",
     pending: "Beklemede",
-    eligible: "Lisansınızı bizimle paylaşın",
+    eligible: "Bize katılın",
     revise: "Başvuruyu güncelle",
     cancel: "Vazgeç",
     openProfessional: "Profesyonel portalı aç",
@@ -105,7 +105,7 @@ const COPY = {
     title: "Professional access",
     modalTitle: "Professional partner application",
     description:
-      "If you hold an investment-advisory licence — in Türkiye or any other jurisdiction — tell us where you're licensed and Hunter & Hunter Investment Advisors will reach out to discuss access in detail.",
+      "Hold an advisory licence in any jurisdiction? Join our advisor network and we'll take it from there.",
     modalDescription:
       "Tell us where you're licensed and your current firm association. Our team verifies the details through the relevant regulatory sources and reaches out to discuss.",
     status: "Application status",
@@ -133,7 +133,7 @@ const COPY = {
     official: "Open official SPL lookup",
     active: "Active",
     pending: "Pending",
-    eligible: "Tell us about your licence",
+    eligible: "Join us",
     revise: "Revise application",
     cancel: "Cancel",
     openProfessional: "Open Professional Portal",
@@ -414,13 +414,6 @@ export function PartnerApplicationView({
             )}
           </div>
         </div>
-
-        {state === "not_applied" && (
-          <div className="flex gap-3 border-t border-[#e7ebee] bg-[#f8fafb] px-5 py-4 text-sm leading-6 text-[#536773] sm:px-6">
-            <ShieldCheck className="mt-0.5 size-[18px] shrink-0 text-[#315c73]" />
-            <p>{c.stateCopy.not_applied}</p>
-          </div>
-        )}
 
         {currentApplication && state !== "active" && (
           <div className="border-t border-[#e7ebee] px-5 py-5 sm:px-6">
