@@ -30,6 +30,9 @@ const COPY = {
     house: "House",
     reset: "Reset",
     noFunds: "No fund is available to compare right now.",
+    investLabel: "How much to invest",
+    investHelp: "Property price — everything below is pre-filled with typical GTA figures.",
+    adjustDetails: "Adjust details",
     fields: {
       purchasePrice: "Purchase price",
       downPaymentPct: "Down payment",
@@ -51,6 +54,9 @@ const COPY = {
     yearBefore: "Year before",
     sinceInception: "Since inception",
     historical: "historical return",
+    colYear: "Year",
+    colReturn: "Return",
+    colPerMonth: "Earned / mo",
     pickYear: "Historical return by year — tap to compare",
     cf: {
       rent: "Rent",
@@ -74,6 +80,9 @@ const COPY = {
     house: "Ev",
     reset: "Sıfırla",
     noFunds: "Şu anda karşılaştırılacak bir fon yok.",
+    investLabel: "Ne kadar yatırım",
+    investHelp: "Mülk fiyatı — aşağıdaki her şey tipik GTA değerleriyle dolduruldu.",
+    adjustDetails: "Detayları düzenle",
     fields: {
       purchasePrice: "Satın alma fiyatı",
       downPaymentPct: "Peşinat",
@@ -95,6 +104,9 @@ const COPY = {
     yearBefore: "Önceki yıl",
     sinceInception: "Kuruluştan bu yana",
     historical: "geçmiş getiri",
+    colYear: "Yıl",
+    colReturn: "Getiri",
+    colPerMonth: "Aylık kazanç",
     pickYear: "Yıla göre geçmiş getiri — karşılaştırmak için dokunun",
     cf: {
       rent: "Kira",
@@ -115,18 +127,40 @@ const COPY = {
 
 type Copy = (typeof COPY)["en"] | (typeof COPY)["tr"];
 
-const DEFAULTS: Omit<CashFlowInputs, "propertyType"> = {
-  purchasePrice: 500000,
-  downPaymentPct: 20,
-  closingCostPct: 1.5,
-  mortgageRatePct: 5,
-  amortizationYears: 25,
-  monthlyRent: 2500,
-  propertyTaxPct: 0.8,
-  insuranceAnnual: 900,
-  propertyMgmtPct: 8,
-  condoFeeMonthly: 550,
-  maintenanceReservePct: 1,
+type Inputs = Omit<CashFlowInputs, "propertyType">;
+
+/**
+ * Sensible present-tense defaults for the general GTA market, so the tool is
+ * useful at a glance with no tuning. Switching property type reloads that
+ * type's defaults; each field can still be adjusted under "Adjust details".
+ */
+const DEFAULTS_BY_TYPE: Record<PropertyType, Inputs> = {
+  condo: {
+    purchasePrice: 650000,
+    downPaymentPct: 20,
+    closingCostPct: 1.5,
+    mortgageRatePct: 5,
+    amortizationYears: 25,
+    monthlyRent: 2600,
+    propertyTaxPct: 0.7,
+    insuranceAnnual: 700,
+    propertyMgmtPct: 8,
+    condoFeeMonthly: 650,
+    maintenanceReservePct: 1,
+  },
+  house: {
+    purchasePrice: 900000,
+    downPaymentPct: 20,
+    closingCostPct: 1.5,
+    mortgageRatePct: 5,
+    amortizationYears: 25,
+    monthlyRent: 3300,
+    propertyTaxPct: 0.8,
+    insuranceAnnual: 1400,
+    propertyMgmtPct: 8,
+    condoFeeMonthly: 0,
+    maintenanceReservePct: 1,
+  },
 };
 
 function periodLabel(p: FundPeriod, c: Copy): string {
@@ -142,19 +176,24 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
   const posthog = usePostHog();
 
   const [propertyType, setPropertyType] = useState<PropertyType>("condo");
-  const [values, setValues] = useState(DEFAULTS);
+  const [values, setValues] = useState<Inputs>(DEFAULTS_BY_TYPE.condo);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [fundId, setFundId] = useState(funds[0]?.id ?? "");
   const [periodKey, setPeriodKey] = useState(funds[0]?.periods[0]?.key ?? "");
 
   const fund = funds.find((f) => f.id === fundId) ?? funds[0];
   const period = fund?.periods.find((p) => p.key === periodKey) ?? fund?.periods[0];
 
-  const set = (key: keyof typeof DEFAULTS) => (value: number) =>
+  const set = (key: keyof Inputs) => (value: number) =>
     setValues((current) => ({ ...current, [key]: value }));
 
+  function selectType(next: PropertyType) {
+    setPropertyType(next);
+    setValues(DEFAULTS_BY_TYPE[next]);
+  }
+
   function reset() {
-    setValues(DEFAULTS);
-    setPropertyType("condo");
+    setValues(DEFAULTS_BY_TYPE[propertyType]);
     posthog?.capture("hnc_compare_reset", { language: lang });
   }
 
@@ -206,8 +245,8 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   metricLabel={periodLabel(period, c)}
                 />
                 <div className="mt-4 border-t border-[#eef2f4] pt-3">
-                  <p className="text-[11px] font-medium text-[#93a0a9]">{c.pickYear}</p>
-                  <PerformanceSelector fund={fund} selectedKey={period.key} onSelect={setPeriodKey} initialCash={cf.initialCash} lang={lang} c={c} />
+                  <p className="mb-2.5 text-[11px] font-medium text-[#93a0a9]">{c.pickYear}</p>
+                  <PerformanceTable fund={fund} selectedKey={period.key} onSelect={setPeriodKey} initialCash={cf.initialCash} lang={lang} c={c} />
                 </div>
                 <div className="mt-auto flex justify-end pt-4">
                   <Link href={`${NORTH_BASE}/funds/${fund.slug}`} className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0a4b72]">
@@ -236,21 +275,40 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   metricLabel={c.returnOnCash}
                 />
                 <div className="mt-4 grid grid-cols-2 gap-2 border-t border-[#eef2f4] pt-3">
-                  <TypeChoice active={propertyType === "condo"} onClick={() => setPropertyType("condo")} icon={<Building2 className="size-4" />} title={c.condo} />
-                  <TypeChoice active={propertyType === "house"} onClick={() => setPropertyType("house")} icon={<Home className="size-4" />} title={c.house} />
+                  <TypeChoice active={propertyType === "condo"} onClick={() => selectType("condo")} icon={<Building2 className="size-4" />} title={c.condo} />
+                  <TypeChoice active={propertyType === "house"} onClick={() => selectType("house")} icon={<Home className="size-4" />} title={c.house} />
                 </div>
-                <div className="mt-4 flex items-center justify-end">
-                  <button type="button" onClick={reset} className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#607480] hover:text-[#0a2d46]">
-                    <RotateCcw className="size-3.5" />
-                    {c.reset}
-                  </button>
+
+                {/* Primary input — the one number most people set; the rest is pre-filled and tucked away */}
+                <div className="mt-4">
+                  <PrimaryAmountField label={c.investLabel} help={c.investHelp} value={values.purchasePrice} step={10000} onChange={set("purchasePrice")} />
                 </div>
-                <div className="mt-1 space-y-2.5">
-                  <NumberField label={c.fields.purchasePrice} prefix="$" value={values.purchasePrice} step={10000} onChange={set("purchasePrice")} />
-                  <NumberField label={c.fields.downPaymentPct} suffix="%" value={values.downPaymentPct} step={1} onChange={set("downPaymentPct")} />
-                  <NumberField label={c.fields.monthlyRent} prefix="$" value={values.monthlyRent} step={100} onChange={set("monthlyRent")} />
-                  <NumberField label={c.fields.mortgageRatePct} suffix="%" value={values.mortgageRatePct} step={0.1} onChange={set("mortgageRatePct")} />
-                  {propertyType === "condo" && <NumberField label={c.fields.condoFeeMonthly} prefix="$" value={values.condoFeeMonthly} step={25} onChange={set("condoFeeMonthly")} />}
+
+                {/* Everything else defaults to GTA norms and stays collapsed until the user wants to fine-tune */}
+                <div className="mt-4 border-t border-[#eef2f4] pt-3">
+                  <div className="flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setDetailsOpen((open) => !open)}
+                      aria-expanded={detailsOpen}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#40515e] hover:text-[#0a2d46]"
+                    >
+                      <ChevronDown className={`size-4 transition-transform ${detailsOpen ? "rotate-180" : ""}`} />
+                      {c.adjustDetails}
+                    </button>
+                    <button type="button" onClick={reset} className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#607480] hover:text-[#0a2d46]">
+                      <RotateCcw className="size-3.5" />
+                      {c.reset}
+                    </button>
+                  </div>
+                  {detailsOpen && (
+                    <div className="mt-3 space-y-2.5">
+                      <NumberField label={c.fields.downPaymentPct} suffix="%" value={values.downPaymentPct} step={1} onChange={set("downPaymentPct")} />
+                      <NumberField label={c.fields.monthlyRent} prefix="$" value={values.monthlyRent} step={100} onChange={set("monthlyRent")} />
+                      <NumberField label={c.fields.mortgageRatePct} suffix="%" value={values.mortgageRatePct} step={0.1} onChange={set("mortgageRatePct")} />
+                      {propertyType === "condo" && <NumberField label={c.fields.condoFeeMonthly} prefix="$" value={values.condoFeeMonthly} step={25} onChange={set("condoFeeMonthly")} />}
+                    </div>
+                  )}
                 </div>
                 <dl className="mt-4 space-y-1.5 border-t border-[#eef2f4] pt-3 text-sm">
                   <CashRow label={c.cf.rent} value={`+ ${money(cf.grossRent, lang)}`} />
@@ -307,6 +365,18 @@ function HeroCashFlow({
   );
 }
 
+/** Small brand logo, matched to the height of the text it sits beside. */
+function FundLogo({ src, className = "" }: { src?: string; className?: string }) {
+  if (!src) return null;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={src} alt="" className={`w-auto max-w-9 shrink-0 rounded-[3px] bg-white object-contain ${className}`} />;
+}
+
+/**
+ * Custom fund picker — a native <select> can't render a logo inside its
+ * options, so this lightweight listbox shows each fund's brand mark beside its
+ * name, sized to match the title text.
+ */
 function FundSelect({
   funds,
   value,
@@ -320,26 +390,68 @@ function FundSelect({
   lang: Lang;
   label: string;
 }) {
+  const [open, setOpen] = useState(false);
+  const selected = funds.find((f) => f.id === value) ?? funds[0];
+
   return (
-    <label className="relative flex-1">
+    <div className="relative flex-1">
       <span className="sr-only">{label}</span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="h-9 w-full appearance-none rounded-md border border-[#cfd9df] bg-white pl-3 pr-8 text-sm font-semibold text-[#233947] outline-none focus:border-[#1d6a4f] focus:ring-2 focus:ring-[#1d6a4f]/15"
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className="flex h-9 w-full items-center gap-2 rounded-md border border-[#cfd9df] bg-white pl-2.5 pr-8 text-left outline-none focus:border-[#1d6a4f] focus:ring-2 focus:ring-[#1d6a4f]/15"
       >
-        {funds.map((f) => (
-          <option key={f.id} value={f.id}>
-            {tx(f.shortName, lang)}
-          </option>
-        ))}
-      </select>
-      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 size-4 -translate-y-1/2 text-[#93a0a9]" />
-    </label>
+        <FundLogo src={selected?.logoSrc} className="h-[1.15em]" />
+        <span className="truncate text-sm font-semibold text-[#233947]">{tx(selected?.shortName, lang)}</span>
+        <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 size-4 -translate-y-1/2 text-[#93a0a9]" />
+      </button>
+      {open && (
+        <>
+          <button type="button" aria-hidden tabIndex={-1} className="fixed inset-0 z-10 cursor-default" onClick={() => setOpen(false)} />
+          <ul
+            role="listbox"
+            className="absolute left-0 top-[calc(100%+4px)] z-20 max-h-64 w-full min-w-[200px] overflow-auto rounded-md border border-[#cfd9df] bg-white py-1 shadow-lg"
+          >
+            {funds.map((f) => {
+              const active = f.id === value;
+              return (
+                <li key={f.id} role="option" aria-selected={active}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onChange(f.id);
+                      setOpen(false);
+                    }}
+                    className={`flex w-full items-center gap-2 px-2.5 py-2 text-left text-sm ${
+                      active ? "bg-[#eaf3ee] font-semibold text-[#1d6a4f]" : "text-[#233947] hover:bg-[#f3f6f8]"
+                    }`}
+                  >
+                    <FundLogo src={f.logoSrc} className="h-[1.15em]" />
+                    <span className="truncate">{tx(f.shortName, lang)}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )}
+    </div>
   );
 }
 
-function PerformanceSelector({
+function rowLabel(p: FundPeriod, c: Copy): string {
+  if (p.role === "inception") return c.sinceInception;
+  return p.year ? String(p.year) : c.sinceInception;
+}
+
+/**
+ * Year-by-year historical returns as a table — the same annual-performance
+ * table used on the fund page, so the two surfaces read as one. Each row is a
+ * selectable period that drives the comparison above.
+ */
+function PerformanceTable({
   fund,
   selectedKey,
   onSelect,
@@ -354,44 +466,47 @@ function PerformanceSelector({
   lang: Lang;
   c: Copy;
 }) {
-  const years = fund.periods.filter((p) => p.role !== "inception");
-  const inception = fund.periods.find((p) => p.role === "inception");
-  const maxPct = Math.max(...years.map((p) => p.pct), 1);
-
   return (
-    <div className="mt-2.5">
-      <div className="flex items-end gap-1">
-        {years.map((p) => {
-          const active = p.key === selectedKey;
-          const height = 14 + (Math.max(p.pct, 0) / maxPct) * 46;
-          return (
-            <button
-              key={p.key}
-              type="button"
-              onClick={() => onSelect(p.key)}
-              title={`${p.year}: +${p.pct.toFixed(1)}% · ${money(historicalEarnings(initialCash, p.pct).monthly, lang)}${c.perMonth}`}
-              className="group flex min-w-0 flex-1 flex-col items-center gap-1"
-            >
-              <span className={`text-[10px] font-semibold ${active ? "text-[#1d6a4f]" : "text-transparent group-hover:text-[#9aa5ae]"}`}>
-                {p.pct.toFixed(1)}%
-              </span>
-              <span className="w-full rounded-t transition" style={{ height, backgroundColor: active ? GREEN : "#d5e4dc" }} />
-              <span className={`text-[10px] ${active ? "font-semibold text-[#233947]" : "text-[#93a0a9]"}`}>{p.year}</span>
-            </button>
-          );
-        })}
-      </div>
-      {inception && (
-        <button
-          type="button"
-          onClick={() => onSelect(inception.key)}
-          className={`mt-2 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold transition ${
-            inception.key === selectedKey ? "border-[#1d6a4f] bg-[#eaf3ee] text-[#1d6a4f]" : "border-[#d9e1e6] text-[#67757f] hover:border-[#b8cbd6]"
-          }`}
-        >
-          {c.sinceInception} · +{inception.pct.toFixed(1)}%
-        </button>
-      )}
+    <div className="overflow-x-auto rounded-xl border border-[#e2e8eb] bg-white">
+      <table className="w-full text-left">
+        <thead className="border-b border-[#e2e8eb] bg-[#f6f9fa]">
+          <tr>
+            <th scope="col" className="px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">{c.colYear}</th>
+            <th scope="col" className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">{c.colReturn}</th>
+            <th scope="col" className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">{c.colPerMonth}</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-[#eef2f4]">
+          {fund.periods.map((p) => {
+            const active = p.key === selectedKey;
+            const monthly = historicalEarnings(initialCash, p.pct).monthly;
+            return (
+              <tr
+                key={p.key}
+                role="button"
+                tabIndex={0}
+                aria-pressed={active}
+                onClick={() => onSelect(p.key)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onSelect(p.key);
+                  }
+                }}
+                className={`cursor-pointer transition ${active ? "bg-[#eaf3ee]" : "hover:bg-[#f6f9fa]"}`}
+              >
+                <th scope="row" className={`px-3 py-2 text-sm font-medium ${active ? "text-[#1d6a4f]" : "text-[#40515e]"}`}>
+                  {rowLabel(p, c)}
+                </th>
+                <td className="px-3 py-2 text-right text-sm font-semibold tabular-nums" style={{ color: active ? GREEN : "#40515e" }}>
+                  +{p.pct.toFixed(1)}%
+                </td>
+                <td className="px-3 py-2 text-right text-sm tabular-nums text-[#67757f]">{money(monthly, lang)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -442,6 +557,9 @@ function NumberField({
           step={step}
           min={min}
           max={max}
+          // Select the whole value on focus so the first keystroke replaces it
+          // (no more typing to the right of a stranded 0).
+          onFocus={(e) => e.target.select()}
           onChange={(e) => {
             const next = e.target.value === "" ? 0 : Number(e.target.value);
             if (!Number.isFinite(next)) return;
@@ -449,10 +567,51 @@ function NumberField({
             if (typeof max === "number") clamped = Math.min(max, clamped);
             onChange(clamped);
           }}
-          className="h-9 w-full bg-transparent px-1.5 text-right text-sm text-[#263f4f] outline-none"
+          // 16px keeps iOS Safari from zooming in when the field is focused.
+          className="h-9 w-full bg-transparent px-1.5 text-right text-[16px] text-[#263f4f] outline-none"
         />
         {suffix && <span className="pr-2.5 text-xs text-[#93a0a9]">{suffix}</span>}
       </span>
+    </label>
+  );
+}
+
+/** The one headline input — property price — shown large and clearly primary. */
+function PrimaryAmountField({
+  label,
+  help,
+  value,
+  onChange,
+  step = 1000,
+}: {
+  label: string;
+  help?: string;
+  value: number;
+  onChange: (value: number) => void;
+  step?: number;
+}) {
+  return (
+    <label className="block">
+      <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8291a0]">{label}</span>
+      <span className="mt-1.5 flex items-center rounded-lg border border-[#cfd9df] bg-white px-3 focus-within:border-[#0a4b72] focus-within:ring-2 focus-within:ring-[#0a4b72]/15">
+        <span className="text-base text-[#93a0a9]">$</span>
+        <input
+          type="number"
+          inputMode="numeric"
+          value={Number.isFinite(value) ? value : ""}
+          step={step}
+          min={0}
+          onFocus={(e) => e.target.select()}
+          onChange={(e) => {
+            const next = e.target.value === "" ? 0 : Number(e.target.value);
+            if (!Number.isFinite(next)) return;
+            onChange(Math.max(0, next));
+          }}
+          // 17px (≥16) keeps iOS Safari from zooming on focus.
+          className="h-11 w-full bg-transparent px-2 text-right text-[17px] font-semibold tabular-nums text-[#0a2d46] outline-none"
+        />
+      </span>
+      {help && <span className="mt-1.5 block text-[11px] leading-4 text-[#93a0a9]">{help}</span>}
     </label>
   );
 }

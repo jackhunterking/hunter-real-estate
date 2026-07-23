@@ -122,6 +122,8 @@ export type FundComparable = {
   slug: string;
   shortName: LocalizedText;
   managerName: LocalizedText;
+  /** Small brand logo, shown beside the fund name in the picker. */
+  logoSrc?: string;
   /** Backward-looking periods, most recent first, ending with "since inception". */
   periods: FundPeriod[];
   targetReturnPhrase?: LocalizedText;
@@ -201,6 +203,7 @@ export function toFundComparable(bundle: OfferingBundle): FundComparable | null 
     slug: bundle.slug,
     shortName: bundle.shortName,
     managerName: bundle.manager.name,
+    logoSrc: bundle.media?.logo?.src,
     periods,
     targetReturnPhrase: primaryClass?.targetReturn
       ? { en: primaryClass.targetReturn.value, tr: primaryClass.targetReturn.value }
