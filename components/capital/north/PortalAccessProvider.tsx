@@ -59,6 +59,7 @@ export type PartnerApplicationInput = {
   firmName: string;
   registeredFirstNames: string;
   registryLastName: string;
+  jurisdiction: string;
   licenceDocumentNumber: string;
   licenceType: string;
   professionalTitle: string;
@@ -253,6 +254,7 @@ export function PortalAccessProvider({
     if (
       !input.registeredFirstNames.trim() ||
       !input.registryLastName.trim() ||
+      !input.jurisdiction.trim() ||
       !input.licenceDocumentNumber.trim() ||
       !input.licenceType.trim() ||
       !input.professionalTitle.trim() ||
@@ -269,6 +271,7 @@ export function PortalAccessProvider({
         registeredFirstNames: input.registeredFirstNames.trim(),
         registryLastName: input.registryLastName.trim(),
         normalizedRegistryLastName: normalizeRegistrySurname(input.registryLastName),
+        jurisdiction: input.jurisdiction.trim(),
         licenceDocumentNumber: input.licenceDocumentNumber.trim(),
         licenceType: input.licenceType.trim(),
         professionalTitle: input.professionalTitle.trim(),
@@ -305,6 +308,7 @@ export function PortalAccessProvider({
         registeredFirstNames: input.registeredFirstNames.trim(),
         registryLastName: input.registryLastName.trim(),
         normalizedRegistryLastName: normalizeRegistrySurname(input.registryLastName),
+        jurisdiction: input.jurisdiction.trim(),
         licenceDocumentNumber: input.licenceDocumentNumber.trim(),
         licenceType: input.licenceType,
         professionalTitle: input.professionalTitle.trim(),

@@ -25,11 +25,11 @@ const RED = "#a24a3f";
 const COPY = {
   en: {
     title: "Compare Investments",
-    description: "The monthly cash flow of a rental vs. what the same cash actually earned in a fund.",
+    description: "The monthly cash flow of a rental vs. what the same cash actually earned in an investment.",
     condo: "Condo",
     house: "House",
     reset: "Reset",
-    noFunds: "No fund is available to compare right now.",
+    noFunds: "No investment is available to compare right now.",
     investLabel: "Property price",
     investHelp: "Paid in cash by default — this whole amount is what's invested on both sides. Add a mortgage below to finance instead.",
     adjustDetails: "Adjust details",
@@ -52,7 +52,7 @@ const COPY = {
       closingCostPct: "Closing cost",
     },
     rental: "Rental property",
-    fundLabel: "Fund",
+    fundLabel: "Investment",
     perMonth: "/mo",
     invested: "invested",
     returnOnCash: "return on cash",
@@ -81,15 +81,15 @@ const COPY = {
     verdictMore: "more per month",
     verdictRental: "Rental nets",
     verdictTie: "About the same each month",
-    viewFund: "Fund details",
+    viewFund: "Investment details",
   },
   tr: {
     title: "Yatırımları Karşılaştır",
-    description: "Bir kiralığın aylık nakit akışı ile aynı nakdin bir fonda gerçekte kazandığı.",
+    description: "Bir kiralığın aylık nakit akışı ile aynı nakdin bir yatırımda gerçekte kazandığı.",
     condo: "Condo",
     house: "Ev",
     reset: "Sıfırla",
-    noFunds: "Şu anda karşılaştırılacak bir fon yok.",
+    noFunds: "Şu anda karşılaştırılacak bir yatırım yok.",
     investLabel: "Mülk fiyatı",
     investHelp: "Varsayılan olarak nakit ödenir — bu tutarın tamamı her iki tarafta da yatırılır. Finanse etmek için aşağıdan mortgage ekleyin.",
     adjustDetails: "Detayları düzenle",
@@ -112,7 +112,7 @@ const COPY = {
       closingCostPct: "Kapanış masrafı",
     },
     rental: "Kiralık mülk",
-    fundLabel: "Fon",
+    fundLabel: "Yatırım",
     perMonth: "/ay",
     invested: "yatırıldı",
     returnOnCash: "nakit getirisi",
@@ -141,7 +141,7 @@ const COPY = {
     verdictMore: "daha fazla ödedi",
     verdictRental: "Kiralık aylık",
     verdictTie: "Aylık olarak yaklaşık aynı",
-    viewFund: "Fon detayları",
+    viewFund: "Yatırım detayları",
   },
 } as const;
 
@@ -313,7 +313,7 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   )}
                 </div>
                 <div className="mt-auto flex justify-end pt-4">
-                  <Link href={`${NORTH_BASE}/funds/${fund.slug}`} className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0a4b72]">
+                  <Link href={`${NORTH_BASE}/investments/${fund.slug}`} className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0a4b72]">
                     {c.viewFund}
                     <ArrowRight className="size-3" />
                   </Link>
@@ -711,9 +711,8 @@ function CommaInput({
       type="text"
       inputMode={allowDecimal ? "decimal" : "numeric"}
       value={text}
-      onFocus={(e) => {
+      onFocus={() => {
         editing.current = true;
-        e.target.select();
       }}
       onBlur={() => {
         editing.current = false;

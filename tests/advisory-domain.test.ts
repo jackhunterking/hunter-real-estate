@@ -36,12 +36,12 @@ test("auth callbacks use the visible host route contract", () => {
 
 test("confirmation continuations stay inside the advisory portal", () => {
   assert.equal(
-    safeAdvisoryNext("www.hunterhunteradvisors.com", "/hunter-advisory/funds/example"),
-    "/funds/example",
+    safeAdvisoryNext("www.hunterhunteradvisors.com", "/hunter-advisory/investments/example"),
+    "/investments/example",
   );
   assert.equal(
-    safeAdvisoryNext("jackhunter.com", "/hunter-advisory/funds/example"),
-    "/hunter-advisory/funds/example",
+    safeAdvisoryNext("jackhunter.com", "/hunter-advisory/investments/example"),
+    "/hunter-advisory/investments/example",
   );
   assert.equal(
     safeAdvisoryNext("www.hunterhunteradvisors.com", "//evil.example"),

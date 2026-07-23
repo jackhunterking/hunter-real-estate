@@ -105,7 +105,7 @@ const en: LandingCopy = {
     // Product-agnostic credibility only — no fund-specific figures here.
     items: [
       "Institutional-grade Canadian real estate",
-      "Independently audited funds",
+      "Independently audited investments",
       "RRSP · TFSA · RESP eligible",
       "Dealer-supervised by Parvis",
     ],
@@ -113,12 +113,12 @@ const en: LandingCopy = {
   platform: {
     eyebrow: "Inside the platform",
     title: "This is what your money looks like from the inside.",
-    body: "The same workspace our investors sign into — real funds, real figures.",
+    body: "The same workspace our investors sign into — real investments, real figures.",
     tabs: [
       {
         label: "Frictionless access",
         title: "Your portfolio on one calm screen",
-        body: "The funds you hold, their terms, and your distributions — no paperwork chase.",
+        body: "The investments you hold, their terms, and your distributions — no paperwork chase.",
       },
       {
         label: "Exclusive opportunities",
@@ -128,7 +128,7 @@ const en: LandingCopy = {
       {
         label: "Capital growth",
         title: "Published performance, not promises",
-        body: "Historical returns shown exactly as the fund publishes them.",
+        body: "Historical returns shown exactly as published.",
       },
       {
         label: "Tangible assets",
@@ -172,9 +172,9 @@ const en: LandingCopy = {
     previewCaption: "A guided path to becoming a partner — with a licensed advisory team beside you at every step.",
     items: [
       { title: "Find the opportunity", body: "Browse a short, curated shelf of vetted private real estate offerings." },
-      { title: "Review the details", body: "Open the full terms, documents, and the numbers behind each fund." },
+      { title: "Review the details", body: "Open the full terms, documents, and the numbers behind each investment." },
       { title: "Become a partner", body: "Commit through a simple, dealer-supervised onboarding with your advisor." },
-      { title: "Get paid", body: "Distributions are paid straight to your account on each fund's schedule." },
+      { title: "Get paid", body: "Distributions are paid straight to your account on each investment's schedule." },
     ],
   },
   final: {
@@ -198,7 +198,7 @@ const en: LandingCopy = {
     buildings: "Buildings",
     openFunds: "Open for investment",
     targetReturn: "Target return",
-    availableFunds: "Available funds",
+    availableFunds: "Available investments",
     exampleFunds: "Product examples",
     historical: "Historical performance",
     historicalTag: "Historical—not a forecast",
@@ -208,7 +208,7 @@ const en: LandingCopy = {
       distribution: "Target distribution",
       minimum: "Minimum investment",
       risk: "Risk profile",
-      term: "Fund term",
+      term: "Investment term",
       aum: "Assets under management",
     },
   },

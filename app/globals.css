@@ -63,6 +63,13 @@ body {
   color: var(--ink);
 }
 
+/* Form fields use a plain, standard selection instead of the brand gold. */
+input::selection,
+textarea::selection {
+  background: #bcd6ea;
+  color: inherit;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -118,4 +125,111 @@ i {
     transform: scaleY(0.4);
     opacity: 0.5;
   }
+}
+
+/* On-map building popup (FundMap). Leaflet CSS is loaded from CDN at runtime. */
+.fund-popup-wrap .leaflet-popup-content-wrapper {
+  border-radius: 14px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(9, 26, 40, 0.22);
+}
+.fund-popup-wrap .leaflet-popup-content {
+  margin: 0;
+  width: 272px !important;
+}
+.fund-popup-wrap .leaflet-popup-tip {
+  box-shadow: 0 16px 40px rgba(9, 26, 40, 0.22);
+}
+.fund-popup-wrap .leaflet-popup-close-button {
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  color: #fff;
+  background: rgba(9, 26, 40, 0.5);
+  border-radius: 999px;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+  transition: background 0.15s ease;
+}
+.fund-popup-wrap .leaflet-popup-close-button:hover {
+  background: rgba(9, 26, 40, 0.75);
+  color: #fff;
+}
+.fund-popup {
+  width: 272px;
+}
+.fund-popup-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #e9edf0;
+}
+.fund-popup-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.fund-popup-media .fund-popup-fund {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  max-width: calc(100% - 20px);
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(9, 26, 40, 0.72);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fund-popup-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 12px 14px 14px;
+}
+.fund-popup-body .fund-popup-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #152b3b;
+}
+.fund-popup-body .fund-popup-loc {
+  font-size: 12.5px;
+  color: #65737e;
+}
+.fund-popup-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 3px;
+}
+.fund-popup-chips .fund-popup-chip {
+  padding: 2px 7px;
+  border: 1px solid #e2e7ea;
+  border-radius: 5px;
+  background: #f4f6f8;
+  color: #5f6d78;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.fund-popup-body .fund-popup-link {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0a4b72;
+  text-decoration: none;
+}
+.fund-popup-body .fund-popup-link:hover {
+  text-decoration: underline;
 }

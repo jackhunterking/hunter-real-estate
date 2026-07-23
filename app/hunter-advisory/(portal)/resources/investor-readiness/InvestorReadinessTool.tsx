@@ -851,7 +851,7 @@ function ResultView({ copy, decision, jurisdictionReview, countryLabel, regionLa
       {referenceClientId
         ? <Link href={`${NORTH_BASE}/clients/${referenceClientId}`} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white"><ArrowLeft className="size-4" />{copy.backToClient}</Link>
         : selfMode
-          ? <Link href={`${NORTH_BASE}/funds`} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white">{copy.exploreFunds}<ArrowRight className="size-4" /></Link>
+          ? <Link href={`${NORTH_BASE}/investments`} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white">{copy.exploreFunds}<ArrowRight className="size-4" /></Link>
           : <button type="button" onClick={onAdd} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white"><UserPlus className="size-4" />{copy.addClient}</button>}
     </div>
   </div>;

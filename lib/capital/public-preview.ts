@@ -33,6 +33,7 @@ export function buildPublicOfferingPreviews(
       return {
         id: offering.id,
         slug: offering.slug,
+        name: offering.name,
         shortName: offering.shortName,
         managerName: offering.manager.name,
         summary: offering.summary,
@@ -85,6 +86,7 @@ export function buildPublicOfferingPreviews(
               media: card || gallery?.length ? { card, gallery } : undefined,
             };
           }),
+        audited: Boolean(offering.serviceProviders?.auditor),
         verifiedAt: offering.verifiedAt,
       } satisfies PublicOfferingPreview;
     });

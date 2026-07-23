@@ -65,7 +65,7 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
       .select("id,organization_id,user_id,status,is_primary,approved_by,approval_reason,approved_at,ended_at"),
     supabase
       .from("partner_applications")
-      .select("id,user_id,organization_id,registered_first_names,registry_last_name,normalized_registry_last_name,licence_document_number,licence_type,professional_title,firm_work_email,evidence_storage_path,lookup_consent_at,accuracy_consent_at,status,submitted_at,updated_at"),
+      .select("id,user_id,organization_id,registered_first_names,registry_last_name,normalized_registry_last_name,jurisdiction,licence_document_number,licence_type,professional_title,firm_work_email,evidence_storage_path,lookup_consent_at,accuracy_consent_at,status,submitted_at,updated_at"),
     supabase
       .from("license_verification_events")
       .select("id,application_id,user_id,queried_licence_number,queried_registry_last_name,source_url,result,returned_licence_types,returned_status,renewal_information,employment_information,reviewer_id,reviewer_notes,evidence_storage_path,verified_at"),
@@ -179,6 +179,7 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
       registeredFirstNames: application.registered_first_names,
       registryLastName: application.registry_last_name,
       normalizedRegistryLastName: application.normalized_registry_last_name,
+      jurisdiction: application.jurisdiction ?? undefined,
       licenceDocumentNumber: application.licence_document_number,
       licenceType: application.licence_type,
       professionalTitle: application.professional_title,

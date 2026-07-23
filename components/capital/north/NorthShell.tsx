@@ -48,7 +48,7 @@ const COPY = {
     groups: { investing: "Yatırımlar", professional: "Profesyonel", resources: "Kaynaklar", operations: "Hunter & Hunter Investment Advisors" },
     investing: [
       ["/portfolio", "Portföyüm", WalletCards],
-      ["/funds", "Keşfet", Compass],
+      ["/investments", "Keşfet", Compass],
       ["/requests", "İşlemlerim", BriefcaseBusiness],
     ],
     professional: [
@@ -78,7 +78,7 @@ const COPY = {
     groups: { investing: "Investing", professional: "Professional", resources: "Resources", operations: "Hunter & Hunter Investment Advisors" },
     investing: [
       ["/portfolio", "My portfolio", WalletCards],
-      ["/funds", "Discover", Compass],
+      ["/investments", "Discover", Compass],
       ["/requests", "Transactions", BriefcaseBusiness],
     ],
     professional: [
@@ -172,7 +172,7 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
     }
   }, [pathname, setAccountView]);
 
-  if (/\/funds\/[^/]+\/present$/.test(pathname)) {
+  if (/\/investments\/[^/]+\/present$/.test(pathname)) {
     return <>{children}</>;
   }
 

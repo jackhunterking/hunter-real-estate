@@ -89,7 +89,7 @@ export function OnboardingFlow({
 
   const destination = useMemo(() => {
     if (offeringSlug) {
-      return `${NORTH_BASE}/funds/${encodeURIComponent(offeringSlug)}`;
+      return `${NORTH_BASE}/investments/${encodeURIComponent(offeringSlug)}`;
     }
     return returnPath?.startsWith(`${NORTH_BASE}/`) ? returnPath : `${NORTH_BASE}/portfolio`;
   }, [offeringSlug, returnPath]);

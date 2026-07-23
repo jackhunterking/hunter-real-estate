@@ -18,7 +18,6 @@ import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider
 import { OfferingVisual } from "../ProductsExplorer";
 import { canUseWorkspace } from "@/lib/capital/portal-access";
 import {
-  Highlights,
   type KeyFact,
   KeyFactsCard,
   PresentationCard,
@@ -35,18 +34,18 @@ const COPY = {
     summaryReturns: "Projected returns", offeringSize: "Offering size", aum: "Assets under management",
     keyFacts: "Key facts", inception: "Inception date", riskProfile: "Risk profile", minimum: "Minimum investment", projectedReturn: "Projected return",
     unitPrice: "Unit price", term: "Investment term", distribution: "Distribution", registered: "Registered accounts",
-    redemption: "Redemptions", managementFee: "Management fee", commission: "Published fund commission",
+    redemption: "Redemptions", managementFee: "Management fee", commission: "Published commission",
     highlights: "Highlights", cities: "Cities", buildingsCount: "Buildings", locations: "Locations",
     presentation: "Presentation", presentationOpen: "Open presentation",
     presentationVersion: "Version", presentationUnavailable: "Available through Hunter & Hunter Investment Advisors",
     risks: "Material risks and trade-offs",
-    historical: "Historical performance", historicalHelp: "Published returns for this fund, shown exactly as provided.", noHistory: "No approved historical information is available.", historicalTag: "Historical—not a forecast",
+    historical: "Historical performance", historicalHelp: "Published returns for this investment, shown exactly as provided.", noHistory: "No approved historical information is available.", historicalTag: "Historical—not a forecast",
     period: "Period", returnValue: "Return",
     exact: "Values and conditions are shown as published for the selected share class. Targets are not guaranteed.",
-    aboutManager: "About the company", headquarters: "Headquarters", fundStructure: "Fund structure", companyWebsite: "Company website",
+    aboutManager: "About the company", headquarters: "Headquarters", fundStructure: "Structure", companyWebsite: "Company website",
     trust: "Independently verified", auditor: "Auditor", legalCounsel: "Legal counsel", appraiser: "Appraiser", verified: "Verified",
     share: "Share class",
-    buildingHelp: "The real, rentable buildings this fund owns — on the map and below. Select a marker or card to view information; missing facts are shown as unavailable and are not inferred.",
+    buildingHelp: "The real, rentable buildings this investment owns — on the map and below. Select a marker or card to view information; missing facts are shown as unavailable and are not inferred.",
     docsHelp: "Approved documents are kept with this offering so their source and version remain clear.",
     type: "Type", effective: "Effective date", version: "Version", source: "Source", open: "Open document", held: "Available through Hunter & Hunter Investment Advisors",
     noDocs: "No approved documents are available.",
@@ -58,18 +57,18 @@ const COPY = {
     summaryReturns: "Öngörülen getiri", offeringSize: "Teklif büyüklüğü", aum: "Yönetilen varlıklar",
     keyFacts: "Temel bilgiler", inception: "Yatırım aracı başlangıç tarihi", riskProfile: "Risk profili", minimum: "Minimum yatırım", projectedReturn: "Öngörülen getiri",
     unitPrice: "Birim fiyatı", term: "Yatırım süresi", distribution: "Dağıtım", registered: "Kayıtlı hesaplar",
-    redemption: "Para çekme", managementFee: "Yönetim ücreti", commission: "Yayımlanan fon komisyonu",
+    redemption: "Para çekme", managementFee: "Yönetim ücreti", commission: "Yayımlanan komisyon",
     highlights: "Öne çıkanlar", cities: "Şehir", buildingsCount: "Bina", locations: "Konum",
     presentation: "Sunum", presentationOpen: "Sunumu aç",
     presentationVersion: "Sürüm", presentationUnavailable: "Hunter & Hunter Investment Advisors üzerinden mevcut",
     risks: "Önemli riskler ve ödünleşimler",
-    historical: "Geçmiş performans", historicalHelp: "Bu fon için yayımlanan getiriler, sağlandığı şekliyle gösterilir.", noHistory: "Onaylı geçmiş bilgi mevcut değil.", historicalTag: "Geçmiş bilgi—tahmin değildir",
+    historical: "Geçmiş performans", historicalHelp: "Bu yatırım için yayımlanan getiriler, sağlandığı şekliyle gösterilir.", noHistory: "Onaylı geçmiş bilgi mevcut değil.", historicalTag: "Geçmiş bilgi—tahmin değildir",
     period: "Dönem", returnValue: "Getiri",
     exact: "Değerler ve koşullar seçili pay sınıfı için yayımlandığı şekliyle gösterilir. Hedefler garanti edilmez.",
-    aboutManager: "Şirket hakkında", headquarters: "Merkez", fundStructure: "Fon yapısı", companyWebsite: "Şirket web sitesi",
+    aboutManager: "Şirket hakkında", headquarters: "Merkez", fundStructure: "Yapı", companyWebsite: "Şirket web sitesi",
     trust: "Bağımsız olarak doğrulandı", auditor: "Denetçi", legalCounsel: "Hukuk müşaviri", appraiser: "Değerleme uzmanı", verified: "Doğrulama tarihi",
     share: "Pay sınıfı",
-    buildingHelp: "Bu fonun sahip olduğu gerçek, kiralık binalar — haritada ve aşağıda. Bilgileri görmek için bir işaretçi veya kart seçin; eksik bilgiler mevcut değil olarak gösterilir ve tahmin edilmez.",
+    buildingHelp: "Bu yatırımın sahip olduğu gerçek, kiralık binalar — haritada ve aşağıda. Bilgileri görmek için bir işaretçi veya kart seçin; eksik bilgiler mevcut değil olarak gösterilir ve tahmin edilmez.",
     docsHelp: "Onaylı belgeler, kaynak ve sürümlerinin açık kalması için bu seçenekle birlikte tutulur.",
     type: "Tür", effective: "Yürürlük tarihi", version: "Sürüm", source: "Kaynak", open: "Belgeyi aç", held: "Hunter & Hunter Investment Advisors üzerinden mevcut",
     noDocs: "Onaylı belge mevcut değil.",
@@ -157,7 +156,6 @@ function Overview({ offering, share, professional }: { offering: OfferingBundle;
   if (!hasCategory("early-exit")) add(c.redemption, tx(share?.redemptionTerms, lang));
   if (professional && commission) facts.push({ label: c.commission, value: commission });
 
-  const funFacts = (offering.highlights ?? []).map((highlight) => tx(highlight, lang));
   const presentation = offering.documents.find((doc) => doc.type === "presentation" && doc.visibility !== "private");
 
   return (
@@ -166,15 +164,6 @@ function Overview({ offering, share, professional }: { offering: OfferingBundle;
       <section>
         <SectionTitle title={c.keyFacts} />
         <KeyFactsCard facts={facts} lang={lang} />
-      </section>
-
-      <section>
-        <SectionTitle title={c.highlights} />
-        <Highlights
-          properties={offering.properties}
-          funFacts={funFacts}
-          copy={{ cities: c.cities, buildings: c.buildingsCount, locations: c.locations }}
-        />
       </section>
 
       {presentation && (
@@ -360,7 +349,7 @@ export function ProductDetailView({ offering }: { offering: OfferingBundle }) {
 
   return (
     <div>
-      <Link href={`${NORTH_BASE}/funds`} className="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"><ArrowLeft className="size-3.5" />{c.back}</Link>
+      <Link href={`${NORTH_BASE}/investments`} className="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"><ArrowLeft className="size-3.5" />{c.back}</Link>
       <header className="overflow-hidden rounded-xl border border-[#dbe1e5] bg-white shadow-[0_1px_2px_rgba(10,28,43,0.04)]">
         <OfferingVisual offering={offering} lang={lang} />
         <div className="px-5 py-5 sm:px-6 sm:py-6">

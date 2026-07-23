@@ -6,11 +6,14 @@ import type { OfferingBundle, PartnerTier, ReferralStatus } from "@/lib/capital/
 import { PARTNER_COMMISSION_ALLOCATIONS, PARTNER_TIER_THRESHOLDS, nextPartnerTier } from "@/lib/capital/commissions";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
-import { taxonomyLabel } from "@/lib/capital/taxonomies";
 import { useTaxonomies } from "@/components/capital/north/TaxonomyProvider";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { PageHeader, Panel, SectionHeader, money } from "@/components/capital/north/PortalUI";
-import { FundBannerCard } from "@/components/capital/FundBannerCard";
+import {
+  OfferingSummaryCard,
+  offeringBundleCardProps,
+  CARD_CTA,
+} from "@/components/capital/OfferingSummaryCard";
 import { useClients } from "@/components/capital/north/ClientProvider";
 import { StageIndicator } from "@/components/capital/north/StageIndicator";
 import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider";
@@ -19,13 +22,13 @@ const COPY = {
   tr: {
     eyebrow: "Profesyonel merkezi",
     title: "Profesyonel Genel Bakış",
-    desc: "Yatırımcı süreci, fon sunumları, bireysel komisyonlar ve yıllık profesyonel ilerleme tek görünümde.",
+    desc: "Yatırımcı süreci, yatırım sunumları, bireysel komisyonlar ve yıllık profesyonel ilerleme tek görünümde.",
     newReferral: "Yeni yatırımcı",
     cleared: "Yıllık kabul edilen sermaye",
     tier: "Profesyonel seviye",
     commission: "Bireysel komisyon payı",
     referrals: "Yatırımcılar",
-    products: "Aktif fonlar",
+    products: "Aktif yatırımlar",
     tierLabels: {
       associate: "Associate",
       principal: "Principal",
@@ -37,9 +40,8 @@ const COPY = {
     all: "Tümünü gör",
     investor: "Yatırımcı",
     status: "Durum",
-    availableProducts: "Kullanılabilir fonlar",
+    availableProducts: "Kullanılabilir yatırımlar",
     strategy: "Strateji",
-    review: "Sunumu aç",
     statusMap: {
       introduced: "Tanıştırıldı",
       contacted: "İletişime geçildi",
@@ -51,13 +53,13 @@ const COPY = {
   en: {
     eyebrow: "Professional centre",
     title: "Professional Overview",
-    desc: "Investor pipeline, fund presentations, individual commissions, and annual professional progress in one view.",
+    desc: "Investor pipeline, investment presentations, individual commissions, and annual professional progress in one view.",
     newReferral: "New investor",
     cleared: "Annual accepted capital",
     tier: "Professional level",
     commission: "Individual commission allocation",
     referrals: "Investors",
-    products: "Active funds",
+    products: "Active investments",
     tierLabels: {
       associate: "Associate",
       principal: "Principal",
@@ -69,9 +71,8 @@ const COPY = {
     all: "View all",
     investor: "Investor",
     status: "Status",
-    availableProducts: "Available funds",
+    availableProducts: "Available investments",
     strategy: "Strategy",
-    review: "Open presentation",
     statusMap: {
       introduced: "Introduced",
       contacted: "Contacted",
@@ -180,19 +181,14 @@ export function DashboardView({ offerings }: { offerings: OfferingBundle[] }) {
       </div>
 
       <div className="mt-8">
-        <SectionHeader title={c.availableProducts} action={<Link href={`${NORTH_BASE}/funds`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#0a4b72] hover:underline">{c.all}<ArrowRight className="size-3.5" /></Link>} />
+        <SectionHeader title={c.availableProducts} action={<Link href={`${NORTH_BASE}/investments`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#0a4b72] hover:underline">{c.all}<ArrowRight className="size-3.5" /></Link>} />
         <div className="grid gap-4 md:grid-cols-2">
             {offerings.map((offering) => (
-              <FundBannerCard
+              <OfferingSummaryCard
                 key={offering.id}
-                image={offering.media?.card?.src}
-                imageAlt={tx(offering.media?.card?.alt, lang) ?? tx(offering.shortName, lang)}
-                logo={offering.media?.logo?.src}
-                name={tx(offering.shortName, lang)}
-                manager={tx(offering.manager.name, lang)}
-                strategyLabel={`${c.strategy} · ${taxonomyLabel(strategies, offering.strategyIds[0], lang)}`}
-                summary={tx(offering.summary, lang)}
-                cta={{ href: `${NORTH_BASE}/funds/${offering.slug}/present`, label: c.review }}
+                lang={lang}
+                {...offeringBundleCardProps(offering, lang, strategies)}
+                cta={CARD_CTA.loggedIn(offering.slug, lang)}
               />
             ))}
         </div>

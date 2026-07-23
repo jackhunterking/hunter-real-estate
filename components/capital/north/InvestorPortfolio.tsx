@@ -1,76 +1,85 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowRight, Building2, Clock3, Compass, Landmark, MapPinned, WalletCards } from "lucide-react";
-import type { OfferingBundle } from "@/lib/capital/types";
-import { buildMapProperties, formatMoneyCompact } from "@/lib/capital/present";
+import { ArrowRight, Compass, MapPinned, Target, TrendingUp, WalletCards } from "lucide-react";
+import type { Lang, OfferingBundle } from "@/lib/capital/types";
+import type { InvestmentApplication } from "@/lib/capital/portal-access";
+import { buildMapProperties, formatMoneyCompact, primaryShareClass } from "@/lib/capital/present";
+import { latestPublished12mReturn, parseTargetMidpoint } from "@/lib/capital/performance";
 import { requestStage } from "@/lib/capital/investment-requests";
-import { taxonomyLabel } from "@/lib/capital/taxonomies";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
+import { cn } from "@/lib/utils";
 import { FundMap } from "@/components/capital/map/FundMap";
-import { TrustStrip } from "@/components/capital/offering-ui";
+import { OfferingSummaryCard, offeringBundleCardProps } from "@/components/capital/OfferingSummaryCard";
 import { NORTH_BASE } from "./NorthBrand";
 import { PageHeader, Panel } from "./PortalUI";
 import { usePortalAccess } from "./PortalAccessProvider";
 import { useTaxonomies } from "./TaxonomyProvider";
-import { InvestmentRequestButton } from "./InvestmentRequestButton";
 
 const COPY = {
   en: {
-    eyebrow: "Your real-asset portfolio",
     title: "Portfolio",
-    description: "Track your funded exposure and requests in review, see the assets and locations behind them, and add funds to available opportunities. Amounts shown are funded exposure—not live market value or direct property ownership.",
-    funded: "Funded exposure",
-    inReview: "In review",
-    held: "Offerings held",
-    locations: "Locations",
+    description:
+      "An overview of the investments you hold and the opportunities open to you. Figures are your committed amounts and each investment's published targets and returns—not income received or live market value.",
+    totalInvested: "Total invested",
+    totalInvestedNote: "Amount you've committed across your investments—not current value or income received.",
+    avgPastReturn: "Avg. past return (12 mo)",
+    avgPastNote: "Your investments' published 12-month returns, weighted by your commitment—not income you received.",
+    avgPastCoverage: (n: number, held: number) =>
+      `Based on ${n} of ${held} ${held === 1 ? "investment" : "investments"} that published a 12-month figure.`,
+    avgTargetReturn: "Avg. target return",
+    avgTargetNote:
+      "Blended midpoint of your investments' published target ranges, weighted by your commitment. Targets are not guaranteed.",
     positionsTitle: "Your positions",
+    committed: "committed",
     reviewBadge: "In review",
     fundedBadge: "Funded",
+    viewFund: "View investment",
     startTitle: "Start your portfolio",
-    startBody: "You have no positions yet. Explore the available opportunities below, review the assets and locations behind each, and add funds to begin.",
+    startBody:
+      "You don't hold any investments yet. Explore the opportunities below—review each investment's assets, locations, and terms—then request to invest.",
     moreTitle: "More opportunities",
-    moreBody: "Available offerings you can add to your portfolio.",
-    addFunds: "Add funds",
+    moreBody: "Available investments you can add to your portfolio.",
     viewOffering: "View details",
     buildings: "buildings",
-    allocationTitle: "Asset mix",
     geographyTitle: "Geography",
-    couldHold: "What you could hold",
     couldHoldNote: "Based on the opportunities below—shown for illustration, not owned.",
     mapHeld: "Where your assets are located",
     mapOpp: "Where these opportunities are located",
-    mapHelp: "Select a marker or building card to see verified property information.",
-    trust: "Independently verified", auditor: "Auditor", legalCounsel: "Legal counsel", appraiser: "Appraiser", verified: "Verified",
+    mapHelp: "Select a marker or building card to see the property, its photo, and location.",
   },
   tr: {
-    eyebrow: "Gayrimenkul varlık portföyünüz",
     title: "Portföy",
-    description: "Fonlanan maruziyetinizi ve incelemedeki taleplerinizi takip edin, arkalarındaki varlıkları ve konumları görün ve mevcut fırsatlara fon ekleyin. Gösterilen tutarlar canlı piyasa değeri veya doğrudan mülk sahipliği değil, fonlanan maruziyettir.",
-    funded: "Fonlanan tutar",
-    inReview: "İncelemede",
-    held: "Sahip olunan seçenekler",
-    locations: "Konumlar",
+    description:
+      "Sahip olduğunuz yatırımların ve size açık fırsatların genel görünümü. Gösterilen rakamlar taahhüt ettiğiniz tutarlar ile her yatırımın yayımladığı hedef ve getirilerdir—elde edilen gelir veya canlı piyasa değeri değildir.",
+    totalInvested: "Toplam yatırılan",
+    totalInvestedNote: "Yatırımlarınıza taahhüt ettiğiniz tutar—güncel değer veya elde edilen gelir değil.",
+    avgPastReturn: "Ort. geçmiş getiri (12 ay)",
+    avgPastNote:
+      "Yatırımlarınızın yayımladığı 12 aylık getiriler, taahhüdünüze göre ağırlıklandırılmıştır—elde ettiğiniz gelir değildir.",
+    avgPastCoverage: (n: number, held: number) => `12 aylık veri yayımlayan ${held} yatırımdan ${n} tanesine dayanır.`,
+    avgTargetReturn: "Ort. hedef getiri",
+    avgTargetNote:
+      "Yatırımlarınızın yayımladığı hedef aralıklarının, taahhüdünüze göre ağırlıklı orta noktası. Hedefler garanti değildir.",
     positionsTitle: "Pozisyonlarınız",
+    committed: "taahhüt",
     reviewBadge: "İncelemede",
     fundedBadge: "Fonlandı",
+    viewFund: "Yatırımı gör",
     startTitle: "Portföyünüzü oluşturun",
-    startBody: "Henüz pozisyonunuz yok. Aşağıdaki mevcut fırsatları inceleyin, her birinin arkasındaki varlıkları ve konumları görün ve başlamak için fon ekleyin.",
+    startBody:
+      "Henüz bir yatırıma sahip değilsiniz. Aşağıdaki fırsatları inceleyin—her yatırımın varlıklarını, konumlarını ve koşullarını gözden geçirin—ardından yatırım talep edin.",
     moreTitle: "Diğer fırsatlar",
-    moreBody: "Portföyünüze ekleyebileceğiniz mevcut yatırım seçenekleri.",
-    addFunds: "Fon ekle",
+    moreBody: "Portföyünüze ekleyebileceğiniz mevcut yatırımlar.",
     viewOffering: "Detayları gör",
     buildings: "bina",
-    allocationTitle: "Varlık dağılımı",
     geographyTitle: "Coğrafya",
-    couldHold: "Neler edinebilirsiniz",
     couldHoldNote: "Aşağıdaki fırsatlara dayanır—örnek amaçlıdır, sahip olunmaz.",
     mapHeld: "Varlıklarınızın konumları",
     mapOpp: "Bu fırsatların konumları",
-    mapHelp: "Doğrulanmış mülk bilgilerini görmek için bir işaretçi veya bina kartı seçin.",
-    trust: "Bağımsız olarak doğrulandı", auditor: "Denetçi", legalCounsel: "Hukuk müşaviri", appraiser: "Değerleme uzmanı", verified: "Doğrulama tarihi",
+    mapHelp: "Mülkü, fotoğrafını ve konumunu görmek için bir işaretçi veya bina kartı seçin.",
   },
 } as const;
 
@@ -90,21 +99,55 @@ function aggregate(offerings: OfferingBundle[], positions: { id: string; offerin
   });
 }
 
+/** "≈ 12.7%" / "≈ %12,7". Trailing ".0" trimmed. */
+function fmtPct(value: number, lang: Lang): string {
+  const n = value.toFixed(1).replace(/\.0$/, "");
+  return lang === "tr" ? `≈ %${n.replace(".", ",")}` : `≈ ${n}%`;
+}
+
+/** Amount-weighted average of published fund figures; null when nothing qualifies. */
+function weightedAverage(rows: { amount: number; r: number }[]): number | null {
+  const weight = rows.reduce((sum, x) => sum + x.amount, 0);
+  if (weight <= 0) return null;
+  return rows.reduce((sum, x) => sum + x.amount * x.r, 0) / weight;
+}
+
+// Dev-preview only: no Supabase session means no real holdings, so the funded
+// experience is never visible. Seed a couple of funded positions (and, when
+// enough offerings exist, one in-review) so the portfolio can be previewed.
+// Fixed id/date keep SSR and client render identical (no hydration mismatch).
+const PREVIEW_AMOUNTS = [145000, 90000, 210000, 60000];
+function previewHoldings(offerings: OfferingBundle[], userId: string): InvestmentApplication[] {
+  return offerings.slice(0, 3).map((offering, index) => ({
+    id: `preview-${offering.id}`,
+    userId,
+    offeringId: offering.id,
+    amount: PREVIEW_AMOUNTS[index] ?? 100000,
+    status: index === 2 ? "submitted" : "funded",
+    updatedAt: "2026-01-01T00:00:00.000Z",
+  }));
+}
+
 export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }) {
   const { lang } = useLang();
-  const { currentUser, dataset } = usePortalAccess();
-  const { assetClasses } = useTaxonomies();
+  const { currentUser, dataset, previewEnabled, backendConfigured } = usePortalAccess();
+  const { assetClasses, strategies } = useTaxonomies();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const c = pick(COPY, lang);
 
-  const mine = dataset.investments.filter((investment) => investment.userId === currentUser.id);
+  const realMine = dataset.investments.filter((investment) => investment.userId === currentUser.id);
+  // In dev-preview (no backend) with no real holdings, show seeded sample
+  // positions so the funded experience is visible. Real data is never touched.
+  const mine = previewEnabled && !backendConfigured && realMine.length === 0 && offerings.length > 0
+    ? previewHoldings(offerings, currentUser.id)
+    : realMine;
   const heldFunds = aggregate(offerings, mine.filter((i) => i.status === "funded"));
   const reviewFunds = aggregate(offerings, mine.filter((i) => requestStage(i.status) === "in-review"));
 
   const engagedIds = new Set([...heldFunds, ...reviewFunds].map(({ fund }) => fund.id));
   const opportunities = offerings.filter((offering) => offering.status === "available" && !engagedIds.has(offering.id));
 
-  // Buildings drive the map + allocation: real holdings when present, else the
+  // Buildings drive the map + geography: real holdings when present, else the
   // opportunities shown below (clearly captioned as illustrative).
   const usingHeld = heldFunds.length > 0;
   const visualFunds = usingHeld ? heldFunds.map(({ fund }) => fund) : opportunities;
@@ -120,120 +163,129 @@ export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }
   );
 
   const buildings = visualFunds.flatMap((fund) => fund.properties);
-  const fundedAmount = heldFunds.reduce((sum, item) => sum + item.position.amount, 0);
-  const locationCount = new Set(buildings.map((b) => `${b.city}:${b.province}`)).size;
-
-  const assetMix = groupCount(buildings.map((b) => b.assetClassId)).map(({ key, count }) => ({
-    label: taxonomyLabel(assetClasses, key, lang), count,
-  }));
   const geography = groupCount(buildings.map((b) => b.province)).map(({ key, count }) => ({ label: key, count }));
 
-  const metrics = [
-    { label: c.funded, value: formatMoneyCompact(fundedAmount, lang), icon: WalletCards },
-    { label: c.inReview, value: String(reviewFunds.length), icon: Clock3 },
-    { label: c.held, value: String(heldFunds.length), icon: Landmark },
-    { label: c.locations, value: String(locationCount), icon: MapPinned },
+  // KPIs — qualitative, derived only from committed amounts + each fund's
+  // published figures. We never claim to track income received.
+  const totalInvested = heldFunds.reduce((sum, item) => sum + item.position.amount, 0);
+  const pastRows = heldFunds
+    .map((h) => ({ amount: h.position.amount, r: latestPublished12mReturn(h.fund.trailingReturns) }))
+    .filter((x): x is { amount: number; r: number } => x.r != null && x.amount > 0);
+  const targetRows = heldFunds
+    .map((h) => ({ amount: h.position.amount, r: parseTargetMidpoint(primaryShareClass(h.fund)?.targetReturn?.value ?? "") }))
+    .filter((x): x is { amount: number; r: number } => x.r != null && x.amount > 0);
+  const avgPast = weightedAverage(pastRows);
+  const avgTarget = weightedAverage(targetRows);
+
+  const hasHoldings = heldFunds.length > 0;
+  const tiles: { key: string; label: string; value: string; note: string; icon: typeof WalletCards }[] = [
+    { key: "invested", label: c.totalInvested, value: hasHoldings ? formatMoneyCompact(totalInvested, lang) : "—", note: c.totalInvestedNote, icon: WalletCards },
+    // Only shown when at least one held fund actually publishes a 12-month figure.
+    ...(avgPast != null
+      ? [{ key: "past", label: c.avgPastReturn, value: fmtPct(avgPast, lang), note: `${c.avgPastNote} ${c.avgPastCoverage(pastRows.length, heldFunds.length)}`, icon: TrendingUp }]
+      : []),
+    { key: "target", label: c.avgTargetReturn, value: avgTarget != null ? fmtPct(avgTarget, lang) : "—", note: c.avgTargetNote, icon: Target },
+  ];
+
+  const renderFundCard = (keyId: string, fund: OfferingBundle, ctaSlot: ReactNode) => (
+    <OfferingSummaryCard
+      key={keyId}
+      lang={lang}
+      {...offeringBundleCardProps(fund, lang, strategies)}
+      ctaSlot={ctaSlot}
+    />
+  );
+
+  const positions = [
+    ...heldFunds.map((f) => ({ ...f, review: false })),
+    ...reviewFunds.map((f) => ({ ...f, review: true })),
   ];
 
   return (
     <div>
       <PageHeader title={c.title} description={c.description} />
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {metrics.map(({ label, value, icon: Icon }) => (
-          <Panel key={label} className="p-5">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold text-[#6d7983]">{label}</p>
-                <p className="mt-2 text-2xl font-semibold tabular-nums text-[#102638]">{value}</p>
+      {/* KPI row — always visible so the portfolio overview reads as an empty
+          state (— placeholders) before any holdings, then fills in once funded. */}
+      {offerings.length > 0 && (
+        <div className={cn("grid gap-3 sm:grid-cols-2", tiles.length === 3 && "lg:grid-cols-3")}>
+          {tiles.map(({ key, label, value, note, icon: Icon }) => (
+            <Panel key={key} className="p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-semibold text-[#6d7983]">{label}</p>
+                  <p className="mt-2 text-2xl font-semibold tabular-nums text-[#102638]">{value}</p>
+                </div>
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#edf3f6] text-[#0a4b72]"><Icon className="size-5" /></span>
               </div>
-              <span className="grid size-10 place-items-center rounded-xl bg-[#edf3f6] text-[#0a4b72]"><Icon className="size-5" /></span>
-            </div>
-          </Panel>
-        ))}
-      </div>
+              <p className="mt-3 text-[11px] leading-4 text-[#8a949b]">{note}</p>
+            </Panel>
+          ))}
+        </div>
+      )}
 
-      {/* Positions the investor already holds or has in review. */}
-      {(heldFunds.length > 0 || reviewFunds.length > 0) && (
+      {/* Positions the investor already holds or has in review — same card as
+          opportunities, but the footer shows status instead of an action. */}
+      {positions.length > 0 && (
         <section className="mt-8">
           <h2 className="mb-3 text-lg font-semibold text-[#193143]">{c.positionsTitle}</h2>
-          <div className="grid gap-3 md:grid-cols-2">
-            {[...heldFunds.map((f) => ({ ...f, review: false })), ...reviewFunds.map((f) => ({ ...f, review: true }))].map(({ position, fund, review }) => (
-              <Panel key={`${fund.id}-${review ? "review" : "held"}`} className="p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[#71808b]">{tx(fund.manager.name, lang)}</p>
-                    <h3 className="mt-2 text-base font-semibold text-[#193143]">{tx(fund.shortName, lang)}</h3>
-                    <p className="mt-2 text-sm text-[#65737e]">
-                      {review ? "" : `${formatMoneyCompact(position.amount, lang)} · `}{fund.properties.length} {c.buildings}
-                    </p>
+          <div className="grid gap-5 md:grid-cols-2">
+            {positions.map(({ position, fund, review }) =>
+              renderFundCard(
+                `${fund.id}-${review ? "review" : "held"}`,
+                fund,
+                <div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className={cn(
+                      "rounded-md border px-2.5 py-1 text-[11px] font-semibold",
+                      review ? "border-[#eadcae] bg-[#f8f1dc] text-[#755718]" : "border-[#cfe5d8] bg-[#e6f2eb] text-[#2f6f4f]",
+                    )}>
+                      {review ? c.reviewBadge : c.fundedBadge}
+                    </span>
+                    <Link href={`${NORTH_BASE}/investments/${fund.slug}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#0a4b72] hover:underline">
+                      {c.viewFund}<ArrowRight className="size-3.5" />
+                    </Link>
                   </div>
-                  <span className={`shrink-0 rounded-md border px-2.5 py-1 text-[11px] font-semibold ${review ? "border-[#eadcae] bg-[#f8f1dc] text-[#755718]" : "border-[#cfe5d8] bg-[#e6f2eb] text-[#2f6f4f]"}`}>
-                    {review ? c.reviewBadge : c.fundedBadge}
-                  </span>
-                </div>
-                <Link href={`${NORTH_BASE}/funds/${fund.slug}`} className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#0a4b72] hover:underline">{c.viewOffering}<ArrowRight className="size-3.5" /></Link>
-              </Panel>
-            ))}
+                  {!review && (
+                    <p className="mt-2 text-sm font-semibold text-[#172d3d]">
+                      {formatMoneyCompact(position.amount, lang)} <span className="font-normal text-[#7a8790]">{c.committed}</span>
+                    </p>
+                  )}
+                </div>,
+              ),
+            )}
           </div>
         </section>
       )}
 
-      {/* Opportunities — the primary content for a new (empty) portfolio: the
-          offerings render here as the portfolio's items, each with Add funds. */}
+      {/* Opportunities — the primary content for a new (empty) portfolio. */}
       {opportunities.length > 0 && (
         <section className="mt-8">
           <div className="mb-3">
             <h2 className="text-lg font-semibold text-[#193143]">{usingHeld ? c.moreTitle : c.startTitle}</h2>
             <p className="mt-1 text-sm text-[#697681]">{usingHeld ? c.moreBody : c.startBody}</p>
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {opportunities.map((fund) => {
-              const locations = uniqueCities(fund);
-              return (
-                <Panel key={fund.id} className="flex flex-col overflow-hidden">
-                  {fund.media?.card?.src && (
-                    <div className="relative aspect-[60/13] overflow-hidden bg-[#0d2d43]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={fund.media.card.src} alt={tx(fund.media.card.alt, lang) ?? tx(fund.shortName, lang)} className="h-full w-full object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-r from-[#071c2c]/70 via-[#071c2c]/10 to-transparent" />
-                    </div>
-                  )}
-                  <div className="flex flex-1 flex-col p-5">
-                    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[#71808b]">{tx(fund.manager.name, lang)}</p>
-                    <h3 className="mt-2 text-base font-semibold text-[#193143]">{tx(fund.shortName, lang)}</h3>
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {fund.assetClassIds.map((id) => (
-                        <span key={id} className="rounded border border-[#dbe1e5] bg-[#f5f7f8] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-[#5f6d78]">{taxonomyLabel(assetClasses, id, lang)}</span>
-                      ))}
-                      <span className="rounded border border-[#dbe1e5] bg-[#f5f7f8] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-[#5f6d78]">{fund.properties.length} {c.buildings}</span>
-                      {locations.slice(0, 3).map((city) => (
-                        <span key={city} className="rounded border border-[#dbe1e5] bg-[#f5f7f8] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-[#5f6d78]">{city}</span>
-                      ))}
-                    </div>
-                    <div className="mt-4 flex flex-1 items-end gap-3">
-                      <InvestmentRequestButton offerings={[fund]} initialOfferingId={fund.id} label={c.addFunds} />
-                      <Link href={`${NORTH_BASE}/funds/${fund.slug}`} className="inline-flex h-10 items-center gap-1 rounded-md border border-[#ccd5db] px-4 text-sm font-semibold text-[#435764] hover:bg-[#f3f5f7]">{c.viewOffering}</Link>
-                    </div>
-                  </div>
-                </Panel>
-              );
-            })}
+          <div className="grid gap-5 md:grid-cols-2">
+            {opportunities.map((fund) =>
+              renderFundCard(
+                fund.id,
+                fund,
+                <Link
+                  href={`${NORTH_BASE}/investments/${fund.slug}`}
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#123f5e]"
+                >
+                  {c.viewOffering}
+                  <ArrowRight className="size-4" />
+                </Link>,
+              ),
+            )}
           </div>
         </section>
       )}
 
-      {/* Asset mix + geography — what the investor holds, or could hold. */}
-      {buildings.length > 0 && (
-        <section className="mt-8 grid gap-4 md:grid-cols-2">
-          <Panel className="p-5">
-            <div className="mb-3 flex items-center gap-2">
-              <Building2 className="size-4 text-[#0a4b72]" />
-              <h2 className="text-sm font-semibold text-[#193143]">{c.allocationTitle}</h2>
-            </div>
-            <AllocationBars items={assetMix} total={buildings.length} unit={c.buildings} />
-            {!usingHeld && <p className="mt-3 text-xs text-[#8a949b]">{c.couldHoldNote}</p>}
-          </Panel>
+      {/* Geography — where the investor's assets (or the opportunities) sit. */}
+      {geography.length > 0 && (
+        <section className="mt-8">
           <Panel className="p-5">
             <div className="mb-3 flex items-center gap-2">
               <MapPinned className="size-4 text-[#0a4b72]" />
@@ -257,31 +309,16 @@ export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }
       )}
 
       {/* Empty final fallback: no offerings at all. */}
-      {opportunities.length === 0 && heldFunds.length === 0 && reviewFunds.length === 0 && (
+      {opportunities.length === 0 && positions.length === 0 && (
         <Panel className="mt-8 grid min-h-[280px] place-items-center p-8 text-center">
           <div className="max-w-md">
             <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-[#edf3f6] text-[#0a4b72]"><Compass className="size-7" /></span>
             <h2 className="mt-5 text-xl font-semibold text-[#193143]">{c.startTitle}</h2>
             <p className="mt-2 text-sm leading-6 text-[#65737e]">{c.startBody}</p>
-            <Link href={`${NORTH_BASE}/funds`} className="mt-6 inline-flex h-10 items-center rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white">{c.viewOffering}</Link>
+            <Link href={`${NORTH_BASE}/investments`} className="mt-6 inline-flex h-10 items-center rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white">{c.viewOffering}</Link>
           </div>
         </Panel>
       )}
-
-      {(() => {
-        const trustFund = [...heldFunds, ...reviewFunds].map(({ fund }) => fund).find((f) => f.serviceProviders)
-          ?? offerings.find((offering) => offering.serviceProviders);
-        if (!trustFund?.serviceProviders) return null;
-        return (
-          <section className="mt-8">
-            <TrustStrip
-              providers={trustFund.serviceProviders}
-              verifiedAt={trustFund.verifiedAt}
-              copy={{ heading: c.trust, auditor: c.auditor, legalCounsel: c.legalCounsel, appraiser: c.appraiser, verified: c.verified }}
-            />
-          </section>
-        );
-      })()}
     </div>
   );
 }
@@ -290,10 +327,6 @@ function groupCount(keys: string[]): { key: string; count: number }[] {
   const map = new Map<string, number>();
   for (const key of keys) map.set(key, (map.get(key) ?? 0) + 1);
   return [...map.entries()].map(([key, count]) => ({ key, count })).sort((a, b) => b.count - a.count);
-}
-
-function uniqueCities(fund: OfferingBundle): string[] {
-  return [...new Set(fund.properties.map((property) => property.city))];
 }
 
 function AllocationBars({ items, total, unit }: { items: { label: string; count: number }[]; total: number; unit: string }) {

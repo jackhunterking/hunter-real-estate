@@ -222,6 +222,7 @@ export type PublicOfferingPropertyPreview = {
 export type PublicOfferingPreview = {
   id: string;
   slug: string;
+  name: LocalizedText;
   shortName: LocalizedText;
   managerName: LocalizedText;
   summary: LocalizedText;
@@ -241,6 +242,8 @@ export type PublicOfferingPreview = {
   performance?: { period: LocalizedText; value: string }[];
   performanceNote?: LocalizedText;
   properties: PublicOfferingPropertyPreview[];
+  /** True when an independent auditor is on file — drives the trust badge. */
+  audited: boolean;
   verifiedAt: string;
 };
 

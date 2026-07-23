@@ -88,7 +88,7 @@ test("Discover cards show the exact offering name, company, and an audited trust
   assert.doesNotMatch(discover, /offering\.fundType|issuerLegalType|Vehicle|Yatırım aracı/);
 });
 
-test("public landing receives only approved offering previews and global documents route returns to funds", () => {
+test("public landing receives only approved offering previews and global documents route returns to investments", () => {
   const page = read("app/hunter-advisory/page.tsx");
   const landing = read("components/capital/north/PublicLanding.tsx");
   const projection = read("lib/capital/public-preview.ts");
@@ -110,7 +110,7 @@ test("public landing receives only approved offering previews and global documen
   assert.match(projection, /targetReturn: approved\(shareClass\?\.targetReturn\)/);
   assert.match(projection, /performance: offering\.trailingReturns\?\.map/);
   assert.doesNotMatch(projection, /documents|risks|serviceProviders|complianceProfile/);
-  assert.match(read("app/hunter-advisory/(portal)/documents/page.tsx"), /hunter-advisory\/funds/);
+  assert.match(read("app/hunter-advisory/(portal)/documents/page.tsx"), /hunter-advisory\/investments/);
 });
 
 test("profile is a permanent sidebar destination instead of an account-popover action", () => {

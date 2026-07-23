@@ -1,5 +1,6 @@
-import { redirect } from "next/navigation";
+import { getPublishedOfferings } from "@/lib/capital/repository-server";
+import { ProductsExplorer } from "../products/ProductsExplorer";
 
-export default function HunterNorthInvestmentsPage() {
-  redirect("/hunter-advisory/requests");
+export default async function HunterNorthInvestmentsPage() {
+  return <ProductsExplorer offerings={await getPublishedOfferings()} />;
 }

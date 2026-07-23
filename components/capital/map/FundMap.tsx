@@ -15,6 +15,73 @@ const TILE_URL = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png";
 const TILE_ATTR = "© OpenStreetMap contributors © CARTO";
 const SELECTED = "#1e3378"; // navy
 
+/**
+ * Minimal on-map card: real photo + name + location + asset class / fund.
+ * Built from DOM nodes with textContent (never interpolated HTML) so CMS
+ * strings like the building name can't inject markup.
+ */
+function buildPopupContent(p: MapProperty, viewListingLabel: string) {
+  const el = document.createElement("div");
+  el.className = "fund-popup";
+
+  if (p.image?.src) {
+    const media = document.createElement("div");
+    media.className = "fund-popup-media";
+    const img = document.createElement("img");
+    img.src = p.image.src;
+    img.alt = p.name;
+    img.loading = "lazy";
+    media.appendChild(img);
+    if (p.offeringName) {
+      const fund = document.createElement("span");
+      fund.className = "fund-popup-fund";
+      fund.textContent = p.offeringName;
+      media.appendChild(fund);
+    }
+    el.appendChild(media);
+  }
+
+  const body = document.createElement("div");
+  body.className = "fund-popup-body";
+
+  const title = document.createElement("strong");
+  title.className = "fund-popup-title";
+  title.textContent = p.name;
+  body.appendChild(title);
+
+  const loc = document.createElement("span");
+  loc.className = "fund-popup-loc";
+  loc.textContent = `${p.city}, ${p.province}`;
+  body.appendChild(loc);
+
+  const chips = document.createElement("div");
+  chips.className = "fund-popup-chips";
+  const chip = document.createElement("span");
+  chip.className = "fund-popup-chip";
+  chip.textContent = p.assetClass;
+  chips.appendChild(chip);
+  if (p.status) {
+    const status = document.createElement("span");
+    status.className = "fund-popup-chip";
+    status.textContent = p.status;
+    chips.appendChild(status);
+  }
+  body.appendChild(chips);
+
+  if (p.listingUrl) {
+    const link = document.createElement("a");
+    link.href = p.listingUrl;
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.className = "fund-popup-link";
+    link.textContent = viewListingLabel;
+    body.appendChild(link);
+  }
+
+  el.appendChild(body);
+  return el;
+}
+
 export function FundMap({
   properties,
   selectedId,
@@ -35,6 +102,15 @@ export function FundMap({
   const markersRef = useRef<Map<string, Record<string, any>>>(new Map());
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
+  const selectedIdRef = useRef(selectedId);
+  selectedIdRef.current = selectedId;
+  // Set while we close/remove popups programmatically, so the `popupclose`
+  // handler doesn't mistake a teardown or a marker switch for a user close.
+  const suppressPopupCloseRef = useRef(false);
+  // Popup label read through a ref so the marker-build effect stays keyed only
+  // on [status, properties] (properties already change when language changes).
+  const viewListingLabelRef = useRef(t.capitalApp.portfolio.viewListing);
+  viewListingLabelRef.current = t.capitalApp.portfolio.viewListing;
   const [status, setStatus] = useState<Status>("loading");
 
   useEffect(() => {
@@ -67,6 +143,7 @@ export function FundMap({
       cancelled = true;
       if (invalidateTimer) clearTimeout(invalidateTimer);
       try {
+        suppressPopupCloseRef.current = true;
         mapRef.current?.stop();
         mapRef.current?.remove();
       } catch {
@@ -82,7 +159,9 @@ export function FundMap({
     const map = mapRef.current;
     if (status !== "ready" || !L || !map) return;
 
+    suppressPopupCloseRef.current = true;
     markersRef.current.forEach((mk) => map.removeLayer(mk));
+    suppressPopupCloseRef.current = false;
     const markers = new Map<string, Record<string, any>>();
     const latlngs: [number, number][] = [];
 
@@ -96,6 +175,21 @@ export function FundMap({
       });
       marker.on("click", () => onSelectRef.current(p.id));
       marker.bindTooltip(p.name, { direction: "top", offset: [0, -6] });
+      marker.bindPopup(buildPopupContent(p, viewListingLabelRef.current), {
+        maxWidth: 272,
+        minWidth: 272,
+        closeButton: true,
+        autoPan: true,
+        autoPanPadding: [24, 24],
+        className: "fund-popup-wrap",
+      });
+      // Closing the popup (its × or a click away) clears the selection so the
+      // aside highlight follows. Guarded so a marker→marker switch (which closes
+      // the previous popup) and teardown don't wrongly deselect.
+      marker.on("popupclose", () => {
+        if (suppressPopupCloseRef.current) return;
+        if (selectedIdRef.current === p.id) onSelectRef.current(null);
+      });
       marker.addTo(map);
       markers.set(p.id, marker);
       latlngs.push([p.latitude, p.longitude]);
@@ -122,7 +216,13 @@ export function FundMap({
     });
     if (selectedId && map) {
       const p = properties.find((x) => x.id === selectedId);
+      const mk = markersRef.current.get(selectedId);
       if (p) map.setView([p.latitude, p.longitude], 14, { animate: false });
+      // Center the marker first; the popup's own autoPan then only nudges if
+      // the wider card would clip a map edge.
+      if (mk) mk.openPopup();
+    } else if (map) {
+      map.closePopup();
     }
   }, [status, selectedId, properties]);
 

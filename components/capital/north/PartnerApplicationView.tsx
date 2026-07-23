@@ -9,7 +9,6 @@ import {
   BriefcaseBusiness,
   CheckCircle2,
   Clock3,
-  ExternalLink,
   LoaderCircle,
   ShieldCheck,
 } from "lucide-react";
@@ -25,7 +24,6 @@ import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import {
-  SPL_PUBLIC_SEARCH_URL,
   canUseWorkspace,
   maskLicenceNumber,
   professionalProfileState,
@@ -39,32 +37,35 @@ const COPY = {
     title: "Profesyonel erişim",
     modalTitle: "Profesyonel partner başvurusu",
     description:
-      "SPL lisansına sahip ve SPK yetkili bir firmayla ilişkili profesyoneller Hunter & Hunter Investment Advisors erişimine başvurabilir.",
+      "Yatırım danışmanlığı lisansınız varsa — Türkiye'de ya da başka bir ülkede — nerede lisanslı olduğunuzu bize bildirin; Hunter & Hunter Investment Advisors erişimini ayrıntılı konuşmak için sizinle iletişime geçelim.",
     modalDescription:
-      "SPL sicilinizdeki bilgileri ve mevcut firma bağlantınızı girin. Hunter & Hunter Investment Advisors bilgileri resmi kaynaklardan doğrular.",
+      "Nerede lisanslı olduğunuzu ve mevcut firma bağlantınızı paylaşın. Ekibimiz bilgileri ilgili düzenleyici kaynaklardan doğrular ve ayrıntıları konuşmak için sizinle iletişime geçer.",
     status: "Başvuru durumu",
     firmGate: "Firma bağlantısı",
-    licenceGate: "SPL doğrulaması",
+    licenceGate: "Lisans doğrulaması",
     accountGate: "Partner hesabı",
-    verified: "SPL üzerinden doğrulandı",
+    verified: "Lisans üzerinden doğrulandı",
     notLive: "Bu tarih canlı senkronizasyon anlamına gelmez.",
-    registeredNames: "SPL sicilindeki ad ve orta adlar",
-    registrySurname: "Sicil soyadı",
-    licenceNumber: "SPL lisans belge numarası",
-    licenceType: "Lisans türü",
+    registeredNames: "Ad ve orta adlar",
+    registrySurname: "Soyad",
+    jurisdiction: "Nerede lisanslısınız?",
+    jurisdictionHelp: "Lisansınızın verildiği ülke veya düzenleyici bölge.",
+    licenceNumber: "Lisans veya sicil numarası",
+    licenceType: "Düzenleyici kurum veya lisans türü",
+    licenceTypeHelp: "Örn. SPK (Türkiye), CIRO (Kanada), FCA (Birleşik Krallık).",
     firm: "Firma adı",
     firmHelp: "Firmanın yasal veya en yaygın kullanılan adını yazın.",
-    firmWorkEmail: "Firma iş e-postası",
+    firmWorkEmail: "İş e-postası",
     titleLabel: "Mevcut mesleki unvan",
-    consentLookup: "Hunter & Hunter Investment Advisors’ın resmi SPL araması yapmasına ve sonucu kaydetmesine izin veriyorum.",
+    consentLookup: "Hunter & Hunter Investment Advisors’ın lisans bilgilerimi ilgili düzenleyici kaynaklardan doğrulamasına izin veriyorum.",
     consentAccuracy: "Verdiğim bilgilerin güncel ve doğru olduğunu beyan ederim.",
-    submit: "Partner başvurusunu gönder",
-    submitting: "Başvuru gönderiliyor",
-    submitted: "Başvurunuz firma ve SPL incelemesine gönderildi.",
+    submit: "Lisans bilgilerini gönder",
+    submitting: "Gönderiliyor",
+    submitted: "Bilgileriniz inceleme için gönderildi; ekibimiz sizinle iletişime geçecek.",
     official: "Resmi SPL sorgulamasını aç",
     active: "Aktif",
     pending: "Beklemede",
-    eligible: "Profesyonel erişime başvur",
+    eligible: "Lisansınızı bizimle paylaşın",
     revise: "Başvuruyu güncelle",
     cancel: "Vazgeç",
     openProfessional: "Profesyonel portalı aç",
@@ -84,7 +85,7 @@ const COPY = {
       rejected: "Reddedildi",
     },
     stateLabels: {
-      not_applied: "Henüz başvuru yapılmadı",
+      not_applied: "Lisanslı bir danışman mısınız?",
       in_review: "İnceleme devam ediyor",
       action_required: "İşlem gerekiyor",
       approved_pending_activation: "Aktivasyon bekleniyor",
@@ -92,7 +93,7 @@ const COPY = {
       inactive: "Erişim devre dışı",
     },
     stateCopy: {
-      not_applied: "Lisans ve firma bilgileriniz Hunter & Hunter Investment Advisors tarafından incelenir.",
+      not_applied: "Nerede lisanslı olduğunuzu bize bildirin; ekibimiz erişimi ayrıntılı görüşmek için sizinle iletişime geçsin.",
       in_review: "Başvurunuz inceleniyor; inceleme sırasında ikinci başvuru gönderilemez.",
       action_required: "Başvurunuzun güncellenmesi gerekiyor.",
       approved_pending_activation: "Başvurunuz onaylandı; kalan erişim adımları tamamlanıyor.",
@@ -104,32 +105,35 @@ const COPY = {
     title: "Professional access",
     modalTitle: "Professional partner application",
     description:
-      "Professionals with an SPL licence and an association with an SPK-authorized firm can apply for Hunter & Hunter Investment Advisors access.",
+      "If you hold an investment-advisory licence — in Türkiye or any other jurisdiction — tell us where you're licensed and Hunter & Hunter Investment Advisors will reach out to discuss access in detail.",
     modalDescription:
-      "Enter the information shown in your SPL registry and your current firm association. Hunter & Hunter Investment Advisors verifies the details through official sources.",
+      "Tell us where you're licensed and your current firm association. Our team verifies the details through the relevant regulatory sources and reaches out to discuss.",
     status: "Application status",
     firmGate: "Firm association",
-    licenceGate: "SPL verification",
+    licenceGate: "Licence verification",
     accountGate: "Partner account",
-    verified: "Verified through SPL",
+    verified: "Verified through licence",
     notLive: "This date does not imply continuous live synchronization.",
-    registeredNames: "First and middle names as registered with SPL",
-    registrySurname: "Registry surname",
-    licenceNumber: "SPL licence-document number",
-    licenceType: "Licence type",
+    registeredNames: "First and middle names",
+    registrySurname: "Surname",
+    jurisdiction: "Where are you licensed?",
+    jurisdictionHelp: "The country or regulatory region that issued your licence.",
+    licenceNumber: "Licence or registration number",
+    licenceType: "Regulator or licence type",
+    licenceTypeHelp: "e.g. SPK (Türkiye), CIRO (Canada), FCA (United Kingdom).",
     firm: "Firm name",
     firmHelp: "Enter the firm's legal or most commonly used name.",
-    firmWorkEmail: "Firm work email",
+    firmWorkEmail: "Work email",
     titleLabel: "Current professional title",
-    consentLookup: "I authorize Hunter & Hunter Investment Advisors to perform and record an official public SPL lookup.",
+    consentLookup: "I authorize Hunter & Hunter Investment Advisors to verify my licence with the relevant regulatory sources.",
     consentAccuracy: "I declare that the information submitted is current and accurate.",
-    submit: "Submit partner application",
-    submitting: "Submitting application",
-    submitted: "Your application was sent for firm and SPL review.",
+    submit: "Submit licence details",
+    submitting: "Submitting",
+    submitted: "Your details were sent for review — our team will be in touch.",
     official: "Open official SPL lookup",
     active: "Active",
     pending: "Pending",
-    eligible: "Apply for professional access",
+    eligible: "Tell us about your licence",
     revise: "Revise application",
     cancel: "Cancel",
     openProfessional: "Open Professional Portal",
@@ -149,7 +153,7 @@ const COPY = {
       rejected: "Rejected",
     },
     stateLabels: {
-      not_applied: "No application yet",
+      not_applied: "Are you a licensed advisor?",
       in_review: "Review in progress",
       action_required: "Action required",
       approved_pending_activation: "Awaiting activation",
@@ -157,7 +161,7 @@ const COPY = {
       inactive: "Access inactive",
     },
     stateCopy: {
-      not_applied: "Hunter & Hunter Investment Advisors reviews your licence and firm information.",
+      not_applied: "Tell us where you're licensed and our team will reach out to discuss access in detail.",
       in_review: "Your application is under review; a duplicate cannot be submitted.",
       action_required: "Your application needs updated information.",
       approved_pending_activation: "Approved; the remaining access steps are being completed.",
@@ -258,6 +262,12 @@ export function PartnerApplicationView({
           valueClass: "",
         },
         {
+          label: c.jurisdiction,
+          value: currentApplication.jurisdiction ?? "—",
+          badge: undefined,
+          valueClass: "",
+        },
+        {
           label: c.titleLabel,
           value: currentApplication.professionalTitle,
           badge: undefined,
@@ -318,17 +328,22 @@ export function PartnerApplicationView({
     setSubmitting(true);
     const form = new FormData(formElement);
 
+    // A single consent checkbox now covers both the verification authorization
+    // and the accuracy declaration.
+    const consent = form.get("consent") === "on";
+
     try {
       await submitPartnerApplication({
         registeredFirstNames: String(form.get("registeredFirstNames") ?? ""),
         registryLastName: String(form.get("registryLastName") ?? ""),
+        jurisdiction: String(form.get("jurisdiction") ?? ""),
         licenceDocumentNumber: String(form.get("licenceDocumentNumber") ?? ""),
         licenceType: String(form.get("licenceType") ?? ""),
         professionalTitle: String(form.get("professionalTitle") ?? ""),
         firmName: String(form.get("firmName") ?? ""),
         firmWorkEmail: String(form.get("firmWorkEmail") ?? ""),
-        lookupConsent: form.get("lookupConsent") === "on",
-        accuracyConsent: form.get("accuracyConsent") === "on",
+        lookupConsent: consent,
+        accuracyConsent: consent,
       });
       setMessage(c.submitted);
       formElement.reset();
@@ -364,10 +379,13 @@ export function PartnerApplicationView({
                 <h2 id="professional-access-heading" className="text-base font-semibold text-[#1b3343]">
                   {c.stateLabels[state]}
                 </h2>
-                <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${state === "active" ? "bg-[#e8f2ec] text-[#326449]" : state === "inactive" || state === "action_required" ? "bg-[#fbefed] text-[#87483f]" : state === "not_applied" ? "bg-[#eef2f4] text-[#5d6d78]" : "bg-[#f7efd9] text-[#735c20]"}`}>
-                  <span className="size-1.5 rounded-full bg-current opacity-70" />
-                  {state === "active" ? c.active : state === "not_applied" ? c.pending : c.applicationStatus[currentApplication?.status ?? "draft"]}
-                </span>
+                {/* The not_applied state is an open invitation, not a pending application — no status pill. */}
+                {state !== "not_applied" && (
+                  <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${state === "active" ? "bg-[#e8f2ec] text-[#326449]" : state === "inactive" || state === "action_required" ? "bg-[#fbefed] text-[#87483f]" : "bg-[#f7efd9] text-[#735c20]"}`}>
+                    <span className="size-1.5 rounded-full bg-current opacity-70" />
+                    {state === "active" ? c.active : c.applicationStatus[currentApplication?.status ?? "draft"]}
+                  </span>
+                )}
               </div>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-[#65737d]">
                 {state === "not_applied" ? c.description : c.stateCopy[state]}
@@ -477,14 +495,9 @@ export function PartnerApplicationView({
 
           <form id="professional-application-form" onSubmit={submit} className="flex min-h-0 flex-1 flex-col overflow-hidden">
             <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-5 py-5 sm:px-7 sm:py-6">
-              <div className="flex flex-col justify-between gap-3 rounded-lg border border-[#dce5e9] bg-[#f7fafb] p-4 sm:flex-row sm:items-center">
-                <div className="flex items-center gap-3">
-                  <ShieldCheck className="size-5 text-[#0a4b72]" />
-                  <p className="text-sm leading-5 text-[#526570]">{c.stateCopy.not_applied}</p>
-                </div>
-                <a href={SPL_PUBLIC_SEARCH_URL} target="_blank" rel="noreferrer" className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-[#0a4b72] hover:underline">
-                  {c.official}<ExternalLink className="size-3.5" />
-                </a>
+              <div className="flex items-center gap-3 rounded-lg border border-[#dce5e9] bg-[#f7fafb] p-4">
+                <ShieldCheck className="size-5 shrink-0 text-[#0a4b72]" />
+                <p className="text-sm leading-5 text-[#526570]">{c.stateCopy.not_applied}</p>
               </div>
 
               {error && (
@@ -504,27 +517,24 @@ export function PartnerApplicationView({
                   <input name="registryLastName" required defaultValue={state === "action_required" ? currentApplication?.registryLastName : undefined} autoComplete="off" data-ph-mask className={fieldClass} />
                 </label>
                 <label className="text-sm font-semibold">
-                  {c.licenceNumber}
-                  <input name="licenceDocumentNumber" required defaultValue={state === "action_required" ? currentApplication?.licenceDocumentNumber : undefined} autoComplete="off" inputMode="numeric" data-ph-mask className={fieldClass} />
+                  {c.jurisdiction}
+                  <input name="jurisdiction" required autoComplete="country-name" placeholder={lang === "tr" ? "Türkiye, Kanada, …" : "Türkiye, Canada, …"} className={fieldClass} />
+                  <span className="mt-1.5 block text-xs font-normal text-[#78858e]">{c.jurisdictionHelp}</span>
                 </label>
-                <label className="text-sm font-semibold sm:col-span-2">
+                <label className="text-sm font-semibold">
                   {c.licenceType}
-                  <select name="licenceType" required defaultValue={currentApplication?.licenceType ?? ""} className={fieldClass}>
-                    <option value="">—</option>
-                    <option>Sermaye Piyasası Faaliyetleri Düzey 1</option>
-                    <option>Sermaye Piyasası Faaliyetleri Düzey 2</option>
-                    <option>Sermaye Piyasası Faaliyetleri Düzey 3</option>
-                    <option>Türev Araçlar Lisansı</option>
-                    <option>Konut Değerleme Lisansı</option>
-                    <option>Gayrimenkul Değerleme Lisansı</option>
-                    <option>{lang === "tr" ? "Diğer / manuel inceleme" : "Other / manual review"}</option>
-                  </select>
+                  <input name="licenceType" required defaultValue={currentApplication?.licenceType ?? undefined} autoComplete="off" placeholder="SPK, CIRO, FCA, …" className={fieldClass} />
+                  <span className="mt-1.5 block text-xs font-normal text-[#78858e]">{c.licenceTypeHelp}</span>
+                </label>
+                <label className="text-sm font-semibold">
+                  {c.licenceNumber}
+                  <input name="licenceDocumentNumber" required defaultValue={state === "action_required" ? currentApplication?.licenceDocumentNumber : undefined} autoComplete="off" data-ph-mask className={fieldClass} />
                 </label>
                 <label className="text-sm font-semibold">
                   {c.titleLabel}
                   <input name="professionalTitle" required defaultValue={currentApplication?.professionalTitle} autoComplete="organization-title" className={fieldClass} />
                 </label>
-                <label className="text-sm font-semibold">
+                <label className="text-sm font-semibold sm:col-span-2">
                   {c.firmWorkEmail}
                   <input name="firmWorkEmail" required type="email" defaultValue={currentApplication?.firmWorkEmail} autoComplete="email" className={fieldClass} />
                 </label>
@@ -536,12 +546,8 @@ export function PartnerApplicationView({
 
                 <div className="space-y-3 border-t border-[#e2e7ea] pt-5 sm:col-span-2">
                   <label className="flex gap-3 text-sm leading-6 text-[#4f5f6b]">
-                    <input name="lookupConsent" required type="checkbox" className="mt-1 size-4 shrink-0 accent-[#0a4b72]" />
-                    <span>{c.consentLookup}</span>
-                  </label>
-                  <label className="flex gap-3 text-sm leading-6 text-[#4f5f6b]">
-                    <input name="accuracyConsent" required type="checkbox" className="mt-1 size-4 shrink-0 accent-[#0a4b72]" />
-                    <span>{c.consentAccuracy}</span>
+                    <input name="consent" required type="checkbox" className="mt-1 size-4 shrink-0 accent-[#0a4b72]" />
+                    <span>{c.consentLookup} {c.consentAccuracy}</span>
                   </label>
                 </div>
               </fieldset>

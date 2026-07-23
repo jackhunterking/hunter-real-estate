@@ -3,7 +3,6 @@ import type { Lang } from "@/lib/capital/types";
 
 export function PageHeader({
   title,
-  description,
   action,
 }: {
   title: string;
@@ -14,7 +13,6 @@ export function PageHeader({
     <header className="mb-7 flex flex-col justify-between gap-4 border-b border-[#dfe4e9] pb-6 md:flex-row md:items-end">
       <div className="min-w-0">
         <h1 className="font-serif text-3xl font-semibold text-[#102638] sm:text-[2.25rem]">{title}</h1>
-        {description && <p className="mt-2 max-w-3xl text-sm leading-6 text-[#65717e]">{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </header>

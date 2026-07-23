@@ -4,7 +4,7 @@ import { ProductDetailView } from "../../products/[slug]/ProductDetailView";
 
 export const dynamic = "force-dynamic";
 
-export default async function HunterNorthFundDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function HunterNorthInvestmentDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const offering = await getPublishedOfferingBySlug(slug);
   if (!offering) notFound();

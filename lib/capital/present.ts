@@ -302,9 +302,18 @@ export function buildMapProperties(
   lang: Lang,
   assetClasses: TaxonomyItem[] = [],
 ): MapProperty[] {
-  return bundle.properties.map((p) => {
-    const verifiedImage = p.media?.gallery?.find((image) => image.src && image.verifiedAt)
-      ?? (p.media?.card?.src && p.media.card.verifiedAt ? p.media.card : undefined);
+  // Real building photos live at the offering level (properties carry none in
+  // practice), so fall back to the fund's gallery — distributed across its
+  // buildings — then its card image. No `verifiedAt` gate: this is a portal-only
+  // path; the public marketing page gates media separately (public-preview.ts).
+  const gallery = (bundle.media?.gallery ?? []).filter((image) => image.src);
+  return bundle.properties.map((p, index) => {
+    const propertyImage = p.media?.gallery?.find((image) => image.src)
+      ?? (p.media?.card?.src ? p.media.card : undefined);
+    const offeringImage = gallery.length
+      ? gallery[index % gallery.length]
+      : (bundle.media?.card?.src ? bundle.media.card : undefined);
+    const image = propertyImage ?? offeringImage;
     return {
       id: p.id,
       name: tx(p.name, lang),
@@ -320,8 +329,8 @@ export function buildMapProperties(
       verification: tx(VERIFICATION[p.verificationStatus], lang),
       assetClass: taxonomyLabel(assetClasses, p.assetClassId, lang),
       offeringName: tx(bundle.shortName, lang),
-      image: verifiedImage,
-      asOfDate: verifiedImage?.verifiedAt ?? bundle.verifiedAt,
+      image,
+      asOfDate: image?.verifiedAt ?? bundle.verifiedAt,
       sourceId: p.units?.sourceId ?? p.squareFeet?.sourceId,
     };
   });

@@ -132,6 +132,7 @@ export type PartnerApplication = {
   registeredFirstNames: string;
   registryLastName: string;
   normalizedRegistryLastName: string;
+  jurisdiction?: string;
   licenceDocumentNumber: string;
   licenceType: string;
   professionalTitle: string;

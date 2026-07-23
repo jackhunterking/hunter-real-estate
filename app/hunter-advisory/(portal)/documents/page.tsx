@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function HunterNorthDocumentsPage() {
-  redirect("/hunter-advisory/funds");
+  redirect("/hunter-advisory/investments");
 }

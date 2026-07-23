@@ -20,13 +20,13 @@ export function FundPresentation({ offering }: { offering: OfferingBundle }) {
     (fact) => fact.approval !== "private" && (!fact.shareClassId || fact.shareClassId === share?.id),
   );
   const labels = lang === "tr" ? {
-    presentation: "Fon sunumu", copy: "Giriş gerektiren bağlantıyı kopyala", copied: "Kopyalandı", close: "Sunumu kapat",
-    owns: "Fonun dayanak binaları", terms: "Seçili pay sınıfı koşulları", risks: "Önemli riskler",
-    target: "Fonun yayımladığı hedef", distribution: "Fonun yayımladığı dağıtım hedefi", minimum: "Minimum yatırım", redemption: "Erken çıkış ve para çekme koşulları",
+    presentation: "Yatırım sunumu", copy: "Giriş gerektiren bağlantıyı kopyala", copied: "Kopyalandı", close: "Sunumu kapat",
+    owns: "Yatırımın dayanak binaları", terms: "Seçili pay sınıfı koşulları", risks: "Önemli riskler",
+    target: "Yayımlanan hedef", distribution: "Yayımlanan dağıtım hedefi", minimum: "Minimum yatırım", redemption: "Erken çıkış ve para çekme koşulları",
   } : {
-    presentation: "Fund presentation", copy: "Copy sign-in-required link", copied: "Copied", close: "Close presentation",
-    owns: "The fund's underlying buildings", terms: "Selected share-class conditions", risks: "Material risks",
-    target: "Fund-published target", distribution: "Fund-published distribution target", minimum: "Minimum investment", redemption: "Early-exit and withdrawal conditions",
+    presentation: "Investment presentation", copy: "Copy sign-in-required link", copied: "Copied", close: "Close presentation",
+    owns: "The investment's underlying buildings", terms: "Selected share-class conditions", risks: "Material risks",
+    target: "Published target", distribution: "Published distribution target", minimum: "Minimum investment", redemption: "Early-exit and withdrawal conditions",
   };
 
   async function copyLink() {
@@ -39,7 +39,7 @@ export function FundPresentation({ offering }: { offering: OfferingBundle }) {
     <header className="sticky top-0 z-30 border-b border-white/10 bg-[#09283d] text-white shadow-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-8">
         <div><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/55">{brand.name} · {labels.presentation}</p><p className="mt-1 text-sm font-semibold">{tx(offering.shortName, lang)}</p></div>
-        <div className="flex items-center gap-2"><button type="button" onClick={copyLink} className="inline-flex h-9 items-center gap-2 rounded-md border border-white/20 px-3 text-xs font-semibold hover:bg-white/10">{copied ? <Check className="size-4" /> : <Copy className="size-4" />}<span className="hidden sm:inline">{copied ? labels.copied : labels.copy}</span></button><Link href={`${NORTH_BASE}/funds/${offering.slug}`} aria-label={labels.close} className="grid size-9 place-items-center rounded-md border border-white/20 hover:bg-white/10"><X className="size-4" /></Link></div>
+        <div className="flex items-center gap-2"><button type="button" onClick={copyLink} className="inline-flex h-9 items-center gap-2 rounded-md border border-white/20 px-3 text-xs font-semibold hover:bg-white/10">{copied ? <Check className="size-4" /> : <Copy className="size-4" />}<span className="hidden sm:inline">{copied ? labels.copied : labels.copy}</span></button><Link href={`${NORTH_BASE}/investments/${offering.slug}`} aria-label={labels.close} className="grid size-9 place-items-center rounded-md border border-white/20 hover:bg-white/10"><X className="size-4" /></Link></div>
       </div>
     </header>
     <main className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-8 sm:py-12">

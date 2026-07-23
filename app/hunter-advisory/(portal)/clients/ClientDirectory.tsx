@@ -15,12 +15,12 @@ import { StageIndicator } from "@/components/capital/north/StageIndicator";
 const COPY = {
   tr: {
     eyebrow: "Partner iş akışı", title: "Yatırımcılar", desc: "Her yatırımcının ilerlemesini, yatırım ilgilerini ve istenen belgelerini tek profilden yönetin.", add: "Yeni yatırımcı",
-    search: "Ad, kurum veya e-posta ara", allStatuses: "Tüm durumlar", allFunds: "Tüm fonlar", client: "Yatırımcı", fund: "Birincil fon", amount: "Gösterge tutarı", stage: "Aşama", next: "Sonraki adım", updated: "Son güncelleme", empty: "Bu filtrelerle eşleşen yatırımcı yok.",
+    search: "Ad, kurum veya e-posta ara", allStatuses: "Tüm durumlar", allFunds: "Tüm yatırımlar", client: "Yatırımcı", fund: "Birincil yatırım", amount: "Gösterge tutarı", stage: "Aşama", next: "Sonraki adım", updated: "Son güncelleme", empty: "Bu filtrelerle eşleşen yatırımcı yok.",
     statuses: { introduced: "Tanıştırıldı", contacted: "İletişime geçildi", "compliance-review": "Uyum incelemesi", accepted: "Kabul edildi", funded: "Fonlandı" } as Record<ReferralStatus, string>,
   },
   en: {
     eyebrow: "Partner workflow", title: "Investors", desc: "Manage each investor’s progress, investment interests, and requested documents from one profile.", add: "New investor",
-    search: "Search name, organization, or email", allStatuses: "All statuses", allFunds: "All funds", client: "Investor", fund: "Primary fund", amount: "Illustrative amount", stage: "Stage", next: "Next action", updated: "Last update", empty: "No investors match these filters.",
+    search: "Search name, organization, or email", allStatuses: "All statuses", allFunds: "All investments", client: "Investor", fund: "Primary investment", amount: "Illustrative amount", stage: "Stage", next: "Next action", updated: "Last update", empty: "No investors match these filters.",
     statuses: { introduced: "Introduced", contacted: "Contacted", "compliance-review": "Compliance review", accepted: "Accepted", funded: "Funded" } as Record<ReferralStatus, string>,
   },
 } as const;

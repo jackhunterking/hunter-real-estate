@@ -352,6 +352,7 @@ export type Database = {
         registered_first_names: string;
         registry_last_name: string;
         normalized_registry_last_name: string;
+        jurisdiction: string | null;
         licence_document_number: string;
         licence_type: string;
         professional_title: string;
@@ -777,6 +778,7 @@ export type Database = {
           p_registered_first_names: string;
           p_registry_last_name: string;
           p_normalized_registry_last_name: string;
+          p_jurisdiction: string;
           p_licence_document_number: string;
           p_licence_type: string;
           p_professional_title: string;

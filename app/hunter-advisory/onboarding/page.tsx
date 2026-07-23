@@ -29,7 +29,7 @@ export default async function OnboardingPage({ searchParams }: { searchParams: S
       search.next?.startsWith(`${NORTH_BASE}/`)
         ? search.next
         : search.offering
-        ? `${NORTH_BASE}/funds/${encodeURIComponent(search.offering)}`
+        ? `${NORTH_BASE}/investments/${encodeURIComponent(search.offering)}`
         : `${NORTH_BASE}/portfolio`,
     );
   }

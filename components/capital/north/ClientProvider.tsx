@@ -310,7 +310,7 @@ export function ClientProvider({ children }: { children: React.ReactNode }) {
           {
             id: `${clientId}-fund-${Date.now()}`,
             kind: "fund",
-            description: activityText("A new fund interest was added", "Yeni bir fon ilgisi eklendi"),
+            description: activityText("A new investment interest was added", "Yeni bir yatırım ilgisi eklendi"),
             occurredAt: timestamp,
           },
           ...client.activity,
