@@ -15,16 +15,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ status: "unknown" });
   }
 
-  // TEMPORARY diagnostics via ?debug=1 to pinpoint prod config issues. Remove.
-  const debug = request.nextUrl.searchParams.get("debug") === "1";
-
   const admin = createSupabaseAdminClient();
   // Without the service key we cannot look users up; fall back to the generic
   // message rather than guessing.
   if (!admin) {
-    return NextResponse.json(
-      debug ? { status: "unknown", reason: "no-admin-client", hasSecret: Boolean(process.env.SUPABASE_WEB_SECRET_KEY), hasUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) } : { status: "unknown" },
-    );
+    return NextResponse.json({ status: "unknown" });
   }
 
   // Read-only lookup via a SECURITY DEFINER function restricted to service_role.
@@ -36,9 +31,7 @@ export async function POST(request: NextRequest) {
   };
   const { data, error } = await typedAdmin.rpc("account_status", { p_email: email });
   if (error || typeof data !== "string") {
-    return NextResponse.json(
-      debug ? { status: "unknown", reason: "rpc-error", error: error?.message ?? null, data } : { status: "unknown" },
-    );
+    return NextResponse.json({ status: "unknown" });
   }
   return NextResponse.json({ status: data });
 }
