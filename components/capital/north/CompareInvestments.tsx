@@ -51,7 +51,8 @@ const COPY = {
     fundLabel: "Fund",
     perMonth: "/mo",
     perYear: "/yr",
-    onCash: "cash-on-cash",
+    invested: "invested",
+    returnOnCash: "return on cash",
     sameCash: "Same cash as the property",
     bestCase: "Always rented · best case",
     lastYear: "Last year",
@@ -105,7 +106,8 @@ const COPY = {
     fundLabel: "Fon",
     perMonth: "/ay",
     perYear: "/yıl",
-    onCash: "nakit getirisi",
+    invested: "yatırıldı",
+    returnOnCash: "nakit getirisi",
     sameCash: "Mülkle aynı nakit",
     bestCase: "Her zaman kirada · en iyi senaryo",
     lastYear: "Geçen yıl",
@@ -192,11 +194,6 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
   const fundLeads = diffMonthly > 0;
   const positive = cf.netMonthly >= 0;
 
-  const downCaption =
-    lang === "tr"
-      ? `${money(values.purchasePrice, lang)} üzerine %${values.downPaymentPct} peşinat`
-      : `${values.downPaymentPct}% down on ${money(values.purchasePrice, lang)}`;
-
   const verdict = tie
     ? c.verdictTie
     : fundLeads
@@ -215,7 +212,7 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
             {/* ── Summary band: identity, amount invested, monthly cash flow (aligned rows) ── */}
             <div className="grid gap-px bg-[#e6ebee] md:grid-cols-2">
               {/* Rental */}
-              <div className="bg-white px-5 py-4">
+              <div className="bg-white px-5 py-5">
                 <div className="flex min-h-9 items-center gap-2">
                   <span className="inline-flex size-7 items-center justify-center rounded-full text-white" style={{ backgroundColor: NAVY }}>
                     <Home className="size-4" />
@@ -223,31 +220,33 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   <p className="text-sm font-semibold text-[#233947]">{c.rental}</p>
                   <span className="ml-auto rounded-full bg-[#f1f5f7] px-2 py-0.5 text-[10px] font-medium text-[#8291a0]">{c.bestCase}</span>
                 </div>
-                <Metric label={c.amountInvested} value={money(cf.initialCash, lang)} caption={downCaption} />
-                <Metric
-                  label={c.monthlyCashFlow}
-                  value={`${money(cf.netMonthly, lang)} ${c.perMonth}`}
-                  caption={`${money(cf.netAnnual, lang)} ${c.perYear} · ${cf.cashOnCashPct.toFixed(1)}% ${c.onCash}`}
-                  hero
+                <HeroCashFlow
+                  value={money(cf.netMonthly, lang)}
+                  unit={c.perMonth}
                   color={positive ? NAVY : RED}
+                  invested={money(cf.initialCash, lang)}
+                  investedLabel={c.invested}
+                  metricValue={`${cf.cashOnCashPct.toFixed(1)}%`}
+                  metricLabel={c.returnOnCash}
                 />
               </div>
 
               {/* Fund */}
-              <div className="bg-white px-5 py-4">
+              <div className="bg-white px-5 py-5">
                 <div className="flex min-h-9 items-center gap-2">
                   <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-white" style={{ backgroundColor: GREEN }}>
                     <Building2 className="size-4" />
                   </span>
                   <FundSelect funds={funds} value={fund.id} onChange={selectFund} lang={lang} label={c.fundLabel} />
                 </div>
-                <Metric label={c.amountInvested} value={money(cf.initialCash, lang)} caption={c.sameCash} />
-                <Metric
-                  label={c.monthlyCashFlow}
-                  value={`${money(earn.monthly, lang)} ${c.perMonth}`}
-                  caption={`${periodLabel(period, c)} · +${period.pct.toFixed(1)}% ${c.historical}`}
-                  hero
+                <HeroCashFlow
+                  value={money(earn.monthly, lang)}
+                  unit={c.perMonth}
                   color={GREEN}
+                  invested={money(cf.initialCash, lang)}
+                  investedLabel={c.invested}
+                  metricValue={`+${period.pct.toFixed(1)}%`}
+                  metricLabel={periodLabel(period, c)}
                 />
               </div>
             </div>
@@ -329,26 +328,34 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
   );
 }
 
-function Metric({
-  label,
+function HeroCashFlow({
   value,
-  caption,
-  hero,
-  color = "#40515e",
+  unit,
+  color,
+  invested,
+  investedLabel,
+  metricValue,
+  metricLabel,
 }: {
-  label: string;
   value: string;
-  caption: string;
-  hero?: boolean;
-  color?: string;
+  unit: string;
+  color: string;
+  invested: string;
+  investedLabel: string;
+  metricValue: string;
+  metricLabel: string;
 }) {
   return (
-    <div className="mt-4">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#93a0a9]">{label}</p>
-      <p className={hero ? "font-serif text-[2rem] font-semibold leading-none" : "text-2xl font-semibold leading-none"} style={{ color }}>
+    <div className="mt-5">
+      <p className="font-serif text-[2.75rem] font-semibold leading-[0.95] tracking-tight" style={{ color }}>
         {value}
+        <span className="ml-1 text-xl font-semibold text-[#9aa5ae]">{unit}</span>
       </p>
-      <p className="mt-1.5 truncate text-xs text-[#8b98a2]">{caption}</p>
+      <p className="mt-2.5 text-[13px] leading-snug text-[#6b7883]">
+        <span className="font-semibold text-[#40515e]">{invested}</span> {investedLabel}
+        <span className="mx-1.5 text-[#c4ced4]">·</span>
+        <span className="font-semibold text-[#40515e]">{metricValue}</span> {metricLabel}
+      </p>
     </div>
   );
 }
