@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
-import { ArrowRight, Building2, ChevronDown, Home, RotateCcw, SlidersHorizontal } from "lucide-react";
+import { ArrowRight, Building2, ChevronDown, Home, RotateCcw } from "lucide-react";
 import {
   computeCashFlow,
   historicalEarnings,
@@ -29,22 +29,14 @@ const COPY = {
     condo: "Condo",
     house: "House",
     reset: "Reset",
-    advanced: "More assumptions",
     noFunds: "No fund is available to compare right now.",
     fields: {
       purchasePrice: "Purchase price",
       downPaymentPct: "Down payment",
       monthlyRent: "Monthly rent",
       mortgageRatePct: "Mortgage rate",
-      amortizationYears: "Amortization",
-      propertyTaxPct: "Property tax / yr",
-      insuranceAnnual: "Insurance / yr",
-      propertyMgmtPct: "Management",
       condoFeeMonthly: "Condo fee / mo",
-      maintenanceReservePct: "Maintenance / yr",
-      closingCostPct: "Closing costs",
     },
-    years: "yrs",
     amountInvested: "Amount invested",
     monthlyCashFlow: "Monthly cash flow",
     rental: "Rental property",
@@ -73,9 +65,6 @@ const COPY = {
     verdictMore: "more per month",
     verdictRental: "Rental nets",
     verdictTie: "About the same each month",
-    tradeoffs: "Trade-offs",
-    tradDownsides: ["One property, one location.", "Slow to sell; repairs and vacancies are on you.", "Big buying and selling costs."],
-    fundDownsides: ["Past returns, not guaranteed.", "You don't pick the properties.", "Hold periods and fees apply."],
     viewFund: "Fund details",
   },
   tr: {
@@ -84,22 +73,14 @@ const COPY = {
     condo: "Condo",
     house: "Ev",
     reset: "Sıfırla",
-    advanced: "Diğer varsayımlar",
     noFunds: "Şu anda karşılaştırılacak bir fon yok.",
     fields: {
       purchasePrice: "Satın alma fiyatı",
       downPaymentPct: "Peşinat",
       monthlyRent: "Aylık kira",
       mortgageRatePct: "Mortgage faizi",
-      amortizationYears: "Amortisman",
-      propertyTaxPct: "Emlak vergisi / yıl",
-      insuranceAnnual: "Sigorta / yıl",
-      propertyMgmtPct: "Yönetim",
       condoFeeMonthly: "Aidat / ay",
-      maintenanceReservePct: "Bakım / yıl",
-      closingCostPct: "Kapanış masrafı",
     },
-    years: "yıl",
     amountInvested: "Yatırılan tutar",
     monthlyCashFlow: "Aylık nakit akışı",
     rental: "Kiralık mülk",
@@ -128,9 +109,6 @@ const COPY = {
     verdictMore: "daha fazla ödedi",
     verdictRental: "Kiralık aylık",
     verdictTie: "Aylık olarak yaklaşık aynı",
-    tradeoffs: "Dengeler",
-    tradDownsides: ["Tek konumda tek mülk.", "Satışı yavaş; onarım ve boşluklar size ait.", "Yüksek alım-satım masrafları."],
-    fundDownsides: ["Geçmiş getiri, garanti değil.", "Mülkleri siz seçmezsiniz.", "Bekleme süreleri ve ücretler geçerli."],
     viewFund: "Fon detayları",
   },
 } as const;
@@ -167,7 +145,6 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
   const [values, setValues] = useState(DEFAULTS);
   const [fundId, setFundId] = useState(funds[0]?.id ?? "");
   const [periodKey, setPeriodKey] = useState(funds[0]?.periods[0]?.key ?? "");
-  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const fund = funds.find((f) => f.id === fundId) ?? funds[0];
   const period = fund?.periods.find((p) => p.key === periodKey) ?? fund?.periods[0];
@@ -232,18 +209,12 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   <p className="text-[11px] font-medium text-[#93a0a9]">{c.pickYear}</p>
                   <PerformanceSelector fund={fund} selectedKey={period.key} onSelect={setPeriodKey} initialCash={cf.initialCash} lang={lang} c={c} />
                 </div>
-                <TradeOffs
-                  className="mt-auto pt-4"
-                  label={c.tradeoffs}
-                  items={c.fundDownsides}
-                  tone="fund"
-                  action={
-                    <Link href={`${NORTH_BASE}/funds/${fund.slug}`} className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0a4b72]">
-                      {c.viewFund}
-                      <ArrowRight className="size-3" />
-                    </Link>
-                  }
-                />
+                <div className="mt-auto flex justify-end pt-4">
+                  <Link href={`${NORTH_BASE}/funds/${fund.slug}`} className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0a4b72]">
+                    {c.viewFund}
+                    <ArrowRight className="size-3" />
+                  </Link>
+                </div>
               </section>
 
               {/* House · Condo — summary then the inputs that drive it, so the controls clearly belong here */}
@@ -281,20 +252,6 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   <NumberField label={c.fields.mortgageRatePct} suffix="%" value={values.mortgageRatePct} step={0.1} onChange={set("mortgageRatePct")} />
                   {propertyType === "condo" && <NumberField label={c.fields.condoFeeMonthly} prefix="$" value={values.condoFeeMonthly} step={25} onChange={set("condoFeeMonthly")} />}
                 </div>
-                <button type="button" onClick={() => setShowAdvanced((v) => !v)} className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-[#0a4b72]">
-                  <SlidersHorizontal className="size-3.5" />
-                  {c.advanced}
-                </button>
-                {showAdvanced && (
-                  <div className="mt-3 space-y-2.5 border-t border-[#e6ebee] pt-3">
-                    <NumberField label={c.fields.amortizationYears} suffix={c.years} value={values.amortizationYears} step={1} min={1} max={35} onChange={set("amortizationYears")} />
-                    <NumberField label={c.fields.propertyTaxPct} suffix="%" value={values.propertyTaxPct} step={0.05} onChange={set("propertyTaxPct")} />
-                    <NumberField label={c.fields.insuranceAnnual} prefix="$" value={values.insuranceAnnual} step={100} onChange={set("insuranceAnnual")} />
-                    <NumberField label={c.fields.propertyMgmtPct} suffix="%" value={values.propertyMgmtPct} step={0.5} onChange={set("propertyMgmtPct")} />
-                    {propertyType === "house" && <NumberField label={c.fields.maintenanceReservePct} suffix="%" value={values.maintenanceReservePct} step={0.25} onChange={set("maintenanceReservePct")} />}
-                    <NumberField label={c.fields.closingCostPct} suffix="%" value={values.closingCostPct} step={0.25} onChange={set("closingCostPct")} />
-                  </div>
-                )}
                 <dl className="mt-4 space-y-1.5 border-t border-[#eef2f4] pt-3 text-sm">
                   <CashRow label={c.cf.rent} value={`+ ${money(cf.grossRent, lang)}`} />
                   <CashRow label={c.cf.mortgage} value={`− ${money(cf.mortgage, lang)}`} muted />
@@ -304,7 +261,6 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   <CashRow label={c.cf.insurance} value={`− ${money(cf.insurance, lang)}`} muted />
                   <CashRow label={c.cf.management} value={`− ${money(cf.management, lang)}`} muted />
                 </dl>
-                <TradeOffs className="mt-auto pt-4" label={c.tradeoffs} items={c.tradDownsides} tone="property" />
               </section>
             </div>
 
@@ -510,34 +466,3 @@ function CashRow({ label, value, muted }: { label: string; value: string; muted?
   );
 }
 
-function TradeOffs({
-  label,
-  items,
-  tone,
-  className = "",
-  action,
-}: {
-  label: string;
-  items: readonly string[];
-  tone: "property" | "fund";
-  className?: string;
-  action?: React.ReactNode;
-}) {
-  const dot = tone === "property" ? NAVY : GREEN;
-  return (
-    <div className={className}>
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#93a0a9]">{label}</p>
-        {action}
-      </div>
-      <ul className="mt-2 space-y-1.5">
-        {items.map((item) => (
-          <li key={item} className="flex gap-2 text-xs leading-4 text-[#6b7883]">
-            <span className="mt-1.5 inline-block size-1 shrink-0 rounded-full" style={{ backgroundColor: dot }} />
-            {item}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
