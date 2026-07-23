@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
 import { ArrowRight, Building2, ChevronDown, Home, RotateCcw } from "lucide-react";
@@ -30,26 +30,32 @@ const COPY = {
     house: "House",
     reset: "Reset",
     noFunds: "No fund is available to compare right now.",
-    investLabel: "How much to invest",
-    investHelp: "The property price — applied to both the fund and the rental below.",
+    investLabel: "Property price",
+    investHelp: "Paid in cash by default — this whole amount is what's invested on both sides. Add a mortgage below to finance instead.",
     adjustDetails: "Adjust details",
     showPerformance: "Historical return by year",
+    financeMortgage: "Finance with a mortgage",
+    payingAllCash: "· paying all cash",
+    financingOn: "· financing on",
     fields: {
-      purchasePrice: "Purchase price",
       downPaymentPct: "Down payment",
+      downPaymentAmount: "Down payment ($)",
       monthlyRent: "Monthly rent",
+      vacancyPct: "Vacancy / bad debt",
+      repairsPct: "Repairs",
       mortgageRatePct: "Mortgage rate",
       condoFeeMonthly: "Condo fee / mo",
+      propertyTaxPct: "Property tax",
+      insuranceMonthly: "Insurance / mo",
+      managementPct: "Management",
+      miscMonthly: "Miscellaneous / mo",
+      closingCostPct: "Closing cost",
     },
-    amountInvested: "Amount invested",
-    monthlyCashFlow: "Monthly cash flow",
     rental: "Rental property",
     fundLabel: "Fund",
     perMonth: "/mo",
-    perYear: "/yr",
     invested: "invested",
     returnOnCash: "return on cash",
-    sameCash: "Same cash as the property",
     bestCase: "Always rented · best case",
     lastYear: "Last year",
     yearBefore: "Year before",
@@ -60,13 +66,16 @@ const COPY = {
     colPerMonth: "Earned / mo",
     pickYear: "Historical return by year — tap to compare",
     cf: {
-      rent: "Rent",
-      mortgage: "Mortgage",
+      rent: "Gross rent",
+      vacancy: "Vacancy / bad debt",
+      repairs: "Repairs",
+      management: "Management",
       condo: "Condo fee",
-      maintenance: "Maintenance",
       tax: "Property tax",
       insurance: "Insurance",
-      management: "Management",
+      misc: "Miscellaneous",
+      noi: "Net operating income",
+      mortgage: "Mortgage",
     },
     verdictFund: "paid",
     verdictMore: "more per month",
@@ -81,26 +90,32 @@ const COPY = {
     house: "Ev",
     reset: "Sıfırla",
     noFunds: "Şu anda karşılaştırılacak bir fon yok.",
-    investLabel: "Ne kadar yatırım",
-    investHelp: "Mülk fiyatı — aşağıdaki hem fona hem de kiralığa uygulanır.",
+    investLabel: "Mülk fiyatı",
+    investHelp: "Varsayılan olarak nakit ödenir — bu tutarın tamamı her iki tarafta da yatırılır. Finanse etmek için aşağıdan mortgage ekleyin.",
     adjustDetails: "Detayları düzenle",
     showPerformance: "Yıla göre geçmiş getiri",
+    financeMortgage: "Mortgage ile finanse et",
+    payingAllCash: "· tamamı nakit",
+    financingOn: "· finansman açık",
     fields: {
-      purchasePrice: "Satın alma fiyatı",
       downPaymentPct: "Peşinat",
+      downPaymentAmount: "Peşinat ($)",
       monthlyRent: "Aylık kira",
+      vacancyPct: "Boşluk / tahsilat kaybı",
+      repairsPct: "Onarımlar",
       mortgageRatePct: "Mortgage faizi",
       condoFeeMonthly: "Aidat / ay",
+      propertyTaxPct: "Emlak vergisi",
+      insuranceMonthly: "Sigorta / ay",
+      managementPct: "Yönetim",
+      miscMonthly: "Diğer / ay",
+      closingCostPct: "Kapanış masrafı",
     },
-    amountInvested: "Yatırılan tutar",
-    monthlyCashFlow: "Aylık nakit akışı",
     rental: "Kiralık mülk",
     fundLabel: "Fon",
     perMonth: "/ay",
-    perYear: "/yıl",
     invested: "yatırıldı",
     returnOnCash: "nakit getirisi",
-    sameCash: "Mülkle aynı nakit",
     bestCase: "Her zaman kirada · en iyi senaryo",
     lastYear: "Geçen yıl",
     yearBefore: "Önceki yıl",
@@ -111,13 +126,16 @@ const COPY = {
     colPerMonth: "Aylık kazanç",
     pickYear: "Yıla göre geçmiş getiri — karşılaştırmak için dokunun",
     cf: {
-      rent: "Kira",
-      mortgage: "Mortgage",
+      rent: "Brüt kira",
+      vacancy: "Boşluk / tahsilat kaybı",
+      repairs: "Onarımlar",
+      management: "Yönetim",
       condo: "Aidat",
-      maintenance: "Bakım",
       tax: "Emlak vergisi",
       insurance: "Sigorta",
-      management: "Yönetim",
+      misc: "Diğer",
+      noi: "Net işletme geliri",
+      mortgage: "Mortgage",
     },
     verdictFund: "aylık",
     verdictMore: "daha fazla ödedi",
@@ -129,12 +147,18 @@ const COPY = {
 
 type Copy = (typeof COPY)["en"] | (typeof COPY)["tr"];
 
-type Inputs = Omit<CashFlowInputs, "propertyType">;
+/**
+ * The primary input is the property price. All-cash by default, so the price is
+ * exactly the cash invested on both sides. `mortgageEnabled` is UI state (the
+ * financing section being open), not stored here.
+ */
+type Inputs = Omit<CashFlowInputs, "propertyType" | "mortgageEnabled">;
 
 /**
- * Sensible present-tense defaults for the general GTA market, so the tool is
- * useful at a glance with no tuning. Switching property type reloads that
- * type's defaults; each field can still be adjusted under "Adjust details".
+ * Sensible present-tense defaults for the general GTA market, underwritten like
+ * a real deal, so the tool is useful at a glance with no tuning. Switching
+ * property type reloads that type's defaults; each field can still be adjusted
+ * under "Adjust details".
  */
 const DEFAULTS_BY_TYPE: Record<PropertyType, Inputs> = {
   condo: {
@@ -144,11 +168,13 @@ const DEFAULTS_BY_TYPE: Record<PropertyType, Inputs> = {
     mortgageRatePct: 5,
     amortizationYears: 25,
     monthlyRent: 2600,
+    vacancyPct: 5,
+    repairsPct: 4,
     propertyTaxPct: 0.7,
     insuranceAnnual: 700,
     propertyMgmtPct: 8,
     condoFeeMonthly: 650,
-    maintenanceReservePct: 1,
+    miscMonthly: 0,
   },
   house: {
     purchasePrice: 900000,
@@ -157,11 +183,13 @@ const DEFAULTS_BY_TYPE: Record<PropertyType, Inputs> = {
     mortgageRatePct: 5,
     amortizationYears: 25,
     monthlyRent: 3300,
+    vacancyPct: 5,
+    repairsPct: 8,
     propertyTaxPct: 0.8,
     insuranceAnnual: 1400,
     propertyMgmtPct: 8,
     condoFeeMonthly: 0,
-    maintenanceReservePct: 1,
+    miscMonthly: 0,
   },
 };
 
@@ -181,6 +209,8 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
   const [values, setValues] = useState<Inputs>(DEFAULTS_BY_TYPE.condo);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [perfOpen, setPerfOpen] = useState(false);
+  // A mortgage applies only while the financing section is open; closed = all cash.
+  const [mortgageOpen, setMortgageOpen] = useState(false);
   const [fundId, setFundId] = useState(funds[0]?.id ?? "");
   const [periodKey, setPeriodKey] = useState(funds[0]?.periods[0]?.key ?? "");
 
@@ -190,6 +220,14 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
   const set = (key: keyof Inputs) => (value: number) =>
     setValues((current) => ({ ...current, [key]: value }));
 
+  // Down payment can also be entered as a dollar amount; both derive from price.
+  const downPaymentAmount = Math.round(values.purchasePrice * (values.downPaymentPct / 100));
+  const setDownPaymentAmount = (amount: number) =>
+    setValues((current) => ({
+      ...current,
+      downPaymentPct: current.purchasePrice > 0 ? Math.min(100, (amount / current.purchasePrice) * 100) : 0,
+    }));
+
   function selectType(next: PropertyType) {
     setPropertyType(next);
     setValues(DEFAULTS_BY_TYPE[next]);
@@ -197,6 +235,7 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
 
   function reset() {
     setValues(DEFAULTS_BY_TYPE[propertyType]);
+    setMortgageOpen(false);
     posthog?.capture("hnc_compare_reset", { language: lang });
   }
 
@@ -205,7 +244,12 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
     setPeriodKey(funds.find((f) => f.id === id)?.periods[0]?.key ?? "");
   }
 
-  const cf = useMemo(() => computeCashFlow({ ...values, propertyType }), [values, propertyType]);
+  const cf = useMemo(
+    () => computeCashFlow({ ...values, propertyType, mortgageEnabled: mortgageOpen }),
+    [values, propertyType, mortgageOpen],
+  );
+  // Both sides invest the same cash (cf.initialCash): all-cash it's the price +
+  // closing; financed it's the down payment + closing. The fund earns on it.
   const earn = period ? historicalEarnings(cf.initialCash, period.pct) : null;
 
   const diffMonthly = earn ? earn.monthly - cf.netMonthly : 0;
@@ -230,7 +274,7 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
           <Panel className="overflow-hidden">
             {/* ── Shared invest amount — sits above both cards and drives them together ── */}
             <div className="border-b border-[#e2e8eb] bg-[#f8fafb] px-5 py-4">
-              <PrimaryAmountField label={c.investLabel} help={c.investHelp} value={values.purchasePrice} step={10000} onChange={set("purchasePrice")} />
+              <PrimaryAmountField label={c.investLabel} help={c.investHelp} value={values.purchasePrice} onChange={set("purchasePrice")} />
             </div>
 
             {/* ── Two aligned columns: investment/fund (left · top) | house · condo (right · bottom) ── */}
@@ -299,7 +343,7 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   <TypeChoice active={propertyType === "house"} onClick={() => selectType("house")} icon={<Home className="size-4" />} title={c.house} />
                 </div>
 
-                {/* Every default (down payment, rent, rate, fee) stays collapsed until the user wants to fine-tune */}
+                {/* Underwriting inputs — collapsed until the user wants to fine-tune the deal */}
                 <div className="mt-4 border-t border-[#eef2f4] pt-3">
                   <div className="flex items-center justify-between">
                     <button
@@ -318,21 +362,58 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   </div>
                   {detailsOpen && (
                     <div className="mt-3 space-y-2.5">
-                      <NumberField label={c.fields.downPaymentPct} suffix="%" value={values.downPaymentPct} step={1} onChange={set("downPaymentPct")} />
                       <NumberField label={c.fields.monthlyRent} prefix="$" value={values.monthlyRent} step={100} onChange={set("monthlyRent")} />
-                      <NumberField label={c.fields.mortgageRatePct} suffix="%" value={values.mortgageRatePct} step={0.1} onChange={set("mortgageRatePct")} />
+                      <NumberField label={c.fields.vacancyPct} suffix="%" value={values.vacancyPct} step={0.5} max={100} onChange={set("vacancyPct")} />
+                      <NumberField label={c.fields.repairsPct} suffix="%" value={values.repairsPct} step={0.5} max={100} onChange={set("repairsPct")} />
+                      <NumberField label={c.fields.managementPct} suffix="%" value={values.propertyMgmtPct} step={0.5} max={100} onChange={set("propertyMgmtPct")} />
                       {propertyType === "condo" && <NumberField label={c.fields.condoFeeMonthly} prefix="$" value={values.condoFeeMonthly} step={25} onChange={set("condoFeeMonthly")} />}
+                      <NumberField label={c.fields.propertyTaxPct} suffix="%" value={values.propertyTaxPct} step={0.1} max={100} onChange={set("propertyTaxPct")} />
+                      <NumberField label={c.fields.insuranceMonthly} prefix="$" value={Math.round(values.insuranceAnnual / 12)} step={10} onChange={(v) => set("insuranceAnnual")(Math.round(v * 12))} />
+                      <NumberField label={c.fields.miscMonthly} prefix="$" value={values.miscMonthly} step={25} onChange={set("miscMonthly")} />
+                      <NumberField label={c.fields.closingCostPct} suffix="%" value={values.closingCostPct} step={0.1} max={100} onChange={set("closingCostPct")} />
                     </div>
                   )}
                 </div>
+
+                {/* Financing — optional. Closed = all cash; open = a mortgage is applied. */}
+                <div className="mt-4 border-t border-[#eef2f4] pt-3">
+                  <button
+                    type="button"
+                    onClick={() => setMortgageOpen((open) => !open)}
+                    aria-expanded={mortgageOpen}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#40515e] hover:text-[#0a2d46]"
+                  >
+                    <ChevronDown className={`size-4 transition-transform ${mortgageOpen ? "rotate-180" : ""}`} />
+                    {c.financeMortgage}
+                    <span className={`font-medium ${mortgageOpen ? "text-[#1d6a4f]" : "text-[#93a0a9]"}`}>
+                      {mortgageOpen ? c.financingOn : c.payingAllCash}
+                    </span>
+                  </button>
+                  {mortgageOpen && (
+                    <div className="mt-3 space-y-2.5">
+                      <NumberField label={c.fields.downPaymentPct} suffix="%" value={values.downPaymentPct} step={1} max={100} onChange={set("downPaymentPct")} />
+                      <NumberField label={c.fields.downPaymentAmount} prefix="$" value={downPaymentAmount} step={5000} onChange={setDownPaymentAmount} />
+                      <NumberField label={c.fields.mortgageRatePct} suffix="%" value={values.mortgageRatePct} step={0.1} onChange={set("mortgageRatePct")} />
+                    </div>
+                  )}
+                </div>
+
+                {/* Underwriting statement: income → operating expenses → NOI → debt service */}
                 <dl className="mt-4 space-y-1.5 border-t border-[#eef2f4] pt-3 text-sm">
                   <CashRow label={c.cf.rent} value={`+ ${money(cf.grossRent, lang)}`} />
-                  <CashRow label={c.cf.mortgage} value={`− ${money(cf.mortgage, lang)}`} muted />
+                  {cf.vacancy > 0 && <CashRow label={c.cf.vacancy} value={`− ${money(cf.vacancy, lang)}`} muted />}
+                  {cf.repairs > 0 && <CashRow label={c.cf.repairs} value={`− ${money(cf.repairs, lang)}`} muted />}
+                  <CashRow label={c.cf.management} value={`− ${money(cf.management, lang)}`} muted />
                   {propertyType === "condo" && <CashRow label={c.cf.condo} value={`− ${money(cf.condoFee, lang)}`} muted />}
-                  {propertyType === "house" && <CashRow label={c.cf.maintenance} value={`− ${money(cf.maintenance, lang)}`} muted />}
                   <CashRow label={c.cf.tax} value={`− ${money(cf.propertyTax, lang)}`} muted />
                   <CashRow label={c.cf.insurance} value={`− ${money(cf.insurance, lang)}`} muted />
-                  <CashRow label={c.cf.management} value={`− ${money(cf.management, lang)}`} muted />
+                  {cf.misc > 0 && <CashRow label={c.cf.misc} value={`− ${money(cf.misc, lang)}`} muted />}
+                  {mortgageOpen && (
+                    <>
+                      <CashRow label={c.cf.noi} value={money(cf.noi, lang)} strong />
+                      <CashRow label={c.cf.mortgage} value={`− ${money(cf.mortgage, lang)}`} muted />
+                    </>
+                  )}
                 </dl>
               </section>
             </div>
@@ -541,6 +622,115 @@ function TypeChoice({ active, onClick, icon, title }: { active: boolean; onClick
   );
 }
 
+/* ── Comma-grouped numeric input ─────────────────────────────────────────────
+ * Native <input type="number"> can't show thousands separators, so these are
+ * text inputs that group the integer part with commas as you type. The caret is
+ * restored by counting digits from the right, which is stable under grouping. */
+
+/** Group the integer part of a plain numeric string with commas. */
+function group(intPart: string): string {
+  return intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+/** Format a stored number for display (commas, up to a few decimals). */
+function formatNumber(value: number, allowDecimal: boolean): string {
+  if (!Number.isFinite(value)) return "";
+  return value.toLocaleString("en-US", { maximumFractionDigits: allowDecimal ? 4 : 0, useGrouping: true });
+}
+
+/** Turn raw keystrokes into a grouped display string + the parsed number. */
+function parseInput(raw: string, allowDecimal: boolean): { formatted: string; num: number } {
+  let s = raw.replace(/,/g, "");
+  s = allowDecimal ? s.replace(/[^\d.]/g, "") : s.replace(/[^\d]/g, "");
+  if (allowDecimal) {
+    const dot = s.indexOf(".");
+    if (dot !== -1) s = s.slice(0, dot + 1) + s.slice(dot + 1).replace(/\./g, "");
+  }
+  if (s === "" || s === ".") return { formatted: s, num: 0 };
+  const dot = allowDecimal ? s.indexOf(".") : -1;
+  const intPart = (dot === -1 ? s : s.slice(0, dot)).replace(/^0+(?=\d)/, "");
+  const decPart = dot === -1 ? "" : s.slice(dot);
+  return { formatted: group(intPart) + decPart, num: Number(s) };
+}
+
+const digitsAfter = (s: string, from: number): number => {
+  let n = 0;
+  for (let i = from; i < s.length; i++) if (s[i] >= "0" && s[i] <= "9") n++;
+  return n;
+};
+
+/** Position whose right side holds exactly `digits` digits (caret restore). */
+function caretForDigits(s: string, digits: number): number {
+  if (digits <= 0) return s.length;
+  let count = 0;
+  for (let p = s.length - 1; p >= 0; p--) {
+    if (s[p] >= "0" && s[p] <= "9" && ++count === digits) return p;
+  }
+  return 0;
+}
+
+function CommaInput({
+  value,
+  onChange,
+  allowDecimal = false,
+  min = 0,
+  max,
+  className,
+}: {
+  value: number;
+  onChange: (value: number) => void;
+  allowDecimal?: boolean;
+  min?: number;
+  max?: number;
+  className: string;
+}) {
+  const ref = useRef<HTMLInputElement>(null);
+  const editing = useRef(false);
+  const caretTarget = useRef<number | null>(null);
+  const [text, setText] = useState(() => formatNumber(value, allowDecimal));
+
+  // Re-sync from the outside only when the field isn't being edited (e.g. reset,
+  // property-type switch, or rent scaling driven by the invested amount).
+  useEffect(() => {
+    if (!editing.current) setText(formatNumber(value, allowDecimal));
+  }, [value, allowDecimal]);
+
+  useLayoutEffect(() => {
+    if (caretTarget.current === null || !ref.current) return;
+    const pos = caretForDigits(text, caretTarget.current);
+    ref.current.setSelectionRange(pos, pos);
+    caretTarget.current = null;
+  }, [text]);
+
+  return (
+    <input
+      ref={ref}
+      type="text"
+      inputMode={allowDecimal ? "decimal" : "numeric"}
+      value={text}
+      onFocus={(e) => {
+        editing.current = true;
+        e.target.select();
+      }}
+      onBlur={() => {
+        editing.current = false;
+        setText(formatNumber(value, allowDecimal));
+      }}
+      onChange={(e) => {
+        const el = e.target;
+        caretTarget.current = digitsAfter(el.value, el.selectionStart ?? el.value.length);
+        const { formatted, num } = parseInput(el.value, allowDecimal);
+        setText(formatted);
+        if (!Number.isFinite(num)) return;
+        let clamped = Math.max(min, num);
+        if (typeof max === "number") clamped = Math.min(max, clamped);
+        onChange(clamped);
+      }}
+      className={className}
+    />
+  );
+}
+
 function NumberField({
   label,
   value,
@@ -565,25 +755,14 @@ function NumberField({
       <span className="text-xs text-[#526976]">{label}</span>
       <span className="flex w-[128px] shrink-0 items-center rounded-md border border-[#cfd9df] bg-white pl-2.5 focus-within:border-[#0a4b72] focus-within:ring-2 focus-within:ring-[#0a4b72]/15">
         {prefix && <span className="text-xs text-[#93a0a9]">{prefix}</span>}
-        <input
-          type="number"
-          inputMode="decimal"
-          value={Number.isFinite(value) ? value : ""}
-          step={step}
+        <CommaInput
+          value={value}
+          onChange={onChange}
+          allowDecimal={step % 1 !== 0}
           min={min}
           max={max}
-          // Select the whole value on focus so the first keystroke replaces it
-          // (no more typing to the right of a stranded 0).
-          onFocus={(e) => e.target.select()}
-          onChange={(e) => {
-            const next = e.target.value === "" ? 0 : Number(e.target.value);
-            if (!Number.isFinite(next)) return;
-            let clamped = Math.max(min, next);
-            if (typeof max === "number") clamped = Math.min(max, clamped);
-            onChange(clamped);
-          }}
           // 16px keeps iOS Safari from zooming in when the field is focused.
-          className="h-9 w-full bg-transparent px-1.5 text-right text-[16px] text-[#263f4f] outline-none"
+          className="h-9 w-full bg-transparent px-1.5 text-right text-[16px] tabular-nums text-[#263f4f] outline-none"
         />
         {suffix && <span className="pr-2.5 text-xs text-[#93a0a9]">{suffix}</span>}
       </span>
@@ -591,37 +770,26 @@ function NumberField({
   );
 }
 
-/** The one headline input — property price — shown large and clearly primary. */
+/** The one headline input — the invested amount — shown large and clearly primary. */
 function PrimaryAmountField({
   label,
   help,
   value,
   onChange,
-  step = 1000,
 }: {
   label: string;
   help?: string;
   value: number;
   onChange: (value: number) => void;
-  step?: number;
 }) {
   return (
     <label className="block">
       <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8291a0]">{label}</span>
       <span className="mt-1.5 flex items-center rounded-lg border border-[#cfd9df] bg-white px-3 focus-within:border-[#0a4b72] focus-within:ring-2 focus-within:ring-[#0a4b72]/15">
         <span className="text-base text-[#93a0a9]">$</span>
-        <input
-          type="number"
-          inputMode="numeric"
-          value={Number.isFinite(value) ? value : ""}
-          step={step}
-          min={0}
-          onFocus={(e) => e.target.select()}
-          onChange={(e) => {
-            const next = e.target.value === "" ? 0 : Number(e.target.value);
-            if (!Number.isFinite(next)) return;
-            onChange(Math.max(0, next));
-          }}
+        <CommaInput
+          value={value}
+          onChange={onChange}
           // 17px (≥16) keeps iOS Safari from zooming on focus.
           className="h-11 w-full bg-transparent px-2 text-right text-[17px] font-semibold tabular-nums text-[#0a2d46] outline-none"
         />
@@ -631,7 +799,15 @@ function PrimaryAmountField({
   );
 }
 
-function CashRow({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
+function CashRow({ label, value, muted, strong }: { label: string; value: string; muted?: boolean; strong?: boolean }) {
+  if (strong) {
+    return (
+      <div className="mt-1 flex items-center justify-between border-t border-dashed border-[#dbe2e6] pt-2.5">
+        <dt className="font-semibold text-[#233947]">{label}</dt>
+        <dd className="font-bold text-[#233947]">{value}</dd>
+      </div>
+    );
+  }
   return (
     <div className="flex items-center justify-between">
       <dt className="text-[#67757f]">{label}</dt>

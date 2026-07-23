@@ -5,14 +5,16 @@ import type { LocalizedText, OfferingBundle } from "./types";
  * Pure, server-safe engine for the "Compare Investments" resource tool.
  *
  * Two tangible, present-tense questions — deliberately NOT a forward guess:
- *   1. What monthly cash flow does a rental throw off after every cost?
+ *   1. What monthly cash flow does a rental throw off, underwritten like a real
+ *      deal (vacancy, repairs, management, taxes, insurance, debt service)?
  *   2. What would the SAME cash have earned in the fund, using its published
  *      historical returns (last year, the year before, since inception)?
  *
- * The rental is modelled on a best-case footing (always rented, no vacancy)
- * so the comparison never understates direct ownership. Nothing here is advice;
- * the fund side is entirely backward-looking — real past figures, not a
- * projection.
+ * The property is paid all-cash by default, so the price entered is exactly the
+ * cash invested on both sides. A mortgage is opt-in: when enabled, the cash
+ * invested becomes the down payment + closing, and the fund is compared against
+ * that same cash. Nothing here is advice; the fund side is entirely
+ * backward-looking — real past figures, not a projection.
  */
 
 export type PropertyType = "condo" | "house";
@@ -20,32 +22,39 @@ export type PropertyType = "condo" | "house";
 export type CashFlowInputs = {
   propertyType: PropertyType;
   purchasePrice: number;
-  downPaymentPct: number; // share of price paid in cash
+  /** When false the property is bought all-cash (no down payment / mortgage). */
+  mortgageEnabled: boolean;
+  downPaymentPct: number; // share of price paid in cash (mortgage only)
   closingCostPct: number; // land transfer + legal, share of price
   mortgageRatePct: number; // annual nominal
   amortizationYears: number;
   monthlyRent: number;
+  vacancyPct: number; // vacancy + bad debt, share of gross rent
+  repairsPct: number; // repairs + maintenance, share of gross rent
   propertyTaxPct: number; // annual, share of price
   insuranceAnnual: number; // annual $
   propertyMgmtPct: number; // share of collected rent
-  /** Condo only: monthly maintenance / condo fee. */
+  /** Condo only: monthly condo / HOA fee. */
   condoFeeMonthly: number;
-  /** House only: annual maintenance + capex reserve as share of price. */
-  maintenanceReservePct: number;
+  /** Any other monthly expenses the owner wants to include (defaults to 0). */
+  miscMonthly: number;
 };
 
 /** All figures are monthly dollars unless the name says otherwise. */
 export type CashFlowResult = {
-  initialCash: number;
+  initialCash: number; // cash to acquire: price (or down payment) + closing
+  closing: number; // one-time closing cost (part of initialCash)
   grossRent: number;
-  mortgage: number;
+  vacancy: number;
+  repairs: number;
+  management: number;
   condoFee: number;
   propertyTax: number;
   insurance: number;
-  management: number;
-  maintenance: number;
-  totalCosts: number;
-  netMonthly: number;
+  misc: number;
+  mortgage: number; // monthly debt service (0 when all-cash)
+  noi: number; // net operating income (before debt service)
+  netMonthly: number; // NOI − debt service
   netAnnual: number;
   cashOnCashPct: number; // net annual cash flow / cash in
 };
@@ -64,45 +73,65 @@ export function computeCashFlow(input: CashFlowInputs): CashFlowResult {
   const {
     propertyType,
     purchasePrice,
+    mortgageEnabled,
     downPaymentPct,
     closingCostPct,
     mortgageRatePct,
     amortizationYears,
     monthlyRent,
+    vacancyPct,
+    repairsPct,
     propertyTaxPct,
     insuranceAnnual,
     propertyMgmtPct,
     condoFeeMonthly,
-    maintenanceReservePct,
+    miscMonthly,
   } = input;
 
-  const downPayment = purchasePrice * (downPaymentPct / 100);
-  const initialCash = downPayment + purchasePrice * (closingCostPct / 100);
-  const loanPrincipal = Math.max(purchasePrice - downPayment, 0);
+  // Acquisition cash. All-cash by default (the whole price); with a mortgage,
+  // just the down payment. Closing costs apply either way.
+  const closing = purchasePrice * (closingCostPct / 100);
+  let cashBase: number;
+  let mortgage: number;
+  if (mortgageEnabled) {
+    const downPayment = purchasePrice * (downPaymentPct / 100);
+    cashBase = downPayment;
+    const loanPrincipal = Math.max(purchasePrice - downPayment, 0);
+    mortgage = monthlyMortgagePayment(loanPrincipal, mortgageRatePct, amortizationYears);
+  } else {
+    cashBase = purchasePrice;
+    mortgage = 0;
+  }
+  const initialCash = cashBase + closing;
 
+  // Income and operating expenses, underwritten off gross rent.
   const grossRent = monthlyRent;
-  const mortgage = monthlyMortgagePayment(loanPrincipal, mortgageRatePct, amortizationYears);
+  const vacancy = grossRent * (vacancyPct / 100);
+  const repairs = grossRent * (repairsPct / 100);
+  const management = grossRent * (propertyMgmtPct / 100);
   const condoFee = propertyType === "condo" ? condoFeeMonthly : 0;
-  const maintenance = propertyType === "house" ? (purchasePrice * (maintenanceReservePct / 100)) / 12 : 0;
   const propertyTax = (purchasePrice * (propertyTaxPct / 100)) / 12;
   const insurance = insuranceAnnual / 12;
-  const management = grossRent * (propertyMgmtPct / 100);
+  const misc = Math.max(miscMonthly, 0);
 
-  const totalCosts = mortgage + condoFee + maintenance + propertyTax + insurance + management;
-  const netMonthly = grossRent - totalCosts;
+  const noi = grossRent - vacancy - repairs - management - condoFee - propertyTax - insurance - misc;
+  const netMonthly = noi - mortgage;
   const netAnnual = netMonthly * 12;
   const cashOnCashPct = initialCash > 0 ? (netAnnual / initialCash) * 100 : 0;
 
   return {
     initialCash,
+    closing,
     grossRent,
-    mortgage,
+    vacancy,
+    repairs,
+    management,
     condoFee,
     propertyTax,
     insurance,
-    management,
-    maintenance,
-    totalCosts,
+    misc,
+    mortgage,
+    noi,
     netMonthly,
     netAnnual,
     cashOnCashPct,
