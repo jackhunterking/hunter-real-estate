@@ -42,8 +42,8 @@ test("fund overview replaces oversized metric cards with a lean, trust-oriented 
   const overview = detail.match(/function Overview[\s\S]*?\n}\n\ntype LocalizedPerformanceRow/)?.[0] ?? "";
 
   assert.doesNotMatch(overview, /summaryCards|<StatCard/);
-  assert.ok(overview.indexOf("<SectionTitle title={c.approach}") < overview.indexOf("<SectionTitle title={c.keyFacts}"));
-  assert.match(overview, /<SectionTitle title=\{c\.approach\} \/>[\s\S]*?<p className="max-w-4xl[^>]*">\{tx\(offering\.thesis, lang\)\}<\/p>/);
+  assert.doesNotMatch(overview, /c\.approach/);
+  assert.doesNotMatch(overview, /offering\.thesis/);
   assert.match(overview, /add\(c\.aum,[\s\S]*add\(c\.inception,[\s\S]*add\(c\.offeringSize,/);
 });
 

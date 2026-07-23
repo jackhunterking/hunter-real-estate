@@ -21,11 +21,11 @@ export function FundPresentation({ offering }: { offering: OfferingBundle }) {
   );
   const labels = lang === "tr" ? {
     presentation: "Fon sunumu", copy: "Giriş gerektiren bağlantıyı kopyala", copied: "Kopyalandı", close: "Sunumu kapat",
-    owns: "Fonun dayanak binaları", approach: "Yatırım yaklaşımı", terms: "Seçili pay sınıfı koşulları", risks: "Önemli riskler",
+    owns: "Fonun dayanak binaları", terms: "Seçili pay sınıfı koşulları", risks: "Önemli riskler",
     target: "Fonun yayımladığı hedef", distribution: "Fonun yayımladığı dağıtım hedefi", minimum: "Minimum yatırım", redemption: "Erken çıkış ve para çekme koşulları",
   } : {
     presentation: "Fund presentation", copy: "Copy sign-in-required link", copied: "Copied", close: "Close presentation",
-    owns: "The fund's underlying buildings", approach: "Investment approach", terms: "Selected share-class conditions", risks: "Material risks",
+    owns: "The fund's underlying buildings", terms: "Selected share-class conditions", risks: "Material risks",
     target: "Fund-published target", distribution: "Fund-published distribution target", minimum: "Minimum investment", redemption: "Early-exit and withdrawal conditions",
   };
 
@@ -50,8 +50,7 @@ export function FundPresentation({ offering }: { offering: OfferingBundle }) {
 
       <section><h2 className="mb-3 text-2xl font-semibold">{labels.owns}</h2><FundMapEmbed offering={offering} /></section>
 
-      <section className="grid gap-5 lg:grid-cols-2">
-        <div className="rounded-xl border border-[#dce3e7] bg-white p-6"><h2 className="text-xl font-semibold">{labels.approach}</h2><p className="mt-4 text-sm leading-7 text-[#586b77]">{tx(offering.thesis, lang)}</p></div>
+      <section>
         <div className="rounded-xl border border-[#dce3e7] bg-white p-6"><h2 className="text-xl font-semibold">{labels.terms}</h2><dl className="mt-4 divide-y divide-[#e8ecee] text-sm">{definedFacts.map((fact) => <div key={fact.id} className="py-3"><dt className="text-[#6b7982]">{tx(fact.label, lang)}</dt><dd className="mt-1 font-semibold leading-6">{tx(fact.value, lang)}</dd><span className="mt-1 block text-[10px] text-[#87929a]">{fact.sourceId} · {fact.effectiveDate}</span></div>)}{!definedFacts.some((fact) => fact.category === "target") && share?.targetReturn && <div className="py-3"><dt className="text-[#6b7982]">{labels.target}</dt><dd className="mt-1 font-semibold">{share.targetReturn.value}</dd></div>}<div className="py-3"><dt className="text-[#6b7982]">{labels.minimum}</dt><dd className="mt-1 font-semibold">{share?.minimumInvestment ? formatCurrencyCad(share.minimumInvestment.value, lang) : "—"}</dd></div>{!definedFacts.some((fact) => fact.category === "early-exit") && <div className="py-3"><dt className="text-[#6b7982]">{labels.redemption}</dt><dd className="mt-1 font-semibold leading-6">{tx(share?.redemptionTerms, lang) ?? "—"}</dd></div>}</dl></div>
       </section>
       <section className="rounded-xl border border-[#e7d39f] bg-[#fffaf0] p-6"><h2 className="text-xl font-semibold text-[#4a3b22]">{labels.risks}</h2><ul className="mt-4 space-y-2 text-sm leading-6 text-[#665537]">{offering.risks.map((risk) => <li key={tx(risk, lang)}>• {tx(risk, lang)}</li>)}</ul></section>

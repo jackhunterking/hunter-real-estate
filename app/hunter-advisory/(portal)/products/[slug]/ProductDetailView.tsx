@@ -37,7 +37,7 @@ const COPY = {
     unitPrice: "Unit price", term: "Investment term", distribution: "Distribution", registered: "Registered accounts",
     redemption: "Redemptions", managementFee: "Management fee", commission: "Published fund commission",
     highlights: "Highlights", cities: "Cities", buildingsCount: "Buildings", locations: "Locations",
-    approach: "Investment approach", presentation: "Presentation", presentationOpen: "Open presentation",
+    presentation: "Presentation", presentationOpen: "Open presentation",
     presentationVersion: "Version", presentationUnavailable: "Available through Hunter & Hunter Investment Advisors",
     risks: "Material risks and trade-offs",
     historical: "Historical performance", historicalHelp: "Published returns for this fund, shown exactly as provided.", noHistory: "No approved historical information is available.", historicalTag: "Historical—not a forecast",
@@ -60,7 +60,7 @@ const COPY = {
     unitPrice: "Birim fiyatı", term: "Yatırım süresi", distribution: "Dağıtım", registered: "Kayıtlı hesaplar",
     redemption: "Para çekme", managementFee: "Yönetim ücreti", commission: "Yayımlanan fon komisyonu",
     highlights: "Öne çıkanlar", cities: "Şehir", buildingsCount: "Bina", locations: "Konum",
-    approach: "Yatırım yaklaşımı", presentation: "Sunum", presentationOpen: "Sunumu aç",
+    presentation: "Sunum", presentationOpen: "Sunumu aç",
     presentationVersion: "Sürüm", presentationUnavailable: "Hunter & Hunter Investment Advisors üzerinden mevcut",
     risks: "Önemli riskler ve ödünleşimler",
     historical: "Geçmiş performans", historicalHelp: "Bu fon için yayımlanan getiriler, sağlandığı şekliyle gösterilir.", noHistory: "Onaylı geçmiş bilgi mevcut değil.", historicalTag: "Geçmiş bilgi—tahmin değildir",
@@ -162,11 +162,6 @@ function Overview({ offering, share, professional }: { offering: OfferingBundle;
 
   return (
     <div className="space-y-8">
-
-      <section>
-        <SectionTitle title={c.approach} />
-        <p className="max-w-4xl text-sm leading-7 text-muted-foreground sm:text-[15px]">{tx(offering.thesis, lang)}</p>
-      </section>
 
       <section>
         <SectionTitle title={c.keyFacts} />
