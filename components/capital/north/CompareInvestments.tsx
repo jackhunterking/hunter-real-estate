@@ -76,7 +76,6 @@ const COPY = {
     tradDownsides: ["One property, one location.", "Slow to sell; repairs and vacancies are on you.", "Big buying and selling costs."],
     fundDownsides: ["Past returns, not guaranteed.", "You don't pick the properties.", "Hold periods and fees apply."],
     viewFund: "Fund details",
-    disclaimer: "Illustration only — not advice. Fund figures are historical and not indicative of future results.",
   },
   tr: {
     title: "Yatırımları Karşılaştır",
@@ -131,7 +130,6 @@ const COPY = {
     tradDownsides: ["Tek konumda tek mülk.", "Satışı yavaş; onarım ve boşluklar size ait.", "Yüksek alım-satım masrafları."],
     fundDownsides: ["Geçmiş getiri, garanti değil.", "Mülkleri siz seçmezsiniz.", "Bekleme süreleri ve ücretler geçerli."],
     viewFund: "Fon detayları",
-    disclaimer: "Yalnızca örnektir — tavsiye değildir. Fon rakamları geçmişe aittir ve gelecekteki sonuçların göstergesi değildir.",
   },
 } as const;
 
@@ -325,8 +323,6 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
               {verdict}
             </div>
           </Panel>
-
-          <p className="text-[11px] leading-4 text-[#9aa5ae]">{c.disclaimer}</p>
         </div>
       )}
     </div>
