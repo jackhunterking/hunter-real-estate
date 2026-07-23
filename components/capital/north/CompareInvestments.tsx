@@ -209,10 +209,45 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
       ) : (
         <div className="space-y-4">
           <Panel className="overflow-hidden">
-            {/* ── Summary band: identity, amount invested, monthly cash flow (aligned rows) ── */}
+            {/* ── Two aligned columns: investment/fund (left · top) | house · condo (right · bottom) ── */}
             <div className="grid gap-px bg-[#e6ebee] md:grid-cols-2">
-              {/* Rental */}
-              <div className="bg-white px-5 py-5">
+              {/* Investment / Fund — leads on the left and on top so the inputs below read as the property's */}
+              <section className="flex flex-col bg-white px-5 py-5">
+                <div className="flex min-h-9 items-center gap-2">
+                  <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-white" style={{ backgroundColor: GREEN }}>
+                    <Building2 className="size-4" />
+                  </span>
+                  <FundSelect funds={funds} value={fund.id} onChange={selectFund} lang={lang} label={c.fundLabel} />
+                </div>
+                <HeroCashFlow
+                  value={money(earn.monthly, lang)}
+                  unit={c.perMonth}
+                  color={GREEN}
+                  invested={money(cf.initialCash, lang)}
+                  investedLabel={c.invested}
+                  metricValue={`+${period.pct.toFixed(1)}%`}
+                  metricLabel={periodLabel(period, c)}
+                />
+                <div className="mt-4 border-t border-[#eef2f4] pt-3">
+                  <p className="text-[11px] font-medium text-[#93a0a9]">{c.pickYear}</p>
+                  <PerformanceSelector fund={fund} selectedKey={period.key} onSelect={setPeriodKey} initialCash={cf.initialCash} lang={lang} c={c} />
+                </div>
+                <TradeOffs
+                  className="mt-auto pt-4"
+                  label={c.tradeoffs}
+                  items={c.fundDownsides}
+                  tone="fund"
+                  action={
+                    <Link href={`${NORTH_BASE}/funds/${fund.slug}`} className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0a4b72]">
+                      {c.viewFund}
+                      <ArrowRight className="size-3" />
+                    </Link>
+                  }
+                />
+              </section>
+
+              {/* House · Condo — summary then the inputs that drive it, so the controls clearly belong here */}
+              <section className="flex flex-col bg-white px-5 py-5">
                 <div className="flex min-h-9 items-center gap-2">
                   <span className="inline-flex size-7 items-center justify-center rounded-full text-white" style={{ backgroundColor: NAVY }}>
                     <Home className="size-4" />
@@ -229,33 +264,7 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   metricValue={`${cf.cashOnCashPct.toFixed(1)}%`}
                   metricLabel={c.returnOnCash}
                 />
-              </div>
-
-              {/* Fund */}
-              <div className="bg-white px-5 py-5">
-                <div className="flex min-h-9 items-center gap-2">
-                  <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-white" style={{ backgroundColor: GREEN }}>
-                    <Building2 className="size-4" />
-                  </span>
-                  <FundSelect funds={funds} value={fund.id} onChange={selectFund} lang={lang} label={c.fundLabel} />
-                </div>
-                <HeroCashFlow
-                  value={money(earn.monthly, lang)}
-                  unit={c.perMonth}
-                  color={GREEN}
-                  invested={money(cf.initialCash, lang)}
-                  investedLabel={c.invested}
-                  metricValue={`+${period.pct.toFixed(1)}%`}
-                  metricLabel={periodLabel(period, c)}
-                />
-              </div>
-            </div>
-
-            {/* ── Detail band: rental controls | fund performance ── */}
-            <div className="grid gap-px border-t border-[#e2e8eb] bg-[#e6ebee] md:grid-cols-2">
-              {/* Rental controls + breakdown */}
-              <section className="flex flex-col bg-white px-5 py-4">
-                <div className="grid grid-cols-2 gap-2">
+                <div className="mt-4 grid grid-cols-2 gap-2 border-t border-[#eef2f4] pt-3">
                   <TypeChoice active={propertyType === "condo"} onClick={() => setPropertyType("condo")} icon={<Building2 className="size-4" />} title={c.condo} />
                   <TypeChoice active={propertyType === "house"} onClick={() => setPropertyType("house")} icon={<Home className="size-4" />} title={c.house} />
                 </div>
@@ -296,24 +305,6 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   <CashRow label={c.cf.management} value={`− ${money(cf.management, lang)}`} muted />
                 </dl>
                 <TradeOffs className="mt-auto pt-4" label={c.tradeoffs} items={c.tradDownsides} tone="property" />
-              </section>
-
-              {/* Fund performance */}
-              <section className="flex flex-col bg-white px-5 py-4">
-                <p className="text-[11px] font-medium text-[#93a0a9]">{c.pickYear}</p>
-                <PerformanceSelector fund={fund} selectedKey={period.key} onSelect={setPeriodKey} initialCash={cf.initialCash} lang={lang} c={c} />
-                <TradeOffs
-                  className="mt-auto pt-4"
-                  label={c.tradeoffs}
-                  items={c.fundDownsides}
-                  tone="fund"
-                  action={
-                    <Link href={`${NORTH_BASE}/funds/${fund.slug}`} className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0a4b72]">
-                      {c.viewFund}
-                      <ArrowRight className="size-3" />
-                    </Link>
-                  }
-                />
               </section>
             </div>
 
@@ -490,6 +481,7 @@ function NumberField({
         {prefix && <span className="text-xs text-[#93a0a9]">{prefix}</span>}
         <input
           type="number"
+          inputMode="decimal"
           value={Number.isFinite(value) ? value : ""}
           step={step}
           min={min}
