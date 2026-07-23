@@ -49,6 +49,7 @@ import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider";
 import { DealerDisclosure } from "@/components/capital/north/DealerDisclosure";
 import { PageHeader, Panel } from "@/components/capital/north/PortalUI";
+import { SELF_CHECK_BANDS } from "@/components/capital/north/InvestorSelfCheck";
 import {
   Dialog,
   DialogContent,
@@ -152,18 +153,7 @@ const COPY = {
       yes: "Yes",
       no: "No",
       unsure: "Not sure",
-      "above-million": "More than CAD $1,000,000",
-      "million-or-less": "CAD $1,000,000 or less",
-      "above-200": "More than CAD $200,000",
-      "above-75-to-200": "More than CAD $75,000, up to $200,000",
-      "75-or-less": "CAD $75,000 or less",
-      "above-300": "More than CAD $300,000",
-      "above-125-to-300": "More than CAD $125,000, up to $300,000",
-      "125-or-less": "CAD $125,000 or less",
-      "not-applicable": "No spouse / not applicable",
-      "five-million-plus": "CAD $5,000,000 or more",
-      "above-400-under-five": "More than CAD $400,000, under $5,000,000",
-      "400-or-less": "CAD $400,000 or less",
+      ...SELF_CHECK_BANDS.en,
     },
     resultEyebrow: "Canadian financial-threshold result",
     resultTitles: {
@@ -300,18 +290,7 @@ const COPY = {
       yes: "Evet",
       no: "Hayır",
       unsure: "Emin değilim",
-      "above-million": "1.000.000 CAD üzerinde",
-      "million-or-less": "1.000.000 CAD veya altında",
-      "above-200": "200.000 CAD üzerinde",
-      "above-75-to-200": "75.000 CAD üzerinde, 200.000 CAD'a kadar",
-      "75-or-less": "75.000 CAD veya altında",
-      "above-300": "300.000 CAD üzerinde",
-      "above-125-to-300": "125.000 CAD üzerinde, 300.000 CAD'a kadar",
-      "125-or-less": "125.000 CAD veya altında",
-      "not-applicable": "Eş yok / uygulanmıyor",
-      "five-million-plus": "5.000.000 CAD veya üzerinde",
-      "above-400-under-five": "400.000 CAD üzerinde, 5.000.000 CAD altında",
-      "400-or-less": "400.000 CAD veya altında",
+      ...SELF_CHECK_BANDS.tr,
     },
     resultEyebrow: "Kanada finansal eşik sonucu",
     resultTitles: {

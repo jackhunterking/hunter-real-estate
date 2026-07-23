@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
+import { TaxonomyProvider } from "@/components/capital/north/TaxonomyProvider";
+import { getTaxonomies } from "@/lib/capital/taxonomies-server";
 import "./north.css";
 
 export const metadata: Metadata = {
@@ -20,13 +22,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HunterAdvisoryLayout({ children }: { children: React.ReactNode }) {
+export default async function HunterAdvisoryLayout({ children }: { children: React.ReactNode }) {
   // Hunter & Hunter is an English-first, global-audience experience. Default to
   // English with its own persisted key so it stays independent of the
   // Turkish-first main site; a language toggle can re-enable TR later.
+  // Classification taxonomies (strategy/asset class/region labels + colors) are
+  // read from Supabase and provided to both the landing and portal trees.
+  const taxonomies = await getTaxonomies();
   return (
     <LanguageProvider defaultLang="en" storageKey="hunter-advisory-lang">
-      <div className="hnc-root min-h-screen bg-[#f4f6f8]">{children}</div>
+      <TaxonomyProvider value={taxonomies}>
+        <div className="hnc-root min-h-screen bg-[#f4f6f8]">{children}</div>
+      </TaxonomyProvider>
     </LanguageProvider>
   );
 }

@@ -64,7 +64,6 @@ test("fund cards keep financial and portfolio facts on detail pages only", () =>
   const cardSources = [
     read("app/hunter-advisory/(portal)/products/ProductsExplorer.tsx"),
     read("app/hunter-advisory/(portal)/dashboard/DashboardView.tsx"),
-    read("components/capital/OfferingCard.tsx"),
   ];
 
   for (const card of cardSources) {
@@ -93,11 +92,12 @@ test("public landing receives only approved offering previews and global documen
   const page = read("app/hunter-advisory/page.tsx");
   const landing = read("components/capital/north/PublicLanding.tsx");
   const projection = read("lib/capital/public-preview.ts");
+  // Supabase is the single source: the landing renders only published offerings,
+  // with no hardcoded demo/fixture fallback.
   assert.match(page, /buildPublicOfferingPreviews\(await getPublishedOfferings\(\)\)/);
-  assert.match(page, /buildPublicOfferingPreviews\(getProductDemoOfferings\(\)\)/);
-  assert.match(page, /productDemoOfferings=\{productDemoOfferings\}/);
-  assert.doesNotMatch(landing, /getPublishedOfferings|OfferingBundle|repository-server/);
-  assert.match(landing, /const displayOfferings = offerings\.length > 0 \? offerings : productDemoOfferings/);
+  assert.doesNotMatch(page, /getProductDemoOfferings|productDemoOfferings|repository"/);
+  assert.doesNotMatch(landing, /getPublishedOfferings|OfferingBundle|repository-server|productDemoOfferings/);
+  assert.match(landing, /const displayOfferings = offerings/);
   assert.match(landing, /offerings=\{displayOfferings\.slice\(0, 2\)\}/);
   assert.match(landing, /isPreview=\{isPreview\}/);
   assert.match(landing, /data\.hasOfferings && <FeaturedOpportunities c=\{c\} offerings=\{displayOfferings\}/);
@@ -173,15 +173,20 @@ test("active professionals retain personal investment actions in Discover", () =
   assert.match(detail, /<PresentationCard/);
 });
 
-test("learning centre ships a bilingual sourced flagship guide", () => {
+test("learning content is Supabase-only with no hardcoded guide in app code", () => {
   const learning = read("lib/capital/learning.ts");
+  const repo = read("lib/capital/learning-repository-server.ts");
   const guide = read("components/capital/north/LearningGuide.tsx");
-  assert.match(learning, /Understanding Core, Core-Plus, Value-Add and Opportunistic Real Estate/);
-  assert.match(learning, /Core, Core-Plus, Value-Add ve Opportunistic/);
-  assert.match(learning, /Urban Land Institute/);
+  // No hardcoded guide fixture or fixture fallback remains in the app.
+  assert.doesNotMatch(learning, /FLAGSHIP_LEARNING_RESOURCE|Understanding Core, Core-Plus/);
+  assert.doesNotMatch(repo, /fixturesAllowed|FLAGSHIP_LEARNING_RESOURCE|HNC_USE_FIXTURE_DATA/);
+  assert.match(repo, /published_learning_resources/);
+  // The guide content is preserved as seed data for provisioning into Supabase.
+  const seed = JSON.parse(read("supabase/seed/learning/core-strategies-guide.json"));
+  assert.equal(seed.slug, "core-core-plus-value-add-opportunistic-real-estate");
+  assert.match(seed.title.en, /Understanding Core, Core-Plus, Value-Add and Opportunistic Real Estate/);
   assert.match(guide, /ReactMarkdown/);
   assert.match(guide, /remarkGfm/);
-  assert.doesNotMatch(learning, /6-10%|8-12%|12-17%|15-25%/);
 });
 
 test("legacy professional profile routes redirect into the unified profile", () => {

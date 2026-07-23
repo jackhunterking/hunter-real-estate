@@ -44,7 +44,7 @@ export type PartnerAccountStatus =
   | "expired"
   | "terminated";
 export type CommissionStatus = "draft" | "approved" | "paid" | "void";
-export type PlatformRole = "compliance_admin" | "finance_admin" | "platform_admin";
+export type PlatformRole = "master_admin";
 export type FirmOfferingStatus =
   | "proposed"
   | "due_diligence"
@@ -64,6 +64,7 @@ export type PortalUser = {
   accountStatus: "active" | "suspended";
   accountIntent?: "investor" | "turkiye_licensed_professional_or_firm";
   investorAccountType?: "individual" | "entity";
+  investorQualificationCategory?: "accredited" | "eligible" | "entity" | "review";
   onboardingStatus?: "pending" | "completed";
   residenceJurisdiction?: string;
   investmentObjective?: string;
@@ -331,6 +332,8 @@ export function maskLicenceNumber(value: string) {
 }
 
 export function hasPlatformRole(user: PortalUser, ...roles: PlatformRole[]) {
+  // master_admin is a superset: it satisfies every platform-role check.
+  if (user.platformRoles.includes("master_admin")) return true;
   return roles.some((role) => user.platformRoles.includes(role));
 }
 
@@ -422,7 +425,7 @@ export function firmRoles(context: PortalAccessContext) {
 export function canUseWorkspace(context: PortalAccessContext, workspace: PortalWorkspace) {
   if (context.user.accountStatus !== "active") return false;
   if (workspace === "investor") {
-    const staff = hasPlatformRole(context.user, "platform_admin", "compliance_admin", "finance_admin");
+    const staff = hasPlatformRole(context.user, "master_admin");
     if (!staff) return context.user.emailVerified;
     return context.user.emailVerified && (
       context.user.accountIntent === "investor" ||
@@ -430,12 +433,7 @@ export function canUseWorkspace(context: PortalAccessContext, workspace: PortalW
     );
   }
   if (workspace === "professional") return isPartnerActive(context);
-  return hasPlatformRole(
-    context.user,
-    "platform_admin",
-    "compliance_admin",
-    "finance_admin",
-  );
+  return hasPlatformRole(context.user, "master_admin");
 }
 
 export function availableWorkspaces(context: PortalAccessContext): PortalWorkspace[] {
@@ -473,7 +471,7 @@ export function defaultPortalPath(context: PortalAccessContext) {
 }
 
 export function visibleCommissions(context: PortalAccessContext) {
-  if (hasPlatformRole(context.user, "platform_admin", "finance_admin")) {
+  if (hasPlatformRole(context.user, "master_admin")) {
     return context.dataset.commissions;
   }
 
@@ -484,7 +482,7 @@ export function visibleCommissions(context: PortalAccessContext) {
 }
 
 export function visibleMemberDirectory(context: PortalAccessContext) {
-  if (!hasPlatformRole(context.user, "platform_admin", "compliance_admin")) return [];
+  if (!hasPlatformRole(context.user, "master_admin")) return [];
   return context.dataset.memberships;
 }
 

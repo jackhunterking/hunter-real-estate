@@ -26,14 +26,12 @@ import {
 
 export function PublicLanding({
   offerings,
-  productDemoOfferings,
 }: {
   offerings: PublicOfferingPreview[];
-  productDemoOfferings: PublicOfferingPreview[];
 }) {
   const { lang } = useLang();
   const c = pick(LANDING_COPY, lang);
-  const displayOfferings = offerings.length > 0 ? offerings : productDemoOfferings;
+  const displayOfferings = offerings;
   const data = deriveLandingData(displayOfferings);
   const isPreview = offerings.length === 0;
 

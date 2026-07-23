@@ -1,5 +1,8 @@
 import type { Lang } from "@/lib/i18n/dictionaries";
 export type { Lang };
+
+/** Public schema version for the offerings API payloads. */
+export const CAPITAL_SCHEMA_VERSION = "1.0.0";
 /**
  * Content-level localized string. `tr` and `en` are the authored source of
  * truth; `fr` and `es` are optional machine translations that fall back to

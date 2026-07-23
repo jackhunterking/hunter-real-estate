@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { CAPITAL_SCHEMA_VERSION } from "@/lib/capital/repository";
+import { CAPITAL_SCHEMA_VERSION } from "@/lib/capital/types";
 import { getPublishedOfferingBySlug } from "@/lib/capital/repository-server";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {

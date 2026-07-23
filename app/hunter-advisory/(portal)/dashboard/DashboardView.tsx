@@ -6,7 +6,8 @@ import type { OfferingBundle, PartnerTier, ReferralStatus } from "@/lib/capital/
 import { PARTNER_COMMISSION_ALLOCATIONS, PARTNER_TIER_THRESHOLDS, nextPartnerTier } from "@/lib/capital/commissions";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
-import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
+import { taxonomyLabel } from "@/lib/capital/taxonomies";
+import { useTaxonomies } from "@/components/capital/north/TaxonomyProvider";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { PageHeader, Panel, SectionHeader, money } from "@/components/capital/north/PortalUI";
 import { FundBannerCard } from "@/components/capital/FundBannerCard";
@@ -89,6 +90,7 @@ function statusClass(status: ReferralStatus) {
 
 export function DashboardView({ offerings }: { offerings: OfferingBundle[] }) {
   const { lang } = useLang();
+  const { strategies } = useTaxonomies();
   const { clients } = useClients();
   const { currentUser, currentOrganization, dataset } = usePortalAccess();
   const c = pick(COPY, lang);

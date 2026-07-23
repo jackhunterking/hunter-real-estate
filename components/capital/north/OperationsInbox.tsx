@@ -32,9 +32,9 @@ export function OperationsInbox({ leads = [], initialModule = "all", initialQueu
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<QueueItem | null>(null);
   const [paymentReference, setPaymentReference] = useState("");
-  const platform = hasPlatformRole(currentUser, "platform_admin");
-  const compliance = platform || hasPlatformRole(currentUser, "compliance_admin");
-  const finance = platform || hasPlatformRole(currentUser, "finance_admin");
+  const platform = hasPlatformRole(currentUser, "master_admin");
+  const compliance = platform;
+  const finance = platform;
   const allowedModules = useMemo(() => new Set<OperationsModule>([
     ...(compliance ? ["requests", "professional", "licences", "firms", "content", "leads", "audit"] as OperationsModule[] : []),
     ...(finance ? ["payments", "fund-schedules", "audit"] as OperationsModule[] : []),

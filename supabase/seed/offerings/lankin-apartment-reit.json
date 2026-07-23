@@ -1,0 +1,571 @@
+{
+  "id": "lankin-apartment-reit",
+  "slug": "lankin-apartment-reit",
+  "managerId": "lankin-investments",
+  "name": {
+    "en": "Lankin Apartment REIT",
+    "tr": "Lankin Apartment REIT"
+  },
+  "shortName": {
+    "en": "Lankin Apartment REIT",
+    "tr": "Lankin Apartment REIT"
+  },
+  "media": {
+    "card": {
+      "src": "/lankinCardBG.png",
+      "alt": {
+        "en": "Lankin Apartment REIT",
+        "tr": "Lankin Apartment REIT"
+      }
+    },
+    "banner": {
+      "src": "/lankinBG.png",
+      "alt": {
+        "en": "Lankin Apartment REIT",
+        "tr": "Lankin Apartment REIT"
+      }
+    },
+    "logo": {
+      "src": "/lankinLogo.png",
+      "alt": {
+        "en": "Lankin Investments logo",
+        "tr": "Lankin Investments logosu"
+      }
+    },
+    "gallery": [
+      {
+        "src": "/capital/photos/lankin-apartment-reit/portfolio-1.jpg",
+        "alt": {
+          "en": "Lankin Apartment REIT portfolio property",
+          "tr": "Lankin Apartment REIT portföy mülkü"
+        },
+        "kind": "photo",
+        "sourceId": "lankin-fact-2026-q1",
+        "verifiedAt": "2026-07-21"
+      },
+      {
+        "src": "/capital/photos/lankin-apartment-reit/portfolio-2.jpg",
+        "alt": {
+          "en": "Lankin Apartment REIT portfolio community",
+          "tr": "Lankin Apartment REIT portföy topluluğu"
+        },
+        "kind": "photo",
+        "sourceId": "lankin-fact-2025-q2",
+        "verifiedAt": "2026-07-21"
+      }
+    ]
+  },
+  "summary": {
+    "en": "Institutional-grade Canadian multi-family real estate with tax-efficient monthly cash distributions.",
+    "tr": "Vergi açısından verimli aylık nakit dağıtımlı, kurumsal nitelikte Kanada çok konutlu gayrimenkulü."
+  },
+  "thesis": {
+    "en": "Lankin Apartment REIT is a real estate investment trust designed to provide investors with consistent monthly cash distributions and long-term capital appreciation. The fund targets newly constructed and stabilized properties within strategic rental markets across Canada, generating steady cash flow through active management in high-growth, resilient rental markets.",
+    "tr": "Lankin Apartment REIT, yatırımcılara istikrarlı aylık nakit dağıtımları ve uzun vadeli sermaye artışı sağlamak üzere tasarlanmış bir gayrimenkul yatırım ortaklığıdır. Fon, Kanada genelindeki stratejik kiralama pazarlarında yeni inşa edilmiş ve stabilize mülkleri hedefler."
+  },
+  "status": "available",
+  "strategyIds": [
+    "core-plus"
+  ],
+  "assetClassIds": [
+    "multifamily"
+  ],
+  "regionIds": [
+    "ontario",
+    "alberta"
+  ],
+  "shareClassIds": [
+    "lankin-class-a"
+  ],
+  "propertyIds": [
+    "lankin-edmonton",
+    "lankin-newmarket",
+    "lankin-brampton"
+  ],
+  "documentIds": [
+    "lankin-fact",
+    "lankin-om",
+    "lankin-subscription",
+    "lankin-report"
+  ],
+  "featured": true,
+  "complianceProfile": {
+    "issuerLegalType": "trust",
+    "isInvestmentFund": true,
+    "approvedOntarioExemptions": [],
+    "reviewOwner": "Licensed compliance review"
+  },
+  "portfolioFacts": [
+    {
+      "value": "8 properties",
+      "classification": "current",
+      "asOfDate": "2026-03-31",
+      "sourceId": "lankin-fact-2026-q1",
+      "sourcePage": 1,
+      "approval": "approved-public"
+    },
+    {
+      "value": "1,434 units",
+      "classification": "current",
+      "asOfDate": "2026-03-31",
+      "sourceId": "lankin-fact-2026-q1",
+      "sourcePage": 1,
+      "approval": "approved-public"
+    },
+    {
+      "value": "$510M+ AUM",
+      "classification": "current",
+      "asOfDate": "2026-03-31",
+      "sourceId": "lankin-fact-2026-q1",
+      "sourcePage": 1,
+      "approval": "approved-public"
+    }
+  ],
+  "fundType": {
+    "en": "Mutual Fund Trust",
+    "tr": "Mutual Fund Trust"
+  },
+  "fundStatus": {
+    "en": "Offering Memorandum",
+    "tr": "Offering Memorandum"
+  },
+  "inceptionDate": "2024",
+  "aum": {
+    "value": "$510M+",
+    "classification": "current",
+    "asOfDate": "2026-03-31",
+    "sourceId": "lankin-fact-2026-q1",
+    "sourcePage": 1,
+    "approval": "approved-public"
+  },
+  "unitsTotal": {
+    "value": 1434,
+    "classification": "current",
+    "asOfDate": "2026-03-31",
+    "sourceId": "lankin-fact-2026-q1",
+    "sourcePage": 1,
+    "approval": "approved-public"
+  },
+  "managementFee": {
+    "en": "0.70% of AUM",
+    "tr": "AUM'nin %0,70'i"
+  },
+  "valuationFrequency": {
+    "en": "Quarterly",
+    "tr": "Üç aylık"
+  },
+  "distributionFrequency": {
+    "en": "Monthly",
+    "tr": "Aylık"
+  },
+  "riskProfile": {
+    "en": "Low - Moderate",
+    "tr": "Düşük - Orta"
+  },
+  "highlights": [
+    {
+      "en": "Access to institutional-grade Canadian multi-family real estate.",
+      "tr": "Kurumsal nitelikte Kanada çok konutlu gayrimenkulüne erişim."
+    },
+    {
+      "en": "Long-term growth and tax-efficient monthly cash distributions.",
+      "tr": "Uzun vadeli büyüme ve vergi açısından verimli aylık nakit dağıtımları."
+    },
+    {
+      "en": "Total targeted annual net return of 10%-14%.",
+      "tr": "Toplam hedeflenen yıllık net getiri %10-14."
+    },
+    {
+      "en": "Targeted annualized cash distribution of 7%-8%, paid monthly.",
+      "tr": "Hedeflenen yıllıklandırılmış nakit dağıtımı %7-8, aylık ödenir."
+    },
+    {
+      "en": "Distribution Reinvestment Plan (DRIP) available at a 2% discount.",
+      "tr": "Dağıtım Yeniden Yatırım Planı (DRIP) %2 indirimle mevcuttur."
+    }
+  ],
+  "trailingReturns": [
+    {
+      "period": {
+        "en": "2025 Q1",
+        "tr": "2025 1Ç"
+      },
+      "value": "4.1%"
+    },
+    {
+      "period": {
+        "en": "2025 Q2",
+        "tr": "2025 2Ç"
+      },
+      "value": "7.2%"
+    },
+    {
+      "period": {
+        "en": "2025 Q3",
+        "tr": "2025 3Ç"
+      },
+      "value": "10.2%"
+    },
+    {
+      "period": {
+        "en": "2025 Q4",
+        "tr": "2025 4Ç"
+      },
+      "value": "14.9%"
+    },
+    {
+      "period": {
+        "en": "2026 Q1",
+        "tr": "2026 1Ç"
+      },
+      "value": "3.2%"
+    }
+  ],
+  "trailingReturnsNote": {
+    "en": "Returns are cumulative year-to-date figures, not individual quarterly returns. Q4 reflects the full-year total return.",
+    "tr": "Getiriler kümülatif yılbaşından bugüne rakamlardır; tekil çeyreklik getiri değildir. 4Ç tam yıl toplam getirisini yansıtır."
+  },
+  "serviceProviders": {
+    "auditor": {
+      "name": "BDO Canada LLP",
+      "url": "https://www.bdo.ca/"
+    },
+    "legalCounsel": {
+      "name": "Borden Ladner Gervais LLP (BLG)",
+      "url": "https://www.blg.com/en"
+    },
+    "appraiser": {
+      "name": "Avison Young",
+      "url": "https://www.avisonyoung.com/"
+    }
+  },
+  "lastUpdated": "2026-03-31",
+  "risks": [
+    {
+      "en": "Distributions are discretionary and may change.",
+      "tr": "Dağıtımlar isteğe bağlıdır ve değişebilir."
+    },
+    {
+      "en": "Private securities may have indefinite hold periods and limited liquidity.",
+      "tr": "Özel menkul kıymetlerin belirsiz bekleme süreleri ve sınırlı likiditesi olabilir."
+    }
+  ],
+  "verifiedAt": "2026-07-12",
+  "manager": {
+    "id": "lankin-investments",
+    "slug": "lankin-investments",
+    "name": {
+      "en": "Lankin Investments",
+      "tr": "Lankin Investments"
+    },
+    "headquarters": {
+      "city": "Woodbridge",
+      "province": "Ontario",
+      "country": "Canada"
+    },
+    "website": "https://www.lankin.com/",
+    "officeAddress": {
+      "en": "6220 Hwy 7, Suite 500, Vaughan, ON L4H 4G3",
+      "tr": "6220 Hwy 7, Suite 500, Vaughan, ON L4H 4G3"
+    },
+    "description": {
+      "en": "Woodbridge, Ontario real estate manager specializing in institutional-grade Canadian multi-family assets across strategic rental markets.",
+      "tr": "Stratejik kiralama pazarlarında kurumsal nitelikte Kanada çok konutlu varlıklarında uzmanlaşmış, Woodbridge (Ontario) merkezli gayrimenkul yöneticisi."
+    }
+  },
+  "shareClasses": [
+    {
+      "id": "lankin-class-a",
+      "offeringId": "lankin-apartment-reit",
+      "name": "Class A (Series A)",
+      "minimumInvestment": {
+        "value": 5000,
+        "classification": "current",
+        "asOfDate": "2026-03-31",
+        "sourceId": "lankin-fact-2026-q1",
+        "sourcePage": 1,
+        "approval": "approved-public"
+      },
+      "unitPrice": {
+        "value": 10.74,
+        "classification": "current",
+        "asOfDate": "2026-07-12",
+        "sourceId": "lankin-deck",
+        "sourcePage": 12,
+        "approval": "approved-public"
+      },
+      "targetReturn": {
+        "value": "10-14% annual net return",
+        "classification": "target",
+        "asOfDate": "2026-03-31",
+        "sourceId": "lankin-fact-2026-q1",
+        "sourcePage": 1,
+        "approval": "approved-public"
+      },
+      "targetDistribution": {
+        "value": "7-8% annually, paid monthly",
+        "classification": "target",
+        "asOfDate": "2026-03-31",
+        "sourceId": "lankin-fact-2026-q1",
+        "sourcePage": 1,
+        "approval": "approved-public"
+      },
+      "distributionPerUnit": {
+        "value": "7-8% annually, paid monthly",
+        "classification": "target",
+        "asOfDate": "2026-03-31",
+        "sourceId": "lankin-fact-2026-q1",
+        "sourcePage": 1,
+        "approval": "approved-public"
+      },
+      "term": {
+        "value": "Open-ended fund",
+        "classification": "current",
+        "asOfDate": "2026-03-31",
+        "sourceId": "lankin-fact-2026-q1",
+        "sourcePage": 1,
+        "approval": "approved-public"
+      },
+      "redemptionTerms": {
+        "en": "Year 1: 10%; Year 2: 8%; Year 3: 6%; no fees after Year 3.",
+        "tr": "1. yıl: %10; 2. yıl: %8; 3. yıl: %6; 3. yıldan sonra ücret yok."
+      },
+      "drip": {
+        "en": "DRIP available at a 2% discount.",
+        "tr": "DRIP %2 indirimle mevcuttur."
+      },
+      "registeredAccountTypes": [
+        "RRSP",
+        "TFSA",
+        "RESP",
+        "LIRA",
+        "RRIF"
+      ],
+      "fundDefinedFacts": [
+        {
+          "id": "lankin-target-return",
+          "label": {
+            "en": "Targeted Annual Net Return",
+            "tr": "Hedeflenen Yıllık Net Getiri"
+          },
+          "value": {
+            "en": "10%-14%",
+            "tr": "%10-%14"
+          },
+          "category": "target",
+          "shareClassId": "lankin-class-a",
+          "sourceId": "lankin-fact-2026-q1",
+          "sourcePage": 1,
+          "effectiveDate": "2026-03-31",
+          "approval": "approved-public"
+        },
+        {
+          "id": "lankin-target-distribution",
+          "label": {
+            "en": "Targeted Annualized Cash Distribution",
+            "tr": "Hedeflenen Yıllıklandırılmış Nakit Dağıtımı"
+          },
+          "value": {
+            "en": "7%-8%, paid monthly",
+            "tr": "%7-%8, aylık ödenir"
+          },
+          "category": "target",
+          "shareClassId": "lankin-class-a",
+          "sourceId": "lankin-fact-2026-q1",
+          "sourcePage": 1,
+          "effectiveDate": "2026-03-31",
+          "approval": "approved-public"
+        },
+        {
+          "id": "lankin-management-fee",
+          "label": {
+            "en": "Management Fee",
+            "tr": "Yönetim Ücreti"
+          },
+          "value": {
+            "en": "0.70% of AUM",
+            "tr": "AUM'nin %0,70'i"
+          },
+          "category": "fee",
+          "shareClassId": "lankin-class-a",
+          "sourceId": "lankin-deck",
+          "sourcePage": 12,
+          "effectiveDate": "2026-07-12",
+          "approval": "approved-public"
+        },
+        {
+          "id": "lankin-redemption-fee",
+          "label": {
+            "en": "Redemption Fee",
+            "tr": "İtfa Ücreti"
+          },
+          "value": {
+            "en": "Year 1: 10%; Year 2: 8%; Year 3: 6%; no fees after Year 3.",
+            "tr": "1. yıl: %10; 2. yıl: %8; 3. yıl: %6; 3. yıldan sonra ücret yok."
+          },
+          "category": "early-exit",
+          "shareClassId": "lankin-class-a",
+          "sourceId": "lankin-deck",
+          "sourcePage": 12,
+          "effectiveDate": "2026-07-12",
+          "approval": "approved-public"
+        },
+        {
+          "id": "lankin-fund-term",
+          "label": {
+            "en": "Fund Term",
+            "tr": "Fon Süresi"
+          },
+          "value": {
+            "en": "Open-ended fund",
+            "tr": "Açık uçlu fon"
+          },
+          "category": "term",
+          "shareClassId": "lankin-class-a",
+          "sourceId": "lankin-fact-2026-q1",
+          "sourcePage": 1,
+          "effectiveDate": "2026-03-31",
+          "approval": "approved-public"
+        }
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "id": "lankin-edmonton",
+      "offeringIds": [
+        "lankin-apartment-reit"
+      ],
+      "managerId": "lankin-investments",
+      "name": {
+        "en": "2014 Sherwood Dr, Edmonton",
+        "tr": "2014 Sherwood Dr, Edmonton"
+      },
+      "address": {
+        "en": "2014 Sherwood Dr, Edmonton, Alberta",
+        "tr": "2014 Sherwood Dr, Edmonton, Alberta"
+      },
+      "city": "Edmonton",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 53.5232,
+      "longitude": -113.33,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "listingUrl": "https://TODO-replace-with-real-listing"
+    },
+    {
+      "id": "lankin-newmarket",
+      "offeringIds": [
+        "lankin-apartment-reit"
+      ],
+      "managerId": "lankin-investments",
+      "name": {
+        "en": "75-77 Huron Heights Dr, Newmarket",
+        "tr": "75-77 Huron Heights Dr, Newmarket"
+      },
+      "address": {
+        "en": "75-77 Huron Heights Dr, Newmarket, Ontario",
+        "tr": "75-77 Huron Heights Dr, Newmarket, Ontario"
+      },
+      "city": "Newmarket",
+      "province": "Ontario",
+      "country": "Canada",
+      "latitude": 44.0501,
+      "longitude": -79.438,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "listingUrl": "https://TODO-replace-with-real-listing"
+    },
+    {
+      "id": "lankin-brampton",
+      "offeringIds": [
+        "lankin-apartment-reit"
+      ],
+      "managerId": "lankin-investments",
+      "name": {
+        "en": "75/85/90 Orenda Rd, Brampton",
+        "tr": "75/85/90 Orenda Rd, Brampton"
+      },
+      "address": {
+        "en": "75, 85 and 90 Orenda Rd, Brampton, Ontario",
+        "tr": "75, 85 ve 90 Orenda Rd, Brampton, Ontario"
+      },
+      "city": "Brampton",
+      "province": "Ontario",
+      "country": "Canada",
+      "latitude": 43.7089,
+      "longitude": -79.7376,
+      "assetClassId": "multifamily",
+      "status": "new-construction",
+      "verificationStatus": "verified",
+      "listingUrl": "https://TODO-replace-with-real-listing"
+    }
+  ],
+  "documents": [
+    {
+      "id": "lankin-fact",
+      "offeringId": "lankin-apartment-reit",
+      "title": {
+        "en": "Fund Fact Sheet - Class A",
+        "tr": "Fon Bilgi Formu - Class A"
+      },
+      "description": {
+        "en": "Q1 2026",
+        "tr": "2026 1. Çeyrek"
+      },
+      "type": "fact-sheet",
+      "effectiveDate": "2026-03-31",
+      "version": "2026.Q1",
+      "sourceId": "lankin-fact-2026-q1",
+      "visibility": "public",
+      "href": "/capital/docs/lankin-apartment-reit-fact-sheet-q1-2026-class-a.pdf"
+    },
+    {
+      "id": "lankin-om",
+      "offeringId": "lankin-apartment-reit",
+      "title": {
+        "en": "Offering Memorandum",
+        "tr": "Teklif Muhtırası"
+      },
+      "description": {
+        "en": "2026 SEDAR filing version",
+        "tr": "2026 SEDAR başvuru sürümü"
+      },
+      "type": "offering-memorandum",
+      "effectiveDate": "2026-01-15",
+      "version": "2026",
+      "visibility": "approved-investor"
+    },
+    {
+      "id": "lankin-subscription",
+      "offeringId": "lankin-apartment-reit",
+      "title": {
+        "en": "Subscription Agreement",
+        "tr": "Abonelik Sözleşmesi"
+      },
+      "type": "subscription-agreement",
+      "effectiveDate": "2025-06-30",
+      "version": "current",
+      "visibility": "approved-investor"
+    },
+    {
+      "id": "lankin-report",
+      "offeringId": "lankin-apartment-reit",
+      "title": {
+        "en": "Report & Financial Statements",
+        "tr": "Rapor ve Mali Tablolar"
+      },
+      "description": {
+        "en": "Q1 2025",
+        "tr": "2025 1. Çeyrek"
+      },
+      "type": "report",
+      "effectiveDate": "2025-03-31",
+      "version": "2025.Q1",
+      "visibility": "approved-investor"
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import { portalRpc } from "@/lib/capital/portal-route";
 
 const Body = z.object({
   userId: z.string().uuid(),
-  role: z.enum(["compliance_admin", "finance_admin", "platform_admin"]),
+  role: z.literal("master_admin"),
   enabled: z.boolean(),
 });
 

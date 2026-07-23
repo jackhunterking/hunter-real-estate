@@ -1,9 +1,7 @@
 import "server-only";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { isSupabaseConfigured } from "@/lib/supabase/config";
 import {
-  FLAGSHIP_LEARNING_RESOURCE,
   learningSummary,
   type LearningResourceDetail,
   type LearningResourceSource,
@@ -28,12 +26,6 @@ type PublishedLearningRow = {
   reviewed_at: string;
   sources: unknown;
 };
-
-function fixturesAllowed() {
-  return process.env.NODE_ENV !== "production" && (
-    !isSupabaseConfigured() || process.env.HNC_USE_FIXTURE_DATA === "true"
-  );
-}
 
 function localizedText(value: unknown): LocalizedText | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
@@ -103,36 +95,27 @@ function resourceFromRow(row: PublishedLearningRow): LearningResourceDetail | nu
   };
 }
 
+// Learning content is read exclusively from Supabase — no fixture fallback.
 export async function getPublishedLearningResources() {
   const supabase = await createSupabaseServerClient();
-  if (!supabase) {
-    return fixturesAllowed() ? [learningSummary(FLAGSHIP_LEARNING_RESOURCE)] : [];
-  }
+  if (!supabase) return [];
   const result = await supabase
     .from("published_learning_resources")
     .select("id,slug,resource_type,category_key,audience,version_id,version,title,summary,body_markdown,disclaimer,reading_minutes,effective_at,published_at,reviewed_at,sources")
     .order("published_at", { ascending: false });
-  if (result.error) return fixturesAllowed() ? [learningSummary(FLAGSHIP_LEARNING_RESOURCE)] : [];
+  if (result.error) return [];
   const resources = (result.data as PublishedLearningRow[]).map(resourceFromRow).filter(Boolean) as LearningResourceDetail[];
   return resources.map(learningSummary);
 }
 
 export async function getPublishedLearningResourceBySlug(slug: string) {
   const supabase = await createSupabaseServerClient();
-  if (!supabase) {
-    return fixturesAllowed() && slug === FLAGSHIP_LEARNING_RESOURCE.slug
-      ? FLAGSHIP_LEARNING_RESOURCE
-      : undefined;
-  }
+  if (!supabase) return undefined;
   const result = await supabase
     .from("published_learning_resources")
     .select("id,slug,resource_type,category_key,audience,version_id,version,title,summary,body_markdown,disclaimer,reading_minutes,effective_at,published_at,reviewed_at,sources")
     .eq("slug", slug)
     .maybeSingle();
-  if (result.error || !result.data) {
-    return fixturesAllowed() && slug === FLAGSHIP_LEARNING_RESOURCE.slug
-      ? FLAGSHIP_LEARNING_RESOURCE
-      : undefined;
-  }
+  if (result.error || !result.data) return undefined;
   return resourceFromRow(result.data as PublishedLearningRow) ?? undefined;
 }

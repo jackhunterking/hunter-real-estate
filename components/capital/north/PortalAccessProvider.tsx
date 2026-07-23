@@ -26,15 +26,33 @@ import {
   type Organization,
   type PartnerApplication,
   type PortalAccessContext as AccessContext,
+  emptyPortalDataset,
   type PortalDataset,
   type PortalUser,
   type PreviewPersona,
 } from "@/lib/capital/portal-access";
-import {
-  demoUserForPersona,
-  initialPortalDataset,
-} from "@/lib/capital/portal-demo";
 import { calculateFundDistributionCommission } from "@/lib/capital/commissions";
+
+/**
+ * Neutral placeholder used only in dev-preview mode (no Supabase session).
+ * Production always has a real snapshot, so this never ships to a tenant. It
+ * carries no realistic PII and no roles — the portal shows the empty investor
+ * experience.
+ */
+const PREVIEW_PLACEHOLDER_USER: PortalUser = {
+  id: "preview",
+  firstName: "Preview",
+  lastName: "",
+  displayName: "Preview",
+  email: "preview@localhost",
+  locale: "en",
+  emailVerified: true,
+  accountStatus: "active",
+  accountIntent: "investor",
+  investorAccountType: "individual",
+  onboardingStatus: "completed",
+  platformRoles: [],
+};
 import { portalRequest } from "@/lib/capital/portal-client";
 
 export type PartnerApplicationInput = {
@@ -151,7 +169,7 @@ function copyDataset(dataset: PortalDataset): PortalDataset {
 
 export function PortalAccessProvider({
   children,
-  initialDataset = initialPortalDataset,
+  initialDataset = emptyPortalDataset,
   initialUser,
   previewEnabled = true,
   backendConfigured = false,
@@ -163,8 +181,8 @@ export function PortalAccessProvider({
   backendConfigured?: boolean;
 }) {
   const [dataset, setDataset] = useState<PortalDataset>(() => copyDataset(initialDataset));
-  const [previewPersona, setPreviewPersonaState] = useState<PreviewPersona>("partner");
-  const [accountView, setAccountViewState] = useState<PortalAccountView>("professional");
+  const [previewPersona, setPreviewPersonaState] = useState<PreviewPersona>("investor");
+  const [accountView, setAccountViewState] = useState<PortalAccountView>("investor");
 
   useEffect(() => {
     if (!previewEnabled) return;
@@ -176,7 +194,7 @@ export function PortalAccessProvider({
     }
   }, [previewEnabled]);
 
-  const currentUser = initialUser ?? demoUserForPersona(previewPersona);
+  const currentUser = initialUser ?? PREVIEW_PLACEHOLDER_USER;
   const context = useMemo(() => ({ user: currentUser, dataset }), [currentUser, dataset]);
 
   useEffect(() => {

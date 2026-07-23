@@ -17,7 +17,8 @@ import {
   formatCurrencyCad,
   formatReturnPhrase,
 } from "@/lib/capital/present";
-import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
+import { taxonomyLabel } from "@/lib/capital/taxonomies";
+import { useTaxonomies } from "@/components/capital/north/TaxonomyProvider";
 import type {
   Lang,
   Property,
@@ -139,6 +140,7 @@ export function DashboardFrame({
   isPreview?: boolean;
 }) {
   const { lang } = useLang();
+  const { strategies } = useTaxonomies();
 
   return (
     <BrowserFrame label={c.frames.portfolio}>
@@ -240,6 +242,7 @@ export function OfferingDetailFrame({
   c: LandingCopy;
 }) {
   const { lang } = useLang();
+  const { strategies } = useTaxonomies();
   const banner = offering.media?.banner?.src ?? offering.media?.card?.src;
   const strategy = offering.strategyIds[0]
     ? taxonomyLabel(strategies, offering.strategyIds[0], lang)

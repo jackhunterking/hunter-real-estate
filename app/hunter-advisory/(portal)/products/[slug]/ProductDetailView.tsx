@@ -6,7 +6,8 @@ import Link from "next/link";
 import { ArrowLeft, Building2, ExternalLink, FileText, MapPinned, TrendingUp } from "lucide-react";
 import type { FundCommissionSchedule, OfferingBundle, ShareClass, TrailingReturn } from "@/lib/capital/types";
 import { formatCurrencyCad, formatDate, formatMoneyCompact } from "@/lib/capital/present";
-import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
+import { taxonomyLabel } from "@/lib/capital/taxonomies";
+import { useTaxonomies } from "@/components/capital/north/TaxonomyProvider";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
 import { FundMapEmbed } from "@/components/capital/map/FundMapEmbed";
@@ -352,6 +353,7 @@ function Documents({ offering }: { offering: OfferingBundle }) {
 
 export function ProductDetailView({ offering }: { offering: OfferingBundle }) {
   const { lang } = useLang();
+  const { strategies } = useTaxonomies();
   const { context, accountView } = usePortalAccess();
   const c = pick(COPY, lang);
   const [tab, setTab] = useState<Tab>("overview");

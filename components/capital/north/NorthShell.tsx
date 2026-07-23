@@ -15,6 +15,7 @@ import {
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
+  Scale,
   ShieldCheck,
   UserRound,
   UsersRound,
@@ -56,6 +57,7 @@ const COPY = {
       ["/commissions", "Ödemeler", CircleDollarSign],
     ],
     learning: ["/resources/learning", "Bilgi merkezi", BookOpen],
+    compareInvestments: ["/resources/compare-investments", "Yatırımları karşılaştır", Scale],
     investorReadiness: ["/resources/investor-readiness", "Yatırımcı öz kontrolü", BadgeCheck],
     professionalReadiness: ["/resources/investor-readiness", "Yatırımcı yeterliliği", BadgeCheck],
     operations: [["/operations", "Operasyonlar", ShieldCheck]],
@@ -85,6 +87,7 @@ const COPY = {
       ["/commissions", "Payments", CircleDollarSign],
     ],
     learning: ["/resources/learning", "Learning centre", BookOpen],
+    compareInvestments: ["/resources/compare-investments", "Compare Investments", Scale],
     investorReadiness: ["/resources/investor-readiness", "Investor self-check", BadgeCheck],
     professionalReadiness: ["/resources/investor-readiness", "Investor qualification", BadgeCheck],
     operations: [["/operations", "Operations", ShieldCheck]],
@@ -137,7 +140,7 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
       ? [{
           id: "resources" as const,
           label: c.groups.resources,
-          items: [c.learning, accountView === "professional" && professional ? c.professionalReadiness : c.investorReadiness]
+          items: [c.learning, c.compareInvestments, accountView === "professional" && professional ? c.professionalReadiness : c.investorReadiness]
             .map(([href, label, icon]) => ({ href, label, icon })),
         }]
       : []),

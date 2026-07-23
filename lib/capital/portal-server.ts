@@ -47,7 +47,7 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
     supabase.auth.getUser(),
     supabase
       .from("profiles")
-      .select("user_id,first_name,middle_names,last_name,display_name,email,locale,account_status,account_intent,investor_account_type,onboarding_status,residence_jurisdiction,investment_objective,time_horizon,risk_acknowledged_at,contact_consent_at"),
+      .select("user_id,first_name,middle_names,last_name,display_name,email,locale,account_status,account_intent,investor_account_type,investor_qualification_category,onboarding_status,residence_jurisdiction,investment_objective,time_horizon,risk_acknowledged_at,contact_consent_at"),
     supabase
       .from("platform_role_assignments")
       .select("user_id,role"),
@@ -109,6 +109,8 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
     accountStatus: profile.account_status === "suspended" ? "suspended" : "active",
     accountIntent: profile.account_intent ?? undefined,
     investorAccountType: profile.investor_account_type ?? undefined,
+    investorQualificationCategory:
+      (profile.investor_qualification_category as PortalUser["investorQualificationCategory"]) ?? undefined,
     onboardingStatus: profile.onboarding_status,
     residenceJurisdiction: profile.residence_jurisdiction ?? undefined,
     investmentObjective: profile.investment_objective ?? undefined,

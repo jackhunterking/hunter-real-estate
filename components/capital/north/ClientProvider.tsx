@@ -10,7 +10,6 @@ import type {
   InvestorReadinessAssessment,
   LocalizedText,
 } from "@/lib/capital/types";
-import { initialClients } from "@/lib/capital/partner-data";
 import { hasPlatformRole } from "@/lib/capital/portal-access";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { uploadInvestorDocument } from "@/lib/supabase/storage";
@@ -153,11 +152,11 @@ export function ClientProvider({ children }: { children: React.ReactNode }) {
   const [allClients, setClients] = useState<ClientRecord[]>(() =>
     backendConfigured
       ? dataset.referrals.map((referral) => referralClient(referral, dataset.documents, dataset.qualificationAssessments))
-      : initialClients,
+      : [],
   );
   const clients = useMemo(
     () =>
-      hasPlatformRole(currentUser, "platform_admin", "compliance_admin")
+      hasPlatformRole(currentUser, "master_admin")
         ? allClients
         : allClients.filter((client) => client.ownerUserId === currentUser.id),
     [allClients, currentUser],

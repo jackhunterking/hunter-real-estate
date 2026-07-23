@@ -1,14 +1,58 @@
-# Hunter & Hunter Investment Advisors controlled-content rollout
+# Hunter & Hunter Investment Advisors — content is Supabase-sourced
 
-The application now reads public and authenticated fund screens from the server-side `api.published_offerings` repository. Static fund records are permitted only outside production when Supabase is not configured, or when `HNC_USE_FIXTURE_DATA=true` is explicitly set for local development. Production never falls back to fixtures.
+Supabase is the single source of truth for portal content. The application reads
+offerings, taxonomies, and learning content **only** from Supabase — there is no
+fixture fallback and no hardcoded tenant/demo content in the app.
 
-## Import and publication sequence
+## Offering content model (admin-panel-ready)
 
-1. Match each fixture manager to `app.fund_managers` and each fund slug to `app.offerings`.
-2. Create a new `app.offering_content_versions` row as `draft`. Its `content_snapshot` must validate as a complete `OfferingBundle` and include only source-approved public or access-controlled document metadata.
-3. Assign a distinct author, reviewer, and compliance owner. Move the record through `draft → in_review → approved → published`; the database trigger blocks skipped publication stages.
-4. Populate effective, publication, source, and withdrawal dates. Set `app.offerings.current_version_id` only to the approved current version and publish the offering only when issuer/dealer/legal approval is recorded.
-5. Verify the anonymous `api.published_offerings` response and compare every public field, document, property, metric, source date, and localized string against the approved source.
-6. Remove `HNC_USE_FIXTURE_DATA`, run the full role matrix and production build, then approve the static-module rows in the deletion manifest separately.
+Offerings use a normalized working model with an audited draft→publish workflow,
+mirroring the learning module:
 
-No remote import was executed from this workspace because no Supabase project credentials are configured. The migration and repository are ready to apply through the normal reviewed deployment pipeline.
+- Editable working rows: `app.fund_managers` (with `content`), `app.properties`
+  (+ `app.offering_properties`), and `app.offerings.draft_content` (offering-level
+  content). A future admin panel edits these directly.
+- `api.publish_offering(offering_id, actor)` **composes** the immutable
+  `content_snapshot` from those rows (manager + properties overlaid on
+  `draft_content`), inserts a new `app.offering_content_versions` row, walks it
+  `draft → in_review → approved → published` (enforced by
+  `private.enforce_offering_version_progression`), supersedes the prior version,
+  and points `app.offerings.current_version_id` at it. Emits an `audit_events`
+  row. Role-gated to `private.is_hunter_admin()` or the service role.
+- `api.seed_offering(bundle jsonb, actor)` imports one offering bundle end-to-end
+  (upsert rows → `publish_offering`). It is the reusable import path the seed
+  script uses and the admin panel can reuse.
+- The live read path is unchanged: `api.published_offerings.content_snapshot`,
+  validated by `parseOfferingBundle` in `lib/capital/repository-server.ts`.
+
+Writes to all content tables are gated to Hunter admins (`is_hunter_admin`), and
+the new `app.taxonomies` table follows the same rule.
+
+## Migrations
+
+- `20260723000000_offering_authoring.sql` — `draft_content`, `fund_managers.content`,
+  `app.compose_offering_snapshot`, `api.publish_offering`.
+- `20260723000100_taxonomies.sql` — `app.taxonomies` + `api.taxonomies` (+ 9 rows).
+- `20260723000200_seed_offering_rpc.sql` — `api.seed_offering`.
+
+## Seeding
+
+Reference taxonomies are seeded by their migration. Offering content lives as
+committed JSON under `supabase/seed/offerings/*.json` and is imported by:
+
+```bash
+node --env-file=.env.local scripts/seed-content.ts
+```
+
+The script (service role) calls `api.seed_offering` per bundle. Idempotent.
+Lankin Apartment REIT and Legacy Investment are published this way.
+
+## Learning content
+
+The learning guide previously hardcoded in `lib/capital/learning.ts` has been
+removed; `lib/capital/learning-repository-server.ts` reads the Supabase learning
+tables only (no fixture fallback). The learning schema and content are live on
+the remote database (published guides in `api.published_learning_resources`), so
+the Learning centre renders real DB content. The old flagship guide is archived
+as seed data at `supabase/seed/learning/core-strategies-guide.json` (not used at
+runtime). Do not reintroduce a code-level fixture fallback.

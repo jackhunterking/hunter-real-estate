@@ -4,6 +4,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { buildMapProperties } from "@/lib/capital/present";
+import { useTaxonomies } from "@/components/capital/north/TaxonomyProvider";
 import type { OfferingBundle } from "@/lib/capital/types";
 
 // Lazy-load the map so Leaflet (CDN) + tiles load only when the Portfolio tab
@@ -15,7 +16,8 @@ const FundMap = dynamic(() => import("./FundMap").then((m) => m.FundMap), {
 
 export function FundMapEmbed({ offering }: { offering: OfferingBundle }) {
   const { lang } = useLang();
-  const buildings = buildMapProperties(offering, lang);
+  const { assetClasses } = useTaxonomies();
+  const buildings = buildMapProperties(offering, lang, assetClasses);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   return (

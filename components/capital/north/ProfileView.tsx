@@ -6,12 +6,15 @@ import { pick } from "@/lib/i18n/localize";
 import { PartnerApplicationView } from "./PartnerApplicationView";
 import { PageHeader, Panel, SectionHeader } from "./PortalUI";
 import { usePortalAccess } from "./PortalAccessProvider";
+import { InvestorSelfCheckButton } from "./InvestorSelfCheckButton";
+import { selfCheckCategoryLabel } from "./InvestorSelfCheck";
 
 const COPY = {
   tr: {
     title: "Profil",
     description: "Hesap bilgilerinizi, doğrulama durumunuzu ve profesyonel erişiminizi yönetin.",
     accountType: "Hesap türü",
+    investorType: "Yatırımcı türü",
     accountStatus: "Hesap durumu",
     active: "Aktif",
     suspended: "Askıya alınmış",
@@ -34,6 +37,7 @@ const COPY = {
     title: "Profile",
     description: "Manage your account information, verification status, and professional access.",
     accountType: "Account type",
+    investorType: "Investor type",
     accountStatus: "Account status",
     active: "Active",
     suspended: "Suspended",
@@ -69,6 +73,11 @@ export function ProfileView() {
     : currentUser.investorAccountType === "entity"
       ? c.entity
       : c.investorAccount;
+  // Prefer the persisted qualification band; fall back to the coarse account
+  // type until the investor completes the self-check at least once.
+  const investorTypeLabel = currentUser.investorQualificationCategory
+    ? selfCheckCategoryLabel(currentUser.investorQualificationCategory, lang)
+    : accountType;
   const accountActive = currentUser.accountStatus === "active";
 
   const profileFields = [
@@ -111,15 +120,15 @@ export function ProfileView() {
               </span>
               <div className="min-w-0">
                 <h2 className="truncate text-lg font-semibold text-[#172e3e]">{currentUser.displayName}</h2>
-                <p className="mt-1 text-xs text-[#6e7b85]">{c.accountType} · <span className="font-semibold text-[#415563]">{accountType}</span></p>
+                <p className="mt-1 text-xs text-[#6e7b85]">{c.investorType} · <span className="font-semibold text-[#415563]">{investorTypeLabel}</span></p>
               </div>
             </div>
-            <div className="flex items-center justify-between gap-3 border-t border-[#e7ebee] pt-4 sm:border-t-0 sm:pt-0">
-              <span className="text-xs text-[#77838c]">{c.accountStatus}</span>
+            <div className="flex items-center justify-between gap-3 border-t border-[#e7ebee] pt-4 sm:flex-col sm:items-end sm:gap-2.5 sm:border-t-0 sm:pt-0">
               <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${accountActive ? "bg-[#e8f2ec] text-[#326449]" : "bg-[#fbefed] text-[#8a4b42]"}`}>
                 <span className="size-1.5 rounded-full bg-current opacity-75" />
                 {accountActive ? c.active : c.suspended}
               </span>
+              <InvestorSelfCheckButton />
             </div>
           </div>
 

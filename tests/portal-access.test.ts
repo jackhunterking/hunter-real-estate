@@ -15,7 +15,7 @@ import {
   DEMO_PERSONA_USER_IDS,
   demoUserForPersona,
   initialPortalDataset,
-} from "../lib/capital/portal-demo.ts";
+} from "./fixtures/portal-personas.ts";
 
 function datasetCopy(): PortalDataset {
   return structuredClone(initialPortalDataset);

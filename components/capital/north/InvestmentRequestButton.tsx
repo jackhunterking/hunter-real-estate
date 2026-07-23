@@ -30,7 +30,7 @@ const COPY = {
   },
 } as const;
 
-export function InvestmentRequestButton({ offerings, initialOfferingId, className = "", light = false }: { offerings: OfferingBundle[]; initialOfferingId?: string; className?: string; light?: boolean }) {
+export function InvestmentRequestButton({ offerings, initialOfferingId, className = "", light = false, label }: { offerings: OfferingBundle[]; initialOfferingId?: string; className?: string; light?: boolean; label?: string }) {
   const { lang } = useLang();
   const { backendConfigured, currentUser } = usePortalAccess();
   const c = pick(COPY, lang);
@@ -65,7 +65,7 @@ export function InvestmentRequestButton({ offerings, initialOfferingId, classNam
 
   return (
     <>
-      <button type="button" onClick={() => dialogRef.current?.showModal()} className={`inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-semibold ${light ? "bg-white text-[#0a2d46] hover:bg-[#edf3f6]" : "bg-[#0a2d46] text-white hover:bg-[#123f5e]"} ${className}`}>{c.open}</button>
+      <button type="button" onClick={() => dialogRef.current?.showModal()} className={`inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-semibold ${light ? "bg-white text-[#0a2d46] hover:bg-[#edf3f6]" : "bg-[#0a2d46] text-white hover:bg-[#123f5e]"} ${className}`}>{label ?? c.open}</button>
       <dialog ref={dialogRef} aria-labelledby="investment-request-title" className="m-auto w-[min(94vw,620px)] rounded-xl border-0 bg-white p-0 text-[#1d3342] shadow-2xl backdrop:bg-[#061521]/65">
         <div className="flex items-start justify-between gap-4 border-b border-[#e4e8eb] px-5 py-4 sm:px-6">
           <div><h2 id="investment-request-title" className="text-xl font-semibold">{c.title}</h2><p className="mt-1 max-w-lg text-sm leading-6 text-[#687681]">{c.intro}</p></div>

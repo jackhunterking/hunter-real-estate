@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { BookOpen, CheckCircle2, FilePlus2, Plus, RefreshCw, Save, Send, Trash2, XCircle } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { FLAGSHIP_LEARNING_RESOURCE, type LearningAdminResource, type LearningResourceSource } from "@/lib/capital/learning";
+import { type LearningAdminResource, type LearningResourceSource } from "@/lib/capital/learning";
 import { hasPlatformRole } from "@/lib/capital/portal-access";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
@@ -68,25 +68,6 @@ function fromResource(resource: LearningAdminResource): Draft {
   };
 }
 
-function flagshipDraft(): Draft {
-  return {
-    ...blankDraft(),
-    slug: FLAGSHIP_LEARNING_RESOURCE.slug,
-    title: { ...FLAGSHIP_LEARNING_RESOURCE.title },
-    summary: { ...FLAGSHIP_LEARNING_RESOURCE.summary },
-    bodyMarkdown: { ...FLAGSHIP_LEARNING_RESOURCE.bodyMarkdown },
-    disclaimer: { ...FLAGSHIP_LEARNING_RESOURCE.disclaimer },
-    sources: FLAGSHIP_LEARNING_RESOURCE.sources.map((source) => ({
-      title: source.title,
-      url: source.url,
-      publisher: source.publisher,
-      publishedOn: source.publishedOn,
-      accessedAt: source.accessedAt,
-      notes: source.notes,
-      sortOrder: source.sortOrder,
-    })),
-  };
-}
 
 function apiBody(draft: Draft) {
   return {
@@ -111,7 +92,7 @@ export function LearningContentManager({ resources, backendConfigured }: { resou
   const [preview, setPreview] = useState(false);
   const [reviewNote, setReviewNote] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "error">("idle");
-  const canReview = hasPlatformRole(currentUser, "platform_admin", "compliance_admin");
+  const canReview = hasPlatformRole(currentUser, "master_admin");
   const isAuthor = draft?.authorId === currentUser.id;
   const versions = useMemo(() => [...resources].sort((a, b) => b.version - a.version), [resources]);
 
@@ -148,7 +129,7 @@ export function LearningContentManager({ resources, backendConfigured }: { resou
   if (!backendConfigured) return <section className="rounded-lg border border-[#d9e1e5] bg-white p-8"><BookOpen className="size-8 text-[#7b919e]" /><h2 className="mt-4 text-xl font-semibold text-[#18384e]">{c.title}</h2><p className="mt-2 max-w-xl text-sm leading-6 text-[#657681]">{c.backend}</p></section>;
 
   return <section>
-    <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><h2 className="text-2xl font-semibold text-[#18384e]">{c.title}</h2><p className="mt-1 text-sm text-[#657681]">{c.description}</p></div><div className="flex flex-wrap gap-2"><button type="button" onClick={() => setDraft(blankDraft())} className="inline-flex h-10 items-center gap-2 rounded-md border border-[#cbd6dc] bg-white px-3 text-sm font-semibold text-[#31566c]"><FilePlus2 className="size-4" />{c.newGuide}</button>{!resources.some((item) => item.slug === FLAGSHIP_LEARNING_RESOURCE.slug) && <button type="button" onClick={() => setDraft(flagshipDraft())} className="inline-flex h-10 items-center gap-2 rounded-md bg-[#0a2d46] px-3 text-sm font-semibold text-white"><BookOpen className="size-4" />{c.flagship}</button>}</div></div>
+    <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><h2 className="text-2xl font-semibold text-[#18384e]">{c.title}</h2><p className="mt-1 text-sm text-[#657681]">{c.description}</p></div><div className="flex flex-wrap gap-2"><button type="button" onClick={() => setDraft(blankDraft())} className="inline-flex h-10 items-center gap-2 rounded-md border border-[#cbd6dc] bg-white px-3 text-sm font-semibold text-[#31566c]"><FilePlus2 className="size-4" />{c.newGuide}</button></div></div>
 
     <div className="grid gap-5 xl:grid-cols-[260px_minmax(0,1fr)]">
       <aside className="rounded-lg border border-[#d9e1e5] bg-white p-3">

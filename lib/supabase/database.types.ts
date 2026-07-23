@@ -121,7 +121,7 @@ export type Database = {
         | "approved"
         | "rejected";
       partner_tier: "associate" | "principal" | "managing_partner";
-      platform_role: "compliance_admin" | "finance_admin" | "platform_admin";
+      platform_role: "master_admin";
       publication_status:
         | "draft"
         | "in_review"
@@ -384,6 +384,7 @@ export type Database = {
         account_status: string;
         account_intent: Database["app"]["Enums"]["account_intent"] | null;
         investor_account_type: Database["app"]["Enums"]["investor_account_type"] | null;
+        investor_qualification_category: string | null;
         onboarding_status: Database["app"]["Enums"]["onboarding_status"];
         residence_jurisdiction: string | null;
         investment_objective: string | null;
@@ -435,6 +436,13 @@ export type Database = {
         content_snapshot: Json;
         effective_at: string;
         published_at: string | null;
+      }>;
+      taxonomies: ApiView<{
+        kind: "strategy" | "asset_class" | "region";
+        key: string;
+        label: Json;
+        color: string;
+        sort_order: number;
       }>;
       published_learning_resources: ApiView<{
         id: string;
@@ -511,6 +519,14 @@ export type Database = {
         Args: { p_lead_id: string; p_note: string };
         Returns: string;
       };
+      publish_offering: {
+        Args: { p_offering_id: string; p_actor?: string | null };
+        Returns: string;
+      };
+      seed_offering: {
+        Args: { p_bundle: Json; p_actor?: string | null };
+        Returns: string;
+      };
       complete_hnc_onboarding: {
         Args: {
           p_account_intent: Database["app"]["Enums"]["account_intent"];
@@ -526,6 +542,13 @@ export type Database = {
       create_learning_resource: {
         Args: { p_input: Json };
         Returns: Json;
+      };
+      set_investor_qualification: {
+        Args: {
+          p_investor_account_type: Database["app"]["Enums"]["investor_account_type"];
+          p_qualification_category: string;
+        };
+        Returns: undefined;
       };
       create_referral_qualification_assessment: {
         Args: { p_referral_id: string; p_input: Json };
@@ -914,7 +937,7 @@ export const Constants = {
         "rejected",
       ],
       partner_tier: ["associate", "principal", "managing_partner"],
-      platform_role: ["compliance_admin", "finance_admin", "platform_admin"],
+      platform_role: ["master_admin"],
       publication_status: [
         "draft",
         "in_review",

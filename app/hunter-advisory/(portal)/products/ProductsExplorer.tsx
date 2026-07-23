@@ -6,6 +6,8 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 import type { OfferingBundle } from "@/lib/capital/types";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
+import { taxonomyLabel } from "@/lib/capital/taxonomies";
+import { useTaxonomies } from "@/components/capital/north/TaxonomyProvider";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { PageHeader, Panel } from "@/components/capital/north/PortalUI";
 
@@ -16,6 +18,7 @@ const COPY = {
     review: "Detayları incele",
     manager: "Yönetici",
     audited: "Bağımsız denetimli",
+    buildings: "bina",
     noResults: "Şu anda görüntülenecek yatırım seçeneği bulunmuyor.",
   },
   en: {
@@ -24,6 +27,7 @@ const COPY = {
     review: "Review details",
     manager: "Manager",
     audited: "Independently audited",
+    buildings: "buildings",
     noResults: "There are no investment options to show right now.",
   },
 } as const;
@@ -47,6 +51,7 @@ export function OfferingVisual({ offering, lang }: { offering: OfferingBundle; l
 
 export function ProductsExplorer({ offerings }: { offerings: OfferingBundle[] }) {
   const { lang } = useLang();
+  const { assetClasses } = useTaxonomies();
   const c = pick(COPY, lang);
 
   return (
@@ -62,6 +67,18 @@ export function ProductsExplorer({ offerings }: { offerings: OfferingBundle[] })
                 <div className="min-w-0">
                   <h2 className="text-lg font-semibold text-[#152b3b]">{tx(offering.name, lang)}</h2>
                   <p className="mt-1 text-xs text-[#75818a]">{tx(offering.manager.name, lang)}</p>
+                </div>
+                {/* Non-financial cues: asset classes, building count, locations. */}
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {offering.assetClassIds.map((id) => (
+                    <span key={id} className="rounded border border-[#dbe1e5] bg-[#f5f7f8] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-[#5f6d78]">{taxonomyLabel(assetClasses, id, lang)}</span>
+                  ))}
+                  {offering.properties.length > 0 && (
+                    <span className="rounded border border-[#dbe1e5] bg-[#f5f7f8] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-[#5f6d78]">{offering.properties.length} {c.buildings}</span>
+                  )}
+                  {[...new Set(offering.properties.map((property) => property.city))].slice(0, 3).map((city) => (
+                    <span key={city} className="rounded border border-[#dbe1e5] bg-[#f5f7f8] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-[#5f6d78]">{city}</span>
+                  ))}
                 </div>
                 <div className="mt-3 flex flex-1 flex-col justify-between gap-4 sm:min-h-12 sm:flex-row sm:items-end">
                   <p className="max-w-2xl text-sm leading-5 text-[#5f6d78]">{tx(offering.summary, lang)}</p>

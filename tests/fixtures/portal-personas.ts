@@ -1,8 +1,11 @@
+// Synthetic personas + dataset used ONLY by access-control unit tests. This is
+// test scaffolding, not app runtime content — the app reads all data from
+// Supabase. Recovered from the former lib/capital/portal-demo.ts.
 import type {
   PortalDataset,
   PortalUser,
   PreviewPersona,
-} from "./portal-access";
+} from "../../lib/capital/portal-access.ts";
 
 export const DEMO_PERSONA_USER_IDS: Record<PreviewPersona, string> = {
   investor: "demo-investor",
@@ -83,7 +86,7 @@ const users: PortalUser[] = [
     locale: "en",
     emailVerified: true,
     accountStatus: "active",
-    platformRoles: ["platform_admin", "compliance_admin", "finance_admin"],
+    platformRoles: ["master_admin"],
   },
 ];
 

@@ -18,7 +18,8 @@ import {
   formatReturnPhrase,
   formatSourceLine,
 } from "@/lib/capital/present";
-import { strategies, taxonomyLabel } from "@/lib/capital/taxonomies";
+import { taxonomyLabel } from "@/lib/capital/taxonomies";
+import { useTaxonomies } from "@/components/capital/north/TaxonomyProvider";
 import type { PublicOfferingPreview } from "@/lib/capital/types";
 import { FundBannerCard } from "@/components/capital/FundBannerCard";
 import { NORTH_BASE } from "../NorthBrand";
@@ -90,6 +91,7 @@ export function OpportunityCard({
   c: LandingCopy;
 }) {
   const { lang } = useLang();
+  const { strategies } = useTaxonomies();
   const strategy = offering.strategyIds[0]
     ? taxonomyLabel(strategies, offering.strategyIds[0], lang)
     : undefined;

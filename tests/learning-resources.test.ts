@@ -1,11 +1,30 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { FLAGSHIP_LEARNING_RESOURCE, learningSummary } from "../lib/capital/learning.ts";
+import { learningSummary, type LearningResourceDetail } from "../lib/capital/learning.ts";
 import { estimateReadingMinutes, LearningDraftSchema } from "../lib/capital/learning-schema.ts";
 
-test("flagship summary removes article-only fields", () => {
-  const summary = learningSummary(FLAGSHIP_LEARNING_RESOURCE);
-  assert.equal(summary.slug, FLAGSHIP_LEARNING_RESOURCE.slug);
+const SAMPLE_RESOURCE: LearningResourceDetail = {
+  id: "sample",
+  slug: "sample-guide",
+  resourceType: "guide",
+  categoryKey: "investment-fundamentals",
+  audience: "investor_and_professional",
+  versionId: "sample-v1",
+  version: 1,
+  title: { en: "Sample", tr: "Örnek" },
+  summary: { en: "Summary", tr: "Özet" },
+  bodyMarkdown: { en: "## Body", tr: "## İçerik" },
+  disclaimer: { en: "Educational only", tr: "Yalnızca eğitim" },
+  readingMinutes: { en: 5, tr: 5 },
+  effectiveAt: "2026-07-18T00:00:00.000Z",
+  publishedAt: "2026-07-18T00:00:00.000Z",
+  reviewedAt: "2026-07-18T00:00:00.000Z",
+  sources: [],
+};
+
+test("learning summary removes article-only fields", () => {
+  const summary = learningSummary(SAMPLE_RESOURCE);
+  assert.equal(summary.slug, SAMPLE_RESOURCE.slug);
   assert.equal("bodyMarkdown" in summary, false);
   assert.equal("sources" in summary, false);
 });

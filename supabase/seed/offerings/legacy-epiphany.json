@@ -1,0 +1,473 @@
+{
+  "id": "legacy-epiphany",
+  "slug": "legacy-epiphany",
+  "managerId": "epiphany-group",
+  "name": {
+    "en": "Epiphany Legacy Investment Mutual Fund Trust",
+    "tr": "Epiphany Legacy Investment Mutual Fund Trust"
+  },
+  "shortName": {
+    "en": "Legacy Investment",
+    "tr": "Legacy Investment"
+  },
+  "media": {
+    "card": {
+      "src": "/legacyBG.png",
+      "alt": {
+        "en": "Legacy Investment background",
+        "tr": "Legacy Investment arka planı"
+      }
+    },
+    "banner": {
+      "src": "/legacyBG.png",
+      "alt": {
+        "en": "Legacy Investment background",
+        "tr": "Legacy Investment arka planı"
+      }
+    },
+    "logo": {
+      "src": "/legacyLogo.png",
+      "alt": {
+        "en": "Legacy Investment logo",
+        "tr": "Legacy Investment logosu"
+      }
+    }
+  },
+  "summary": {
+    "en": "A REIT targeting Western Canada residential and commercial secondary properties in emerging markets.",
+    "tr": "Gelişmekte olan pazarlarda Batı Kanada konut ve ticari ikincil mülklerini hedefleyen bir REIT."
+  },
+  "thesis": {
+    "en": "The Epiphany Legacy Investment Mutual Fund Trust generates sustainable growth through strategic real estate investments across Western Canada's secondary markets. Since inception in Fall 2021 it has secured over $85 million in assets under management — a blend of multi-residential and commercial properties — with a disciplined approach to asset acquisition and management.",
+    "tr": "Epiphany Legacy Investment Mutual Fund Trust, Batı Kanada'nın ikincil pazarlarındaki stratejik gayrimenkul yatırımlarıyla sürdürülebilir büyüme üretir. 2021 sonbaharındaki kuruluşundan bu yana, çok konutlu ve ticari mülklerin bir karışımından oluşan 85 milyon doları aşkın yönetilen varlık edinmiştir."
+  },
+  "status": "available",
+  "strategyIds": [
+    "core-plus"
+  ],
+  "assetClassIds": [
+    "multifamily",
+    "commercial"
+  ],
+  "regionIds": [
+    "alberta",
+    "saskatchewan",
+    "manitoba",
+    "british-columbia"
+  ],
+  "shareClassIds": [
+    "legacy-class-a"
+  ],
+  "propertyIds": [
+    "cold-lake",
+    "bayer-lethbridge"
+  ],
+  "documentIds": [
+    "legacy-fact",
+    "legacy-om",
+    "legacy-presentation"
+  ],
+  "featured": true,
+  "complianceProfile": {
+    "issuerLegalType": "trust",
+    "isInvestmentFund": true,
+    "approvedOntarioExemptions": [],
+    "reviewOwner": "Licensed compliance review"
+  },
+  "portfolioFacts": [
+    {
+      "value": "27 properties",
+      "classification": "current",
+      "asOfDate": "2025-09-02",
+      "sourceId": "legacy-ir-2025-09",
+      "sourcePage": 6,
+      "approval": "approved-public"
+    },
+    {
+      "value": "7 communities",
+      "classification": "current",
+      "asOfDate": "2026-01-30",
+      "sourceId": "legacy-fact-2026-01",
+      "sourcePage": 2,
+      "approval": "approved-public"
+    },
+    {
+      "value": "543 units",
+      "classification": "current",
+      "asOfDate": "2026-01-30",
+      "sourceId": "legacy-fact-2026-01",
+      "sourcePage": 2,
+      "approval": "approved-public"
+    }
+  ],
+  "fundType": {
+    "en": "Mutual Fund Trust",
+    "tr": "Mutual Fund Trust"
+  },
+  "fundStatus": {
+    "en": "Offering Memorandum",
+    "tr": "Offering Memorandum"
+  },
+  "inceptionDate": "2021-09",
+  "aum": {
+    "value": "$85M+",
+    "classification": "current",
+    "asOfDate": "2025-09-02",
+    "sourceId": "legacy-ir-2025-09",
+    "sourcePage": 6,
+    "approval": "approved-public"
+  },
+  "offeringSize": {
+    "value": 38160000,
+    "classification": "current",
+    "asOfDate": "2026-01-30",
+    "sourceId": "legacy-fact-2026-01",
+    "sourcePage": 1,
+    "approval": "approved-public"
+  },
+  "amountRaised": {
+    "value": 18480000,
+    "classification": "current",
+    "asOfDate": "2026-01-30",
+    "sourceId": "legacy-fact-2026-01",
+    "sourcePage": 1,
+    "approval": "approved-public"
+  },
+  "fundingPercent": 48.4,
+  "distributionFrequency": {
+    "en": "Quarterly",
+    "tr": "Üç aylık"
+  },
+  "riskProfile": {
+    "en": "Low - Moderate",
+    "tr": "Düşük - Orta"
+  },
+  "highlights": [
+    {
+      "en": "Registered fund eligible (RRSP, TFSA, RESP, LIRA, RRIF).",
+      "tr": "Kayıtlı fon uygun (RRSP, TFSA, RESP, LIRA, RRIF)."
+    },
+    {
+      "en": "27 properties across Western Canada, $85M+ in assets.",
+      "tr": "Batı Kanada genelinde 27 mülk, 85M$+ varlık."
+    },
+    {
+      "en": "Over a century of combined senior management experience.",
+      "tr": "Yüz yılı aşkın birleşik üst yönetim deneyimi."
+    },
+    {
+      "en": "Insider ownership of approximately $13M.",
+      "tr": "Yaklaşık 13M$ içeriden sahiplik."
+    }
+  ],
+  "trailingReturns": [
+    {
+      "period": {
+        "en": "2021",
+        "tr": "2021"
+      },
+      "value": "2.17%"
+    },
+    {
+      "period": {
+        "en": "2022",
+        "tr": "2022"
+      },
+      "value": "8.60%"
+    },
+    {
+      "period": {
+        "en": "2023",
+        "tr": "2023"
+      },
+      "value": "8.60%"
+    },
+    {
+      "period": {
+        "en": "2024",
+        "tr": "2024"
+      },
+      "value": "13.97%"
+    },
+    {
+      "period": {
+        "en": "2025",
+        "tr": "2025"
+      },
+      "value": "8.20%"
+    },
+    {
+      "period": {
+        "en": "Year 1",
+        "tr": "1 yıl"
+      },
+      "value": "8.46%"
+    },
+    {
+      "period": {
+        "en": "Year 3",
+        "tr": "3 yıl"
+      },
+      "value": "10.61%"
+    },
+    {
+      "period": {
+        "en": "Since inception",
+        "tr": "Kuruluştan bu yana"
+      },
+      "value": "11.89%"
+    }
+  ],
+  "serviceProviders": {
+    "auditor": {
+      "name": "BDO Canada LLP",
+      "url": "https://www.bdo.ca/"
+    },
+    "legalCounsel": {
+      "name": "Borden Ladner Gervais LLP (BLG)",
+      "url": "https://www.blg.com/en"
+    },
+    "appraiser": {
+      "name": "Avison Young",
+      "url": "https://www.avisonyoung.com/"
+    }
+  },
+  "lastUpdated": "2026-01-30",
+  "risks": [
+    {
+      "en": "Private securities may be illiquid and redemption rights are governed by offering documents.",
+      "tr": "Özel menkul kıymetler likit olmayabilir; itfa hakları teklif belgelerine tabidir."
+    }
+  ],
+  "verifiedAt": "2026-07-12",
+  "manager": {
+    "id": "epiphany-group",
+    "slug": "epiphany-group",
+    "name": {
+      "en": "Epiphany Group",
+      "tr": "Epiphany Group"
+    },
+    "headquarters": {
+      "city": "Lethbridge",
+      "province": "Alberta",
+      "country": "Canada"
+    },
+    "description": {
+      "en": "Asset manager focused on residential and commercial real estate in Western Canadian secondary markets, backed by 100+ years of combined senior management experience.",
+      "tr": "Batı Kanada'nın ikincil pazarlarında konut ve ticari gayrimenkule odaklanan, 100 yılı aşkın birleşik üst yönetim deneyimine sahip varlık yöneticisi."
+    }
+  },
+  "shareClasses": [
+    {
+      "id": "legacy-class-a",
+      "offeringId": "legacy-epiphany",
+      "name": "Class A",
+      "minimumInvestment": {
+        "value": 2508,
+        "classification": "current",
+        "asOfDate": "2026-01-30",
+        "sourceId": "legacy-fact-2026-01",
+        "sourcePage": 1,
+        "approval": "approved-public"
+      },
+      "unitPrice": {
+        "value": 4.75,
+        "classification": "current",
+        "asOfDate": "2026-01-30",
+        "sourceId": "legacy-fact-2026-01",
+        "sourcePage": 1,
+        "approval": "approved-public"
+      },
+      "targetReturn": {
+        "value": "12-15% annually",
+        "classification": "target",
+        "asOfDate": "2026-01-30",
+        "sourceId": "legacy-fact-2026-01",
+        "sourcePage": 1,
+        "approval": "approved-public"
+      },
+      "targetDistribution": {
+        "value": "Quarterly; up to 8.2% annually",
+        "classification": "target",
+        "asOfDate": "2026-01-30",
+        "sourceId": "legacy-fact-2026-01",
+        "sourcePage": 1,
+        "approval": "approved-public"
+      },
+      "term": {
+        "value": "Open-ended fund",
+        "classification": "current",
+        "asOfDate": "2026-01-30",
+        "sourceId": "legacy-fact-2026-01",
+        "sourcePage": 1,
+        "approval": "approved-public"
+      },
+      "registeredAccountTypes": [
+        "RRSP",
+        "TFSA",
+        "RESP",
+        "LIRA",
+        "RRIF"
+      ],
+      "fundDefinedFacts": [
+        {
+          "id": "legacy-target-return",
+          "label": {
+            "en": "Target Return",
+            "tr": "Hedef Getiri"
+          },
+          "value": {
+            "en": "12-15% annually",
+            "tr": "Yıllık %12-15"
+          },
+          "category": "target",
+          "shareClassId": "legacy-class-a",
+          "sourceId": "legacy-fact-2026-01",
+          "sourcePage": 1,
+          "effectiveDate": "2026-01-30",
+          "approval": "approved-public"
+        },
+        {
+          "id": "legacy-target-distribution",
+          "label": {
+            "en": "Target Distribution",
+            "tr": "Hedef Dağıtım"
+          },
+          "value": {
+            "en": "Quarterly; up to 8.2% annually",
+            "tr": "Üç aylık; yıllık en fazla %8,2"
+          },
+          "category": "target",
+          "shareClassId": "legacy-class-a",
+          "sourceId": "legacy-fact-2026-01",
+          "sourcePage": 1,
+          "effectiveDate": "2026-01-30",
+          "approval": "approved-public"
+        },
+        {
+          "id": "legacy-fund-term",
+          "label": {
+            "en": "Fund Term",
+            "tr": "Fon Süresi"
+          },
+          "value": {
+            "en": "Open-ended fund",
+            "tr": "Açık uçlu fon"
+          },
+          "category": "term",
+          "shareClassId": "legacy-class-a",
+          "sourceId": "legacy-fact-2026-01",
+          "sourcePage": 1,
+          "effectiveDate": "2026-01-30",
+          "approval": "approved-public"
+        }
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "id": "cold-lake",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "Cold Lake Apartment Complex",
+        "tr": "Cold Lake Apartman Kompleksi"
+      },
+      "city": "Cold Lake",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 54.4642,
+      "longitude": -110.1825,
+      "assetClassId": "multifamily",
+      "units": {
+        "value": 63,
+        "classification": "current",
+        "asOfDate": "2025-09-02",
+        "sourceId": "legacy-ir-2025-09",
+        "sourcePage": 15,
+        "approval": "approved-public"
+      },
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "listingUrl": "https://TODO-replace-with-real-listing"
+    },
+    {
+      "id": "bayer-lethbridge",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "Lethbridge Commercial Property",
+        "tr": "Lethbridge Ticari Mülkü"
+      },
+      "city": "Lethbridge",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 49.6956,
+      "longitude": -112.8451,
+      "assetClassId": "commercial",
+      "squareFeet": {
+        "value": 77000,
+        "classification": "current",
+        "asOfDate": "2025-09-02",
+        "sourceId": "legacy-ir-2025-09",
+        "sourcePage": 15,
+        "approval": "approved-public"
+      },
+      "status": "commercial",
+      "verificationStatus": "verified",
+      "listingUrl": "https://TODO-replace-with-real-listing"
+    }
+  ],
+  "documents": [
+    {
+      "id": "legacy-fact",
+      "offeringId": "legacy-epiphany",
+      "title": {
+        "en": "Class A Unit Fact Sheet",
+        "tr": "Class A Bilgi Formu"
+      },
+      "description": {
+        "en": "January 30th, 2026",
+        "tr": "30 Ocak 2026"
+      },
+      "type": "fact-sheet",
+      "effectiveDate": "2026-01-30",
+      "version": "2026.01",
+      "sourceId": "legacy-fact-2026-01",
+      "visibility": "public",
+      "href": "/capital/docs/legacy-class-a-fact-sheet-2026-01-30.pdf"
+    },
+    {
+      "id": "legacy-om",
+      "offeringId": "legacy-epiphany",
+      "title": {
+        "en": "Offering Memorandum",
+        "tr": "Teklif Muhtırası"
+      },
+      "description": {
+        "en": "September 2025 mid-year update",
+        "tr": "Eylül 2025 yıl ortası güncellemesi"
+      },
+      "type": "offering-memorandum",
+      "effectiveDate": "2025-09-02",
+      "version": "2025.09",
+      "visibility": "approved-investor"
+    },
+    {
+      "id": "legacy-presentation",
+      "offeringId": "legacy-epiphany",
+      "title": {
+        "en": "Investor Presentation",
+        "tr": "Yatırımcı Sunumu"
+      },
+      "type": "presentation",
+      "effectiveDate": "2025-09-02",
+      "version": "2025.09",
+      "visibility": "approved-investor"
+    }
+  ]
+}
