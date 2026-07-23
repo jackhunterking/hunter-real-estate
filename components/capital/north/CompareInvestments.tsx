@@ -35,8 +35,8 @@ const COPY = {
     adjustDetails: "Adjust details",
     showPerformance: "Historical return by year",
     financeMortgage: "Finance with a mortgage",
-    payingAllCash: "· paying all cash",
-    financingOn: "· financing on",
+    payingAllCash: "Paying all cash",
+    financingOn: "Financing on",
     fields: {
       downPaymentPct: "Down payment",
       downPaymentAmount: "Down payment ($)",
@@ -95,8 +95,8 @@ const COPY = {
     adjustDetails: "Detayları düzenle",
     showPerformance: "Yıla göre geçmiş getiri",
     financeMortgage: "Mortgage ile finanse et",
-    payingAllCash: "· tamamı nakit",
-    financingOn: "· finansman açık",
+    payingAllCash: "Tamamı nakit",
+    financingOn: "Finansman açık",
     fields: {
       downPaymentPct: "Peşinat",
       downPaymentAmount: "Peşinat ($)",
@@ -375,17 +375,20 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                   )}
                 </div>
 
-                {/* Financing — optional. Closed = all cash; open = a mortgage is applied. */}
+                {/* Financing — optional toggle. Off = all cash; on = reveal fields and apply a mortgage. */}
                 <div className="mt-4 border-t border-[#eef2f4] pt-3">
                   <button
                     type="button"
+                    role="switch"
+                    aria-checked={mortgageOpen}
                     onClick={() => setMortgageOpen((open) => !open)}
-                    aria-expanded={mortgageOpen}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#40515e] hover:text-[#0a2d46]"
+                    className="flex w-full items-center gap-2.5"
                   >
-                    <ChevronDown className={`size-4 transition-transform ${mortgageOpen ? "rotate-180" : ""}`} />
-                    {c.financeMortgage}
-                    <span className={`font-medium ${mortgageOpen ? "text-[#1d6a4f]" : "text-[#93a0a9]"}`}>
+                    <span className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${mortgageOpen ? "bg-[#1d6a4f]" : "bg-[#cfd9df]"}`}>
+                      <span className={`inline-block size-4 rounded-full bg-white shadow-sm transition-transform ${mortgageOpen ? "translate-x-4" : "translate-x-0.5"}`} />
+                    </span>
+                    <span className="text-xs font-semibold text-[#40515e]">{c.financeMortgage}</span>
+                    <span className={`ml-auto text-[11px] font-medium ${mortgageOpen ? "text-[#1d6a4f]" : "text-[#93a0a9]"}`}>
                       {mortgageOpen ? c.financingOn : c.payingAllCash}
                     </span>
                   </button>
