@@ -7,7 +7,7 @@ import type { FundCommissionSchedule, Lang, OfferingBundle, ShareClass, Trailing
 import { formatCurrencyCad, primaryShareClass } from "@/lib/capital/present";
 import { calendarYearReturns } from "@/lib/capital/performance";
 import { buildEssentialKeyFacts, documentTermGroups } from "@/lib/capital/key-facts";
-import { riskLevel, tightRange } from "@/components/capital/OfferingSummaryCard";
+import { riskLevel, tightDistribution, tightRange, tightTerm } from "@/components/capital/OfferingSummaryCard";
 import { taxonomyLabel } from "@/lib/capital/taxonomies";
 import { useTaxonomies } from "@/components/capital/north/TaxonomyProvider";
 import { useLang } from "@/lib/i18n/LanguageProvider";
@@ -351,12 +351,15 @@ export function ProductDetailView({ offering }: { offering: OfferingBundle }) {
   const headerRiskText = tx(offering.riskProfile, lang);
   const headerRisk = headerRiskText ? { label: headerRiskText, level: riskLevel(headerRiskText) } : undefined;
   // The white bar under the banner. AUM is not repeated here — it sits on the
-  // frosted strip with target return and risk. Published terms stay VERBATIM,
-  // exactly as in the Key facts table; only the numeric minimum is formatted.
+  // frosted strip with target return and risk. The marketing distribution and
+  // term phrases are tightened to their lean shape ("Monthly; 7–8% annually",
+  // "Open-ended trust") so a tile never wraps to a paragraph; only the numeric
+  // minimum is formatted. The fund's own published caveats live in Key facts.
+  const headerDistribution = share?.targetDistribution?.value ?? share?.distributionPerUnit?.value ?? tx(offering.distributionFrequency, lang);
   const headerFacts = ([
     { label: c.minimum, value: share?.minimumInvestment ? formatCurrencyCad(share.minimumInvestment.value, lang) : null },
-    { label: c.distribution, value: share?.targetDistribution?.value ?? share?.distributionPerUnit?.value ?? tx(offering.distributionFrequency, lang) },
-    { label: c.term, value: share?.term?.value ?? null },
+    { label: c.distribution, value: headerDistribution ? tightDistribution(headerDistribution, lang) : null },
+    { label: c.term, value: share?.term?.value ? tightTerm(share.term.value, lang) : null },
   ] as { label: string; value: string | null }[]).filter((fact): fact is { label: string; value: string } => Boolean(fact.value));
 
   useEffect(() => {
