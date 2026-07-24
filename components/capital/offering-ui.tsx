@@ -20,9 +20,11 @@ import {
   MapPinned,
   Presentation,
 } from "lucide-react";
-import type { Lang, OfferingDocument, Property, ServiceProviders, SourcedValue } from "@/lib/capital/types";
+import type { Lang, OfferingBundle, OfferingDocument, Property, ServiceProviders, SourcedValue } from "@/lib/capital/types";
 import type { DocumentTermGroup } from "@/lib/capital/key-facts";
-import { formatSourceLine, localizeVerification, resolveImage } from "@/lib/capital/present";
+import { formatSourceLine, localizeVerification, primaryShareClass, resolveImage } from "@/lib/capital/present";
+import { computeInvestmentIncome } from "@/lib/capital/performance";
+import { CommaInput } from "@/components/capital/north/CompareUI";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
@@ -356,6 +358,159 @@ export function ServiceProvidersCard({
             )}
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Performance-tab income calculator                                   */
+/* ------------------------------------------------------------------ */
+
+const INCOME_CALC_COPY = {
+  en: {
+    title: "See it on your amount",
+    help: "Enter an amount to see what it would have earned in this fund — looking back, not a projection.",
+    tag: "Historical—not a forecast",
+    amountLabel: "Amount invested",
+    caption: "What your amount would have earned each year, at this fund’s published returns",
+    year: "Year",
+    ret: "Return",
+    perYear: "Income / year",
+    perMonth: "Income / month",
+    average: "Average / yr",
+  },
+  tr: {
+    title: "Kendi tutarınızda görün",
+    help: "Bu yatırımda ne kazandırmış olacağını görmek için bir tutar girin — geriye dönük, bir öngörü değil.",
+    tag: "Geçmiş bilgi—tahmin değildir",
+    amountLabel: "Yatırılan tutar",
+    caption: "Girdiğiniz tutarın, bu yatırımın yayımlanan getirilerinde her yıl ne kazandıracağı",
+    year: "Yıl",
+    ret: "Getiri",
+    perYear: "Gelir / yıl",
+    perMonth: "Gelir / ay",
+    average: "Ortalama / yıl",
+  },
+} as const;
+
+const INCOME_PRESETS = [10000, 25000, 100000, 500000, 1000000];
+const INCOME_DEFAULT_AMOUNT = 25000;
+
+function presetLabel(value: number): string {
+  if (value >= 1_000_000) return `$${value / 1_000_000}M`;
+  if (value >= 1000) return `$${value / 1000}k`;
+  return `$${value}`;
+}
+
+/**
+ * Backward-looking passive-income illustration for the Performance tab. The
+ * amount is a free, uncapped entry (any figure up to $1M+); the table applies
+ * the fund's own published calendar-year total returns to it, per year and per
+ * month, with an average row. Renders nothing when the fund has no usable
+ * calendar-year history, so it is safe to drop onto every offering.
+ */
+export function PerformanceIncomeCalculator({ offering, lang }: { offering: OfferingBundle; lang: Lang }) {
+  const c = lang === "tr" ? INCOME_CALC_COPY.tr : INCOME_CALC_COPY.en;
+  const minimum = primaryShareClass(offering)?.minimumInvestment?.value;
+  const [amount, setAmount] = useState<number>(() =>
+    Math.max(1000, Math.round(minimum && minimum > INCOME_DEFAULT_AMOUNT ? minimum : INCOME_DEFAULT_AMOUNT)),
+  );
+
+  const result = computeInvestmentIncome(amount, offering.trailingReturns);
+  if (!result) return null;
+
+  const nf = new Intl.NumberFormat(lang === "tr" ? "tr-TR" : "en-CA", {
+    style: "currency",
+    currency: "CAD",
+    maximumFractionDigits: 0,
+  });
+  const money = (n: number) => nf.format(Math.round(n));
+  const pctText = (n: number) => `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`;
+  const pctClass = (n: number) => (n >= 0 ? "text-ok" : "text-destructive");
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+        <div>
+          <h2 className="flex items-center gap-2.5 font-serif text-lg font-semibold text-foreground">
+            <span className="h-4 w-[3px] shrink-0 rounded-full bg-gold" aria-hidden />
+            {c.title}
+          </h2>
+          <p className="mt-1.5 pl-[15px] text-sm text-muted-foreground">{c.help}</p>
+        </div>
+        <span className="w-fit shrink-0 rounded bg-secondary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+          {c.tag}
+        </span>
+      </div>
+
+      <div className="flex flex-wrap items-end gap-4 rounded-xl border border-border bg-card p-4 sm:p-5">
+        <label className="min-w-[200px] flex-1">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{c.amountLabel}</span>
+          <span className="mt-1.5 flex items-center rounded-lg border border-border bg-card px-3 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15">
+            <span className="text-lg text-muted-foreground">$</span>
+            <CommaInput
+              value={amount}
+              onChange={setAmount}
+              min={0}
+              // ≥16px keeps iOS Safari from zooming on focus.
+              className="h-12 w-full bg-transparent px-2 text-left font-serif text-2xl font-semibold tabular-nums text-foreground outline-none"
+            />
+          </span>
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {INCOME_PRESETS.map((preset) => {
+            const active = amount === preset;
+            return (
+              <button
+                key={preset}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setAmount(preset)}
+                className={`rounded-full border px-3 py-1.5 text-[13px] font-semibold transition ${
+                  active
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border text-muted-foreground hover:border-primary hover:text-foreground"
+                }`}
+              >
+                {presetLabel(preset)}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <p className="text-sm text-muted-foreground">{c.caption}</p>
+
+      <div className="overflow-x-auto rounded-xl border border-border bg-card">
+        <table className="w-full text-left">
+          <thead className="border-b border-border bg-secondary/40">
+            <tr>
+              <th scope="col" className="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground sm:px-5">{c.year}</th>
+              <th scope="col" className="px-4 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground sm:px-5">{c.ret}</th>
+              <th scope="col" className="px-4 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground sm:px-5">{c.perYear}</th>
+              <th scope="col" className="px-4 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground sm:px-5">{c.perMonth}</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {result.rows.map((row) => (
+              <tr key={row.year}>
+                <th scope="row" className="px-4 py-3 text-sm font-medium text-foreground sm:px-5">{row.year}</th>
+                <td className={`px-4 py-3 text-right text-sm font-semibold tabular-nums sm:px-5 ${pctClass(row.pct)}`}>{pctText(row.pct)}</td>
+                <td className="px-4 py-3 text-right text-base font-semibold tabular-nums text-foreground sm:px-5">{money(row.incomePerYear)}</td>
+                <td className="px-4 py-3 text-right text-sm tabular-nums text-muted-foreground sm:px-5">{money(row.incomePerMonth)}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr className="border-t-2 border-border bg-secondary/40">
+              <th scope="row" className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-muted-foreground sm:px-5">{c.average}</th>
+              <td className={`px-4 py-3 text-right text-sm font-bold tabular-nums sm:px-5 ${pctClass(result.avgPct)}`}>{`${result.avgPct >= 0 ? "+" : ""}${result.avgPct.toFixed(1)}%`}</td>
+              <td className="px-4 py-3 text-right text-base font-bold tabular-nums text-foreground sm:px-5">{money(result.avgIncomePerYear)}</td>
+              <td className="px-4 py-3 text-right text-sm font-bold tabular-nums text-foreground sm:px-5">{money(result.avgIncomePerMonth)}</td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
     </div>
   );

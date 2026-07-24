@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Building2, ChevronRight, ExternalLink, FileText, MapPinned, TrendingUp } from "lucide-react";
 import type { FundCommissionSchedule, Lang, OfferingBundle, ShareClass, TrailingReturn } from "@/lib/capital/types";
 import { formatCurrencyCad, primaryShareClass } from "@/lib/capital/present";
+import { calendarYearReturns } from "@/lib/capital/performance";
 import { buildEssentialKeyFacts, documentTermGroups } from "@/lib/capital/key-facts";
 import { riskLevel, tightRange } from "@/components/capital/OfferingSummaryCard";
 import { taxonomyLabel } from "@/lib/capital/taxonomies";
@@ -21,6 +22,7 @@ import {
   DocumentTermsDisclosure,
   type KeyFact,
   KeyFactsCard,
+  PerformanceIncomeCalculator,
   PresentationCard,
   ServiceProvidersCard,
 } from "@/components/capital/offering-ui";
@@ -268,6 +270,14 @@ function Performance({ offering }: { offering: OfferingBundle }) {
         </>
       ) : (
         <div className="rounded-xl border border-border bg-card p-10 text-center text-sm text-muted-foreground">{c.noHistory}</div>
+      )}
+
+      {/* Backward-looking passive-income tool; shown only when the fund has
+          usable calendar-year history, so it is safe on every offering. */}
+      {calendarYearReturns(offering.trailingReturns).length > 0 && (
+        <div className="border-t border-border pt-6">
+          <PerformanceIncomeCalculator offering={offering} lang={lang} />
+        </div>
       )}
     </div>
   );

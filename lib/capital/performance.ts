@@ -59,6 +59,83 @@ export function parseTargetMidpoint(text: string): number | null {
  *   4. else null (a partial YTD is excluded rather than shown misleadingly).
  * Reads the canonical English period text, falling back to Turkish.
  */
+export type CalendarYearReturn = { year: number; pct: number };
+
+/**
+ * Complete calendar-year total returns from a fund's trailing figures, oldest
+ * first. A bare "2024" row is a full year; a "2024 Q4" / "2024 4Ç"
+ * cumulative-YTD row is treated as that year's full-year total. Partial latest
+ * quarters and aggregate labels ("Since inception") are excluded so no
+ * incomplete year is ever presented as a full one.
+ *
+ * Shared source of truth for both the Performance-tab income calculator and the
+ * Active/Passive comparison tools (lib/capital/compare-investments.ts).
+ */
+export function calendarYearReturns(returns?: TrailingReturn[]): CalendarYearReturn[] {
+  const byYear = new Map<number, number>();
+  for (const row of returns ?? []) {
+    const pct = parsePerformancePercentage(row.value);
+    if (pct === null) continue;
+    const label = `${row.period.en} ${row.period.tr}`;
+    const yearMatch = label.match(/(20\d{2})/);
+    if (!yearMatch) continue;
+    const year = Number(yearMatch[1]);
+    const quarterMatch = label.match(/Q\s*([1-4])|([1-4])\s*[QÇ]/i);
+    if (!quarterMatch) {
+      byYear.set(year, pct); // bare calendar year
+    } else if (/4/.test(quarterMatch[0])) {
+      byYear.set(year, pct); // Q4 cumulative-YTD == full-year total
+    }
+  }
+  return [...byYear.entries()]
+    .map(([year, pct]) => ({ year, pct }))
+    .sort((a, b) => a.year - b.year);
+}
+
+export type IncomeRow = {
+  year: number;
+  pct: number;
+  incomePerYear: number;
+  incomePerMonth: number;
+};
+
+export type InvestmentIncome = {
+  rows: IncomeRow[];
+  avgPct: number;
+  avgIncomePerYear: number;
+  avgIncomePerMonth: number;
+  years: number;
+};
+
+/**
+ * Backward-looking illustration for the Performance tab: what a given amount
+ * would have earned each published calendar year, applying the fund's own
+ * historical total returns to the amount (income = amount × that year's return).
+ * The average row summarizes across the published years. Returns null when the
+ * fund has no usable calendar-year history, so the caller can hide the tool.
+ *
+ * This is history applied to a number, never a forecast — income per year is a
+ * total-return figure (includes appreciation), not a promised cash distribution.
+ */
+export function computeInvestmentIncome(amount: number, returns?: TrailingReturn[]): InvestmentIncome | null {
+  const years = calendarYearReturns(returns);
+  if (!years.length) return null;
+
+  const rows: IncomeRow[] = years.map(({ year, pct }) => {
+    const incomePerYear = amount * (pct / 100);
+    return { year, pct, incomePerYear, incomePerMonth: incomePerYear / 12 };
+  });
+  const avgPct = years.reduce((sum, y) => sum + y.pct, 0) / years.length;
+  const avgIncomePerYear = amount * (avgPct / 100);
+  return {
+    rows,
+    avgPct,
+    avgIncomePerYear,
+    avgIncomePerMonth: avgIncomePerYear / 12,
+    years: years.length,
+  };
+}
+
 export function latestPublished12mReturn(returns?: TrailingReturn[]): number | null {
   if (!returns?.length) return null;
   const periodText = (r: TrailingReturn) => (r.period.en || r.period.tr || "").trim();

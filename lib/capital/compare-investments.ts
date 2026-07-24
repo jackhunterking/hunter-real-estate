@@ -1,4 +1,4 @@
-import { parsePerformancePercentage } from "./performance.ts";
+import { calendarYearReturns, parsePerformancePercentage } from "./performance.ts";
 import type { LocalizedText, OfferingBundle } from "./types";
 
 /**
@@ -196,28 +196,14 @@ export function historicalEarnings(initialCash: number, pct: number): { annual: 
 }
 
 /**
- * Extract COMPLETE calendar-year returns from a fund's trailing figures.
- * A bare "2024" row is a full year; a "2024 Q4" cumulative-YTD row is treated
- * as that year's full-year total. Partial years (latest quarter, no Q4) are
- * ignored so we never present an incomplete year as a full one.
+ * Extract COMPLETE calendar-year returns from a fund's trailing figures, most
+ * recent first. The normalization (bare year vs. Q4 cumulative-YTD, partial
+ * years ignored) is shared with the Performance-tab income calculator via
+ * `calendarYearReturns`, which returns oldest-first; this view wants newest
+ * first, so it reverses the shared result.
  */
 function extractCalendarYears(bundle: OfferingBundle): { year: number; pct: number }[] {
-  const byYear = new Map<number, number>();
-  for (const row of bundle.trailingReturns ?? []) {
-    const pct = parsePerformancePercentage(row.value);
-    if (pct === null) continue;
-    const label = `${row.period.en} ${row.period.tr}`;
-    const yearMatch = label.match(/(20\d{2})/);
-    if (!yearMatch) continue;
-    const year = Number(yearMatch[1]);
-    const quarterMatch = label.match(/Q\s*([1-4])|([1-4])\s*[QÇ]/i);
-    if (!quarterMatch) {
-      byYear.set(year, pct); // bare calendar year
-    } else if (/4/.test(quarterMatch[0])) {
-      byYear.set(year, pct); // Q4 cumulative-YTD == full year
-    }
-  }
-  return [...byYear.entries()].map(([year, pct]) => ({ year, pct })).sort((a, b) => b.year - a.year);
+  return calendarYearReturns(bundle.trailingReturns).sort((a, b) => b.year - a.year);
 }
 
 /** Annualized "since inception" figure, if the fund publishes one explicitly. */
