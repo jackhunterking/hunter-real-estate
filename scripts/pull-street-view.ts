@@ -91,7 +91,7 @@ async function image(lat: number, lng: number, heading: number, fov = FOV, pitch
   return Buffer.from(await res.arrayBuffer());
 }
 
-type Property = { id: string; name?: unknown; latitude: number; longitude: number; media?: { card?: { src?: string; bucket?: string; path?: string } } };
+type Property = { id: string; name?: unknown; latitude: number; longitude: number; media?: { card?: { src?: string; bucket?: string; path?: string; kind?: string; sourceId?: string; alt?: { en?: string; tr?: string }; verifiedAt?: string } } };
 
 function seedFiles(): string[] {
   return readdirSync(SEED_DIR).filter((f) => f.endsWith(".json") && (!slugArg || f.startsWith(slugArg)));
@@ -155,7 +155,7 @@ async function main() {
           sourceId: "google-street-view",
           alt: { en: `${txt(p.name)} — street view`, tr: `${txt(p.name)} — sokak görünümü` },
           verifiedAt: meta.date ?? undefined,
-        } as Property["media"]["card"];
+        };
         changed = true; pulled++;
         console.log(`  ✓ ${p.id}  heading ${heading.toFixed(0)}°  → ${objectPath}`);
       }
