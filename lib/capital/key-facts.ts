@@ -22,7 +22,13 @@
  * inception) go through the formatters in ./present.
  */
 import { tx } from "../i18n/localize.ts";
-import { formatCurrencyCad, formatDate, formatMoneyCompact } from "./present.ts";
+import {
+  formatCurrencyCad,
+  formatDate,
+  formatMoneyCompact,
+  tightDistribution,
+  tightRange,
+} from "./present.ts";
 import type {
   FundDefinedFact,
   Lang,
@@ -101,20 +107,25 @@ export function buildEssentialKeyFacts(
     share?.minimumInvestment,
   );
 
+  // A fund's own published `target` fact is shown verbatim — it carries wording
+  // the fund chose (price-point splits, "target only" caveats) that must not be
+  // reshaped. The derived share-class phrase is a marketing sentence, so it is
+  // tightened to the lean shape the masthead and cards already use.
   const publishedReturn = target(/return/i);
   if (publishedReturn) {
     rows.push({ label: tx(publishedReturn.label, lang), value: tx(publishedReturn.value, lang) });
   } else {
-    add(copy.projectedReturn, share?.targetReturn?.value, share?.targetReturn);
+    add(copy.projectedReturn, share?.targetReturn ? tightRange(share.targetReturn.value) : null, share?.targetReturn);
   }
 
   const publishedDistribution = target(/distribution/i);
   if (publishedDistribution) {
     rows.push({ label: tx(publishedDistribution.label, lang), value: tx(publishedDistribution.value, lang) });
   } else {
+    const derivedDistribution = share?.targetDistribution?.value ?? share?.distributionPerUnit?.value ?? tx(offering.distributionFrequency, lang);
     add(
       copy.distribution,
-      share?.targetDistribution?.value ?? share?.distributionPerUnit?.value ?? tx(offering.distributionFrequency, lang),
+      derivedDistribution ? tightDistribution(derivedDistribution, lang) : null,
       share?.targetDistribution ?? share?.distributionPerUnit,
     );
   }

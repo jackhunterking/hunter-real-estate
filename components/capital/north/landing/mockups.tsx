@@ -46,7 +46,7 @@ function offeringMetrics(
     {
       label: labels.distribution,
       value: offering.targetDistribution
-        ? tightDistribution(formatReturnPhrase(offering.targetDistribution.value, lang), lang)
+        ? tightDistribution(offering.targetDistribution.value, lang)
         : c.card.reviewRequired,
     },
     {

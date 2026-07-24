@@ -19,7 +19,9 @@ import {
   formatCurrencyCad,
   formatReturnPhrase,
   primaryShareClass,
+  tightDistribution,
   tightRange,
+  tightTerm,
 } from "@/lib/capital/present";
 import { taxonomyLabel, type TaxonomyItem } from "@/lib/capital/taxonomies";
 import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
@@ -29,41 +31,10 @@ export type OfferingCardMetric = { label: string; value: string };
 
 const T = (lang: Lang, en: string, tr: string) => (lang === "tr" ? tr : en);
 
-// Lives in the presentation layer so the detail-view tiles tighten ranges the
-// same way; re-exported here for the surfaces that already import it by name.
-export { tightRange };
-
-/**
- * Payout cadences, matched most-specific-first: the "annualized"/"annually" in
- * a *rate* must never outrank the "paid monthly" that is the real cadence.
- */
-const DISTRIBUTION_CADENCES = [
-  { key: "monthly", match: /month|ayl[ıi]k/i, en: "Monthly", tr: "Aylık" },
-  { key: "quarterly", match: /quarter|üç ayl[ıi]k|uc ayl[ıi]k/i, en: "Quarterly", tr: "Üç aylık" },
-  { key: "semiannual", match: /semi-?annual|alt[ıi] ayl[ıi]k/i, en: "Semi-annual", tr: "Altı aylık" },
-  { key: "annual", match: /annual|yearly|y[ıi]ll[ıi]k/i, en: "Annual", tr: "Yıllık" },
-] as const;
-
-/**
- * Distribution copy → "Monthly; 7–8% annually" — the cadence and the rate, and
- * nothing else. Sentences like "targeted annualized cash distribution, paid
- * monthly" read as prose next to a neighbouring card that says "Quarterly; up
- * to 8.2% annually", so the card normalises every offering to that one shape.
- * "up to" survives because it qualifies the number. Copy with no percentage in
- * it (a per-unit dollar amount, say) is left exactly as authored.
- */
-export function tightDistribution(text: string, lang: Lang) {
-  const percent = tightRange(text);
-  if (percent === text) return text;
-  const rate = `${/up to|en fazla|azami/i.test(text) ? T(lang, "up to ", "en fazla ") : ""}${percent}`;
-  const annualised = T(lang, `${rate} annually`, `yıllık ${rate}`);
-  const cadence = DISTRIBUTION_CADENCES.find((c) => c.match.test(text));
-  // No cadence to lead with → the rate stands alone, so it starts the sentence.
-  if (!cadence || cadence.key === "annual") {
-    return annualised.charAt(0).toLocaleUpperCase(lang) + annualised.slice(1);
-  }
-  return `${T(lang, cadence.en, cadence.tr)}; ${annualised}`;
-}
+// The range/distribution/term tighteners live in the presentation layer so the
+// detail-view tiles and the Key facts table shorten values the same way; they
+// are re-exported here for the surfaces that already import them by name.
+export { tightRange, tightDistribution, tightTerm };
 
 /**
  * Free-text risk copy → 1–5 position on a Low→High scale. Matches both English
@@ -308,7 +279,7 @@ export function offeringBundleCardFacts(
   if (distribution) {
     metrics.push({
       label: labels.distribution,
-      value: tightDistribution(formatReturnPhrase(distribution.value, lang), lang),
+      value: tightDistribution(distribution.value, lang),
     });
   }
   if (bundle.properties.length) {

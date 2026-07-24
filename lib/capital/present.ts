@@ -167,6 +167,56 @@ export function tightRange(text: string) {
   return single ? single[0].replace(/\s+/g, "") : text;
 }
 
+const T = (lang: Lang, en: string, tr: string) => (lang === "tr" ? tr : en);
+
+/**
+ * Payout cadences, matched most-specific-first: the "annualized"/"annually" in
+ * a *rate* must never outrank the "paid monthly" that is the real cadence.
+ */
+const DISTRIBUTION_CADENCES = [
+  { key: "monthly", match: /month|ayl[ıi]k/i, en: "Monthly", tr: "Aylık" },
+  { key: "quarterly", match: /quarter|üç ayl[ıi]k|uc ayl[ıi]k/i, en: "Quarterly", tr: "Üç aylık" },
+  { key: "semiannual", match: /semi-?annual|alt[ıi] ayl[ıi]k/i, en: "Semi-annual", tr: "Altı aylık" },
+  { key: "annual", match: /annual|yearly|y[ıi]ll[ıi]k/i, en: "Annual", tr: "Yıllık" },
+] as const;
+
+/**
+ * Distribution copy → "Monthly; 7–8% annually" — the cadence and the rate, and
+ * nothing else. Marketing sentences like "7%-8% targeted annualized cash
+ * distribution, paid monthly" read as prose that wraps to two lines on a fund
+ * tile, so every offering is normalised to that one lean shape. "up to"
+ * survives because it qualifies the number. Copy with no percentage in it (a
+ * per-unit dollar amount, say) has no rate to lift out, so it is only localized.
+ *
+ * Pass the raw canonical (English) value: this localizes internally, so wrapping
+ * the input in `formatReturnPhrase` first would corrupt the percent it looks for.
+ */
+export function tightDistribution(text: string, lang: Lang) {
+  const percent = tightRange(text);
+  if (percent === text) return formatReturnPhrase(text, lang);
+  const rate = `${/up to|en fazla|azami/i.test(text) ? T(lang, "up to ", "en fazla ") : ""}${percent}`;
+  const annualised = T(lang, `${rate} annually`, `yıllık ${rate}`);
+  const cadence = DISTRIBUTION_CADENCES.find((c) => c.match.test(text));
+  // No cadence to lead with → the rate stands alone, so it starts the sentence.
+  if (!cadence || cadence.key === "annual") {
+    return annualised.charAt(0).toLocaleUpperCase(lang) + annualised.slice(1);
+  }
+  return `${T(lang, cadence.en, cadence.tr)}; ${annualised}`;
+}
+
+/**
+ * Investment-term copy → the structure alone. "Open-ended trust; Units offered
+ * on a continuous basis" collapses to its lead clause "Open-ended trust" (the
+ * continuation is mechanism, not the term), and a fixed-term fund keeps its
+ * duration: "5-year term". Falls back to the input untouched.
+ */
+export function tightTerm(text: string, lang: Lang) {
+  const years = text.match(/(\d+)\s*[-–\s]?\s*(?:year|y[ıi]l)/i);
+  if (years) return T(lang, `${years[1]}-year term`, `${years[1]} yıl vade`);
+  const lead = text.split(/[;.]/)[0].trim();
+  return lead || text;
+}
+
 /* ------------------------------------------------------------------ */
 /* Image slot resolution (elegant placeholder when no src)            */
 /* ------------------------------------------------------------------ */
