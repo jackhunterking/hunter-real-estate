@@ -6,6 +6,7 @@ import {
   isChronologicalPerformancePeriod,
   parsePerformancePercentage,
   parseTargetMidpoint,
+  portfolioMonthlyIncome,
 } from "../lib/capital/performance.ts";
 import type { TrailingReturn } from "../lib/capital/types.ts";
 
@@ -95,4 +96,47 @@ test("investment income applies each year's return to the amount, per year and p
 test("investment income is null when there is no usable calendar-year history", () => {
   assert.equal(computeInvestmentIncome(25000, []), null);
   assert.equal(computeInvestmentIncome(25000, [yr("Since inception", "11.89%")]), null);
+});
+
+test("portfolio monthly income splits cash + growth across mixed-frequency holdings", () => {
+  // Frequency ("Quarterly"/"Monthly") is prose the cash rate is read past — it
+  // must not change the average, which is always annual ÷ 12.
+  const result = portfolioMonthlyIncome([
+    { amount: 145000, targetDistribution: "Quarterly; up to 8.2% annually", targetReturn: "12%-15%" },
+    { amount: 90000, targetDistribution: "Monthly; 7-8% annually", targetReturn: "10%-14%" },
+  ]);
+  assert.ok(result);
+  // Cash = 145k×8.2% + 90k×7.5% = 11,890 + 6,750 = 18,640 /yr.
+  assert.equal(Math.round(result!.annualCash), 18640);
+  // Total = 145k×13.5% + 90k×12% = 19,575 + 10,800 = 30,375 /yr.
+  assert.equal(Math.round(result!.annualTotal), 30375);
+  assert.equal(Math.round(result!.annualGrowth), 30375 - 18640);
+  assert.equal(Math.round(result!.monthlyTotal), Math.round(30375 / 12));
+  // Cash + growth reconstruct the total, and both holdings published a rate.
+  assert.ok(Math.abs(result!.monthlyCash + result!.monthlyGrowth - result!.monthlyTotal) < 1e-9);
+  assert.equal(result!.coverage, 2);
+});
+
+test("portfolio monthly income falls back to cash and never shows negative growth", () => {
+  // No target return published → total falls back to the cash figure, growth 0.
+  const noReturn = portfolioMonthlyIncome([
+    { amount: 100000, targetDistribution: "6% annually", targetReturn: null },
+  ]);
+  assert.ok(noReturn);
+  assert.equal(Math.round(noReturn!.annualTotal), 6000);
+  assert.equal(noReturn!.annualGrowth, 0);
+
+  // Distribution above the total return is floored, not shown as negative growth.
+  const clamped = portfolioMonthlyIncome([
+    { amount: 100000, targetDistribution: "9% annually", targetReturn: "7% annually" },
+  ]);
+  assert.ok(clamped);
+  assert.equal(Math.round(clamped!.annualTotal), 9000);
+  assert.equal(clamped!.annualGrowth, 0);
+});
+
+test("portfolio monthly income is null when nothing usable is committed", () => {
+  assert.equal(portfolioMonthlyIncome([]), null);
+  assert.equal(portfolioMonthlyIncome([{ amount: 0, targetDistribution: "8%", targetReturn: "12%" }]), null);
+  assert.equal(portfolioMonthlyIncome([{ amount: 50000, targetDistribution: "Open-ended", targetReturn: "n/a" }]), null);
 });

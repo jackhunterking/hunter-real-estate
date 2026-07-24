@@ -278,7 +278,6 @@ export function OfferingDetailFrame({
           <KeyFactsCard
             strategyLabel={strategy}
             facts={publicKeyFacts(offering, c, lang).slice(0, 6)}
-            lang={lang}
           />
         </div>
       </div>

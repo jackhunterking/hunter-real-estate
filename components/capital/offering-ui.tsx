@@ -14,7 +14,6 @@ import {
   CheckCircle2,
   ChevronDown,
   ExternalLink,
-  Info,
   type LucideIcon,
   MapPin,
   MapPinned,
@@ -22,29 +21,10 @@ import {
 } from "lucide-react";
 import type { Lang, OfferingBundle, OfferingDocument, Property, ServiceProviders, SourcedValue } from "@/lib/capital/types";
 import type { DocumentTermGroup } from "@/lib/capital/key-facts";
-import { formatSourceLine, localizeVerification, primaryShareClass, resolveImage } from "@/lib/capital/present";
+import { localizeVerification, primaryShareClass, resolveImage } from "@/lib/capital/present";
 import { computeInvestmentIncome } from "@/lib/capital/performance";
 import { CommaInput } from "@/components/capital/north/CompareUI";
 import { cn } from "@/lib/utils";
-
-/* ------------------------------------------------------------------ */
-/* Calm provenance — an unobtrusive info affordance, detail on hover   */
-/* ------------------------------------------------------------------ */
-
-export function ProvenanceChip({ value, lang }: { value?: SourcedValue; lang: Lang }) {
-  const line = formatSourceLine(value, lang);
-  if (!value || !line) return null;
-  return (
-    <span
-      tabIndex={0}
-      title={`${value.sourceId} · ${line}`}
-      aria-label={`${value.sourceId} · ${line}`}
-      className="ml-1 inline-flex translate-y-[1px] cursor-help text-muted-foreground/70 hover:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      <Info className="size-3.5" aria-hidden />
-    </span>
-  );
-}
 
 /* ------------------------------------------------------------------ */
 /* Summary stat card (the 3-up row the user likes)                     */
@@ -73,11 +53,9 @@ export type KeyFact = { label: string; value: string; provenance?: SourcedValue;
 export function KeyFactsCard({
   strategyLabel,
   facts,
-  lang,
 }: {
   strategyLabel?: string;
   facts: KeyFact[];
-  lang: Lang;
 }) {
   if (!facts.length) return null;
   return (
@@ -91,10 +69,7 @@ export function KeyFactsCard({
         {facts.map((fact, index) => (
           <div key={`${fact.label}-${index}`} className="border-b border-border/70 pb-3">
             <dt className="text-xs font-medium text-muted-foreground">{fact.label}</dt>
-            <dd className="mt-1 text-[15px] font-semibold leading-6 text-foreground">
-              {fact.value}
-              <ProvenanceChip value={fact.provenance} lang={lang} />
-            </dd>
+            <dd className="mt-1 text-[15px] font-semibold leading-6 text-foreground">{fact.value}</dd>
             {fact.note && <p className="mt-1 text-xs font-normal leading-5 text-muted-foreground">{fact.note}</p>}
           </div>
         ))}

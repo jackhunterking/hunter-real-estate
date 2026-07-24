@@ -2,17 +2,18 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowRight, Compass, MapPinned, Target, TrendingUp, WalletCards } from "lucide-react";
+import { ArrowRight, BanknoteArrowDown, Compass, MapPinned, Target, TrendingUp, WalletCards } from "lucide-react";
 import type { Lang, OfferingBundle } from "@/lib/capital/types";
 import type { InvestmentApplication } from "@/lib/capital/portal-access";
-import { buildMapProperties, formatMoneyCompact, primaryShareClass } from "@/lib/capital/present";
-import { latestPublished12mReturn, parseTargetMidpoint } from "@/lib/capital/performance";
+import { buildMapProperties, formatCurrencyCad, formatMoneyCompact, primaryShareClass } from "@/lib/capital/present";
+import { latestPublished12mReturn, parseTargetMidpoint, portfolioMonthlyIncome, type MonthlyIncomeBreakdown } from "@/lib/capital/performance";
 import { requestStage } from "@/lib/capital/investment-requests";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
 import { cn } from "@/lib/utils";
 import { FundMap } from "@/components/capital/map/FundMap";
 import { OfferingSummaryCard, offeringBundleCardProps } from "@/components/capital/OfferingSummaryCard";
+import { InfoPopover } from "@/components/capital/InfoPopover";
 import { NORTH_BASE } from "./NorthBrand";
 import { PageHeader, Panel } from "./PortalUI";
 import { usePortalAccess } from "./PortalAccessProvider";
@@ -32,6 +33,12 @@ const COPY = {
     avgTargetReturn: "Avg. target return",
     avgTargetNote:
       "Blended midpoint of your investments' published target ranges, weighted by your commitment. Targets are not guaranteed.",
+    infoLabel: "What this means",
+    monthlyIncome: "Est. monthly income",
+    monthlyIncomeNote:
+      "Blended from your investments' published target distribution (cash) and target return, weighted by your commitment. Illustrative estimate—growth is unrealized and not guaranteed.",
+    incomeCash: "Cash",
+    incomeGrowth: "Growth",
     positionsTitle: "Your positions",
     committed: "committed",
     reviewBadge: "In review",
@@ -63,6 +70,12 @@ const COPY = {
     avgTargetReturn: "Ort. hedef getiri",
     avgTargetNote:
       "Yatırımlarınızın yayımladığı hedef aralıklarının, taahhüdünüze göre ağırlıklı orta noktası. Hedefler garanti değildir.",
+    infoLabel: "Ne anlama geliyor",
+    monthlyIncome: "Tahmini aylık gelir",
+    monthlyIncomeNote:
+      "Yatırımlarınızın yayımladığı hedef dağıtım (nakit) ve hedef getirisinden, taahhüdünüze göre ağırlıklandırılarak hesaplanır. Örnek amaçlı tahmindir—büyüme gerçekleşmemiştir ve garanti değildir.",
+    incomeCash: "Nakit",
+    incomeGrowth: "Büyüme",
     positionsTitle: "Pozisyonlarınız",
     committed: "taahhüt",
     reviewBadge: "İncelemede",
@@ -177,15 +190,38 @@ export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }
   const avgPast = weightedAverage(pastRows);
   const avgTarget = weightedAverage(targetRows);
 
+  // Estimated monthly income, split into cash distribution + unrealized growth.
+  // Derived from each held fund's published target distribution and target
+  // return; frequency is irrelevant to a monthly average (see the helper).
+  const income = portfolioMonthlyIncome(
+    heldFunds.map((h) => ({
+      amount: h.position.amount,
+      targetDistribution: primaryShareClass(h.fund)?.targetDistribution?.value,
+      targetReturn: primaryShareClass(h.fund)?.targetReturn?.value,
+    })),
+  );
+
   const hasHoldings = heldFunds.length > 0;
-  const tiles: { key: string; label: string; value: string; note: string; icon: typeof WalletCards }[] = [
+  const money = (n: number) => formatCurrencyCad(Math.round(n), lang);
+  const incomeBody = hasHoldings && income ? <IncomeSplit income={income} money={money} c={c} /> : undefined;
+  const tiles: { key: string; label: string; value: string; note: string; icon: typeof WalletCards; body?: ReactNode }[] = [
     { key: "invested", label: c.totalInvested, value: hasHoldings ? formatMoneyCompact(totalInvested, lang) : "—", note: c.totalInvestedNote, icon: WalletCards },
+    // The star metric — how much the portfolio throws off per month.
+    {
+      key: "income",
+      label: c.monthlyIncome,
+      value: hasHoldings && income ? `≈ ${money(income.monthlyTotal)}` : "—",
+      note: c.monthlyIncomeNote,
+      icon: BanknoteArrowDown,
+      body: incomeBody,
+    },
     // Only shown when at least one held fund actually publishes a 12-month figure.
     ...(avgPast != null
       ? [{ key: "past", label: c.avgPastReturn, value: fmtPct(avgPast, lang), note: `${c.avgPastNote} ${c.avgPastCoverage(pastRows.length, heldFunds.length)}`, icon: TrendingUp }]
       : []),
     { key: "target", label: c.avgTargetReturn, value: avgTarget != null ? fmtPct(avgTarget, lang) : "—", note: c.avgTargetNote, icon: Target },
   ];
+  const lgCols = { 2: "lg:grid-cols-2", 3: "lg:grid-cols-3", 4: "lg:grid-cols-4" }[tiles.length] ?? "lg:grid-cols-3";
 
   const renderFundCard = (keyId: string, fund: OfferingBundle, ctaSlot: ReactNode) => (
     <OfferingSummaryCard
@@ -208,17 +244,15 @@ export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }
       {/* KPI row — always visible so the portfolio overview reads as an empty
           state (— placeholders) before any holdings, then fills in once funded. */}
       {offerings.length > 0 && (
-        <div className={cn("grid gap-3 sm:grid-cols-2", tiles.length === 3 && "lg:grid-cols-3")}>
-          {tiles.map(({ key, label, value, note, icon: Icon }) => (
+        <div className={cn("grid gap-3 sm:grid-cols-2", lgCols)}>
+          {tiles.map(({ key, label, value, note, icon: Icon, body }) => (
             <Panel key={key} className="p-5">
               <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-xs font-semibold text-[#6d7983]">{label}</p>
-                  <p className="mt-2 text-2xl font-semibold tabular-nums text-[#102638]">{value}</p>
-                </div>
+                <MetricLabel label={label} note={note} infoLabel={c.infoLabel} />
                 <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#edf3f6] text-[#0a4b72]"><Icon className="size-5" /></span>
               </div>
-              <p className="mt-3 text-[11px] leading-4 text-[#8a949b]">{note}</p>
+              <p className="mt-2 text-2xl font-semibold tabular-nums text-[#102638]">{value}</p>
+              {body}
             </Panel>
           ))}
         </div>
@@ -327,6 +361,52 @@ function groupCount(keys: string[]): { key: string; count: number }[] {
   const map = new Map<string, number>();
   for (const key of keys) map.set(key, (map.get(key) ?? 0) + 1);
   return [...map.entries()].map(([key, count]) => ({ key, count })).sort((a, b) => b.count - a.count);
+}
+
+/**
+ * A KPI tile's label with the shared info dot that reveals the (otherwise
+ * hidden) explanation on click — the fine print only surfaces when the investor
+ * asks for it.
+ */
+function MetricLabel({ label, note, infoLabel }: { label: string; note: string; infoLabel: string }) {
+  return (
+    <div className="flex min-w-0 items-center gap-1.5">
+      <p className="text-xs font-semibold text-[#6d7983]">{label}</p>
+      <InfoPopover label={`${infoLabel}: ${label}`} content={note} />
+    </div>
+  );
+}
+
+/** Two-segment bar splitting the monthly total into cash distribution + growth. */
+function IncomeSplit({
+  income,
+  money,
+  c,
+}: {
+  income: MonthlyIncomeBreakdown;
+  money: (n: number) => string;
+  c: { incomeCash: string; incomeGrowth: string };
+}) {
+  const total = income.monthlyTotal || 1;
+  const cashPct = Math.round((income.monthlyCash / total) * 100);
+  return (
+    <div className="mt-3">
+      <div className="flex h-2 overflow-hidden rounded-full bg-[#eef2f4]">
+        <div className="h-full bg-[#0a4b72]" style={{ width: `${cashPct}%` }} />
+        <div className="h-full bg-[#996c26]" style={{ width: `${100 - cashPct}%` }} />
+      </div>
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[#6d7983]">
+        <span className="inline-flex items-center gap-1.5">
+          <span className="size-2 rounded-full bg-[#0a4b72]" aria-hidden />
+          {c.incomeCash} <span className="font-semibold tabular-nums text-[#2c3e4c]">{money(income.monthlyCash)}</span>
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="size-2 rounded-full bg-[#996c26]" aria-hidden />
+          {c.incomeGrowth} <span className="font-semibold tabular-nums text-[#2c3e4c]">{money(income.monthlyGrowth)}</span>
+        </span>
+      </div>
+    </div>
+  );
 }
 
 function AllocationBars({ items, total, unit }: { items: { label: string; count: number }[]; total: number; unit: string }) {

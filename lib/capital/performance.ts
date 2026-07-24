@@ -161,3 +161,68 @@ export function latestPublished12mReturn(returns?: TrailingReturn[]): number | n
 
   return null;
 }
+
+export type MonthlyIncomeBreakdown = {
+  monthlyCash: number;
+  monthlyGrowth: number;
+  monthlyTotal: number;
+  annualCash: number;
+  annualGrowth: number;
+  annualTotal: number;
+  /** Holdings that published a target-distribution rate (drove the cash figure). */
+  coverage: number;
+};
+
+/**
+ * Forward-looking, portfolio-level income estimate: what committed holdings
+ * would throw off per month, split into the cash actually distributed and the
+ * unrealized growth on top. For each holding, on committed amount A:
+ *   cash   = A × (target-distribution midpoint) — the money paid out
+ *   total  = A × (target-return midpoint)       — cash + appreciation
+ *   growth = max(0, total − cash)               — unrealized paper gain
+ * Summed across holdings, then ÷ 12 for the monthly view.
+ *
+ * Payout frequency is intentionally ignored: an 8%/yr fund paying quarterly and
+ * one paying monthly produce the same *average* monthly amount (annual ÷ 12) —
+ * frequency changes when cash lands, not the average. One formula therefore
+ * withstands monthly / quarterly / semi-annual / annual vehicles alike.
+ *
+ * This is published targets applied to committed amounts — an illustrative
+ * estimate, never a forecast or a promise of income received. Returns null when
+ * no holding yields a usable figure, so the caller can render an empty state.
+ */
+export function portfolioMonthlyIncome(
+  rows: { amount: number; targetDistribution?: string | null; targetReturn?: string | null }[],
+): MonthlyIncomeBreakdown | null {
+  let annualCash = 0;
+  let annualTotal = 0;
+  let coverage = 0;
+
+  for (const row of rows) {
+    if (!(row.amount > 0)) continue;
+    const distRate = parseTargetMidpoint(row.targetDistribution ?? "");
+    const totalRate = parseTargetMidpoint(row.targetReturn ?? "");
+
+    const cash = distRate != null ? row.amount * (distRate / 100) : 0;
+    // Total return falls back to the cash figure when no return is published,
+    // and is floored at cash so growth is never negative.
+    const total = Math.max(totalRate != null ? row.amount * (totalRate / 100) : cash, cash);
+
+    annualCash += cash;
+    annualTotal += total;
+    if (distRate != null) coverage += 1;
+  }
+
+  if (annualTotal <= 0) return null;
+  const annualGrowth = Math.max(0, annualTotal - annualCash);
+
+  return {
+    monthlyCash: annualCash / 12,
+    monthlyGrowth: annualGrowth / 12,
+    monthlyTotal: annualTotal / 12,
+    annualCash,
+    annualGrowth,
+    annualTotal,
+    coverage,
+  };
+}

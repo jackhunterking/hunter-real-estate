@@ -137,7 +137,7 @@ function Overview({ offering, share, professional }: { offering: OfferingBundle;
 
       <section>
         <SectionTitle title={c.keyFacts} />
-        <KeyFactsCard facts={facts} lang={lang} />
+        <KeyFactsCard facts={facts} />
       </section>
 
       {presentation && (
