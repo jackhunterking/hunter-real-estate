@@ -4,9 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { tx } from "@/lib/i18n/localize";
-import type { MapProperty } from "@/lib/capital/present";
+import { resolveImage, type MapProperty } from "@/lib/capital/present";
 import { cn } from "@/lib/utils";
-import { BuildingMapThumb } from "./BuildingMapThumb";
 import { loadLeaflet } from "./leaflet-loader";
 
 type Status = "loading" | "ready" | "error";
@@ -280,13 +279,15 @@ export function FundMap({
                     className="aspect-[4/3] w-full rounded-md border border-border object-cover"
                   />
                 ) : (
-                  <BuildingMapThumb
-                    latitude={p.latitude}
-                    longitude={p.longitude}
-                    query={`${p.address ?? p.name}, ${p.city}, ${p.province}`}
-                    label={p.name}
-                    className="w-full rounded-md border border-border"
-                  />
+                  <div
+                    className="flex aspect-[4/3] w-full items-center justify-center rounded-md border border-border"
+                    style={{ backgroundImage: resolveImage(undefined, p.id, p.name, lang).gradient }}
+                    aria-hidden
+                  >
+                    <span className="font-serif text-sm font-semibold text-white/85">
+                      {resolveImage(undefined, p.id, p.name, lang).initials}
+                    </span>
+                  </div>
                 )}
                 <div className="flex min-w-0 flex-col gap-1">
                   <button

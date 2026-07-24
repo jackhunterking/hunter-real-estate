@@ -384,17 +384,18 @@ export function buildMapProperties(
   lang: Lang,
   assetClasses: TaxonomyItem[] = [],
 ): MapProperty[] {
-  // Real building photos live at the offering level (properties carry none in
-  // practice), so fall back to the fund's gallery — distributed across its
-  // buildings — then its card image. No `verifiedAt` gate: this is a portal-only
-  // path; the public marketing page gates media separately (public-preview.ts).
+  // Image precedence per building: its own photo first, then a real offering
+  // gallery photo distributed across buildings. We deliberately do NOT fall back
+  // to the offering's card/banner — that is generic brand art (e.g. legacyBG),
+  // and stamping it on a specific address reads as fake. A building with no photo
+  // resolves to `undefined` here so the card shows the branded initials tile
+  // (and, once wired, a Google Street View of the exact address). No `verifiedAt`
+  // gate: portal-only path; the marketing page gates media separately.
   const gallery = (bundle.media?.gallery ?? []).filter((image) => image.src);
   return bundle.properties.map((p, index) => {
     const propertyImage = p.media?.gallery?.find((image) => image.src)
       ?? (p.media?.card?.src ? p.media.card : undefined);
-    const offeringImage = gallery.length
-      ? gallery[index % gallery.length]
-      : (bundle.media?.card?.src ? bundle.media.card : undefined);
+    const offeringImage = gallery.length ? gallery[index % gallery.length] : undefined;
     const image = propertyImage ?? offeringImage;
     return {
       id: p.id,

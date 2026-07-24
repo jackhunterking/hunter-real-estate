@@ -1207,6 +1207,17 @@
       "unitCount": 63,
       "purchasePrice": 6300000,
       "acquiredOn": "2023-06-07",
+      "media": {
+        "card": {
+          "src": "/capital/photos/legacy-epiphany/6602-48-st-cold-lake.jpg",
+          "kind": "photo",
+          "sourceId": "legacy-deck-2026-07",
+          "alt": {
+            "en": "6602 48 Street, Cold Lake — apartment building",
+            "tr": "6602 48 Street, Cold Lake — apartman binası"
+          }
+        }
+      },
       "ownershipNote": {
         "en": "Apartment rental property, 63 units at $100,000 per door. Wood frame, built 2009, great condition. 97% occupied. Acquisition-year net operating income of $359,000 annualized rose to $467,000 in 2025, with $528,000 projected for 2026; cap rate 6.9% on fair market value. Acquired by Epiphany Multi-Family LP from Black Elm Financial LP, a related party, on 7 June 2023.",
         "tr": "63 daireli apartman kiralık mülkü, kapı başına 100.000 $. Ahşap karkas, 2009 yapımı, çok iyi durumda. %97 dolu. Satın alma yılı yıllıklandırılmış net faaliyet geliri 359.000 $ iken 2025'te 467.000 $'a yükselmiş, 2026 için 528.000 $ öngörülmüştür; gerçeğe uygun piyasa değeri üzerinden kapitalizasyon oranı %6,9. 7 Haziran 2023'te ilişkili taraf olan Black Elm Financial LP'den Epiphany Multi-Family LP tarafından satın alınmıştır."
@@ -1674,6 +1685,17 @@
       "status": "value-add",
       "verificationStatus": "verified",
       "unitCount": 30,
+      "media": {
+        "card": {
+          "src": "/capital/photos/legacy-epiphany/3620-23-ave-s-lethbridge.jpg",
+          "kind": "photo",
+          "sourceId": "legacy-deck-2026-07",
+          "alt": {
+            "en": "3620 23 Avenue S, Lethbridge — apartment building",
+            "tr": "3620 23 Avenue S, Lethbridge — apartman binası"
+          }
+        }
+      },
       "ownershipNote": {
         "en": "Apartment rental property, 30 units at $126,000 per door. Wood frame, built 1984, good condition. 100% occupied. A projected investment of $63,000 targets a 38.9% return and a $400,000 increase in value. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "30 daireli apartman kiralık mülkü, kapı başına 126.000 $. Ahşap karkas, 1984 yapımı, iyi durumda. %100 dolu. Öngörülen 63.000 $ yatırımla %38,9 getiri ve 400.000 $ değer artışı hedeflenmektedir. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
