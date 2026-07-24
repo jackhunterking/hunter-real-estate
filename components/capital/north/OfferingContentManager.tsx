@@ -16,9 +16,13 @@ import type {
   LocalizedText,
   OfferingBundle,
   OfferingDocument,
+  RiskCategory,
+  RiskEntry,
   ShareClass,
   SourcedValue,
 } from "@/lib/capital/types";
+import { riskText } from "@/lib/capital/present";
+import { scoreOfferingCompleteness } from "@/lib/capital/field-catalogue";
 import { hasPlatformRole } from "@/lib/capital/portal-access";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
@@ -42,6 +46,10 @@ const COPY = {
     gallery: "Gallery", upload: "Upload", documents: "Documents", docTitle: "Title", type: "Type", visibility: "Visibility",
     version: "Version", effective: "Effective date", save: "Save draft", publish: "Publish", saved: "Saved",
     error: "The update was not completed.", uploading: "Uploading…", remove: "Remove", publishHint: "Save the draft before publishing.",
+    freshness: "Data freshness", cadence: "Update cadence", dataAsOf: "Figures as of (YYYY-MM-DD)",
+    dataPeriodLabel: "Period label", managerPublicUrl: "Manager fund page (URL)",
+    completeness: "Profile completeness", missingRequired: "Still required", missingRecommended: "Recommended",
+    allRequired: "Every required field is filled.",
   },
   tr: {
     title: "Yatırımlar", description: "Yatırım profillerini oluşturun ve düzenleyin — içerik, veriler, medya ve belgeler — ardından yayımlayın.",
@@ -58,6 +66,10 @@ const COPY = {
     gallery: "Galeri", upload: "Yükle", documents: "Belgeler", docTitle: "Başlık", type: "Tür", visibility: "Görünürlük",
     version: "Sürüm", effective: "Yürürlük tarihi", save: "Taslağı kaydet", publish: "Yayımla", saved: "Kaydedildi",
     error: "Güncelleme tamamlanamadı.", uploading: "Yükleniyor…", remove: "Kaldır", publishHint: "Yayımlamadan önce taslağı kaydedin.",
+    freshness: "Veri güncelliği", cadence: "Güncelleme sıklığı", dataAsOf: "Veri tarihi (YYYY-AA-GG)",
+    dataPeriodLabel: "Dönem etiketi", managerPublicUrl: "Yönetici fon sayfası (URL)",
+    completeness: "Profil tamamlanma", missingRequired: "Hâlâ zorunlu", missingRecommended: "Önerilen",
+    allRequired: "Tüm zorunlu alanlar dolu.",
   },
 } as const;
 
@@ -94,6 +106,12 @@ export function OfferingContentManager({ offerings, backendConfigured }: { offer
   const [editLanguage, setEditLanguage] = useState<Lang>("en");
   const [state, setState] = useState<"idle" | "saving" | "error" | "saved">("idle");
   const [busy, setBusy] = useState(false);
+  // Recomputed on every keystroke so the gap panel tracks the draft, not the
+  // last save — the point is to see the profile close as you fill it.
+  const completeness = useMemo(
+    () => scoreOfferingCompleteness(bundle ?? blankBundle()),
+    [bundle],
+  );
 
   function load(row: OfferingAdminRow) {
     setSelectedId(row.id);
@@ -206,6 +224,39 @@ export function OfferingContentManager({ offerings, backendConfigured }: { offer
           {busy && <span className="text-xs font-medium text-[#0a4b72]">{c.uploading}</span>}
         </div>
 
+        {/* Freshness + gaps: what period these figures describe, and what is
+            still missing before the profile is publishable. */}
+        <Group title={c.freshness}>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label={c.cadence}>
+              <select value={bundle.updateCadence ?? "quarterly"} onChange={(e) => patch({ updateCadence: e.target.value as OfferingBundle["updateCadence"] })} className="field">
+                {(["quarterly", "semi-annual", "annual", "ad-hoc"] as const).map((v) => <option key={v} value={v}>{v}</option>)}
+              </select>
+            </Field>
+            <Field label={c.dataAsOf}><input value={bundle.dataAsOf ?? ""} onChange={(e) => patch({ dataAsOf: e.target.value })} placeholder="2026-03-31" className="field" /></Field>
+            <Field label={c.dataPeriodLabel}><input value={bundle.dataPeriodLabel ?? ""} onChange={(e) => patch({ dataPeriodLabel: e.target.value })} placeholder="Q1 2026" className="field" /></Field>
+            <Field label={c.managerPublicUrl}><input value={bundle.managerPublicUrl ?? ""} onChange={(e) => patch({ managerPublicUrl: e.target.value })} className="field" /></Field>
+          </div>
+          <div className="mt-4 rounded-md border border-[#dfe5e8] bg-[#fafbfb] p-4">
+            <p className="text-xs font-semibold text-[#5d707b]">
+              {c.completeness}: <span className="text-[#234154]">{completeness.percent}%</span>
+              {" · "}{completeness.filled}/{completeness.total}
+            </p>
+            {completeness.missingRequired.length > 0 ? (
+              <p className="mt-2 text-xs leading-5 text-[#8a6d24]">
+                <strong>{c.missingRequired}:</strong> {completeness.missingRequired.map((f) => tx(f.label, lang)).join(" · ")}
+              </p>
+            ) : (
+              <p className="mt-2 text-xs font-semibold text-[#2f7d55]">{c.allRequired}</p>
+            )}
+            {completeness.missingRecommended.length > 0 && (
+              <p className="mt-2 text-xs leading-5 text-[#71808a]">
+                <strong>{c.missingRecommended}:</strong> {completeness.missingRecommended.map((f) => tx(f.label, lang)).join(" · ")}
+              </p>
+            )}
+          </div>
+        </Group>
+
         {/* Identity */}
         <Group title={c.identity}>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -242,7 +293,7 @@ export function OfferingContentManager({ offerings, backendConfigured }: { offer
             onChange={(items) => patch({ highlights: items })} />
         </Group>
         <Group title={c.risks}>
-          <LocalizedList items={bundle.risks ?? []} lang={editLanguage} addLabel={c.add} removeLabel={c.remove}
+          <RiskList items={bundle.risks ?? []} lang={editLanguage} addLabel={c.add} removeLabel={c.remove}
             onChange={(items) => patch({ risks: items })} />
         </Group>
 
@@ -351,6 +402,33 @@ function AddButton({ label, onClick }: { label: string; onClick: () => void }) {
 function UploadButton({ label, accept, onFile }: { label: string; accept: string; onFile: (file: File) => void }) {
   return <label className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-md border border-[#cbd6dc] bg-white px-3 text-xs font-semibold text-[#31566c]"><Upload className="size-3.5" />{label}<input type="file" accept={accept} className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); e.target.value = ""; }} /></label>;
 }
+/**
+ * Risks carry a category because fund documents group them that way (Lankin's
+ * March 2026 deck breaks them into six). Legacy rows are plain LocalizedText, so
+ * every read normalises through `riskText` and every write emits the object
+ * form; `app.apply_offering_bundle` accepts both.
+ */
+function RiskList({ items, lang, addLabel, removeLabel, onChange }: { items: RiskEntry[]; lang: Lang; addLabel: string; removeLabel: string; onChange: (items: RiskEntry[]) => void }) {
+  const categories: RiskCategory[] = ["investment", "regulatory", "leverage", "business", "redemption", "tax", "other"];
+  const update = (index: number, next: Partial<{ text: LocalizedText; category: RiskCategory }>) =>
+    onChange(items.map((item, i) => {
+      if (i !== index) return item;
+      const current = { text: riskText(item), category: "category" in item ? item.category : undefined };
+      return { ...current, ...next };
+    }));
+  return <div className="space-y-2">
+    {items.map((item, i) => <div key={i} className="grid grid-cols-[1fr_150px_auto] gap-2">
+      <input value={riskText(item)[lang] ?? ""} onChange={(e) => update(i, { text: { ...riskText(item), [lang]: e.target.value } })} className="field" />
+      <select value={("category" in item && item.category) || "other"} onChange={(e) => update(i, { category: e.target.value as RiskCategory })} className="field">
+        {categories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+      </select>
+      <IconButton onClick={() => onChange(items.filter((_, xi) => xi !== i))}><Trash2 className="size-4" /></IconButton>
+    </div>)}
+    <AddButton label={addLabel} onClick={() => onChange([...items, { text: { en: "", tr: "" }, category: "other" }])} />
+    <span className="sr-only">{removeLabel}</span>
+  </div>;
+}
+
 function LocalizedList({ items, lang, addLabel, removeLabel, onChange }: { items: LocalizedText[]; lang: Lang; addLabel: string; removeLabel: string; onChange: (items: LocalizedText[]) => void }) {
   return <div className="space-y-2">
     {items.map((item, i) => <div key={i} className="flex gap-2">

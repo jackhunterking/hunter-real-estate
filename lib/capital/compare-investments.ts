@@ -1,4 +1,4 @@
-import { parsePerformancePercentage } from "./performance";
+import { parsePerformancePercentage } from "./performance.ts";
 import type { LocalizedText, OfferingBundle } from "./types";
 
 /**
@@ -144,6 +144,29 @@ export type FundPeriod = {
   role: "last" | "prior" | "older" | "inception";
   year?: number;
   pct: number;
+  /**
+   * True when the inception figure is our average of the published years rather
+   * than a since-inception number the fund itself published. Labelled
+   * differently so an average of one year is never read as a track record.
+   */
+  derived?: boolean;
+};
+
+/**
+ * Terms exactly as the fund publishes them. Shown verbatim, side by side, in
+ * the fund-vs-fund tool; every field is optional because funds publish
+ * different subsets.
+ */
+export type FundTerms = {
+  targetReturn?: string;
+  targetDistribution?: string;
+  managementFee?: LocalizedText;
+  term?: string;
+  redemptionTerms?: LocalizedText;
+  riskProfile?: LocalizedText;
+  registeredAccountTypes?: string[];
+  aum?: string;
+  distributionFrequency?: LocalizedText;
 };
 
 export type FundComparable = {
@@ -158,6 +181,12 @@ export type FundComparable = {
   targetReturnPhrase?: LocalizedText;
   distributionFrequency?: LocalizedText;
   minimumInvestment?: number;
+  terms?: FundTerms;
+  /** "2021-09" — shown beside inception so two different spans stay visible. */
+  inceptionDate?: string;
+  /** The manager's own words for the period these figures describe ("Q1 2026"). */
+  dataPeriodLabel?: string;
+  dataAsOf?: string;
 };
 
 /** Given cash invested and a return %, what it would have earned. */
@@ -219,9 +248,11 @@ export function toFundComparable(bundle: OfferingBundle): FundComparable | null 
     });
   });
 
+  // A published since-inception figure is a real track record; our own average
+  // of the published years is not, so it is flagged and labelled differently.
   const inceptionPct = inception ?? (years.length ? years.reduce((sum, y) => sum + y.pct, 0) / years.length : null);
   if (inceptionPct !== null) {
-    periods.push({ key: "since-inception", role: "inception", pct: inceptionPct });
+    periods.push({ key: "since-inception", role: "inception", pct: inceptionPct, derived: inception === null });
   }
 
   if (!periods.length) return null;
@@ -239,5 +270,19 @@ export function toFundComparable(bundle: OfferingBundle): FundComparable | null 
       : undefined,
     distributionFrequency: bundle.distributionFrequency,
     minimumInvestment: primaryClass?.minimumInvestment?.value,
+    terms: {
+      targetReturn: primaryClass?.targetReturn?.value,
+      targetDistribution: primaryClass?.targetDistribution?.value ?? primaryClass?.distributionPerUnit?.value,
+      managementFee: bundle.managementFee,
+      term: primaryClass?.term?.value,
+      redemptionTerms: primaryClass?.redemptionTerms,
+      riskProfile: bundle.riskProfile,
+      registeredAccountTypes: primaryClass?.registeredAccountTypes,
+      aum: bundle.aum ? String(bundle.aum.value) : undefined,
+      distributionFrequency: bundle.distributionFrequency,
+    },
+    inceptionDate: bundle.inceptionDate,
+    dataPeriodLabel: bundle.dataPeriodLabel,
+    dataAsOf: bundle.dataAsOf,
   };
 }

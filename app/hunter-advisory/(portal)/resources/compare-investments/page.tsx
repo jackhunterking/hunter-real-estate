@@ -1,11 +1,6 @@
-import { getPublishedOfferings } from "@/lib/capital/repository-server";
-import { toFundComparable } from "@/lib/capital/compare-investments";
-import { CompareInvestments } from "@/components/capital/north/CompareInvestments";
+import { redirect } from "next/navigation";
 
-export default async function CompareInvestmentsPage() {
-  const offerings = await getPublishedOfferings();
-  const funds = offerings
-    .map(toFundComparable)
-    .filter((fund): fund is NonNullable<typeof fund> => fund !== null);
-  return <CompareInvestments funds={funds} />;
+/** The tool moved under Resources → Tools and was renamed "Active vs. Passive". */
+export default function CompareInvestmentsPage() {
+  redirect("/hunter-advisory/resources/tools/active-vs-passive");
 }

@@ -6,8 +6,8 @@
  * so screens stay thin. The English canonical strings in data.ts are the source
  * of truth; Turkish display values are derived here at render time.
  */
-import { tx } from "@/lib/i18n/localize";
-import { taxonomyColor, taxonomyLabel, type TaxonomyItem } from "./taxonomies";
+import { tx } from "../i18n/localize.ts";
+import { taxonomyColor, taxonomyLabel, type TaxonomyItem } from "./taxonomies.ts";
 import type {
   ImageSlot,
   Lang,
@@ -15,9 +15,19 @@ import type {
   MetricClassification,
   OfferingBundle,
   Property,
+  RiskEntry,
   ShareClass,
   SourcedValue,
-} from "./types";
+} from "./types.ts";
+
+/**
+ * Reads a risk written in either shape. Published snapshots flatten `risks` to
+ * plain LocalizedText, but a draft bundle straight from the editor may carry
+ * `{ text, category }`, so every reader goes through here.
+ */
+export function riskText(entry: RiskEntry): LocalizedText {
+  return "text" in entry ? entry.text : entry;
+}
 
 /* ------------------------------------------------------------------ */
 /* Localized label tables                                             */
@@ -111,7 +121,9 @@ const RETURN_PHRASES_TR: Record<string, string> = {
 function genericReturnTr(text: string): string {
   let out = text;
   // Move "%" in front of the number and use Turkish decimal comma: "8.2%" -> "%8,2"
-  out = out.replace(/(\d+(?:\.\d+)?)-(\d+(?:\.\d+)?)%/g, (_m, a: string, b: string) =>
+  // The published ranges sign both sides ("10%-14%"), so the inner sign is
+  // optional — otherwise each number is prefixed on its own: "%10-%14".
+  out = out.replace(/(\d+(?:\.\d+)?)\s*%?\s*[-–—]\s*(\d+(?:\.\d+)?)\s*%/g, (_m, a: string, b: string) =>
     `%${a.replace(".", ",")}-${b.replace(".", ",")}`,
   );
   out = out.replace(/(\d+(?:\.\d+)?)%/g, (_m, a: string) => `%${a.replace(".", ",")}`);
@@ -136,6 +148,23 @@ export function formatReturnPhrase(text: string, lang: Lang): string {
 export function formatSourcedPhrase(value: SourcedValue<string> | undefined, lang: Lang): string | null {
   if (!value) return null;
   return formatReturnPhrase(value.value, lang);
+}
+
+/**
+ * Target-return copy → the figure alone: "12 - 15 % annually" and
+ * "10%-14% targeted annual net return" both collapse to a tight "10–14%". The
+ * card headline carries the number only; the qualifying prose belongs in the
+ * detail view. Falls back to the input when there is no percentage to pull out.
+ *
+ * Published ranges carry a percent sign on BOTH sides, so the sign between the
+ * two numbers is optional here — reading only up to the first "%" would print
+ * the bottom of the range as if it were the whole target.
+ */
+export function tightRange(text: string) {
+  const range = text.match(/(\d+(?:[.,]\d+)?)\s*%?\s*[-–—]\s*(\d+(?:[.,]\d+)?)\s*%/);
+  if (range) return `${range[1]}–${range[2]}%`;
+  const single = text.match(/\d+(?:[.,]\d+)?\s*%/);
+  return single ? single[0].replace(/\s+/g, "") : text;
 }
 
 /* ------------------------------------------------------------------ */
@@ -201,10 +230,13 @@ export type MetricTile = {
 };
 
 function compactPercent(value: string, lang: Lang): string | null {
-  const match = value.match(/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?%/);
-  if (!match) return null;
-  const percent = match[0].replace(".", ",");
-  return lang === "tr" ? `%${percent.replace("%", "")}` : percent;
+  if (!/\d\s*%/.test(value)) return null;
+  // Same tightening the summary card and detail header use, so one investment
+  // never shows a different target on its overview tile than on its own header.
+  const compact = tightRange(value);
+  if (lang !== "tr") return compact;
+  // Turkish leads with the sign and uses a decimal comma: "8.2%" -> "%8,2".
+  return `%${compact.replace("%", "").replace(/\./g, ",")}`;
 }
 
 /**

@@ -144,6 +144,108 @@ export type Database = {
         latest_version: string | null;
         draft_content: Json;
         updated_at: string;
+        update_cadence: string;
+        data_as_of: string | null;
+        data_period_label: string | null;
+        next_review_due_at: string | null;
+        last_reviewed_at: string | null;
+        review_owner_user_id: string | null;
+        manager_public_url: string | null;
+        freshness_status: string;
+        review_owner_name: string | null;
+      }>;
+      // Admin console directories. Every one is gated in SQL with
+      // `where private.is_hunter_admin()`, so a non-admin reads zero rows.
+      admin_users: ApiView<{
+        user_id: string;
+        display_name: string;
+        first_name: string;
+        last_name: string;
+        email: string;
+        locale: string;
+        account_status: string;
+        account_intent: string | null;
+        onboarding_status: string | null;
+        investor_account_type: string | null;
+        investor_qualification_category: string | null;
+        created_at: string;
+        email_verified: boolean;
+        last_sign_in_at: string | null;
+        platform_roles: string[];
+        partner_application_status: string | null;
+        license_verification_status: string | null;
+        firm_affiliation_status: string | null;
+        partner_account_status: string | null;
+        partner_is_active: boolean;
+      }>;
+      admin_taxonomies: ApiView<{
+        id: string;
+        kind: string;
+        key: string;
+        label: Json;
+        color: string | null;
+        sort_order: number;
+        updated_at: string;
+        usage_count: number;
+      }>;
+      admin_investment_interests: ApiView<{
+        id: string;
+        user_id: string;
+        offering_id: string;
+        message: string | null;
+        preferred_channel: string | null;
+        contact_consent_at: string | null;
+        status: string;
+        reviewer_notes: string | null;
+        created_at: string;
+        updated_at: string;
+        display_name: string | null;
+        email: string | null;
+      }>;
+      admin_firm_memberships: ApiView<{
+        id: string;
+        organization_id: string;
+        user_id: string;
+        roles: string[];
+        status: string;
+        work_email: string | null;
+        registered_name: string | null;
+        licence_type: string | null;
+        masked_licence_number: string | null;
+        verification_status: string | null;
+        requested_at: string | null;
+        approved_at: string | null;
+        ended_at: string | null;
+        organization_name: string | null;
+        display_name: string | null;
+      }>;
+      admin_email_delivery: ApiView<{
+        id: string;
+        category: string;
+        related_entity_type: string | null;
+        related_entity_id: string | null;
+        recipient: string;
+        template_key: string;
+        status: string;
+        attempt_count: number;
+        last_error_code: string | null;
+        created_at: string;
+        sent_at: string | null;
+        delivered_at: string | null;
+        failed_at: string | null;
+        last_event_at: string | null;
+        suppression_reason: string | null;
+      }>;
+      admin_legal_documents: ApiView<{
+        id: string;
+        document_key: string;
+        language: string;
+        version: string;
+        status: string;
+        effective_at: string | null;
+        published_at: string | null;
+        withdrawal_at: string | null;
+        created_at: string;
       }>;
       admin_leads: ApiView<{
         id: string;
@@ -540,6 +642,32 @@ export type Database = {
       };
       save_offering_draft: {
         Args: { p_bundle: Json };
+        Returns: string;
+      };
+      upsert_taxonomy: {
+        Args: {
+          p_kind: string;
+          p_key: string;
+          p_label: Json;
+          p_color?: string | null;
+          p_sort_order?: number | null;
+        };
+        Returns: string;
+      };
+      retire_taxonomy: {
+        Args: { p_kind: string; p_key: string };
+        Returns: void;
+      };
+      record_offering_review: {
+        Args: {
+          p_offering_id: string;
+          p_outcome: "updated" | "no-change" | "awaiting-source";
+          p_data_as_of?: string | null;
+          p_period_label?: string | null;
+          p_fields_changed?: string[] | null;
+          p_note?: string | null;
+          p_source_document_id?: string | null;
+        };
         Returns: string;
       };
       complete_hnc_onboarding: {

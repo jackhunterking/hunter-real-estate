@@ -18,6 +18,7 @@ import {
   OfferingSummaryCard,
   cardMetricLabels,
   riskLevel,
+  tightDistribution,
   tightRange,
   CARD_CTA,
 } from "@/components/capital/OfferingSummaryCard";
@@ -45,7 +46,7 @@ function offeringMetrics(
     {
       label: labels.distribution,
       value: offering.targetDistribution
-        ? formatReturnPhrase(offering.targetDistribution.value, lang)
+        ? tightDistribution(formatReturnPhrase(offering.targetDistribution.value, lang), lang)
         : c.card.reviewRequired,
     },
     {

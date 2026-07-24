@@ -51,8 +51,11 @@ const UPLOADS: { local: string; bucket: string; path: string }[] = [
   // Legacy images
   { local: "legacyBG.png", bucket: "offering-public", path: "legacy-epiphany/media/legacyBG.png" },
   { local: "legacyLogo.png", bucket: "offering-public", path: "legacy-epiphany/media/legacyLogo.png" },
-  // Legacy public document
-  { local: "capital/docs/legacy-class-a-fact-sheet-2026-01-30.pdf", bucket: "offering-public", path: "legacy-epiphany/docs/fact-sheet-2026-01-30.pdf" },
+  // Legacy public document. The Class A fact sheet and term sheet are NOT here:
+  // both are legended "for the exclusive use of registered dealers and exempt
+  // market dealing representatives", so they are approved-investor documents and
+  // belong in the private bucket, uploaded through the admin panel.
+  { local: "capital/docs/legacy-offering-summary-class-a-2026-07-09.pdf", bucket: "offering-public", path: "legacy-epiphany/docs/offering-summary-class-a-2026-07-09.pdf" },
 ];
 
 async function main() {

@@ -85,12 +85,18 @@
     "alberta"
   ],
   "shareClassIds": [
-    "lankin-class-a"
+    "lankin-series-a"
   ],
   "propertyIds": [
-    "lankin-edmonton",
-    "lankin-newmarket",
-    "lankin-brampton"
+    "lankin-park-centre-place",
+    "lankin-huron-heights",
+    "lankin-orenda-court",
+    "lankin-4-silver-maple",
+    "lankin-greenstone-park",
+    "lankin-darcel-avenue",
+    "lankin-queen-frederica",
+    "lankin-6-silver-maple",
+    "lankin-riverwood-ottawa"
   ],
   "documentIds": [
     "lankin-fact",
@@ -101,51 +107,58 @@
   "featured": true,
   "complianceProfile": {
     "issuerLegalType": "trust",
-    "isInvestmentFund": true,
+    "isInvestmentFund": false,
     "approvedOntarioExemptions": [],
     "reviewOwner": "Licensed compliance review"
   },
   "portfolioFacts": [
     {
-      "value": "8 properties",
+      "value": "9 properties",
       "classification": "current",
-      "asOfDate": "2026-03-31",
-      "sourceId": "lankin-fact-2026-q1",
-      "sourcePage": 1,
+      "asOfDate": "2026-07-23",
+      "sourceId": "lankin-site-2026-07",
       "approval": "approved-public"
     },
     {
-      "value": "1,434 units",
+      "value": "1,692 units",
       "classification": "current",
-      "asOfDate": "2026-03-31",
-      "sourceId": "lankin-fact-2026-q1",
-      "sourcePage": 1,
+      "asOfDate": "2026-07-23",
+      "sourceId": "lankin-site-2026-07",
       "approval": "approved-public"
     },
     {
-      "value": "$510M+ AUM",
+      "value": "5 cities across Ontario and Alberta",
       "classification": "current",
-      "asOfDate": "2026-03-31",
-      "sourceId": "lankin-fact-2026-q1",
-      "sourcePage": 1,
+      "asOfDate": "2026-07-23",
+      "sourceId": "lankin-site-2026-07",
+      "approval": "approved-public"
+    },
+    {
+      "value": "$450.7M gross assets (audited, 31 Dec 2025)",
+      "classification": "historical",
+      "asOfDate": "2025-12-31",
+      "sourceId": "lankin-fs-2025-audit",
       "approval": "approved-public"
     }
   ],
   "fundType": {
-    "en": "Mutual Fund Trust",
-    "tr": "Mutual Fund Trust"
+    "en": "Open-ended unincorporated investment trust (Ontario). Qualifies as a \"mutual fund trust\" for Income Tax Act purposes only — it is not a mutual fund or non-redeemable investment fund under securities law.",
+    "tr": "Açık uçlu, tüzel kişiliği olmayan yatırım tröstü (Ontario). Yalnızca Gelir Vergisi Kanunu açısından \"yatırım fonu tröstü\" sayılır — menkul kıymet mevzuatı uyarınca yatırım fonu veya itfa edilemez yatırım fonu değildir."
+  },
+  "structureLabel": {
+    "en": "Open-ended unincorporated investment trust (Ontario)",
+    "tr": "Açık uçlu, tüzel kişiliği olmayan yatırım tröstü (Ontario)"
   },
   "fundStatus": {
-    "en": "Offering Memorandum",
-    "tr": "Offering Memorandum"
+    "en": "Offering Memorandum — continuous private placement",
+    "tr": "Teklif Muhtırası — sürekli özel yerleştirme"
   },
-  "inceptionDate": "2024",
+  "inceptionDate": "2024-05",
   "aum": {
-    "value": "$510M+",
+    "value": "$580M+",
     "classification": "current",
-    "asOfDate": "2026-03-31",
-    "sourceId": "lankin-fact-2026-q1",
-    "sourcePage": 1,
+    "asOfDate": "2026-07-23",
+    "sourceId": "lankin-site-2026-07",
     "approval": "approved-public"
   },
   "unitsTotal": {
@@ -157,8 +170,8 @@
     "approval": "approved-public"
   },
   "managementFee": {
-    "en": "0.70% of AUM",
-    "tr": "AUM'nin %0,70'i"
+    "en": "0.7% of Gross Asset Value per year, paid monthly",
+    "tr": "Yıllık Brüt Aktif Değerin %0,7'si, aylık ödenir"
   },
   "valuationFrequency": {
     "en": "Quarterly",
@@ -174,20 +187,24 @@
   },
   "highlights": [
     {
-      "en": "Access to institutional-grade Canadian multi-family real estate.",
-      "tr": "Kurumsal nitelikte Kanada çok konutlu gayrimenkulüne erişim."
-    },
-    {
-      "en": "Long-term growth and tax-efficient monthly cash distributions.",
-      "tr": "Uzun vadeli büyüme ve vergi açısından verimli aylık nakit dağıtımları."
-    },
-    {
       "en": "Total targeted annual net return of 10%-14%.",
       "tr": "Toplam hedeflenen yıllık net getiri %10-14."
     },
     {
       "en": "Targeted annualized cash distribution of 7%-8%, paid monthly.",
       "tr": "Hedeflenen yıllıklandırılmış nakit dağıtımı %7-8, aylık ödenir."
+    },
+    {
+      "en": "Long-term equity growth and tax-efficient monthly cash distributions.",
+      "tr": "Uzun vadeli özkaynak büyümesi ve vergi açısından verimli aylık nakit dağıtımları."
+    },
+    {
+      "en": "Access to institutional-grade Canadian multi-family real estate.",
+      "tr": "Kurumsal nitelikte Kanada çok konutlu gayrimenkulüne erişim."
+    },
+    {
+      "en": "Takes advantage of strategic government-insured financing.",
+      "tr": "Stratejik devlet sigortalı finansmandan yararlanır."
     },
     {
       "en": "Distribution Reinvestment Plan (DRIP) available at a 2% discount.",
@@ -238,29 +255,193 @@
   "serviceProviders": {
     "auditor": {
       "name": "BDO Canada LLP",
-      "url": "https://www.bdo.ca/"
+      "url": "https://www.bdo.ca/",
+      "scope": {
+        "en": "FY2025 statements, report dated 30 Apr 2026",
+        "tr": "2025 mali yılı tabloları, rapor tarihi 30 Nis 2026"
+      },
+      "asOfDate": "2026-04-30",
+      "sourceId": "lankin-fs-2025-audit"
     },
     "legalCounsel": {
       "name": "Borden Ladner Gervais LLP (BLG)",
-      "url": "https://www.blg.com/en"
+      "url": "https://www.blg.com/en",
+      "scope": {
+        "en": "Item 8 tax opinion in the OM",
+        "tr": "Muhtırada Madde 8 vergi görüşü"
+      },
+      "asOfDate": "2026-05-01",
+      "sourceId": "lankin-om-2026-05"
     },
     "appraiser": {
       "name": "Avison Young",
-      "url": "https://www.avisonyoung.com/"
+      "url": "https://www.avisonyoung.com/",
+      "scope": {
+        "en": "Named on the Q1 2026 fact sheet",
+        "tr": "2026 1Ç bilgi formunda belirtilmiştir"
+      },
+      "asOfDate": "2026-03-31",
+      "sourceId": "lankin-fact-2026-q1"
     }
   },
-  "lastUpdated": "2026-03-31",
+  "lastUpdated": "2026-05-01",
   "risks": [
     {
-      "en": "Distributions are discretionary and may change.",
-      "tr": "Dağıtımlar isteğe bağlıdır ve değişebilir."
+      "text": {
+        "en": "No assurance of investment return. The purchase of Units is highly speculative and you should invest only if you can bear the loss of your entire investment.",
+        "tr": "Yatırım getirisi garantisi yoktur. Birim alımı yüksek risklidir; yalnızca yatırımınızın tamamını kaybetmeyi göze alabiliyorsanız yatırım yapın."
+      },
+      "category": "investment"
     },
     {
-      "en": "Private securities may have indefinite hold periods and limited liquidity.",
-      "tr": "Özel menkul kıymetlerin belirsiz bekleme süreleri ve sınırlı likiditesi olabilir."
+      "text": {
+        "en": "Past performance is not a predictor of future results, and the Trust has a limited operating history.",
+        "tr": "Geçmiş performans gelecekteki sonuçların göstergesi değildir ve Tröstün faaliyet geçmişi sınırlıdır."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "The price for the Units is determined by the Administrator with reference to Net Asset Value, not by a market.",
+        "tr": "Birim fiyatı bir piyasa tarafından değil, Net Aktif Değere göre Yönetici tarafından belirlenir."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "Series risk: each series bears different fees and expenses, so the value of each series will differ over time.",
+        "tr": "Seri riski: her seri farklı ücret ve giderler taşır; bu nedenle her serinin değeri zamanla farklılaşır."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "Fund-of-fund risk: the Trust does not carry on active business and invests substantially all of its assets in the Partnership.",
+        "tr": "Fon-fonu riski: Tröst aktif ticari faaliyet yürütmez ve varlıklarının tamamına yakınını Ortaklığa yatırır."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "Restrictions on redemption and transfer; Units are illiquid, there is no market for them, and you will be restricted from selling for an indefinite period.",
+        "tr": "İtfa ve devir kısıtlamaları; Birimler likit değildir, bir piyasası yoktur ve satış belirsiz bir süre boyunca kısıtlanacaktır."
+      },
+      "category": "redemption"
+    },
+    {
+      "text": {
+        "en": "Cash redemptions are capped annually at the greater of $100,000 or 5% of Net Asset Value, and require 90 days' notice.",
+        "tr": "Nakit itfalar yıllık olarak 100.000 $ ile Net Aktif Değerin %5'inden yüksek olanı ile sınırlıdır ve 90 gün önceden bildirim gerektirir."
+      },
+      "category": "redemption"
+    },
+    {
+      "text": {
+        "en": "Above the cash limit the Trust may pay in Redemption Notes, which are unsecured, may be subordinated, and are not qualified investments for Registered Plans.",
+        "tr": "Nakit limitinin üzerinde Tröst, teminatsız, tali nitelikte olabilen ve Kayıtlı Planlar için uygun yatırım sayılmayan İtfa Senetleri ile ödeme yapabilir."
+      },
+      "category": "redemption"
+    },
+    {
+      "text": {
+        "en": "A redemption deduction applies to most series based on how long the Units are held.",
+        "tr": "Çoğu seride, Birimlerin elde tutulma süresine göre bir itfa kesintisi uygulanır."
+      },
+      "category": "redemption"
+    },
+    {
+      "text": {
+        "en": "Distributions characterized as a return of capital reduce your adjusted cost base, producing a larger capital gain on disposition; the Trust has paid distributions exceeding cash flow from operations.",
+        "tr": "Sermaye iadesi olarak nitelendirilen dağıtımlar düzeltilmiş maliyet esasınızı azaltır ve elden çıkarmada daha büyük bir sermaye kazancı doğurur; Tröst, faaliyetlerden gelen nakit akışını aşan dağıtımlar yapmıştır."
+      },
+      "category": "tax"
+    },
+    {
+      "text": {
+        "en": "The Trust must maintain mutual fund trust status under the Tax Act for Units to remain eligible for Registered Plans; SIFT rules may also apply.",
+        "tr": "Birimlerin Kayıtlı Planlar için uygun kalması adına Tröst, Vergi Kanunu uyarınca yatırım fonu tröstü statüsünü korumalıdır; SIFT kuralları da uygulanabilir."
+      },
+      "category": "tax"
+    },
+    {
+      "text": {
+        "en": "No securities regulatory authority has reviewed this offering, and the Trust is not a reporting issuer.",
+        "tr": "Hiçbir menkul kıymet düzenleyicisi bu teklifi incelememiştir ve Tröst raporlayan bir ihraççı değildir."
+      },
+      "category": "regulatory"
+    },
+    {
+      "text": {
+        "en": "The Trust is not a public mutual fund, investment fund or trust company, so certain investor protections in those regulations are not available.",
+        "tr": "Tröst; halka açık bir yatırım fonu, yatırım fonu veya tröst şirketi değildir; bu nedenle bu düzenlemelerdeki bazı yatırımcı korumaları geçerli değildir."
+      },
+      "category": "regulatory"
+    },
+    {
+      "text": {
+        "en": "No independent counsel represents Unitholders, and the Declaration of Trust expressly permits a range of conflicts of interest, including related-party transactions.",
+        "tr": "Birim sahiplerini bağımsız bir hukuk müşaviri temsil etmez ve Tröst Sözleşmesi, ilişkili taraf işlemleri dahil bir dizi çıkar çatışmasına açıkça izin verir."
+      },
+      "category": "regulatory"
+    },
+    {
+      "text": {
+        "en": "The Trust and Partnership use leverage. Debt must be serviced regardless of operating results, and refinancing terms may differ from those assumed — including the $97,750,000 facility on 6 Silver Maple Court maturing 1 January 2027.",
+        "tr": "Tröst ve Ortaklık kaldıraç kullanır. Borç, faaliyet sonuçlarından bağımsız olarak ödenmelidir ve yeniden finansman koşulları varsayılanlardan farklı olabilir — 1 Ocak 2027'de vadesi dolan 6 Silver Maple Court üzerindeki 97.750.000 $ kredi dahil."
+      },
+      "category": "leverage"
+    },
+    {
+      "text": {
+        "en": "Interest rate fluctuations and mortgage financing risk may reduce cash available for distribution.",
+        "tr": "Faiz oranı dalgalanmaları ve ipotek finansman riski, dağıtım için mevcut nakdi azaltabilir."
+      },
+      "category": "leverage"
+    },
+    {
+      "text": {
+        "en": "Concentration of investments and lack of geographic diversification, with the portfolio concentrated in Ontario and Alberta.",
+        "tr": "Yatırım yoğunlaşması ve coğrafi çeşitlendirme eksikliği; portföy Ontario ve Alberta'da yoğunlaşmıştır."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Real estate is relatively illiquid and its value depends on appraisals, market conditions and competition for tenants.",
+        "tr": "Gayrimenkul görece likit değildir ve değeri değerlemelere, piyasa koşullarına ve kiracı rekabetine bağlıdır."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Rent control legislation limits the rate at which in-place rents can be increased.",
+        "tr": "Kira kontrolü mevzuatı, mevcut kiraların artırılabileceği oranı sınırlar."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Properties are subject to environmental risks and the risk of uninsured losses.",
+        "tr": "Mülkler çevresel risklere ve sigortasız zarar riskine tabidir."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Dependence on key personnel and reliance on the Administrator, the Partnership and third-party property managers.",
+        "tr": "Kilit personele bağımlılık ve Yöneticiye, Ortaklığa ve üçüncü taraf mülk yöneticilerine dayanma."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Joint venture risk: 6 Silver Maple Court is held through 6 Silver Maple JV LP rather than wholly owned.",
+        "tr": "Ortak girişim riski: 6 Silver Maple Court, tamamen sahip olunmak yerine 6 Silver Maple JV LP aracılığıyla tutulmaktadır."
+      },
+      "category": "business"
     }
   ],
-  "verifiedAt": "2026-07-12",
+  "verifiedAt": "2026-07-23",
   "manager": {
     "id": "lankin-investments",
     "slug": "lankin-investments",
@@ -285,27 +466,32 @@
   },
   "shareClasses": [
     {
-      "id": "lankin-class-a",
+      "id": "lankin-series-a",
       "offeringId": "lankin-apartment-reit",
-      "name": "Class A (Series A)",
+      "name": "Class A Units — Series A",
+      "registeredAccountTypes": [
+        "RRSP",
+        "RRIF",
+        "TFSA",
+        "RESP",
+        "LIRA"
+      ],
       "minimumInvestment": {
         "value": 5000,
         "classification": "current",
-        "asOfDate": "2026-03-31",
-        "sourceId": "lankin-fact-2026-q1",
-        "sourcePage": 1,
+        "asOfDate": "2026-05-01",
+        "sourceId": "lankin-om-2026-05",
         "approval": "approved-public"
       },
       "unitPrice": {
-        "value": 10.74,
+        "value": 10.61,
         "classification": "current",
-        "asOfDate": "2026-07-12",
-        "sourceId": "lankin-deck",
-        "sourcePage": 12,
+        "asOfDate": "2025-12-31",
+        "sourceId": "lankin-fs-2025-audit",
         "approval": "approved-public"
       },
       "targetReturn": {
-        "value": "10-14% annual net return",
+        "value": "10%-14% targeted annual net return",
         "classification": "target",
         "asOfDate": "2026-03-31",
         "sourceId": "lankin-fact-2026-q1",
@@ -313,15 +499,7 @@
         "approval": "approved-public"
       },
       "targetDistribution": {
-        "value": "7-8% annually, paid monthly",
-        "classification": "target",
-        "asOfDate": "2026-03-31",
-        "sourceId": "lankin-fact-2026-q1",
-        "sourcePage": 1,
-        "approval": "approved-public"
-      },
-      "distributionPerUnit": {
-        "value": "7-8% annually, paid monthly",
+        "value": "7%-8% targeted annualized cash distribution, paid monthly",
         "classification": "target",
         "asOfDate": "2026-03-31",
         "sourceId": "lankin-fact-2026-q1",
@@ -329,112 +507,102 @@
         "approval": "approved-public"
       },
       "term": {
-        "value": "Open-ended fund",
+        "value": "Open-ended trust; Units offered on a continuous basis",
         "classification": "current",
-        "asOfDate": "2026-03-31",
-        "sourceId": "lankin-fact-2026-q1",
-        "sourcePage": 1,
+        "asOfDate": "2026-05-01",
+        "sourceId": "lankin-om-2026-05",
         "approval": "approved-public"
       },
       "redemptionTerms": {
-        "en": "Year 1: 10%; Year 2: 8%; Year 3: 6%; no fees after Year 3.",
-        "tr": "1. yıl: %10; 2. yıl: %8; 3. yıl: %6; 3. yıldan sonra ücret yok."
+        "en": "Redemption deduction 8% within 6 months, 8% in year 1, 7% in year 2, 6% in year 3, nil thereafter.",
+        "tr": "İtfa kesintisi: 6 ay içinde %8, 1. yıl %8, 2. yıl %7, 3. yıl %6, sonrasında yok."
       },
       "drip": {
-        "en": "DRIP available at a 2% discount.",
-        "tr": "DRIP %2 indirimle mevcuttur."
+        "en": "DRIP available: distributions reinvested at a 2% discount to the most recent subscription price, with no commissions or service charges.",
+        "tr": "DRIP mevcut: dağıtımlar, en son abonelik fiyatına göre %2 indirimle, komisyon veya hizmet bedeli olmaksızın yeniden yatırılır."
       },
-      "registeredAccountTypes": [
-        "RRSP",
-        "TFSA",
-        "RESP",
-        "LIRA",
-        "RRIF"
-      ],
       "fundDefinedFacts": [
         {
-          "id": "lankin-target-return",
+          "id": "lankin-series-a-channel",
           "label": {
-            "en": "Targeted Annual Net Return",
-            "tr": "Hedeflenen Yıllık Net Getiri"
+            "en": "Sales channel",
+            "tr": "Satış kanalı"
           },
           "value": {
-            "en": "10%-14%",
-            "tr": "%10-%14"
-          },
-          "category": "target",
-          "shareClassId": "lankin-class-a",
-          "sourceId": "lankin-fact-2026-q1",
-          "sourcePage": 1,
-          "effectiveDate": "2026-03-31",
-          "approval": "approved-public"
-        },
-        {
-          "id": "lankin-target-distribution",
-          "label": {
-            "en": "Targeted Annualized Cash Distribution",
-            "tr": "Hedeflenen Yıllıklandırılmış Nakit Dağıtımı"
-          },
-          "value": {
-            "en": "7%-8%, paid monthly",
-            "tr": "%7-%8, aylık ödenir"
-          },
-          "category": "target",
-          "shareClassId": "lankin-class-a",
-          "sourceId": "lankin-fact-2026-q1",
-          "sourcePage": 1,
-          "effectiveDate": "2026-03-31",
-          "approval": "approved-public"
-        },
-        {
-          "id": "lankin-management-fee",
-          "label": {
-            "en": "Management Fee",
-            "tr": "Yönetim Ücreti"
-          },
-          "value": {
-            "en": "0.70% of AUM",
-            "tr": "AUM'nin %0,70'i"
-          },
-          "category": "fee",
-          "shareClassId": "lankin-class-a",
-          "sourceId": "lankin-deck",
-          "sourcePage": 12,
-          "effectiveDate": "2026-07-12",
-          "approval": "approved-public"
-        },
-        {
-          "id": "lankin-redemption-fee",
-          "label": {
-            "en": "Redemption Fee",
-            "tr": "İtfa Ücreti"
-          },
-          "value": {
-            "en": "Year 1: 10%; Year 2: 8%; Year 3: 6%; no fees after Year 3.",
-            "tr": "1. yıl: %10; 2. yıl: %8; 3. yıl: %6; 3. yıldan sonra ücret yok."
-          },
-          "category": "early-exit",
-          "shareClassId": "lankin-class-a",
-          "sourceId": "lankin-deck",
-          "sourcePage": 12,
-          "effectiveDate": "2026-07-12",
-          "approval": "approved-public"
-        },
-        {
-          "id": "lankin-fund-term",
-          "label": {
-            "en": "Fund Term",
-            "tr": "Fon Süresi"
-          },
-          "value": {
-            "en": "Open-ended fund",
-            "tr": "Açık uçlu fon"
+            "en": "Direct or through an exempt market dealer",
+            "tr": "Doğrudan veya muaf piyasa aracısı üzerinden"
           },
           "category": "term",
-          "shareClassId": "lankin-class-a",
-          "sourceId": "lankin-fact-2026-q1",
-          "sourcePage": 1,
-          "effectiveDate": "2026-03-31",
+          "shareClassId": "lankin-series-a",
+          "sourceId": "lankin-om-2026-05",
+          "effectiveDate": "2026-05-01",
+          "approval": "approved-public",
+          "audience": "advisor"
+        },
+        {
+          "id": "lankin-series-a-commission",
+          "label": {
+            "en": "Selling commission",
+            "tr": "Satış komisyonu"
+          },
+          "value": {
+            "en": "Selling commission up to 8%; marketing fee up to 2%",
+            "tr": "Satış komisyonu %8'e kadar; pazarlama ücreti %2'ye kadar"
+          },
+          "category": "fee",
+          "shareClassId": "lankin-series-a",
+          "sourceId": "lankin-om-2026-05",
+          "effectiveDate": "2026-05-01",
+          "approval": "approved-public",
+          "audience": "advisor"
+        },
+        {
+          "id": "lankin-series-a-trailer",
+          "label": {
+            "en": "Annual trailer fee",
+            "tr": "Yıllık kuyruk ücreti"
+          },
+          "value": {
+            "en": "No trailer fee",
+            "tr": "Kuyruk ücreti yok"
+          },
+          "category": "fee",
+          "shareClassId": "lankin-series-a",
+          "sourceId": "lankin-om-2026-05",
+          "effectiveDate": "2026-05-01",
+          "approval": "approved-public",
+          "audience": "advisor"
+        },
+        {
+          "id": "lankin-series-a-redemption",
+          "label": {
+            "en": "Redemption deduction",
+            "tr": "İtfa kesintisi"
+          },
+          "value": {
+            "en": "Redemption deduction 8% within 6 months, 8% in year 1, 7% in year 2, 6% in year 3, nil thereafter.",
+            "tr": "İtfa kesintisi: 6 ay içinde %8, 1. yıl %8, 2. yıl %7, 3. yıl %6, sonrasında yok."
+          },
+          "category": "early-exit",
+          "shareClassId": "lankin-series-a",
+          "sourceId": "lankin-om-2026-05",
+          "effectiveDate": "2026-05-01",
+          "approval": "approved-public"
+        },
+        {
+          "id": "lankin-series-a-minimum",
+          "label": {
+            "en": "Minimum subscription",
+            "tr": "Asgari abonelik"
+          },
+          "value": {
+            "en": "$5,000",
+            "tr": "5.000 $"
+          },
+          "category": "term",
+          "shareClassId": "lankin-series-a",
+          "sourceId": "lankin-om-2026-05",
+          "effectiveDate": "2026-05-01",
           "approval": "approved-public"
         }
       ]
@@ -442,76 +610,264 @@
   ],
   "properties": [
     {
-      "id": "lankin-edmonton",
+      "id": "lankin-park-centre-place",
       "offeringIds": [
         "lankin-apartment-reit"
       ],
       "managerId": "lankin-investments",
       "name": {
-        "en": "2014 Sherwood Dr, Edmonton",
-        "tr": "2014 Sherwood Dr, Edmonton"
+        "en": "Park Centre Place",
+        "tr": "Park Centre Place"
       },
       "address": {
-        "en": "2014 Sherwood Dr, Edmonton, Alberta",
-        "tr": "2014 Sherwood Dr, Edmonton, Alberta"
+        "en": "2014 Sherwood Drive, Edmonton, Alberta",
+        "tr": "2014 Sherwood Drive, Edmonton, Alberta"
       },
       "city": "Edmonton",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 53.5232,
-      "longitude": -113.33,
+      "latitude": 53.5695097,
+      "longitude": -113.295488,
       "assetClassId": "multifamily",
-      "status": "stabilized",
+      "status": "new-construction",
       "verificationStatus": "verified",
-      "listingUrl": "https://TODO-replace-with-real-listing"
+      "unitCount": 177,
+      "ownershipNote": {
+        "en": "Built 2023. 927 sq ft average. 165 of 177 units rented as at 10 March 2026; average rent $2,067 per unit.",
+        "tr": "2023 yapımı. Ortalama 927 sq ft. 10 Mart 2026 itibarıyla 177 dairenin 165'i kiralık; daire başına ortalama kira 2.067 $."
+      }
     },
     {
-      "id": "lankin-newmarket",
+      "id": "lankin-huron-heights",
       "offeringIds": [
         "lankin-apartment-reit"
       ],
       "managerId": "lankin-investments",
       "name": {
-        "en": "75-77 Huron Heights Dr, Newmarket",
-        "tr": "75-77 Huron Heights Dr, Newmarket"
+        "en": "Huron Heights",
+        "tr": "Huron Heights"
       },
       "address": {
-        "en": "75-77 Huron Heights Dr, Newmarket, Ontario",
-        "tr": "75-77 Huron Heights Dr, Newmarket, Ontario"
+        "en": "75-77 Huron Heights Drive, Newmarket, Ontario",
+        "tr": "75-77 Huron Heights Drive, Newmarket, Ontario"
       },
       "city": "Newmarket",
       "province": "Ontario",
       "country": "Canada",
-      "latitude": 44.0501,
-      "longitude": -79.438,
+      "latitude": 44.0651574,
+      "longitude": -79.4456718,
       "assetClassId": "multifamily",
       "status": "stabilized",
       "verificationStatus": "verified",
-      "listingUrl": "https://TODO-replace-with-real-listing"
+      "unitCount": 110,
+      "purchasePrice": 33450000,
+      "ownershipNote": {
+        "en": "Built 1963. 650 sq ft average. 107 of 110 units rented as at 10 March 2026; average rent $1,795 per unit.",
+        "tr": "1963 yapımı. Ortalama 650 sq ft. 10 Mart 2026 itibarıyla 110 dairenin 107'si kiralık; daire başına ortalama kira 1.795 $."
+      }
     },
     {
-      "id": "lankin-brampton",
+      "id": "lankin-orenda-court",
       "offeringIds": [
         "lankin-apartment-reit"
       ],
       "managerId": "lankin-investments",
       "name": {
-        "en": "75/85/90 Orenda Rd, Brampton",
-        "tr": "75/85/90 Orenda Rd, Brampton"
+        "en": "Orenda Court",
+        "tr": "Orenda Court"
       },
       "address": {
-        "en": "75, 85 and 90 Orenda Rd, Brampton, Ontario",
-        "tr": "75, 85 ve 90 Orenda Rd, Brampton, Ontario"
+        "en": "75-90 Orenda Court, Brampton, Ontario",
+        "tr": "75-90 Orenda Court, Brampton, Ontario"
       },
       "city": "Brampton",
       "province": "Ontario",
       "country": "Canada",
-      "latitude": 43.7089,
-      "longitude": -79.7376,
+      "latitude": 43.6918117,
+      "longitude": -79.7454388,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "unitCount": 242,
+      "ownershipNote": {
+        "en": "Built 1976. 948 sq ft average, including 91 townhouses. 224 of 242 units rented as at 10 March 2026; average rent $1,753 per unit.",
+        "tr": "1976 yapımı. 91 sıra ev dahil ortalama 948 sq ft. 10 Mart 2026 itibarıyla 242 dairenin 224'ü kiralık; daire başına ortalama kira 1.753 $."
+      }
+    },
+    {
+      "id": "lankin-4-silver-maple",
+      "offeringIds": [
+        "lankin-apartment-reit"
+      ],
+      "managerId": "lankin-investments",
+      "name": {
+        "en": "4 Silver Maple Court",
+        "tr": "4 Silver Maple Court"
+      },
+      "address": {
+        "en": "4 Silver Maple Court, Brampton, Ontario",
+        "tr": "4 Silver Maple Court, Brampton, Ontario"
+      },
+      "city": "Brampton",
+      "province": "Ontario",
+      "country": "Canada",
+      "latitude": 43.711401,
+      "longitude": -79.729162,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "unitCount": 219,
+      "ownershipNote": {
+        "en": "Built 1982. 1,009 sq ft average. 211 of 219 units rented as at 10 March 2026; average rent $1,840 per unit.",
+        "tr": "1982 yapımı. Ortalama 1.009 sq ft. 10 Mart 2026 itibarıyla 219 dairenin 211'i kiralık; daire başına ortalama kira 1.840 $."
+      }
+    },
+    {
+      "id": "lankin-greenstone-park",
+      "offeringIds": [
+        "lankin-apartment-reit"
+      ],
+      "managerId": "lankin-investments",
+      "name": {
+        "en": "Greenstone Park",
+        "tr": "Greenstone Park"
+      },
+      "address": {
+        "en": "11350 128 Street NW, Edmonton, Alberta",
+        "tr": "11350 128 Street NW, Edmonton, Alberta"
+      },
+      "city": "Edmonton",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 53.5493425,
+      "longitude": -113.542861,
       "assetClassId": "multifamily",
       "status": "new-construction",
       "verificationStatus": "verified",
-      "listingUrl": "https://TODO-replace-with-real-listing"
+      "unitCount": 89,
+      "ownershipNote": {
+        "en": "Built 2022. 976 sq ft average. 88 of 89 units rented as at 10 March 2026; average rent $1,896 per unit.",
+        "tr": "2022 yapımı. Ortalama 976 sq ft. 10 Mart 2026 itibarıyla 89 dairenin 88'i kiralık; daire başına ortalama kira 1.896 $."
+      }
+    },
+    {
+      "id": "lankin-darcel-avenue",
+      "offeringIds": [
+        "lankin-apartment-reit"
+      ],
+      "managerId": "lankin-investments",
+      "name": {
+        "en": "Darcel Avenue",
+        "tr": "Darcel Avenue"
+      },
+      "address": {
+        "en": "7110 Darcel Avenue, Mississauga, Ontario",
+        "tr": "7110 Darcel Avenue, Mississauga, Ontario"
+      },
+      "city": "Mississauga",
+      "province": "Ontario",
+      "country": "Canada",
+      "latitude": 43.7189128,
+      "longitude": -79.6313918,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "unitCount": 118,
+      "purchasePrice": 32300000,
+      "acquiredOn": "2025-07-21",
+      "ownershipNote": {
+        "en": "Built 1971. 811 sq ft average. 116 of 118 units rented as at 10 March 2026; average rent $1,591 per unit.",
+        "tr": "1971 yapımı. Ortalama 811 sq ft. 10 Mart 2026 itibarıyla 118 dairenin 116'sı kiralık; daire başına ortalama kira 1.591 $."
+      }
+    },
+    {
+      "id": "lankin-queen-frederica",
+      "offeringIds": [
+        "lankin-apartment-reit"
+      ],
+      "managerId": "lankin-investments",
+      "name": {
+        "en": "Queen Frederica",
+        "tr": "Queen Frederica"
+      },
+      "address": {
+        "en": "3045 Queen Frederica Drive, Mississauga, Ontario",
+        "tr": "3045 Queen Frederica Drive, Mississauga, Ontario"
+      },
+      "city": "Mississauga",
+      "province": "Ontario",
+      "country": "Canada",
+      "latitude": 43.6079889,
+      "longitude": -79.5873891,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "unitCount": 140,
+      "purchasePrice": 50000000,
+      "acquiredOn": "2025-07-21",
+      "ownershipNote": {
+        "en": "Built 1975. 743 sq ft average. 132 of 140 units rented as at 10 March 2026; average rent $1,870 per unit.",
+        "tr": "1975 yapımı. Ortalama 743 sq ft. 10 Mart 2026 itibarıyla 140 dairenin 132'si kiralık; daire başına ortalama kira 1.870 $."
+      }
+    },
+    {
+      "id": "lankin-6-silver-maple",
+      "offeringIds": [
+        "lankin-apartment-reit"
+      ],
+      "managerId": "lankin-investments",
+      "name": {
+        "en": "6 Silver Maple Court",
+        "tr": "6 Silver Maple Court"
+      },
+      "address": {
+        "en": "6 Silver Maple Court, Brampton, Ontario",
+        "tr": "6 Silver Maple Court, Brampton, Ontario"
+      },
+      "city": "Brampton",
+      "province": "Ontario",
+      "country": "Canada",
+      "latitude": 43.7122795,
+      "longitude": -79.7296943,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "unitCount": 339,
+      "purchasePrice": 115000000,
+      "acquiredOn": "2025-12-11",
+      "ownershipNote": {
+        "en": "Built 1982. 1,007 sq ft average. Held through 6 Silver Maple JV LP, a joint venture. 324 of 339 units rented as at 10 March 2026; average rent $1,869 per unit. Secured by a $97,750,000 credit facility at 6.25%, maturing 1 January 2027.",
+        "tr": "1982 yapımı. Ortalama 1.007 sq ft. Bir ortak girişim olan 6 Silver Maple JV LP aracılığıyla tutulmaktadır. 10 Mart 2026 itibarıyla 339 dairenin 324'ü kiralık; daire başına ortalama kira 1.869 $. 1 Ocak 2027 vadeli, %6,25 faizli 97.750.000 $ kredi ile teminatlandırılmıştır."
+      }
+    },
+    {
+      "id": "lankin-riverwood-ottawa",
+      "offeringIds": [
+        "lankin-apartment-reit"
+      ],
+      "managerId": "lankin-investments",
+      "name": {
+        "en": "The Riverwood",
+        "tr": "The Riverwood"
+      },
+      "address": {
+        "en": "1551 Lycée Place, Ottawa, Ontario K1G 0E5",
+        "tr": "1551 Lycée Place, Ottawa, Ontario K1G 0E5"
+      },
+      "city": "Ottawa",
+      "province": "Ontario",
+      "country": "Canada",
+      "latitude": 45.4084547,
+      "longitude": -75.6626657,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "partial",
+      "unitCount": 258,
+      "purchasePrice": 72000000,
+      "ownershipNote": {
+        "en": "23-storey concrete high-rise; 115 one-bedroom and 143 two-bedroom suites. Acquired May 2026, after the date of the 1 May 2026 Offering Memorandum, and therefore not described in it.",
+        "tr": "23 katlı betonarme yüksek yapı; 115 adet 1+1 ve 143 adet 2+1 daire. 1 Mayıs 2026 tarihli Teklif Muhtırasından sonra, Mayıs 2026'da satın alınmıştır ve bu nedenle muhtırada yer almamaktadır."
+      }
     }
   ],
   "documents": [
@@ -547,8 +903,8 @@
         "tr": "2026 SEDAR başvuru sürümü"
       },
       "type": "offering-memorandum",
-      "effectiveDate": "2026-01-15",
-      "version": "2026",
+      "effectiveDate": "2026-05-01",
+      "version": "2026.05",
       "visibility": "approved-investor"
     },
     {
@@ -578,6 +934,388 @@
       "effectiveDate": "2025-03-31",
       "version": "2025.Q1",
       "visibility": "approved-investor"
+    }
+  ],
+  "strategyPoints": [
+    {
+      "id": "location",
+      "kind": "strategy",
+      "label": {
+        "en": "The Location (The Where)",
+        "tr": "Konum (Nerede)"
+      },
+      "body": {
+        "en": "Identifying areas with strong population growth and limited housing supply.",
+        "tr": "Güçlü nüfus artışı ve sınırlı konut arzı olan bölgeleri belirlemek."
+      }
+    },
+    {
+      "id": "asset",
+      "kind": "strategy",
+      "label": {
+        "en": "The Asset (The What)",
+        "tr": "Varlık (Ne)"
+      },
+      "body": {
+        "en": "Acquiring institutional-grade, cash-flowing multi-family properties with high occupancy and strong potential for NOI growth.",
+        "tr": "Yüksek doluluk ve güçlü NOI büyüme potansiyeline sahip, kurumsal nitelikte, nakit akışı sağlayan çok konutlu mülkler edinmek."
+      }
+    },
+    {
+      "id": "deal-source",
+      "kind": "strategy",
+      "label": {
+        "en": "The Source of Deal (The How)",
+        "tr": "İşlem Kaynağı (Nasıl)"
+      },
+      "body": {
+        "en": "Leveraging access to exclusive off-market opportunities and a proven partner network for consistent deal flow.",
+        "tr": "Münhasır piyasa dışı fırsatlara erişimden ve tutarlı işlem akışı için kanıtlanmış bir ortak ağından yararlanmak."
+      }
+    },
+    {
+      "id": "energy",
+      "kind": "initiative",
+      "label": {
+        "en": "Energy & utility management",
+        "tr": "Enerji ve altyapı yönetimi"
+      },
+      "body": {
+        "en": "Unit submetering and lighting retrofits.",
+        "tr": "Daire bazlı sayaç ve aydınlatma yenileme."
+      },
+      "metric": {
+        "en": "Up to 40% reduction in energy costs",
+        "tr": "Enerji maliyetlerinde %40'a varan azalma"
+      }
+    },
+    {
+      "id": "heat-pumps",
+      "kind": "initiative",
+      "label": {
+        "en": "Heat pump programme",
+        "tr": "Isı pompası programı"
+      },
+      "body": {
+        "en": "Replacing gas-fired systems across the portfolio.",
+        "tr": "Portföy genelinde gazla çalışan sistemlerin değiştirilmesi."
+      },
+      "metric": {
+        "en": "Up to 60% reduction in natural gas consumption",
+        "tr": "Doğal gaz tüketiminde %60'a varan azalma"
+      }
+    },
+    {
+      "id": "water",
+      "kind": "initiative",
+      "label": {
+        "en": "Water conservation",
+        "tr": "Su tasarrufu"
+      },
+      "body": {
+        "en": "Installation of low-flow fixtures.",
+        "tr": "Düşük debili armatürlerin montajı."
+      },
+      "metric": {
+        "en": "Up to 40% reduction in water usage",
+        "tr": "Su kullanımında %40'a varan azalma"
+      }
+    },
+    {
+      "id": "carbon",
+      "kind": "initiative",
+      "label": {
+        "en": "Building carbon reduction",
+        "tr": "Bina karbon azaltımı"
+      },
+      "body": {
+        "en": "Combined effect of the operating programmes.",
+        "tr": "İşletme programlarının birleşik etkisi."
+      },
+      "metric": {
+        "en": "50%-60% reduction in building carbon emissions",
+        "tr": "Bina karbon emisyonlarında %50-60 azalma"
+      }
+    },
+    {
+      "id": "tax-structure",
+      "kind": "differentiator",
+      "label": {
+        "en": "Tax-advantaged fund structure",
+        "tr": "Vergi avantajlı fon yapısı"
+      },
+      "body": {
+        "en": "A Limited Partnership model with distributions targeted at 100% return of capital.",
+        "tr": "Dağıtımları %100 sermaye iadesi hedefleyen Limited Ortaklık modeli."
+      }
+    },
+    {
+      "id": "financing",
+      "kind": "differentiator",
+      "label": {
+        "en": "Exclusive financing advantages",
+        "tr": "Münhasır finansman avantajları"
+      },
+      "body": {
+        "en": "Strategic use of government-insured financing.",
+        "tr": "Devlet sigortalı finansmanın stratejik kullanımı."
+      }
+    },
+    {
+      "id": "noi",
+      "kind": "differentiator",
+      "label": {
+        "en": "Proven NOI growth strategies",
+        "tr": "Kanıtlanmış NOI büyüme stratejileri"
+      },
+      "body": {
+        "en": "Revenue enhancement through ancillary income, targeted leasing and tenant retention; expense reduction through operational efficiency, utility management, preventative maintenance and bulk purchasing.",
+        "tr": "Yan gelirler, hedefli kiralama ve kiracı elde tutma yoluyla gelir artışı; operasyonel verimlilik, altyapı yönetimi, önleyici bakım ve toplu satın alma yoluyla gider azaltımı."
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "lankin-om-2026-05",
+      "title": {
+        "en": "Lankin Apartment REIT — Offering Memorandum, 1 May 2026 (SEDAR filing version)",
+        "tr": "Lankin Apartment REIT — Teklif Muhtırası, 1 Mayıs 2026 (SEDAR başvuru sürümü)"
+      },
+      "publisher": "Lankin Apartment Real Estate Investment Trust",
+      "publishedOn": "2026-05-01",
+      "documentSlug": "lankin-om"
+    },
+    {
+      "id": "lankin-fs-2025-audit",
+      "title": {
+        "en": "Audited financial statements for the year ended 31 December 2025 (BDO Canada LLP)",
+        "tr": "31 Aralık 2025 tarihinde sona eren yıla ait denetlenmiş mali tablolar (BDO Canada LLP)"
+      },
+      "publisher": "BDO Canada LLP",
+      "publishedOn": "2025-12-31"
+    },
+    {
+      "id": "lankin-fact-2026-q1",
+      "title": {
+        "en": "Lankin Apartment REIT — Fund Fact Sheet, Q1 2026 (Series A)",
+        "tr": "Lankin Apartment REIT — Fon Bilgi Formu, 2026 1Ç (A Serisi)"
+      },
+      "publisher": "Lankin Investments",
+      "publishedOn": "2026-03-31",
+      "documentSlug": "lankin-fact"
+    },
+    {
+      "id": "lankin-site-2026-07",
+      "title": {
+        "en": "Lankin Apartment REIT fund page",
+        "tr": "Lankin Apartment REIT fon sayfası"
+      },
+      "publisher": "Lankin Investments",
+      "publishedOn": "2026-07-23",
+      "url": "https://lankin.com/lankin-apartment-reit/"
+    },
+    {
+      "id": "renx-2026-05-ottawa",
+      "title": {
+        "en": "Public reporting: Lankin REIT acquires 258-unit Ottawa apartment for $72M",
+        "tr": "Kamuya açık haber: Lankin REIT, 258 daireli Ottawa apartmanını 72M$'a satın aldı"
+      },
+      "publisher": "Real Estate News Exchange",
+      "publishedOn": "2026-05-01",
+      "url": "https://renx.ca/lankin-reit-acquires-258-unit-ottawa-apartment-for-72m"
+    }
+  ],
+  "updateCadence": "quarterly",
+  "dataAsOf": "2026-06-30",
+  "dataPeriodLabel": "Q2 2026",
+  "managerPublicUrl": "https://lankin.com/lankin-apartment-reit/",
+  "offeringSize": {
+    "value": 250000000,
+    "classification": "current",
+    "asOfDate": "2026-05-01",
+    "sourceId": "lankin-om-2026-05",
+    "approval": "approved-public"
+  },
+  "fundDefinedFacts": [
+    {
+      "id": "lankin-asset-management-fee",
+      "label": {
+        "en": "Asset management fee",
+        "tr": "Yönetim ücreti"
+      },
+      "value": {
+        "en": "0.7% of Gross Asset Value per year, payable monthly to the Asset Manager.",
+        "tr": "Yıllık Brüt Aktif Değerin %0,7'si, Varlık Yöneticisine aylık ödenir."
+      },
+      "category": "fee",
+      "sourceId": "lankin-om-2026-05",
+      "effectiveDate": "2026-05-01",
+      "approval": "approved-public"
+    },
+    {
+      "id": "lankin-profit-share-fee",
+      "label": {
+        "en": "Profit share fee",
+        "tr": "Kâr payı ücreti"
+      },
+      "value": {
+        "en": "30% of the sum of Distributable Cash paid and Profit Share Fee paid for a period, plus 30% of any increase in Property Net Asset Value recognised on a Realization Event, accrued and paid quarterly.",
+        "tr": "Bir dönemde ödenen Dağıtılabilir Nakit ile ödenen Kâr Payı Ücreti toplamının %30'u, artı bir Realizasyon Olayında kaydedilen Mülk Net Aktif Değeri artışının %30'u; üç ayda bir tahakkuk eder ve ödenir."
+      },
+      "category": "fee",
+      "sourceId": "lankin-om-2026-05",
+      "effectiveDate": "2026-05-01",
+      "approval": "approved-public"
+    },
+    {
+      "id": "lankin-acquisition-fee",
+      "label": {
+        "en": "Acquisition fee",
+        "tr": "Satın alma ücreti"
+      },
+      "value": {
+        "en": "1% of the acquisition price of each Property, excluding costs of acquisition.",
+        "tr": "Her mülkün satın alma bedelinin %1'i, satın alma masrafları hariç."
+      },
+      "category": "fee",
+      "sourceId": "lankin-om-2026-05",
+      "effectiveDate": "2026-05-01",
+      "approval": "approved-public"
+    },
+    {
+      "id": "lankin-financing-fee",
+      "label": {
+        "en": "Financing fee",
+        "tr": "Finansman ücreti"
+      },
+      "value": {
+        "en": "1% of the gross financing amount, including refinancings, extensions and renewals.",
+        "tr": "Yeniden finansman, uzatma ve yenilemeler dahil brüt finansman tutarının %1'i."
+      },
+      "category": "fee",
+      "sourceId": "lankin-om-2026-05",
+      "effectiveDate": "2026-05-01",
+      "approval": "approved-public"
+    },
+    {
+      "id": "lankin-disposition-fee",
+      "label": {
+        "en": "Disposition fee",
+        "tr": "Elden çıkarma ücreti"
+      },
+      "value": {
+        "en": "1% of the sale price of each Property sold, excluding costs of disposition.",
+        "tr": "Satılan her mülkün satış bedelinin %1'i, elden çıkarma masrafları hariç."
+      },
+      "category": "fee",
+      "sourceId": "lankin-om-2026-05",
+      "effectiveDate": "2026-05-01",
+      "approval": "approved-public"
+    },
+    {
+      "id": "lankin-trustee-fee",
+      "label": {
+        "en": "Trustee fee",
+        "tr": "Mütevelli ücreti"
+      },
+      "value": {
+        "en": "$7,500 per year to Olympia Trust Company, plus reimbursement of expenses.",
+        "tr": "Olympia Trust Company'ye yılda 7.500 $, artı masrafların iadesi."
+      },
+      "category": "fee",
+      "sourceId": "lankin-om-2026-05",
+      "effectiveDate": "2026-05-01",
+      "approval": "approved-public"
+    },
+    {
+      "id": "lankin-maximum-offering",
+      "label": {
+        "en": "Maximum offering",
+        "tr": "Azami teklif"
+      },
+      "value": {
+        "en": "$250,000,000. There is no minimum offering — you may be the only purchaser.",
+        "tr": "250.000.000 $. Asgari teklif yoktur — tek alıcı siz olabilirsiniz."
+      },
+      "category": "term",
+      "sourceId": "lankin-om-2026-05",
+      "effectiveDate": "2026-05-01",
+      "approval": "approved-public"
+    },
+    {
+      "id": "lankin-redemption-limit",
+      "label": {
+        "en": "Annual cash redemption limit",
+        "tr": "Yıllık nakit itfa limiti"
+      },
+      "value": {
+        "en": "The greater of $100,000 or 5% of the Net Asset Value of all Units as at the start of the calendar year. Above that limit the Trust may pay in Redemption Notes, which are not qualified investments for Registered Plans.",
+        "tr": "Takvim yılı başındaki tüm Birimlerin Net Aktif Değerinin %5'i ile 100.000 $'dan yüksek olanı. Bu limitin üzerinde Tröst, Kayıtlı Planlar için uygun yatırım sayılmayan İtfa Senetleri ile ödeme yapabilir."
+      },
+      "category": "liquidity",
+      "sourceId": "lankin-om-2026-05",
+      "effectiveDate": "2026-05-01",
+      "approval": "approved-public"
+    },
+    {
+      "id": "lankin-redemption-notice",
+      "label": {
+        "en": "Redemption notice",
+        "tr": "İtfa bildirimi"
+      },
+      "value": {
+        "en": "Written request at least 90 days before a Redemption Date. Redemption Dates are the last day of each month.",
+        "tr": "Bir İtfa Tarihinden en az 90 gün önce yazılı talep. İtfa Tarihleri her ayın son günüdür."
+      },
+      "category": "liquidity",
+      "sourceId": "lankin-om-2026-05",
+      "effectiveDate": "2026-05-01",
+      "approval": "approved-public"
+    },
+    {
+      "id": "lankin-subscription-price",
+      "label": {
+        "en": "Subscription price",
+        "tr": "Abonelik fiyatı"
+      },
+      "value": {
+        "en": "Set by the Administrator with reference to the Net Asset Value of the Units on each Valuation Date.",
+        "tr": "Her Değerleme Tarihinde Birimlerin Net Aktif Değerine göre Yönetici tarafından belirlenir."
+      },
+      "category": "term",
+      "sourceId": "lankin-om-2026-05",
+      "effectiveDate": "2026-05-01",
+      "approval": "approved-public"
+    },
+    {
+      "id": "lankin-fund-manager",
+      "label": {
+        "en": "Investment fund manager",
+        "tr": "Yatırım fonu yöneticisi"
+      },
+      "value": {
+        "en": "Axcess Capital Advisors Inc. The trustee is Olympia Trust Company, which has delegated management to Lankin Apartment Asset Management Inc.",
+        "tr": "Axcess Capital Advisors Inc. Mütevelli, yönetimi Lankin Apartment Asset Management Inc.'e devreden Olympia Trust Company'dir."
+      },
+      "category": "term",
+      "sourceId": "lankin-om-2026-05",
+      "effectiveDate": "2026-05-01",
+      "approval": "approved-public"
+    },
+    {
+      "id": "lankin-dealer",
+      "label": {
+        "en": "Exempt market dealer",
+        "tr": "Muaf piyasa aracısı"
+      },
+      "value": {
+        "en": "Parvis Investment Services Inc. Several Parvis dealing representatives are also employees of the Administrator; the OM discloses this as a conflict of interest.",
+        "tr": "Parvis Investment Services Inc. Bazı Parvis işlem temsilcileri aynı zamanda Yöneticinin çalışanlarıdır; muhtıra bunu bir çıkar çatışması olarak açıklar."
+      },
+      "category": "term",
+      "sourceId": "lankin-om-2026-05",
+      "effectiveDate": "2026-05-01",
+      "approval": "approved-public"
     }
   ]
 }

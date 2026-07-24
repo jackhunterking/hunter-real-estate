@@ -1,4 +1,4 @@
-import type { Lang } from "@/lib/i18n/dictionaries";
+import type { Lang } from "../i18n/dictionaries.ts";
 export type { Lang };
 
 /** Public schema version for the offerings API payloads. */
@@ -57,6 +57,14 @@ export type SourcedValue<T = string | number> = {
 };
 
 /**
+ * Who a published fact is written for. `advisor` marks dealer-compensation
+ * disclosures — selling commission, trailer fee, the sales channel that names
+ * the dealer — which belong in the Offering Memorandum and in the advisor view,
+ * not on the page an investor is deciding from. Absent means `investor`.
+ */
+export type FactAudience = "investor" | "advisor";
+
+/**
  * A label and value published by the fund. The interface must display both
  * verbatim and may only show a class-specific fact for the selected class.
  */
@@ -70,6 +78,7 @@ export type FundDefinedFact = {
   sourcePage?: number;
   effectiveDate: string;
   approval: Approval;
+  audience?: FactAudience;
 };
 
 export type Manager = {
@@ -111,6 +120,16 @@ export type Property = {
   longitude: number;
   assetClassId: string;
   units?: SourcedValue<number>;
+  /**
+   * Plain unit count, promoted out of `units` so the portfolio can be summed.
+   * A fund's published unit total must equal the sum of these across its
+   * buildings; a mismatch means a property is missing or miscounted.
+   */
+  unitCount?: number;
+  acquiredOn?: string;
+  purchasePrice?: number;
+  /** e.g. "50% JV ownership" — qualifies how much of the asset the fund holds. */
+  ownershipNote?: LocalizedText;
   squareFeet?: SourcedValue<number>;
   status: "stabilized" | "new-construction" | "value-add" | "commercial";
   image?: string;
@@ -150,9 +169,75 @@ export type TrailingReturn = {
   note?: LocalizedText;
 };
 
+export type RiskCategory =
+  | "investment"
+  | "regulatory"
+  | "leverage"
+  | "business"
+  | "redemption"
+  | "tax"
+  | "other";
+
+/**
+ * A risk as authored. Fund documents group risks (investment / regulatory /
+ * leverage / …), so the authoring form carries a category; the published
+ * snapshot flattens `risks` to plain LocalizedText for the presenter and emits
+ * the grouped view separately as `riskGroups`. Both shapes are accepted on
+ * write — use `riskText()` (lib/capital/present.ts) to read one.
+ */
+export type RiskEntry = LocalizedText | { text: LocalizedText; category?: RiskCategory };
+
+export type RiskGroup = { category: RiskCategory; items: LocalizedText[] };
+
+/**
+ * A point from the manager's own materials: what makes the fund distinctive
+ * (`differentiator`), how it acquires (`strategy`), or an operating programme
+ * with a quantified target (`initiative`).
+ */
+export type StrategyPoint = {
+  id?: string;
+  kind: "differentiator" | "strategy" | "initiative";
+  label: LocalizedText;
+  body?: LocalizedText;
+  metric?: LocalizedText;
+  sourceId?: string;
+  sourcePage?: number;
+};
+
+/**
+ * The document a `SourcedValue.sourceId` points at. Without these rows a
+ * sourceId is an unresolvable string and provenance cannot be shown or audited.
+ */
+export type OfferingSource = {
+  id: string;
+  title: LocalizedText;
+  publisher?: string;
+  publishedOn?: string;
+  documentSlug?: string;
+  url?: string;
+};
+
+/** How often the manager publishes updated figures for this investment. */
+export type UpdateCadence = "quarterly" | "semi-annual" | "annual" | "ad-hoc";
+
+/** Derived from `next_review_due_at` — see app.offering_freshness_status(). */
+export type FreshnessStatus = "current" | "due-soon" | "overdue" | "unscheduled";
+
+export type ReviewOutcome = "updated" | "no-change" | "awaiting-source";
+
+/**
+ * An independent third party on the file. `scope` and `asOfDate` say what the
+ * firm actually did and when — an auditor's opinion covers a stated fiscal year
+ * and carries its own report date, which is not the date Hunter last checked the
+ * profile. Without them the name alone invites the reader to attach whatever
+ * date is nearby to the audit.
+ */
 export type ProviderInfo = {
   name: string;
   url?: string;
+  scope?: LocalizedText;
+  asOfDate?: string;
+  sourceId?: string;
 };
 
 export type ServiceProviders = {
@@ -178,13 +263,24 @@ export type Offering = {
   documentIds: string[];
   featured: boolean;
   portfolioFacts: SourcedValue<string>[];
-  risks: LocalizedText[];
+  risks: RiskEntry[];
+  /** Categorised view of `risks`, emitted by compose. Read-only. */
+  riskGroups?: RiskGroup[];
+  strategyPoints?: StrategyPoint[];
+  sources?: OfferingSource[];
   fundDefinedFacts?: FundDefinedFact[];
   media?: MediaSet;
   offeringSize?: SourcedValue<number>;
   unitsTotal?: SourcedValue<number>;
   // Fact-sheet fields (all optional)
   fundType?: LocalizedText;
+  /**
+   * The one-line legal form ("Open-ended unincorporated investment trust
+   * (Ontario)"). `fundType` carries the full statement including its securities-
+   * law caveat, which reads as a disclosure and belongs with the document rather
+   * than in a three-column summary card.
+   */
+  structureLabel?: LocalizedText;
   fundStatus?: LocalizedText;
   inceptionDate?: string;
   aum?: SourcedValue<string>;
@@ -201,6 +297,17 @@ export type Offering = {
   complianceProfile: OfferingComplianceProfile;
   lastUpdated?: string;
   verifiedAt: string;
+  /**
+   * Data-freshness contract. `dataAsOf` is the reporting period END the figures
+   * describe (a date, so it does arithmetic); `dataPeriodLabel` is the manager's
+   * own words for it ("Q1 2026"), shown verbatim. `managerPublicUrl` is the
+   * manager's own fund page — the first thing a reviewer opens to check whether
+   * our figures have fallen behind theirs.
+   */
+  updateCadence?: UpdateCadence;
+  dataAsOf?: string;
+  dataPeriodLabel?: string;
+  managerPublicUrl?: string;
 };
 
 /**

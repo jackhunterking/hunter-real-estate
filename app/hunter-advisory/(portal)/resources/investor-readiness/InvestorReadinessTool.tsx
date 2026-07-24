@@ -47,7 +47,6 @@ import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import { useClients } from "@/components/capital/north/ClientProvider";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider";
-import { DealerDisclosure } from "@/components/capital/north/DealerDisclosure";
 import { PageHeader, Panel } from "@/components/capital/north/PortalUI";
 import { SELF_CHECK_BANDS } from "@/components/capital/north/InvestorSelfCheck";
 import {
@@ -592,8 +591,6 @@ export function InvestorReadinessTool() {
       title={professionalMode ? c.title : c.selfTitle}
       description={professionalMode ? c.description : c.selfDescription}
     />
-    <DealerDisclosure level="transactional" className="mx-auto mb-5 max-w-3xl rounded-md border border-[#d9e1e6] bg-white p-4" />
-
     {referenceMode && <div className="mx-auto mb-5 flex max-w-3xl flex-col gap-3 rounded-md border border-[#cddce5] bg-[#eef4f7] p-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 size-5 shrink-0 text-[#0a4b72]" /><div><p className="text-sm font-semibold text-[#203f52]">{c.referenceMode}</p><p className="mt-1 text-xs leading-5 text-[#607581]">{c.referenceBody}</p></div></div>
       {referenceClient && <Link href={`${NORTH_BASE}/clients/${referenceClient.id}`} className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md border border-[#b8cbd6] bg-white px-3 text-xs font-semibold text-[#31566c]"><ArrowLeft className="size-3.5" />{c.backToClient}</Link>}

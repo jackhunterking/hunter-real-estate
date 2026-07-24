@@ -4,7 +4,6 @@ import { useEffect, useState, type ComponentType } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  BadgeCheck,
   BookOpen,
   BriefcaseBusiness,
   ChevronDown,
@@ -15,11 +14,11 @@ import {
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
-  Scale,
   ShieldCheck,
   UserRound,
   UsersRound,
   WalletCards,
+  Wrench,
   X,
 } from "lucide-react";
 import { canUseWorkspace } from "@/lib/capital/portal-access";
@@ -57,10 +56,7 @@ const COPY = {
       ["/commissions", "Ödemeler", CircleDollarSign],
     ],
     learning: ["/resources/learning", "Bilgi merkezi", BookOpen],
-    compareInvestments: ["/resources/compare-investments", "Yatırımları karşılaştır", Scale],
-    investorReadiness: ["/resources/investor-readiness", "Yatırımcı öz kontrolü", BadgeCheck],
-    professionalReadiness: ["/resources/investor-readiness", "Yatırımcı yeterliliği", BadgeCheck],
-    operations: [["/operations", "Operasyonlar", ShieldCheck]],
+    tools: ["/resources/tools", "Araçlar", Wrench],
     account: "Hesap",
     accountView: "Hesap görünümü",
     accountViewInvestor: "Yatırımcı",
@@ -87,10 +83,7 @@ const COPY = {
       ["/commissions", "Payments", CircleDollarSign],
     ],
     learning: ["/resources/learning", "Learning centre", BookOpen],
-    compareInvestments: ["/resources/compare-investments", "Compare Investments", Scale],
-    investorReadiness: ["/resources/investor-readiness", "Investor self-check", BadgeCheck],
-    professionalReadiness: ["/resources/investor-readiness", "Investor qualification", BadgeCheck],
-    operations: [["/operations", "Operations", ShieldCheck]],
+    tools: ["/resources/tools", "Tools", Wrench],
     account: "Account",
     accountView: "Account view",
     accountViewInvestor: "Investor",
@@ -140,13 +133,12 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
       ? [{
           id: "resources" as const,
           label: c.groups.resources,
-          items: [c.learning, c.compareInvestments, accountView === "professional" && professional ? c.professionalReadiness : c.investorReadiness]
-            .map(([href, label, icon]) => ({ href, label, icon })),
+          // The qualification tool lives inside Resources → Tools, not beside it.
+          items: [c.learning, c.tools].map(([href, label, icon]) => ({ href, label, icon })),
         }]
       : []),
-    ...(operations
-      ? [{ id: "operations" as const, label: c.groups.operations, items: c.operations.map(([href, label, icon]) => ({ href, label, icon })) }]
-      : []),
+    // The Admin console is deliberately absent from the rail — staff reach it
+    // from inside Profile, so the nav reads the same for every account.
     {
       id: "account",
       label: c.account,
@@ -235,7 +227,11 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
                 <div className="space-y-1">
                   {group.items.map(({ href, label, icon: Icon }) => {
                     const fullHref = `${NORTH_BASE}${href}`;
-                    const active = pathname === fullHref || pathname.startsWith(`${fullHref}/`);
+                    const active = pathname === fullHref
+                      || pathname.startsWith(`${fullHref}/`)
+                      // The qualification tool is reached from Tools but keeps
+                      // its own route, so Tools stays lit while it is open.
+                      || (href === "/resources/tools" && pathname.startsWith(`${NORTH_BASE}/resources/investor-readiness`));
                     return (
                       <Link
                         key={href}

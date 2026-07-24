@@ -28,13 +28,55 @@ test("historical returns live in a dedicated compact Performance view", () => {
   assert.match(performance, /c\.noHistory/);
 });
 
-test("fund terms remain verbatim and early exit conditions live in Overview", () => {
+test("published terms stay verbatim and file under the document that sets them out", () => {
   const detail = read("app/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
-  assert.match(detail, /fundDefinedFacts/);
-  assert.match(detail, /tx\(fact\.value, lang\)/);
-  assert.match(detail, /tx\(share\?\.redemptionTerms, lang\)/);
+  const ui = read("components/capital/offering-ui.tsx");
+  const keyFacts = read("lib/capital/key-facts.ts");
+
+  // The detail page no longer dumps every fund-defined fact into Key facts; the
+  // Documents tab renders them under the document they cite.
+  assert.match(detail, /<DocumentTermsDisclosure/);
+  assert.match(detail, /documentTermGroups\(offering, share, document\)/);
+  assert.match(ui, /tx\(fact\.value, lang\)/);
+  // Values are never reformatted on the way out.
   assert.doesNotMatch(detail, /formatReturnPhrase/);
+  assert.doesNotMatch(keyFacts, /formatReturnPhrase/);
   assert.doesNotMatch(detail, /Cash income goal/i);
+});
+
+test("dealer compensation never reaches an investor surface", () => {
+  const keyFacts = read("lib/capital/key-facts.ts");
+  const deck = read("components/capital/north/FundPresentation.tsx");
+
+  // The audience gate lives in one place and both investor surfaces use it.
+  assert.match(keyFacts, /\(fact\.audience \?\? "investor"\) === "investor"/);
+  assert.match(deck, /investorFacts\(allPublishedFacts\(offering, share\), share\?\.id\)/);
+  assert.doesNotMatch(deck, /fact\.approval !== "private" && \(!fact\.shareClassId/);
+});
+
+test("the audit cue carries the auditor's own scope, never the Hunter check date", () => {
+  const detail = read("app/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
+  const masthead = detail.match(/\{c\.audited\}[\s\S]*?<\/p>/)?.[0] ?? "";
+
+  assert.match(masthead, /serviceProviders\.auditor\.scope/);
+  assert.doesNotMatch(masthead, /verifiedAt/);
+  // Hunter claims nothing of its own here: the section just names the firms
+  // the manager itself names, with no verification wording anywhere.
+  assert.match(detail, /trust: "Service providers"/);
+  assert.doesNotMatch(detail, /Independently verified|Hunter data check/);
+});
+
+test("the service providers card is a bare role-and-firm list, not a trust badge", () => {
+  const ui = read("components/capital/offering-ui.tsx");
+  const card = ui.match(/export function ServiceProvidersCard[\s\S]*?\n}\n/)?.[0] ?? "";
+
+  // White like every other section card — not the beige "verified" panel.
+  assert.match(card, /bg-card/);
+  assert.doesNotMatch(card, /bg-secondary/);
+  // No shield, no green tick, no seal-like colouring beside the firms.
+  assert.doesNotMatch(card, /ShieldCheck|CheckCircle2|--ok/);
+  // A role and a firm, nothing else: no engagement caption, no profile date.
+  assert.doesNotMatch(card, /scope|verifiedAt|asOfDate/);
 });
 
 test("fund overview replaces oversized metric cards with a lean, trust-oriented flow", () => {
@@ -44,19 +86,23 @@ test("fund overview replaces oversized metric cards with a lean, trust-oriented 
   assert.doesNotMatch(overview, /summaryCards|<StatCard/);
   assert.doesNotMatch(overview, /c\.approach/);
   assert.doesNotMatch(overview, /offering\.thesis/);
-  assert.match(overview, /add\(c\.aum,[\s\S]*add\(c\.inception,[\s\S]*add\(c\.offeringSize,/);
+  // Key facts is a fixed eight built in one place, not accumulated inline from
+  // whatever the fund happens to publish. See tests/offering-key-facts.test.ts.
+  assert.match(overview, /buildEssentialKeyFacts\(offering, share, lang, c\)/);
+  assert.doesNotMatch(overview, /termFacts|hasCategory/);
 });
 
-test("fund manager context appears immediately before independent verification", () => {
+test("fund manager context appears immediately before its service providers", () => {
   const detail = read("app/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
   const overview = detail.match(/function Overview[\s\S]*?\n}\n\ntype LocalizedPerformanceRow/)?.[0] ?? "";
   const managerIndex = overview.indexOf("<SectionTitle title={c.aboutManager}");
-  const trustIndex = overview.indexOf("<TrustStrip");
+  const trustIndex = overview.indexOf("<ServiceProvidersCard");
 
   assert.ok(managerIndex >= 0 && managerIndex < trustIndex);
   assert.match(overview, /tx\(offering\.manager\.description, lang\)/);
   assert.match(overview, /offering\.manager\.headquarters\.city/);
-  assert.match(overview, /tx\(offering\.fundType, lang\)/);
+  // The one-line legal form; the full statement is a term of the OM.
+  assert.match(overview, /tx\(offering\.structureLabel \?\? offering\.fundType, lang\)/);
   assert.match(overview, /offering\.manager\.website/);
 });
 
@@ -121,15 +167,31 @@ test("profile is a permanent sidebar destination instead of an account-popover a
   assert.doesNotMatch(popover, /\/profile|partner\/apply/);
 });
 
-test("Resources is a shared group with contextual qualification labels", () => {
+test("Resources is a shared group of two entries: learning and tools", () => {
   const shell = read("components/capital/north/NorthShell.tsx");
   assert.match(shell, /id: "resources"/);
   assert.match(shell, /"\/resources\/learning", "Learning centre"/);
-  assert.match(shell, /investorReadiness: \["\/resources\/investor-readiness", "Investor self-check"/);
-  assert.match(shell, /professionalReadiness: \["\/resources\/investor-readiness", "Investor qualification"/);
+  // The sidebar names the tools group; each tool names itself on its own page.
+  assert.match(shell, /tools: \["\/resources\/tools", "Tools"/);
+  assert.match(shell, /tools: \["\/resources\/tools", "Araçlar"/);
+  assert.doesNotMatch(shell, /compare-investments/);
+  // Qualification is reached through Tools, so it has no sidebar entry of its
+  // own — it only appears as the path that keeps Tools lit.
+  assert.doesNotMatch(shell, /Readiness: \["\/resources\/investor-readiness"/);
+  assert.match(shell, /items: \[c\.learning, c\.tools\]/);
+  assert.match(shell, /href === "\/resources\/tools" && pathname\.startsWith\(`\$\{NORTH_BASE\}\/resources\/investor-readiness`\)/);
   assert.match(shell, /"\/commissions", "Ödemeler"/);
   assert.match(shell, /professional: \[[\s\S]*?"\/commissions", "Payments"[\s\S]*?\],\n    learning:/);
-  assert.match(shell, /accountView === "professional"[\s\S]*c\.professionalReadiness/);
+});
+
+test("the tools hub carries the qualification tool with per-view labels", () => {
+  const hub = read("components/capital/north/ToolsHub.tsx");
+  assert.match(hub, /href: "\/resources\/investor-readiness"/);
+  assert.match(hub, /name: "Investor qualification"/);
+  assert.match(hub, /name: "Check your investor category"/);
+  assert.match(hub, /name: "Yatırımcı sınıflandırması"/);
+  assert.match(hub, /name: "Yatırımcı kategorinizi kontrol edin"/);
+  assert.match(hub, /accountView === "professional" && canUseWorkspace\(context, "professional"\)/);
 });
 
 test("partner payment page uses payment terminology in both languages", () => {
@@ -241,20 +303,23 @@ test("fund pages show only the published gross schedule to active professionals"
   assert.match(route, /\.limit\(1\)/);
 });
 
-test("Operations exposes fund schedules only through the finance-enabled module", () => {
-  const operations = read("components/capital/north/OperationsInbox.tsx");
+test("the Admin console mounts fund schedules behind the platform-admin gate", () => {
+  const console_ = read("components/capital/north/AdminConsole.tsx");
   const manager = read("components/capital/north/FundCommissionScheduleManager.tsx");
-  assert.match(operations, /finance \? \["payments", "fund-schedules", "audit"\]/);
-  assert.match(operations, /FundCommissionScheduleManager/);
+  // Module-by-module role sets were replaced by one gate on the console plus
+  // the `private.is_hunter_admin()` predicate on every view it reads.
+  assert.match(console_, /hasPlatformRole\(currentUser, "master_admin"\)/);
+  assert.match(console_, /if \(!isAdmin\)/);
+  assert.match(console_, /FundCommissionScheduleManager/);
   assert.match(manager, /Save draft|Taslak kaydet/);
   assert.match(manager, /Published schedules are immutable/);
 });
 
-test("Operations exposes controlled learning content only to compliance roles", () => {
-  const operations = read("components/capital/north/OperationsInbox.tsx");
+test("the Admin console exposes controlled learning content to platform admins only", () => {
+  const console_ = read("components/capital/north/AdminConsole.tsx");
   const manager = read("components/capital/north/LearningContentManager.tsx");
-  assert.match(operations, /compliance \? \["requests", "professional", "licences", "firms", "content"/);
-  assert.match(operations, /LearningContentManager/);
+  assert.match(console_, /hasPlatformRole\(currentUser, "master_admin"\)/);
+  assert.match(console_, /LearningContentManager/);
   assert.match(manager, /Import flagship draft/);
   assert.match(manager, /request_changes/);
   assert.match(manager, /author cannot approve/i);

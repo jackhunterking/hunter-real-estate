@@ -19,6 +19,7 @@ import {
   formatCurrencyCad,
   formatReturnPhrase,
   primaryShareClass,
+  tightRange,
 } from "@/lib/capital/present";
 import { taxonomyLabel, type TaxonomyItem } from "@/lib/capital/taxonomies";
 import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
@@ -28,10 +29,40 @@ export type OfferingCardMetric = { label: string; value: string };
 
 const T = (lang: Lang, en: string, tr: string) => (lang === "tr" ? tr : en);
 
-/** Collapse "12 - 15 %" style ranges to a tight "12–15%". */
-export function tightRange(text: string) {
-  const match = text.match(/\d+(?:[.,]\d+)?\s*[-–]\s*\d+(?:[.,]\d+)?\s*%/);
-  return match ? match[0].replace(/\s+/g, "").replace("-", "–") : text;
+// Lives in the presentation layer so the detail-view tiles tighten ranges the
+// same way; re-exported here for the surfaces that already import it by name.
+export { tightRange };
+
+/**
+ * Payout cadences, matched most-specific-first: the "annualized"/"annually" in
+ * a *rate* must never outrank the "paid monthly" that is the real cadence.
+ */
+const DISTRIBUTION_CADENCES = [
+  { key: "monthly", match: /month|ayl[ıi]k/i, en: "Monthly", tr: "Aylık" },
+  { key: "quarterly", match: /quarter|üç ayl[ıi]k|uc ayl[ıi]k/i, en: "Quarterly", tr: "Üç aylık" },
+  { key: "semiannual", match: /semi-?annual|alt[ıi] ayl[ıi]k/i, en: "Semi-annual", tr: "Altı aylık" },
+  { key: "annual", match: /annual|yearly|y[ıi]ll[ıi]k/i, en: "Annual", tr: "Yıllık" },
+] as const;
+
+/**
+ * Distribution copy → "Monthly; 7–8% annually" — the cadence and the rate, and
+ * nothing else. Sentences like "targeted annualized cash distribution, paid
+ * monthly" read as prose next to a neighbouring card that says "Quarterly; up
+ * to 8.2% annually", so the card normalises every offering to that one shape.
+ * "up to" survives because it qualifies the number. Copy with no percentage in
+ * it (a per-unit dollar amount, say) is left exactly as authored.
+ */
+export function tightDistribution(text: string, lang: Lang) {
+  const percent = tightRange(text);
+  if (percent === text) return text;
+  const rate = `${/up to|en fazla|azami/i.test(text) ? T(lang, "up to ", "en fazla ") : ""}${percent}`;
+  const annualised = T(lang, `${rate} annually`, `yıllık ${rate}`);
+  const cadence = DISTRIBUTION_CADENCES.find((c) => c.match.test(text));
+  // No cadence to lead with → the rate stands alone, so it starts the sentence.
+  if (!cadence || cadence.key === "annual") {
+    return annualised.charAt(0).toLocaleUpperCase(lang) + annualised.slice(1);
+  }
+  return `${T(lang, cadence.en, cadence.tr)}; ${annualised}`;
 }
 
 /**
@@ -53,30 +84,28 @@ export function riskLevel(risk: string): number {
   return 0;
 }
 
-function RiskMeter({ lang, label, level }: { lang: Lang; label: string; level: number }) {
+const STAT_LABEL =
+  "text-[10px] font-bold uppercase tracking-[0.08em] text-[#7a8790]";
+
+/**
+ * Right half of the stat panel. Label, wrapped value, then the 1–5 meter —
+ * the same vertical structure as the target-return half, so the two read as
+ * one small table instead of two competing treatments at phone widths.
+ */
+function RiskStat({ lang, label, level }: { lang: Lang; label: string; level: number }) {
   return (
-    <div className="min-w-0 flex-1 sm:max-w-[220px]">
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#7a8790]">
-          {T(lang, "Risk profile", "Risk profili")}
-        </span>
-        <span className="truncate text-xs font-semibold text-[#0a2d46]">{label}</span>
-      </div>
+    <div className="min-w-0 p-3.5">
+      <p className={STAT_LABEL}>{T(lang, "Risk profile", "Risk profili")}</p>
+      <p className="mt-2 text-sm font-semibold leading-tight text-[#0a2d46]">{label}</p>
       {level > 0 && (
-        <>
-          <div className="mt-2 flex gap-1" aria-hidden>
-            {[1, 2, 3, 4, 5].map((step) => (
-              <span
-                key={step}
-                className={`h-1.5 flex-1 rounded-full ${step <= level ? "bg-[#0a2d46]" : "bg-[#e2e7ea]"}`}
-              />
-            ))}
-          </div>
-          <div className="mt-1.5 flex justify-between text-[9px] text-[#9aa6ad]">
-            <span>{T(lang, "Low", "Düşük")}</span>
-            <span>{T(lang, "High", "Yüksek")}</span>
-          </div>
-        </>
+        <div className="mt-2 flex gap-1" aria-hidden>
+          {[1, 2, 3, 4, 5].map((step) => (
+            <span
+              key={step}
+              className={`h-1 flex-1 rounded-full ${step <= level ? "bg-[#0a2d46]" : "bg-[#dde4e8]"}`}
+            />
+          ))}
+        </div>
       )}
     </div>
   );
@@ -138,18 +167,26 @@ export function OfferingSummaryCard({
       footer={
         <div>
           {(targetReturn || risk) && (
-            <div className="mt-4 flex items-end justify-between gap-5 border-b border-[#e9edef] pb-4">
+            <div
+              className={`mt-4 grid overflow-hidden rounded-lg bg-[#f4f7f9] ${
+                targetReturn && risk ? "grid-cols-2" : "grid-cols-1"
+              }`}
+            >
               {targetReturn && (
-                <div className="shrink-0">
-                  <p className="font-serif text-4xl font-semibold leading-none text-[#0a2d46]">
-                    {targetReturn}
-                  </p>
-                  <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[#7a8790]">
+                <div className="min-w-0 p-3.5">
+                  <p className={STAT_LABEL}>
                     {T(lang, "Target return", "Hedeflenen getiri")}
+                  </p>
+                  <p className="mt-2 font-serif text-[1.625rem] font-semibold leading-none text-[#0a2d46] sm:text-3xl">
+                    {targetReturn}
                   </p>
                 </div>
               )}
-              {risk && <RiskMeter lang={lang} label={risk.label} level={risk.level} />}
+              {risk && (
+                <div className={targetReturn ? "border-l border-[#e2e8ec]" : ""}>
+                  <RiskStat lang={lang} label={risk.label} level={risk.level} />
+                </div>
+              )}
             </div>
           )}
 
@@ -271,7 +308,7 @@ export function offeringBundleCardFacts(
   if (distribution) {
     metrics.push({
       label: labels.distribution,
-      value: formatReturnPhrase(distribution.value, lang),
+      value: tightDistribution(formatReturnPhrase(distribution.value, lang), lang),
     });
   }
   if (bundle.properties.length) {

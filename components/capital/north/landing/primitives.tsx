@@ -22,10 +22,7 @@ import type {
 /* ------------------------------------------------------------------ */
 
 /** "12-15% annually" → "12–15%" for big stat tiles; falls back to input. */
-export function shortRange(text: string) {
-  const match = text.match(/\d+(?:[.,]\d+)?\s*[-–]\s*\d+(?:[.,]\d+)?\s*%/);
-  return match ? match[0].replace(/\s+/g, "").replace("-", "–") : text;
-}
+export { tightRange as shortRange } from "@/components/capital/OfferingSummaryCard";
 
 /** A photo shown in the real-assets footprint, with an honest caption. */
 export type FootprintImage = {

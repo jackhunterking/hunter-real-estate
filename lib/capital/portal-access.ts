@@ -423,18 +423,31 @@ export function firmRoles(context: PortalAccessContext) {
   return membershipForUser(context.dataset, context.user.id)?.roles ?? [];
 }
 
+/**
+ * Which workspaces a user may open.
+ *
+ * A `master_admin` is platform staff and can open all three, because operating
+ * the platform means being able to see exactly what each audience sees — an
+ * admin who cannot open the professional workspace cannot check what a partner
+ * is being shown.
+ *
+ * This grants VISIBILITY ONLY. It deliberately does not make staff a partner:
+ * `isPartnerActive` still requires a real approved application, a verified
+ * licence, an active firm affiliation and an active partner account, and that
+ * is what commission allocation and firm membership continue to gate on (see
+ * `partnerActivationIssues` and `createCommission`). A staff member with no
+ * partner account sees the professional screens in their empty state, which is
+ * the honest rendering — it is not a claim that they are licensed.
+ *
+ * Account status and a verified email remain hard requirements for everyone.
+ */
 export function canUseWorkspace(context: PortalAccessContext, workspace: PortalWorkspace) {
   if (context.user.accountStatus !== "active") return false;
-  if (workspace === "investor") {
-    const staff = hasPlatformRole(context.user, "master_admin");
-    if (!staff) return context.user.emailVerified;
-    return context.user.emailVerified && (
-      context.user.accountIntent === "investor" ||
-      context.dataset.investments.some((investment) => investment.userId === context.user.id)
-    );
-  }
+  if (!context.user.emailVerified) return false;
+  if (hasPlatformRole(context.user, "master_admin")) return true;
+  if (workspace === "investor") return true;
   if (workspace === "professional") return isPartnerActive(context);
-  return hasPlatformRole(context.user, "master_admin");
+  return false;
 }
 
 export function availableWorkspaces(context: PortalAccessContext): PortalWorkspace[] {
@@ -466,7 +479,8 @@ export function canAccessPath(context: PortalAccessContext, pathname: string) {
 }
 
 export function defaultPortalPath(context: PortalAccessContext) {
-  if (canUseWorkspace(context, "operations")) return "/operations";
+  // Staff land in their normal workspace, not the console: the Admin console is
+  // reached deliberately from Profile, never by simply signing in.
   if (canUseWorkspace(context, "professional")) return "/professional";
   return "/portfolio";
 }

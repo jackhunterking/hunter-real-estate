@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   availableWorkspaces,
   canAccessPath,
+  defaultPortalPath,
   isPartnerActive,
   normalizeRegistrySurname,
   professionalProfileState,
@@ -133,26 +134,64 @@ test("commission visibility follows the beneficiary instead of the firm associat
   );
 });
 
-test("Hunter & Hunter Investment Advisors administrators start in Operations and require separate investing or professional approval", () => {
+test("master admins can open every workspace, but that is visibility only — not partner status", () => {
   const admin = context("hnc-admin");
-  assert.deepEqual(availableWorkspaces(admin), ["operations"]);
+  // Changed deliberately: admins previously saw Operations alone and needed a
+  // separate approval to open the investor or professional workspaces. Staff
+  // now see all three, because operating the platform means being able to see
+  // what each audience sees.
+  assert.deepEqual(availableWorkspaces(admin), ["investor", "professional", "operations"]);
+  assert.equal(canAccessPath(admin, "/hunter-advisory/admin"), true);
   assert.equal(canAccessPath(admin, "/hunter-advisory/admin/license-verifications"), true);
+  // /operations survives only as a redirect into the console.
   assert.equal(canAccessPath(admin, "/hunter-advisory/operations"), true);
-  assert.equal(canAccessPath(admin, "/hunter-advisory/portfolio"), false);
-  assert.equal(canAccessPath(admin, "/hunter-advisory/clients"), false);
+  assert.equal(canAccessPath(admin, "/hunter-advisory/portfolio"), true);
+  assert.equal(canAccessPath(admin, "/hunter-advisory/clients"), true);
+
+  // The load-bearing half: seeing the professional workspace must never imply
+  // the admin is a licensed, firm-affiliated partner. Everything that acts on
+  // partner status still refuses.
+  assert.equal(isPartnerActive(admin), false, "an admin is not a partner");
+  assert.equal(professionalProfileState(admin), "not_applied");
+});
+
+test("a suspended or unverified account opens nothing, even with the master admin role", () => {
+  const suspended = context("hnc-admin");
+  suspended.user = { ...suspended.user, accountStatus: "suspended" };
+  assert.deepEqual(availableWorkspaces(suspended), []);
+
+  const unverified = context("hnc-admin");
+  unverified.user = { ...unverified.user, emailVerified: false };
+  assert.deepEqual(availableWorkspaces(unverified), []);
 });
 
 test("investor qualification is available to verified investors and active professionals", () => {
   assert.equal(canAccessPath(context("partner"), "/hunter-advisory/resources/investor-readiness"), true);
   assert.equal(canAccessPath(context("investor"), "/hunter-advisory/resources/investor-readiness"), true);
   assert.equal(canAccessPath(context("applicant"), "/hunter-advisory/resources/investor-readiness"), true);
-  assert.equal(canAccessPath(context("hnc-admin"), "/hunter-advisory/resources/investor-readiness"), false);
+  // Staff can open it too, now that master admins hold every workspace.
+  assert.equal(canAccessPath(context("hnc-admin"), "/hunter-advisory/resources/investor-readiness"), true);
 });
 
 test("all resource routes are shared by investors and active professionals", () => {
   assert.equal(canAccessPath(context("investor"), "/hunter-advisory/resources/learning"), true);
   assert.equal(canAccessPath(context("partner"), "/hunter-advisory/resources/learning/core-strategies"), true);
-  assert.equal(canAccessPath(context("hnc-admin"), "/hunter-advisory/resources/learning"), false);
+  assert.equal(canAccessPath(context("hnc-admin"), "/hunter-advisory/resources/learning"), true);
+});
+
+test("the Admin console is closed to everyone without the operations workspace", () => {
+  for (const persona of ["investor", "applicant", "partner", "firm-admin"] as const) {
+    const who = context(persona);
+    assert.equal(canAccessPath(who, "/hunter-advisory/admin"), false, `${persona} reached the console`);
+    assert.equal(canAccessPath(who, "/hunter-advisory/admin?section=users"), false, `${persona} reached Users & roles`);
+    assert.equal(canAccessPath(who, "/hunter-advisory/operations"), false, `${persona} reached the old route`);
+  }
+});
+
+test("nobody lands in the console — staff open it from Profile", () => {
+  assert.equal(defaultPortalPath(context("hnc-admin")), "/professional");
+  assert.equal(defaultPortalPath(context("partner")), "/professional");
+  assert.equal(defaultPortalPath(context("investor")), "/portfolio");
 });
 
 test("registry surnames retain submitted text while duplicate matching uses Turkish normalization", () => {

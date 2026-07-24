@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function CommissionsAdminPage() {
-  redirect("/hunter-advisory/operations?module=payments");
+  redirect("/hunter-advisory/admin?section=payments");
 }

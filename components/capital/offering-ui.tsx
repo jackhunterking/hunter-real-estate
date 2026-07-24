@@ -12,15 +12,16 @@ import { tx } from "@/lib/i18n/localize";
 import {
   Building2,
   CheckCircle2,
+  ChevronDown,
   ExternalLink,
   Info,
   type LucideIcon,
   MapPin,
   MapPinned,
   Presentation,
-  ShieldCheck,
 } from "lucide-react";
 import type { Lang, OfferingDocument, Property, ServiceProviders, SourcedValue } from "@/lib/capital/types";
+import type { DocumentTermGroup } from "@/lib/capital/key-facts";
 import { formatSourceLine, localizeVerification, resolveImage } from "@/lib/capital/present";
 import { cn } from "@/lib/utils";
 
@@ -65,7 +66,7 @@ export function StatCard({ value, label, icon: Icon }: { value: string; label: s
 /* Key-facts card (Parvis-style two-column, with a strategy pill)      */
 /* ------------------------------------------------------------------ */
 
-export type KeyFact = { label: string; value: string; provenance?: SourcedValue };
+export type KeyFact = { label: string; value: string; provenance?: SourcedValue; note?: string };
 
 export function KeyFactsCard({
   strategyLabel,
@@ -92,10 +93,62 @@ export function KeyFactsCard({
               {fact.value}
               <ProvenanceChip value={fact.provenance} lang={lang} />
             </dd>
+            {fact.note && <p className="mt-1 text-xs font-normal leading-5 text-muted-foreground">{fact.note}</p>}
           </div>
         ))}
       </dl>
     </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Document terms — the published terms, under the document they cite  */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The terms a document sets out, collapsed by default. These are the same
+ * fund-published facts that used to crowd the Key facts card; filing them under
+ * their own document keeps them one click away and makes their provenance the
+ * obvious thing about them.
+ */
+export function DocumentTermsDisclosure({
+  groups,
+  lang,
+  copy,
+}: {
+  groups: DocumentTermGroup[];
+  lang: Lang;
+  copy: { summary: string; page: string };
+}) {
+  if (!groups.length) return null;
+  return (
+    <details className="group mt-4 border-t border-border pt-3">
+      <summary className="flex cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-primary hover:underline [&::-webkit-details-marker]:hidden">
+        <ChevronDown className="size-4 transition-transform group-open:rotate-180" aria-hidden />
+        {copy.summary}
+      </summary>
+      <div className="mt-4 space-y-5">
+        {groups.map((group) => (
+          <section key={group.key}>
+            <h4 className="text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+              {tx(group.title, lang)}
+            </h4>
+            <dl className="mt-2 grid gap-x-8 gap-y-4 sm:grid-cols-2">
+              {group.facts.map((fact) => (
+                <div key={fact.id} className="border-b border-border/70 pb-3">
+                  <dt className="text-xs font-medium text-muted-foreground">{tx(fact.label, lang)}</dt>
+                  <dd className="mt-1 text-sm leading-6 text-foreground">{tx(fact.value, lang)}</dd>
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    {fact.effectiveDate}
+                    {fact.sourcePage ? ` · ${copy.page}${fact.sourcePage}` : ""}
+                  </p>
+                </div>
+              ))}
+            </dl>
+          </section>
+        ))}
+      </div>
+    </details>
   );
 }
 
@@ -259,18 +312,24 @@ export function PresentationCard({
 }
 
 /* ------------------------------------------------------------------ */
-/* Trust strip — independent auditor / legal / appraiser + verified    */
+/* Service providers — a role and a firm name, nothing else. Hunter    */
+/* audits nothing here, so the card carries no claim of its own: no    */
+/* shield, no green tick, no "verified" wording, and no date. Each     */
+/* firm's engagement scope belongs in the documents that set it out,   */
+/* not in a caption underneath a name.                                 */
 /* ------------------------------------------------------------------ */
 
-export function TrustStrip({
+export function ServiceProvidersCard({
   providers,
-  verifiedAt,
   copy,
   className,
 }: {
   providers?: ServiceProviders;
-  verifiedAt?: string;
-  copy: { heading: string; auditor: string; legalCounsel: string; appraiser: string; verified: string };
+  copy: {
+    auditor: string;
+    legalCounsel: string;
+    appraiser: string;
+  };
   className?: string;
 }) {
   const rows = [
@@ -279,37 +338,24 @@ export function TrustStrip({
     providers?.appraiser ? { label: copy.appraiser, ...providers.appraiser } : null,
   ].filter(Boolean) as { label: string; name: string; url?: string }[];
 
-  if (!rows.length && !verifiedAt) return null;
+  if (!rows.length) return null;
 
   return (
-    <div className={cn("rounded-xl border border-border bg-secondary/50 p-5 sm:p-6", className)}>
-      <div className="flex items-center gap-2">
-        <ShieldCheck className="size-4 text-[color:var(--ok)]" aria-hidden />
-        <h2 className="text-sm font-semibold text-foreground">{copy.heading}</h2>
-      </div>
-      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className={cn("rounded-xl border border-border bg-card px-5 py-5 sm:px-6", className)}>
+      <div className="grid gap-6 sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-3">
         {rows.map((row) => (
           <div key={row.label}>
             <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">{row.label}</p>
             {row.url ? (
-              <a href={row.url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-foreground hover:text-primary">
+              <a href={row.url} target="_blank" rel="noreferrer" className="mt-1.5 inline-flex items-center gap-1 text-sm font-semibold text-foreground hover:text-primary">
                 {row.name}
                 <ExternalLink className="size-3 text-muted-foreground" aria-hidden />
               </a>
             ) : (
-              <p className="mt-1 text-sm font-semibold text-foreground">{row.name}</p>
+              <p className="mt-1.5 text-sm font-semibold text-foreground">{row.name}</p>
             )}
           </div>
         ))}
-        {verifiedAt && (
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">{copy.verified}</p>
-            <p className="mt-1 inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--ok)]">
-              <CheckCircle2 className="size-3.5" aria-hidden />
-              {verifiedAt}
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

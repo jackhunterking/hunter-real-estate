@@ -5,7 +5,8 @@ import Link from "next/link";
 import { Check, Copy, X } from "lucide-react";
 import type { OfferingBundle } from "@/lib/capital/types";
 import { FundMapEmbed } from "@/components/capital/map/FundMapEmbed";
-import { formatCurrencyCad } from "@/lib/capital/present";
+import { formatCurrencyCad, riskText } from "@/lib/capital/present";
+import { allPublishedFacts, investorFacts } from "@/lib/capital/key-facts";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { tx } from "@/lib/i18n/localize";
 import { investmentBrandFor } from "@/lib/capital/investment-brand";
@@ -16,9 +17,10 @@ export function FundPresentation({ offering }: { offering: OfferingBundle }) {
   const brand = investmentBrandFor(lang);
   const [copied, setCopied] = useState(false);
   const share = offering.shareClasses[0];
-  const definedFacts = [...(offering.fundDefinedFacts ?? []), ...(share?.fundDefinedFacts ?? [])].filter(
-    (fact) => fact.approval !== "private" && (!fact.shareClassId || fact.shareClassId === share?.id),
-  );
+  // This deck is shared with clients (it offers a sign-in-required link), so it
+  // applies the same audience gate as the investment page: dealer-compensation
+  // facts stay in the Offering Memorandum and the advisor view.
+  const definedFacts = investorFacts(allPublishedFacts(offering, share), share?.id);
   const labels = lang === "tr" ? {
     presentation: "Yatırım sunumu", copy: "Giriş gerektiren bağlantıyı kopyala", copied: "Kopyalandı", close: "Sunumu kapat",
     owns: "Yatırımın dayanak binaları", terms: "Seçili pay sınıfı koşulları", risks: "Önemli riskler",
@@ -53,7 +55,7 @@ export function FundPresentation({ offering }: { offering: OfferingBundle }) {
       <section>
         <div className="rounded-xl border border-[#dce3e7] bg-white p-6"><h2 className="text-xl font-semibold">{labels.terms}</h2><dl className="mt-4 divide-y divide-[#e8ecee] text-sm">{definedFacts.map((fact) => <div key={fact.id} className="py-3"><dt className="text-[#6b7982]">{tx(fact.label, lang)}</dt><dd className="mt-1 font-semibold leading-6">{tx(fact.value, lang)}</dd><span className="mt-1 block text-[10px] text-[#87929a]">{fact.sourceId} · {fact.effectiveDate}</span></div>)}{!definedFacts.some((fact) => fact.category === "target") && share?.targetReturn && <div className="py-3"><dt className="text-[#6b7982]">{labels.target}</dt><dd className="mt-1 font-semibold">{share.targetReturn.value}</dd></div>}<div className="py-3"><dt className="text-[#6b7982]">{labels.minimum}</dt><dd className="mt-1 font-semibold">{share?.minimumInvestment ? formatCurrencyCad(share.minimumInvestment.value, lang) : "—"}</dd></div>{!definedFacts.some((fact) => fact.category === "early-exit") && <div className="py-3"><dt className="text-[#6b7982]">{labels.redemption}</dt><dd className="mt-1 font-semibold leading-6">{tx(share?.redemptionTerms, lang) ?? "—"}</dd></div>}</dl></div>
       </section>
-      <section className="rounded-xl border border-[#e7d39f] bg-[#fffaf0] p-6"><h2 className="text-xl font-semibold text-[#4a3b22]">{labels.risks}</h2><ul className="mt-4 space-y-2 text-sm leading-6 text-[#665537]">{offering.risks.map((risk) => <li key={tx(risk, lang)}>• {tx(risk, lang)}</li>)}</ul></section>
+      <section className="rounded-xl border border-[#e7d39f] bg-[#fffaf0] p-6"><h2 className="text-xl font-semibold text-[#4a3b22]">{labels.risks}</h2><ul className="mt-4 space-y-2 text-sm leading-6 text-[#665537]">{offering.risks.map((risk) => <li key={tx(riskText(risk), lang)}>• {tx(riskText(risk), lang)}</li>)}</ul></section>
     </main>
   </div>;
 }

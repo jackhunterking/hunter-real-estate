@@ -1,8 +1,11 @@
 "use client";
 
-import { CheckCircle2, CircleAlert, Globe2, Mail, MapPin, UserRound } from "lucide-react";
+import Link from "next/link";
+import { CheckCircle2, ChevronRight, CircleAlert, Globe2, Mail, MapPin, ShieldCheck, UserRound } from "lucide-react";
+import { canUseWorkspace } from "@/lib/capital/portal-access";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
+import { NORTH_BASE } from "./NorthBrand";
 import { PartnerApplicationView } from "./PartnerApplicationView";
 import { PageHeader, Panel, SectionHeader } from "./PortalUI";
 import { usePortalAccess } from "./PortalAccessProvider";
@@ -34,6 +37,10 @@ const COPY = {
     english: "English",
     professionalAccess: "Profesyonel erişim",
     professionalAccessMeta: "Lisans, firma bağlantısı ve profesyonel çalışma alanı durumunuz.",
+    staffAccess: "Ekip erişimi",
+    adminConsole: "Yönetim konsolu",
+    adminConsoleMeta: "Yatırımlar, kişiler, firmalar, ödemeler, içerik ve sistem kayıtları.",
+    openAdminConsole: "Yönetim konsolunu aç",
   },
   en: {
     title: "Profile",
@@ -59,6 +66,10 @@ const COPY = {
     english: "English",
     professionalAccess: "Professional access",
     professionalAccessMeta: "Your licence, firm association, and professional workspace status.",
+    staffAccess: "Staff access",
+    adminConsole: "Admin console",
+    adminConsoleMeta: "Investments, people, firms, payments, content and system records.",
+    openAdminConsole: "Open the Admin console",
   },
 } as const;
 
@@ -70,8 +81,11 @@ function initials(name: string) {
 
 export function ProfileView() {
   const { lang, setLang } = useLang();
-  const { currentUser } = usePortalAccess();
+  const { currentUser, context } = usePortalAccess();
   const c = pick(COPY, lang);
+  // The Admin console has no place in the sidebar; staff open it from here, and
+  // everyone else never learns it exists. The route stays gated on its own.
+  const staff = canUseWorkspace(context, "operations");
   const accountType = currentUser.investorAccountType === "individual"
     ? c.individual
     : currentUser.investorAccountType === "entity"
@@ -189,6 +203,28 @@ export function ProfileView() {
       <section aria-label={c.professionalAccess}>
         <PartnerApplicationView embedded />
       </section>
+
+      {staff && (
+        <section aria-label={c.staffAccess}>
+          <SectionHeader title={c.staffAccess} />
+          <Panel className="overflow-hidden">
+            <Link
+              href={`${NORTH_BASE}/admin`}
+              aria-label={c.openAdminConsole}
+              className="flex min-w-0 items-center gap-3.5 px-5 py-4 transition-colors hover:bg-[#f7f9fa] sm:px-6"
+            >
+              <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[#eef2f4] text-[#31546a]">
+                <ShieldCheck className="size-[17px]" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-[#263c4a]">{c.adminConsole}</p>
+                <p className="mt-1 text-xs text-[#77838c]">{c.adminConsoleMeta}</p>
+              </div>
+              <ChevronRight className="size-4 shrink-0 text-[#8b96a0]" />
+            </Link>
+          </Panel>
+        </section>
+      )}
     </div>
   );
 }

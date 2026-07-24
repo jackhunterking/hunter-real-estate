@@ -24,12 +24,15 @@ export function isChronologicalPerformancePeriod(period: string): boolean {
 
 /**
  * Midpoint of a free-text target-return string, as a number.
- * "10-14% annual net return" → 12; "8% annually" → 8;
+ * "10%-14% targeted annual net return" → 12; "8% annually" → 8;
  * "Quarterly; up to 8.2% annually" → 8.2; "Open-ended fund" → null.
+ *
+ * Published ranges sign both numbers, so the inner sign is optional — reading
+ * only to the first "%" would pass the floor off as the midpoint.
  */
 export function parseTargetMidpoint(text: string): number | null {
   if (!text) return null;
-  const range = text.match(/(\d+(?:[.,]\d+)?)\s*[-–]\s*(\d+(?:[.,]\d+)?)\s*%/);
+  const range = text.match(/(\d+(?:[.,]\d+)?)\s*%?\s*[-–—]\s*(\d+(?:[.,]\d+)?)\s*%/);
   if (range) {
     const a = Number(range[1].replace(",", "."));
     const b = Number(range[2].replace(",", "."));

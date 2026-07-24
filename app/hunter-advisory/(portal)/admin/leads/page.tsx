@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function LeadsPage() {
-  redirect("/hunter-advisory/operations?module=leads");
+export default function LeadsAdminPage() {
+  redirect("/hunter-advisory/admin?section=leads");
 }

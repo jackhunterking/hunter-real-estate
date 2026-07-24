@@ -40,12 +40,12 @@
     }
   },
   "summary": {
-    "en": "A REIT targeting Western Canada residential and commercial secondary properties in emerging markets.",
-    "tr": "Gelişmekte olan pazarlarda Batı Kanada konut ve ticari ikincil mülklerini hedefleyen bir REIT."
+    "en": "Income-producing residential and commercial real estate across Western Canada's secondary markets, paying quarterly distributions.",
+    "tr": "Batı Kanada'nın ikincil pazarlarında gelir getiren konut ve ticari gayrimenkul; üç ayda bir dağıtım öder."
   },
   "thesis": {
-    "en": "The Epiphany Legacy Investment Mutual Fund Trust generates sustainable growth through strategic real estate investments across Western Canada's secondary markets. Since inception in Fall 2021 it has secured over $85 million in assets under management — a blend of multi-residential and commercial properties — with a disciplined approach to asset acquisition and management.",
-    "tr": "Epiphany Legacy Investment Mutual Fund Trust, Batı Kanada'nın ikincil pazarlarındaki stratejik gayrimenkul yatırımlarıyla sürdürülebilir büyüme üretir. 2021 sonbaharındaki kuruluşundan bu yana, çok konutlu ve ticari mülklerin bir karışımından oluşan 85 milyon doları aşkın yönetilen varlık edinmiştir."
+    "en": "Epiphany Legacy Investment Mutual Fund Trust gives investors access to an established, income-producing portfolio of residential and commercial real estate across Alberta and Saskatchewan. The Trust does not own real estate directly: it lends invested capital to Epiphany Multi-Family LP and Epiphany Commercial LP through debentures and Class X units, and those partnerships hold the underlying buildings. Rental cash flow, after property costs and financing, flows up through the partnerships to support the Trust's quarterly distributions. Growth comes two ways — disciplined acquisitions that add doors and economies of scale, and selective value-add work that lifts rents and value over time.",
+    "tr": "Epiphany Legacy Investment Mutual Fund Trust, yatırımcılara Alberta ve Saskatchewan genelinde yerleşik, gelir getiren bir konut ve ticari gayrimenkul portföyüne erişim sağlar. Tröst gayrimenkule doğrudan sahip değildir: yatırılan sermayeyi tahviller ve X Sınıfı birimler aracılığıyla Epiphany Multi-Family LP ve Epiphany Commercial LP'ye ödünç verir; binaları bu ortaklıklar elinde tutar. Mülk giderleri ve finansman sonrası kira nakit akışı, ortaklıklar üzerinden Tröste akarak üç aylık dağıtımları destekler. Büyüme iki yoldan gelir — kapı sayısını ve ölçek ekonomilerini artıran disiplinli satın almalar ve zaman içinde kiraları ve değeri yükselten seçici değer artırıcı çalışmalar."
   },
   "status": "available",
   "strategyIds": [
@@ -57,89 +57,169 @@
   ],
   "regionIds": [
     "alberta",
-    "saskatchewan",
-    "manitoba",
-    "british-columbia"
+    "saskatchewan"
   ],
   "shareClassIds": [
     "legacy-class-a"
   ],
   "propertyIds": [
-    "cold-lake",
-    "bayer-lethbridge"
+    "legacy-1105-36-st-n",
+    "legacy-3760-18-ave-n",
+    "legacy-3306-9-ave-n",
+    "legacy-495-wt-hill-blvd-s",
+    "legacy-405-stafford-dr-n",
+    "legacy-3710-18-ave-n",
+    "legacy-2930-9-ave-n",
+    "legacy-550-wt-hill-blvd-s",
+    "legacy-3174-34-st-n",
+    "legacy-562-2-st-se",
+    "legacy-638-isabelle-st",
+    "legacy-718-3-st",
+    "legacy-6602-48-st",
+    "legacy-timber-lane",
+    "legacy-5333-5-ave",
+    "legacy-5415-10-ave",
+    "legacy-5506-10-ave",
+    "legacy-1015-57-st",
+    "legacy-541-dufferin-ave",
+    "legacy-5112-54-ave",
+    "legacy-604-21-st-s",
+    "legacy-542-5-st-se",
+    "legacy-1201-99-st",
+    "legacy-1551-107-st",
+    "legacy-1901-pearson-ave",
+    "legacy-10908-winder-cres",
+    "legacy-10910-winder-cres",
+    "legacy-10912-winder-cres",
+    "legacy-2231-southview-dr",
+    "legacy-3620-23-ave-s"
   ],
   "documentIds": [
+    "legacy-summary",
     "legacy-fact",
-    "legacy-om",
-    "legacy-presentation"
+    "legacy-term-sheet",
+    "legacy-presentation",
+    "legacy-om"
   ],
   "featured": true,
   "complianceProfile": {
     "issuerLegalType": "trust",
-    "isInvestmentFund": true,
+    "isInvestmentFund": false,
     "approvedOntarioExemptions": [],
     "reviewOwner": "Licensed compliance review"
   },
   "portfolioFacts": [
     {
-      "value": "27 properties",
+      "value": "30 properties",
       "classification": "current",
-      "asOfDate": "2025-09-02",
-      "sourceId": "legacy-ir-2025-09",
-      "sourcePage": 6,
+      "asOfDate": "2026-07-08",
+      "sourceId": "legacy-om-2026-07",
+      "sourcePage": 213,
       "approval": "approved-public"
     },
     {
-      "value": "7 communities",
+      "value": "7 markets across Alberta and Saskatchewan",
       "classification": "current",
-      "asOfDate": "2026-01-30",
-      "sourceId": "legacy-fact-2026-01",
-      "sourcePage": 2,
+      "asOfDate": "2026-07-09",
+      "sourceId": "legacy-summary-2026-07",
+      "sourcePage": 3,
       "approval": "approved-public"
     },
     {
-      "value": "543 units",
+      "value": "543 doors (523 residential + 20 commercial)",
       "classification": "current",
-      "asOfDate": "2026-01-30",
-      "sourceId": "legacy-fact-2026-01",
-      "sourcePage": 2,
+      "asOfDate": "2026-07-09",
+      "sourceId": "legacy-summary-2026-07",
+      "sourcePage": 3,
+      "approval": "approved-public"
+    },
+    {
+      "value": "$116K cost per door (multi-family)",
+      "classification": "current",
+      "asOfDate": "2026-07-09",
+      "sourceId": "legacy-summary-2026-07",
+      "sourcePage": 3,
+      "approval": "approved-public"
+    },
+    {
+      "value": "65 / 35 AUM split, Alberta / Saskatchewan",
+      "classification": "current",
+      "asOfDate": "2026-07-09",
+      "sourceId": "legacy-summary-2026-07",
+      "sourcePage": 3,
+      "approval": "approved-public"
+    },
+    {
+      "value": "72% loan-to-value, consolidated",
+      "classification": "current",
+      "asOfDate": "2026-03-31",
+      "sourceId": "legacy-deck-2026-07",
+      "sourcePage": 15,
+      "approval": "approved-public"
+    },
+    {
+      "value": "$1.27M net operating income, Q1 FY2026",
+      "classification": "current",
+      "asOfDate": "2026-03-31",
+      "sourceId": "legacy-deck-2026-07",
+      "sourcePage": 15,
       "approval": "approved-public"
     }
   ],
   "fundType": {
-    "en": "Mutual Fund Trust",
-    "tr": "Mutual Fund Trust"
+    "en": "Open-ended mutual fund trust under the Income Tax Act (Canada). It is not a \"reporting issuer\" or a \"mutual fund\" for securities law purposes.",
+    "tr": "Gelir Vergisi Kanunu (Kanada) uyarınca açık uçlu yatırım fonu tröstü. Menkul kıymet mevzuatı açısından \"raporlayan ihraççı\" veya \"yatırım fonu\" değildir."
+  },
+  "structureLabel": {
+    "en": "Open-ended mutual fund trust (Alberta)",
+    "tr": "Açık uçlu yatırım fonu tröstü (Alberta)"
   },
   "fundStatus": {
-    "en": "Offering Memorandum",
-    "tr": "Offering Memorandum"
+    "en": "Offering Memorandum — continuous private placement",
+    "tr": "Teklif Muhtırası — sürekli özel yerleştirme"
   },
   "inceptionDate": "2021-09",
   "aum": {
-    "value": "$85M+",
+    "value": "$93.6M+",
     "classification": "current",
-    "asOfDate": "2025-09-02",
-    "sourceId": "legacy-ir-2025-09",
-    "sourcePage": 6,
+    "asOfDate": "2026-03-31",
+    "sourceId": "legacy-summary-2026-07",
+    "sourcePage": 3,
     "approval": "approved-public"
   },
   "offeringSize": {
-    "value": 38160000,
+    "value": 32920224,
     "classification": "current",
-    "asOfDate": "2026-01-30",
-    "sourceId": "legacy-fact-2026-01",
-    "sourcePage": 1,
+    "asOfDate": "2026-07-08",
+    "sourceId": "legacy-om-2026-07",
+    "sourcePage": 3,
     "approval": "approved-public"
   },
   "amountRaised": {
-    "value": 18480000,
+    "value": 18400000,
     "classification": "current",
-    "asOfDate": "2026-01-30",
-    "sourceId": "legacy-fact-2026-01",
+    "asOfDate": "2026-07-09",
+    "sourceId": "legacy-summary-2026-07",
     "sourcePage": 1,
     "approval": "approved-public"
   },
-  "fundingPercent": 48.4,
+  "fundingPercent": 55.9,
+  "unitsTotal": {
+    "value": 543,
+    "classification": "current",
+    "asOfDate": "2026-07-09",
+    "sourceId": "legacy-summary-2026-07",
+    "sourcePage": 3,
+    "approval": "approved-public"
+  },
+  "managementFee": {
+    "en": "1.5% of total assets under management, payable quarterly to Epiphany Consulting Services Ltd.",
+    "tr": "Yönetilen toplam varlıkların %1,5'i, Epiphany Consulting Services Ltd.'ye üç ayda bir ödenir."
+  },
+  "valuationFrequency": {
+    "en": "Quarterly",
+    "tr": "Üç aylık"
+  },
   "distributionFrequency": {
     "en": "Quarterly",
     "tr": "Üç aylık"
@@ -150,20 +230,32 @@
   },
   "highlights": [
     {
-      "en": "Registered fund eligible (RRSP, TFSA, RESP, LIRA, RRIF).",
-      "tr": "Kayıtlı fon uygun (RRSP, TFSA, RESP, LIRA, RRIF)."
+      "en": "Targeted total annual return of 12%-15%.",
+      "tr": "Hedeflenen yıllık toplam getiri %12-15."
     },
     {
-      "en": "27 properties across Western Canada, $85M+ in assets.",
-      "tr": "Batı Kanada genelinde 27 mülk, 85M$+ varlık."
+      "en": "Preferential distribution of up to 8.2% a year, paid quarterly.",
+      "tr": "Yılda %8,2'ye varan imtiyazlı dağıtım, üç ayda bir ödenir."
     },
     {
-      "en": "Over a century of combined senior management experience.",
-      "tr": "Yüz yılı aşkın birleşik üst yönetim deneyimi."
+      "en": "Eligible for registered and non-registered accounts (RRSP, RRIF, RESP, TFSA).",
+      "tr": "Kayıtlı ve kayıtsız hesaplar için uygundur (RRSP, RRIF, RESP, TFSA)."
     },
     {
-      "en": "Insider ownership of approximately $13M.",
-      "tr": "Yaklaşık 13M$ içeriden sahiplik."
+      "en": "A portion of distributions may be paid as a tax-efficient return of capital.",
+      "tr": "Dağıtımların bir kısmı vergi açısından verimli sermaye iadesi olarak ödenebilir."
+    },
+    {
+      "en": "Distribution Reinvestment Plan (DRIP) available; units bought through the DRIP carry no redemption fee.",
+      "tr": "Dağıtım Yeniden Yatırım Planı (DRIP) mevcuttur; DRIP ile alınan birimlerde itfa ücreti yoktur."
+    },
+    {
+      "en": "30 income-producing buildings across seven Alberta and Saskatchewan markets.",
+      "tr": "Yedi Alberta ve Saskatchewan pazarında gelir getiren 30 bina."
+    },
+    {
+      "en": "Minimum subscription of $2,508, with monthly closings.",
+      "tr": "Aylık kapanışlarla 2.508 $ asgari abonelik."
     }
   ],
   "trailingReturns": [
@@ -201,51 +293,346 @@
         "tr": "2025"
       },
       "value": "8.20%"
-    },
-    {
-      "period": {
-        "en": "Year 1",
-        "tr": "1 yıl"
-      },
-      "value": "8.46%"
-    },
-    {
-      "period": {
-        "en": "Year 3",
-        "tr": "3 yıl"
-      },
-      "value": "10.61%"
-    },
-    {
-      "period": {
-        "en": "Since inception",
-        "tr": "Kuruluştan bu yana"
-      },
-      "value": "11.89%"
     }
   ],
+  "trailingReturnsNote": {
+    "en": "Calendar-year total returns for Class A units with the DRIP option. The Trust launched in September 2021, so 2021 reflects distributions accrued only in the fourth quarter. Compound trailing returns to 31 December 2025 were 8.46% over one year, 10.61% over three years and 11.89% since inception. The December 2025 results were prepared by the asset manager and are unaudited.",
+    "tr": "DRIP seçeneğiyle Class A birimlerinin takvim yılı toplam getirileri. Tröst Eylül 2021'de kurulduğundan 2021, yalnızca dördüncü çeyrekte tahakkuk eden dağıtımları yansıtır. 31 Aralık 2025'e kadar bileşik getiriler bir yılda %8,46, üç yılda %10,61 ve kuruluştan bu yana %11,89 olmuştur. Aralık 2025 sonuçları varlık yöneticisi tarafından hazırlanmış olup denetlenmemiştir."
+  },
   "serviceProviders": {
     "auditor": {
-      "name": "BDO Canada LLP",
-      "url": "https://www.bdo.ca/"
+      "name": "KPMG LLP",
+      "url": "https://kpmg.com/ca/en/home.html",
+      "scope": {
+        "en": "FY2025 financial statements of the partnerships, bound into the Offering Memorandum at Item 14",
+        "tr": "Ortaklıkların 2025 mali yılı tabloları, Teklif Muhtırası Madde 14'e eklenmiştir"
+      },
+      "asOfDate": "2025-12-31",
+      "sourceId": "legacy-fs-2025-audit"
     },
     "legalCounsel": {
-      "name": "Borden Ladner Gervais LLP (BLG)",
-      "url": "https://www.blg.com/en"
-    },
-    "appraiser": {
-      "name": "Avison Young",
-      "url": "https://www.avisonyoung.com/"
+      "name": "Fasken Martineau DuMoulin LLP",
+      "url": "https://www.fasken.com/",
+      "scope": {
+        "en": "Item 8 income tax and exempt plan eligibility opinion in the Offering Memorandum",
+        "tr": "Teklif Muhtırasında Madde 8 gelir vergisi ve muaf plan uygunluk görüşü"
+      },
+      "asOfDate": "2026-07-08",
+      "sourceId": "legacy-om-2026-07"
     }
   },
-  "lastUpdated": "2026-01-30",
+  "lastUpdated": "2026-07-09",
   "risks": [
     {
-      "en": "Private securities may be illiquid and redemption rights are governed by offering documents.",
-      "tr": "Özel menkul kıymetler likit olmayabilir; itfa hakları teklif belgelerine tabidir."
+      "text": {
+        "en": "This is a speculative offering. There is no assurance of a positive return, and an investment is appropriate only for subscribers who can absorb the loss of some or all of it.",
+        "tr": "Bu spekülatif bir tekliftir. Pozitif getiri garantisi yoktur ve yatırım, yalnızca bir kısmını veya tamamını kaybetmeyi göze alabilecek aboneler için uygundur."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "The subscription price per unit was determined arbitrarily by the Trust, not by a market.",
+        "tr": "Birim başına abonelik fiyatı bir piyasa tarafından değil, Tröst tarafından ihtiyari olarak belirlenmiştir."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "Units are not a direct investment in real estate. The Trust holds debentures and Class X units of the partnerships, not properties, and unitholders have none of the statutory rights of a corporation's shareholders.",
+        "tr": "Birimler gayrimenkule doğrudan yatırım değildir. Tröst, mülkleri değil ortaklıkların tahvillerini ve X Sınıfı birimlerini elinde tutar ve birim sahipleri bir şirketin hissedarlarına tanınan yasal haklara sahip değildir."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "Any return depends entirely on the success of Epiphany Multi-Family LP, Epiphany Commercial LP and Black Elm Financial LP in generating income and acquiring assets.",
+        "tr": "Herhangi bir getiri tamamen Epiphany Multi-Family LP, Epiphany Commercial LP ve Black Elm Financial LP'nin gelir üretme ve varlık edinme başarısına bağlıdır."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "Concentration in the debentures increases exposure to a smaller number of projects, so an adverse development has a proportionately larger effect.",
+        "tr": "Tahvillerdeki yoğunlaşma daha az sayıda projeye maruziyeti artırır; bu nedenle olumsuz bir gelişme orantılı olarak daha büyük bir etki yaratır."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "It would be very difficult for unitholders to remove the Administrator; recourse is limited to the mechanisms in the Administrator Agreement.",
+        "tr": "Birim sahiplerinin Yöneticiyi görevden alması çok zor olacaktır; başvuru yolları Yönetici Sözleşmesindeki mekanizmalarla sınırlıdır."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "Except as disclosed, unitholders have no management rights over Operations Management or the general partners of the partnerships.",
+        "tr": "Açıklananlar dışında, birim sahiplerinin Operasyon Yönetimi veya ortaklıkların genel ortakları üzerinde yönetim hakkı yoktur."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "The Trust may issue an unlimited number of units, which may dilute existing unitholders.",
+        "tr": "Tröst sınırsız sayıda birim ihraç edebilir; bu mevcut birim sahiplerini sulandırabilir."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "Offering proceeds may be used as deposits that are unsecured and could be lost if a transaction does not complete.",
+        "tr": "Teklif gelirleri, teminatsız olan ve bir işlem tamamlanmazsa kaybedilebilecek depozitolar olarak kullanılabilir."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "The Trust continues only until 2 September 2121 and may be terminated earlier under the Declaration of Trust, so investors should not expect it to operate or distribute indefinitely.",
+        "tr": "Tröst yalnızca 2 Eylül 2121'e kadar devam eder ve Tröst Sözleşmesi uyarınca daha erken sonlandırılabilir; bu nedenle yatırımcılar süresiz faaliyet veya dağıtım beklememelidir."
+      },
+      "category": "investment"
+    },
+    {
+      "text": {
+        "en": "There is no market for the units and none is expected to develop; the only route to a return of capital may be the redemption provisions.",
+        "tr": "Birimler için bir piyasa yoktur ve oluşması da beklenmemektedir; sermayenin geri dönüşü için tek yol itfa hükümleri olabilir."
+      },
+      "category": "redemption"
+    },
+    {
+      "text": {
+        "en": "For the first 12 months after purchase the Trustees may suspend redemptions for a period of up to 12 months.",
+        "tr": "Satın alımdan sonraki ilk 12 ay boyunca Mütevelliler itfaları 12 aya kadar askıya alabilir."
+      },
+      "category": "redemption"
+    },
+    {
+      "text": {
+        "en": "A redemption fee applies on early redemption and reduces the amount received — 9% in the first year, falling to nil after 60 months for commission subscribers.",
+        "tr": "Erken itfada bir itfa ücreti uygulanır ve alınan tutarı azaltır — komisyon aboneleri için ilk yıl %9, 60 aydan sonra sıfıra iner."
+      },
+      "category": "redemption"
+    },
+    {
+      "text": {
+        "en": "There are limits on the Trust's obligation to pay redemption requests in cash; above those limits it may issue Redemption Notes instead.",
+        "tr": "Tröstün itfa taleplerini nakit olarak ödeme yükümlülüğünde sınırlar vardır; bu sınırların üzerinde bunun yerine İtfa Senetleri ihraç edebilir."
+      },
+      "category": "redemption"
+    },
+    {
+      "text": {
+        "en": "Redemption Notes are unsecured, subordinated to senior indebtedness, and not payable until the fifth anniversary of issuance.",
+        "tr": "İtfa Senetleri teminatsızdır, kıdemli borçlara tali niteliktedir ve ihraç tarihinin beşinci yıl dönümüne kadar ödenmez."
+      },
+      "category": "redemption"
+    },
+    {
+      "text": {
+        "en": "Redemption Notes, if issued, rank ahead of the units, so noteholders are paid before remaining unitholders.",
+        "tr": "İhraç edilmesi hâlinde İtfa Senetleri birimlerin önünde yer alır; bu nedenle senet sahiplerine kalan birim sahiplerinden önce ödeme yapılır."
+      },
+      "category": "redemption"
+    },
+    {
+      "text": {
+        "en": "There is no assurance the Trust will have or can raise the funds required to satisfy redemption requests.",
+        "tr": "Tröstün itfa taleplerini karşılamak için gereken fonlara sahip olacağına veya bunları toplayabileceğine dair güvence yoktur."
+      },
+      "category": "redemption"
+    },
+    {
+      "text": {
+        "en": "The partnerships rely on lender debt from Peoples, National Bank and Tallinn Capital, which must be serviced regardless of operating results.",
+        "tr": "Ortaklıklar, faaliyet sonuçlarından bağımsız olarak ödenmesi gereken Peoples, National Bank ve Tallinn Capital kredilerine dayanır."
+      },
+      "category": "leverage"
+    },
+    {
+      "text": {
+        "en": "Debts owing under the debentures rank behind senior indebtedness of the partnerships.",
+        "tr": "Tahviller kapsamındaki borçlar, ortaklıkların kıdemli borçlarının gerisinde yer alır."
+      },
+      "category": "leverage"
+    },
+    {
+      "text": {
+        "en": "The Declaration of Trust and the debentures do not limit the partnerships' ability to incur further indebtedness — there is no covenant protection.",
+        "tr": "Tröst Sözleşmesi ve tahviller, ortaklıkların daha fazla borçlanma imkânını sınırlamaz — sözleşmesel koruma yoktur."
+      },
+      "category": "leverage"
+    },
+    {
+      "text": {
+        "en": "The Trust may borrow, and the partnerships are also entitled to borrow, increasing the leverage behind the units.",
+        "tr": "Tröst borçlanabilir ve ortaklıklar da borçlanma hakkına sahiptir; bu, birimlerin arkasındaki kaldıracı artırır."
+      },
+      "category": "leverage"
+    },
+    {
+      "text": {
+        "en": "Real estate is relatively illiquid and its value depends on market conditions, appraisals and competition for tenants.",
+        "tr": "Gayrimenkul görece likit değildir ve değeri piyasa koşullarına, değerlemelere ve kiracı rekabetine bağlıdır."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Vacancy risk: the partnerships may not be able to re-let space on comparable terms, or at all.",
+        "tr": "Boşluk riski: ortaklıklar alanı benzer koşullarla veya hiç yeniden kiralayamayabilir."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Rent control legislation may limit the rate at which in-place rents can be increased.",
+        "tr": "Kira kontrolü mevzuatı, mevcut kiraların artırılabileceği oranı sınırlayabilir."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Tenant credit risk: tenants may become unable to pay rent, and utility and energy costs fluctuate.",
+        "tr": "Kiracı kredi riski: kiracılar kirayı ödeyemez hâle gelebilir ve altyapı ile enerji maliyetleri dalgalanır."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Because of their age, buildings in the portfolio may contain asbestos-containing materials; no survey has been conducted, and environmental laws require abatement on damage, demolition or renovation.",
+        "tr": "Yaşları nedeniyle portföydeki binalar asbest içeren malzemeler barındırabilir; herhangi bir inceleme yapılmamıştır ve çevre mevzuatı hasar, yıkım veya tadilat durumunda giderim gerektirir."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Insurance may be inadequate to cover all risks incidental to the business, and some losses are uninsurable.",
+        "tr": "Sigorta, işle ilgili tüm riskleri karşılamakta yetersiz kalabilir ve bazı zararlar sigortalanamaz."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Growth depends on the partnerships continuing to source and complete acquisitions on acceptable terms.",
+        "tr": "Büyüme, ortaklıkların kabul edilebilir koşullarla satın alma bulmaya ve tamamlamaya devam etmesine bağlıdır."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "The portfolio is concentrated in Alberta and Saskatchewan, with no geographic diversification beyond Western Canada.",
+        "tr": "Portföy Alberta ve Saskatchewan'da yoğunlaşmıştır; Batı Kanada dışında coğrafi çeşitlendirme yoktur."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Executive and senior officers have a significant role and the loss of key personnel could adversely affect the business.",
+        "tr": "Üst düzey yöneticiler önemli bir role sahiptir ve kilit personelin kaybı işi olumsuz etkileyebilir."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Cybersecurity and personal information risks: the partnerships hold confidential business and subscriber information.",
+        "tr": "Siber güvenlik ve kişisel bilgi riskleri: ortaklıklar gizli iş ve abone bilgilerini elinde tutar."
+      },
+      "category": "business"
+    },
+    {
+      "text": {
+        "en": "Distributions are targets only. There is no guarantee the Trust will meet its target distribution or return rates, and it may make no distributions at all.",
+        "tr": "Dağıtımlar yalnızca hedeftir. Tröstün hedef dağıtım veya getiri oranlarına ulaşacağına dair garanti yoktur ve hiç dağıtım yapmayabilir."
+      },
+      "category": "tax"
+    },
+    {
+      "text": {
+        "en": "The Trust must maintain \"mutual fund trust\" status under the Tax Act for units to remain qualified investments for registered plans.",
+        "tr": "Birimlerin kayıtlı planlar için uygun yatırım olarak kalması adına Tröst, Vergi Kanunu uyarınca \"yatırım fonu tröstü\" statüsünü korumalıdır."
+      },
+      "category": "tax"
+    },
+    {
+      "text": {
+        "en": "No advance income tax ruling has been applied for or received, and the CRA may reassess unitholders' returns.",
+        "tr": "Peşin gelir vergisi görüşü talep edilmemiş veya alınmamıştır ve CRA birim sahiplerinin beyanlarını yeniden değerlendirebilir."
+      },
+      "category": "tax"
+    },
+    {
+      "text": {
+        "en": "The SIFT rules may apply, and federal or provincial tax law may change in a way that alters the consequences described in the Offering Memorandum.",
+        "tr": "SIFT kuralları uygulanabilir ve federal veya eyalet vergi mevzuatı, Teklif Muhtırasında açıklanan sonuçları değiştirecek şekilde değişebilir."
+      },
+      "category": "tax"
+    },
+    {
+      "text": {
+        "en": "Non-residents of Canada may face withholding and other adverse tax consequences.",
+        "tr": "Kanada'da mukim olmayanlar stopaj ve diğer olumsuz vergi sonuçlarıyla karşılaşabilir."
+      },
+      "category": "tax"
+    },
+    {
+      "text": {
+        "en": "No securities regulatory authority has assessed the merits of these securities or reviewed the Offering Memorandum.",
+        "tr": "Hiçbir menkul kıymet düzenleyicisi bu menkul kıymetlerin esaslarını değerlendirmemiş veya Teklif Muhtırasını incelememiştir."
+      },
+      "category": "regulatory"
+    },
+    {
+      "text": {
+        "en": "The Trust is not a reporting issuer and is not a \"mutual fund\" for securities law purposes, so the investor protections in those regimes do not apply.",
+        "tr": "Tröst raporlayan bir ihraççı değildir ve menkul kıymet mevzuatı açısından \"yatırım fonu\" sayılmaz; bu nedenle bu rejimlerdeki yatırımcı korumaları geçerli değildir."
+      },
+      "category": "regulatory"
+    },
+    {
+      "text": {
+        "en": "The units are not insured under any deposit insurance regime.",
+        "tr": "Birimler hiçbir mevduat sigortası rejimi kapsamında sigortalı değildir."
+      },
+      "category": "regulatory"
+    },
+    {
+      "text": {
+        "en": "You will be restricted from reselling the units for an indefinite period, and the Trust has no present intention of becoming a reporting issuer.",
+        "tr": "Birimleri belirsiz bir süre boyunca yeniden satmanız kısıtlanacaktır ve Tröstün raporlayan ihraççı olma yönünde mevcut bir niyeti yoktur."
+      },
+      "category": "regulatory"
+    },
+    {
+      "text": {
+        "en": "The Administrator, the Trust and their affiliates are subject to conflicts of interest, and certain transactions in the Trust's structure are non-arm's length.",
+        "tr": "Yönetici, Tröst ve bağlı kuruluşları çıkar çatışmalarına tabidir ve Tröstün yapısındaki bazı işlemler ilişkili taraflar arasındadır."
+      },
+      "category": "regulatory"
+    },
+    {
+      "text": {
+        "en": "Counsel for the Trust also acts for the partnerships, and no independent counsel was retained on behalf of subscribers.",
+        "tr": "Tröstün hukuk müşaviri aynı zamanda ortaklıklar için de hareket eder ve aboneler adına bağımsız bir hukuk müşaviri görevlendirilmemiştir."
+      },
+      "category": "regulatory"
+    },
+    {
+      "text": {
+        "en": "Only one of the Trust's seven trustees is considered Independent as at the date of the Offering Memorandum.",
+        "tr": "Teklif Muhtırası tarihi itibarıyla Tröstün yedi mütevellisinden yalnızca biri Bağımsız kabul edilmektedir."
+      },
+      "category": "regulatory"
+    },
+    {
+      "text": {
+        "en": "Valuation of the partnerships' properties involves judgment, and reported values may not be realised on sale.",
+        "tr": "Ortaklıkların mülklerinin değerlemesi takdir gerektirir ve raporlanan değerler satışta gerçekleşmeyebilir."
+      },
+      "category": "regulatory"
     }
   ],
-  "verifiedAt": "2026-07-12",
+  "verifiedAt": "2026-07-23",
   "manager": {
     "id": "epiphany-group",
     "slug": "epiphany-group",
@@ -258,196 +645,1061 @@
       "province": "Alberta",
       "country": "Canada"
     },
+    "website": "https://legacyinvestment.ca/",
+    "officeAddress": {
+      "en": "#50 – 550 WT Hill Boulevard South, Lethbridge, Alberta T1J 4Z9",
+      "tr": "#50 – 550 WT Hill Boulevard South, Lethbridge, Alberta T1J 4Z9"
+    },
     "description": {
-      "en": "Asset manager focused on residential and commercial real estate in Western Canadian secondary markets, backed by 100+ years of combined senior management experience.",
-      "tr": "Batı Kanada'nın ikincil pazarlarında konut ve ticari gayrimenkule odaklanan, 100 yılı aşkın birleşik üst yönetim deneyimine sahip varlık yöneticisi."
+      "en": "Lethbridge, Alberta real estate manager investing in residential and commercial property across the secondary and tertiary markets of the Prairies and Western Canada, founded in 2018.",
+      "tr": "2018'de kurulan, Bozkırlar ve Batı Kanada'nın ikincil ve üçüncül pazarlarında konut ve ticari gayrimenkule yatırım yapan, Lethbridge (Alberta) merkezli gayrimenkul yöneticisi."
     }
   },
   "shareClasses": [
     {
       "id": "legacy-class-a",
       "offeringId": "legacy-epiphany",
-      "name": "Class A",
+      "name": "Participating Preferred Class A Units",
+      "registeredAccountTypes": [
+        "RRSP",
+        "RRIF",
+        "RESP",
+        "TFSA"
+      ],
       "minimumInvestment": {
         "value": 2508,
         "classification": "current",
-        "asOfDate": "2026-01-30",
-        "sourceId": "legacy-fact-2026-01",
-        "sourcePage": 1,
+        "asOfDate": "2026-07-08",
+        "sourceId": "legacy-om-2026-07",
+        "sourcePage": 3,
         "approval": "approved-public"
       },
       "unitPrice": {
         "value": 4.75,
         "classification": "current",
-        "asOfDate": "2026-01-30",
-        "sourceId": "legacy-fact-2026-01",
-        "sourcePage": 1,
+        "asOfDate": "2026-07-08",
+        "sourceId": "legacy-om-2026-07",
+        "sourcePage": 2,
         "approval": "approved-public"
       },
       "targetReturn": {
-        "value": "12-15% annually",
+        "value": "12%-15% targeted total annual return",
         "classification": "target",
-        "asOfDate": "2026-01-30",
-        "sourceId": "legacy-fact-2026-01",
-        "sourcePage": 1,
+        "asOfDate": "2026-07-09",
+        "sourceId": "legacy-summary-2026-07",
+        "sourcePage": 2,
         "approval": "approved-public"
       },
       "targetDistribution": {
-        "value": "Quarterly; up to 8.2% annually",
+        "value": "Up to 8.2% preferential return a year, paid quarterly",
         "classification": "target",
-        "asOfDate": "2026-01-30",
-        "sourceId": "legacy-fact-2026-01",
-        "sourcePage": 1,
+        "asOfDate": "2026-07-08",
+        "sourceId": "legacy-om-2026-07",
+        "sourcePage": 2,
         "approval": "approved-public"
       },
       "term": {
-        "value": "Open-ended fund",
+        "value": "Open-ended trust; units offered on a continuous basis",
         "classification": "current",
-        "asOfDate": "2026-01-30",
-        "sourceId": "legacy-fact-2026-01",
-        "sourcePage": 1,
+        "asOfDate": "2026-07-08",
+        "sourceId": "legacy-om-2026-07",
         "approval": "approved-public"
       },
-      "registeredAccountTypes": [
-        "RRSP",
-        "TFSA",
-        "RESP",
-        "LIRA",
-        "RRIF"
-      ],
+      "redemptionTerms": {
+        "en": "Commission subscribers pay a redemption fee of 9% in months 1-12, 7% in months 13-24, 5% in months 25-36, 3% in months 37-48 and nil from month 49. Trailer subscribers pay a flat 3% of the redemption price. Units acquired through the DRIP carry no redemption fee.",
+        "tr": "Komisyon aboneleri 1-12. aylarda %9, 13-24. aylarda %7, 25-36. aylarda %5, 37-48. aylarda %3 ve 49. aydan itibaren sıfır itfa ücreti öder. Kuyruk aboneleri itfa fiyatının sabit %3'ünü öder. DRIP ile edinilen birimlerde itfa ücreti yoktur."
+      },
+      "drip": {
+        "en": "DRIP available: instead of receiving quarterly distributions in cash, a unitholder may elect to reinvest them in additional units under the Trust's DRIP policy.",
+        "tr": "DRIP mevcut: birim sahibi, üç aylık dağıtımları nakit almak yerine Tröstün DRIP politikası kapsamında ek birimlere yeniden yatırmayı seçebilir."
+      },
       "fundDefinedFacts": [
         {
-          "id": "legacy-target-return",
+          "id": "legacy-class-a-total-return",
           "label": {
-            "en": "Target Return",
-            "tr": "Hedef Getiri"
+            "en": "Targeted total return",
+            "tr": "Hedeflenen toplam getiri"
           },
           "value": {
-            "en": "12-15% annually",
-            "tr": "Yıllık %12-15"
+            "en": "12%-15% a year. This is a target only and is not published in the Offering Memorandum.",
+            "tr": "Yılda %12-15. Bu yalnızca bir hedeftir ve Teklif Muhtırasında yayımlanmamıştır."
           },
           "category": "target",
           "shareClassId": "legacy-class-a",
-          "sourceId": "legacy-fact-2026-01",
-          "sourcePage": 1,
-          "effectiveDate": "2026-01-30",
+          "sourceId": "legacy-summary-2026-07",
+          "sourcePage": 2,
+          "effectiveDate": "2026-07-09",
           "approval": "approved-public"
         },
         {
-          "id": "legacy-target-distribution",
+          "id": "legacy-class-a-preferred-distribution",
           "label": {
-            "en": "Target Distribution",
-            "tr": "Hedef Dağıtım"
+            "en": "Preferential distribution",
+            "tr": "İmtiyazlı dağıtım"
           },
           "value": {
-            "en": "Quarterly; up to 8.2% annually",
-            "tr": "Üç aylık; yıllık en fazla %8,2"
+            "en": "Up to 8.2% a year for units purchased at $4.75, or up to 7.8% for units purchased at $5.00. Paid quarterly, beginning to accrue the month after purchase.",
+            "tr": "4,75 $'dan alınan birimler için yılda %8,2'ye kadar, 5,00 $'dan alınanlar için %7,8'e kadar. Üç ayda bir ödenir; satın alımı izleyen ay tahakkuk etmeye başlar."
           },
           "category": "target",
           "shareClassId": "legacy-class-a",
-          "sourceId": "legacy-fact-2026-01",
-          "sourcePage": 1,
-          "effectiveDate": "2026-01-30",
+          "sourceId": "legacy-om-2026-07",
+          "sourcePage": 2,
+          "effectiveDate": "2026-07-08",
           "approval": "approved-public"
         },
         {
-          "id": "legacy-fund-term",
+          "id": "legacy-class-a-minimum",
           "label": {
-            "en": "Fund Term",
-            "tr": "Fon Süresi"
+            "en": "Minimum subscription",
+            "tr": "Asgari abonelik"
           },
           "value": {
-            "en": "Open-ended fund",
-            "tr": "Açık uçlu fon"
+            "en": "$2,508 (528 units). The Administrator may accept a lesser amount at its sole discretion.",
+            "tr": "2.508 $ (528 birim). Yönetici, tamamen kendi takdirine bağlı olarak daha düşük bir tutarı kabul edebilir."
           },
           "category": "term",
           "shareClassId": "legacy-class-a",
-          "sourceId": "legacy-fact-2026-01",
-          "sourcePage": 1,
-          "effectiveDate": "2026-01-30",
+          "sourceId": "legacy-om-2026-07",
+          "sourcePage": 3,
+          "effectiveDate": "2026-07-08",
           "approval": "approved-public"
+        },
+        {
+          "id": "legacy-class-a-redemption-fee",
+          "label": {
+            "en": "Redemption fee",
+            "tr": "İtfa ücreti"
+          },
+          "value": {
+            "en": "Commission subscribers: 9% in months 1-12, 7% in months 13-24, 5% in months 25-36, 3% in months 37-48, nil from month 49. Trailer subscribers: a flat 3% of the redemption price. DRIP units are exempt.",
+            "tr": "Komisyon aboneleri: 1-12. aylarda %9, 13-24. aylarda %7, 25-36. aylarda %5, 37-48. aylarda %3, 49. aydan itibaren sıfır. Kuyruk aboneleri: itfa fiyatının sabit %3'ü. DRIP birimleri muaftır."
+          },
+          "category": "early-exit",
+          "shareClassId": "legacy-class-a",
+          "sourceId": "legacy-om-2026-07",
+          "sourcePage": 17,
+          "effectiveDate": "2026-07-08",
+          "approval": "approved-public"
+        },
+        {
+          "id": "legacy-class-a-channel",
+          "label": {
+            "en": "Sales channel",
+            "tr": "Satış kanalı"
+          },
+          "value": {
+            "en": "Through registered dealers and exempt market dealing representatives acting as Agents.",
+            "tr": "Aracı olarak hareket eden kayıtlı aracılar ve muaf piyasa işlem temsilcileri aracılığıyla."
+          },
+          "category": "term",
+          "shareClassId": "legacy-class-a",
+          "sourceId": "legacy-om-2026-07",
+          "sourcePage": 86,
+          "effectiveDate": "2026-07-08",
+          "approval": "approved-public",
+          "audience": "advisor"
+        },
+        {
+          "id": "legacy-class-a-commission",
+          "label": {
+            "en": "Selling commission",
+            "tr": "Satış komisyonu"
+          },
+          "value": {
+            "en": "Up to 8% of the subscription proceeds referred by Agents (\"Agents' Fees\").",
+            "tr": "Aracılar tarafından yönlendirilen abonelik gelirlerinin %8'ine kadar (\"Aracı Ücretleri\")."
+          },
+          "category": "fee",
+          "shareClassId": "legacy-class-a",
+          "sourceId": "legacy-om-2026-07",
+          "sourcePage": 86,
+          "effectiveDate": "2026-07-08",
+          "approval": "approved-public",
+          "audience": "advisor"
+        },
+        {
+          "id": "legacy-class-a-trailer",
+          "label": {
+            "en": "Trailing commission",
+            "tr": "Kuyruk komisyonu"
+          },
+          "value": {
+            "en": "Up to 1% of raised proceeds annually until the units are redeemed.",
+            "tr": "Birimler itfa edilene kadar yıllık olarak toplanan gelirin %1'ine kadar."
+          },
+          "category": "fee",
+          "shareClassId": "legacy-class-a",
+          "sourceId": "legacy-om-2026-07",
+          "sourcePage": 86,
+          "effectiveDate": "2026-07-08",
+          "approval": "approved-public",
+          "audience": "advisor"
+        },
+        {
+          "id": "legacy-class-a-diligence",
+          "label": {
+            "en": "Agent due-diligence reimbursement",
+            "tr": "Aracı durum tespiti geri ödemesi"
+          },
+          "value": {
+            "en": "The Trust may reimburse Agents for due diligence costs and provide other consideration, not exceeding 3.0% of raised proceeds.",
+            "tr": "Tröst, Aracılara durum tespiti masraflarını geri ödeyebilir ve toplanan gelirin %3,0'ını aşmamak üzere başka bedeller sağlayabilir."
+          },
+          "category": "fee",
+          "shareClassId": "legacy-class-a",
+          "sourceId": "legacy-om-2026-07",
+          "sourcePage": 86,
+          "effectiveDate": "2026-07-08",
+          "approval": "approved-public",
+          "audience": "advisor"
         }
       ]
     }
   ],
   "properties": [
     {
-      "id": "cold-lake",
+      "id": "legacy-1105-36-st-n",
       "offeringIds": [
         "legacy-epiphany"
       ],
       "managerId": "epiphany-group",
       "name": {
-        "en": "Cold Lake Apartment Complex",
-        "tr": "Cold Lake Apartman Kompleksi"
+        "en": "1105 36 Street N",
+        "tr": "1105 36 Street N"
       },
-      "city": "Cold Lake",
-      "province": "Alberta",
-      "country": "Canada",
-      "latitude": 54.4642,
-      "longitude": -110.1825,
-      "assetClassId": "multifamily",
-      "units": {
-        "value": 63,
-        "classification": "current",
-        "asOfDate": "2025-09-02",
-        "sourceId": "legacy-ir-2025-09",
-        "sourcePage": 15,
-        "approval": "approved-public"
-      },
-      "status": "stabilized",
-      "verificationStatus": "verified",
-      "listingUrl": "https://TODO-replace-with-real-listing"
-    },
-    {
-      "id": "bayer-lethbridge",
-      "offeringIds": [
-        "legacy-epiphany"
-      ],
-      "managerId": "epiphany-group",
-      "name": {
-        "en": "Lethbridge Commercial Property",
-        "tr": "Lethbridge Ticari Mülkü"
+      "address": {
+        "en": "1105 36 St N, Lethbridge, Alberta",
+        "tr": "1105 36 St N, Lethbridge, Alberta"
       },
       "city": "Lethbridge",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 49.6956,
-      "longitude": -112.8451,
+      "latitude": 49.7273654,
+      "longitude": -112.7890958,
       "assetClassId": "commercial",
-      "squareFeet": {
-        "value": 77000,
-        "classification": "current",
-        "asOfDate": "2025-09-02",
-        "sourceId": "legacy-ir-2025-09",
-        "sourcePage": 15,
-        "approval": "approved-public"
-      },
       "status": "commercial",
       "verificationStatus": "verified",
-      "listingUrl": "https://TODO-replace-with-real-listing"
+      "ownershipNote": {
+        "en": "Service industrial facility, generating rental income. Steel frame structure with concrete foundation and floors, built 1998, average condition. 100% occupied. Held by Epiphany Commercial LP.",
+        "tr": "Kira geliri üreten hizmet amaçlı sanayi tesisi. Betonarme temel ve döşemeli çelik karkas yapı, 1998 yapımı, ortalama durumda. %100 dolu. Epiphany Commercial LP tarafından tutulmaktadır."
+      }
+    },
+    {
+      "id": "legacy-3760-18-ave-n",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "3760 18 Avenue N",
+        "tr": "3760 18 Avenue N"
+      },
+      "address": {
+        "en": "3760 18 Ave N, Lethbridge, Alberta",
+        "tr": "3760 18 Ave N, Lethbridge, Alberta"
+      },
+      "city": "Lethbridge",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 49.7223226,
+      "longitude": -112.7901403,
+      "assetClassId": "commercial",
+      "status": "commercial",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Industrial warehouse development, generating rental income. Steel frame structure with concrete foundation and floors, built 2008, good condition. 100% occupied. Tenant pays all utilities. Held by Epiphany Commercial LP.",
+        "tr": "Kira geliri üreten sanayi deposu geliştirmesi. Betonarme temel ve döşemeli çelik karkas yapı, 2008 yapımı, iyi durumda. %100 dolu. Tüm altyapı giderlerini kiracı öder. Epiphany Commercial LP tarafından tutulmaktadır."
+      }
+    },
+    {
+      "id": "legacy-3306-9-ave-n",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "3306 9 Avenue N",
+        "tr": "3306 9 Avenue N"
+      },
+      "address": {
+        "en": "3306 9 Ave N, Lethbridge, Alberta",
+        "tr": "3306 9 Ave N, Lethbridge, Alberta"
+      },
+      "city": "Lethbridge",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 49.7123006,
+      "longitude": -112.7911168,
+      "assetClassId": "commercial",
+      "status": "commercial",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Industrial retail development, generating rental income. Steel frame structure with concrete foundation and floors, built 1997, average condition. 70% occupied. Tenant pays all utilities. Held by Epiphany Commercial LP.",
+        "tr": "Kira geliri üreten sanayi-perakende geliştirmesi. Betonarme temel ve döşemeli çelik karkas yapı, 1997 yapımı, ortalama durumda. %70 dolu. Tüm altyapı giderlerini kiracı öder. Epiphany Commercial LP tarafından tutulmaktadır."
+      }
+    },
+    {
+      "id": "legacy-495-wt-hill-blvd-s",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "Unit 15, 495 WT Hill Boulevard S",
+        "tr": "Unit 15, 495 WT Hill Boulevard S"
+      },
+      "address": {
+        "en": "Unit 15, 495 WT Hill Blvd S, Lethbridge, Alberta",
+        "tr": "Unit 15, 495 WT Hill Blvd S, Lethbridge, Alberta"
+      },
+      "city": "Lethbridge",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 49.693676,
+      "longitude": -112.786375,
+      "assetClassId": "commercial",
+      "status": "commercial",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Suburban retail development, generating rental income. Steel frame structure with concrete foundation and floors, built 2011, good condition. 100% occupied. Held by Epiphany Commercial LP.",
+        "tr": "Kira geliri üreten banliyö perakende geliştirmesi. Betonarme temel ve döşemeli çelik karkas yapı, 2011 yapımı, iyi durumda. %100 dolu. Epiphany Commercial LP tarafından tutulmaktadır."
+      }
+    },
+    {
+      "id": "legacy-405-stafford-dr-n",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "405 Stafford Drive N",
+        "tr": "405 Stafford Drive N"
+      },
+      "address": {
+        "en": "405 Stafford Dr N, Lethbridge, Alberta",
+        "tr": "405 Stafford Dr N, Lethbridge, Alberta"
+      },
+      "city": "Lethbridge",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 49.7045982,
+      "longitude": -112.8344217,
+      "assetClassId": "commercial",
+      "status": "commercial",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Strip centre retail development, generating rental income. Steel frame structure with brick foundation and concrete floors, built 1974, average condition. 100% occupied. Held by Epiphany Commercial LP.",
+        "tr": "Kira geliri üreten şerit çarşı perakende geliştirmesi. Tuğla temel ve beton döşemeli çelik karkas yapı, 1974 yapımı, ortalama durumda. %100 dolu. Epiphany Commercial LP tarafından tutulmaktadır."
+      }
+    },
+    {
+      "id": "legacy-3710-18-ave-n",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "3710 18 Avenue N",
+        "tr": "3710 18 Avenue N"
+      },
+      "address": {
+        "en": "3710 18 Ave N, Lethbridge, Alberta",
+        "tr": "3710 18 Ave N, Lethbridge, Alberta"
+      },
+      "city": "Lethbridge",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 49.7208135,
+      "longitude": -112.8216405,
+      "assetClassId": "commercial",
+      "status": "commercial",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Industrial warehouse development, generating rental income. Steel frame structure with concrete foundation and floors, built 2010, good condition. 100% occupied. Tenant pays all utilities. Held by Epiphany Commercial LP.",
+        "tr": "Kira geliri üreten sanayi deposu geliştirmesi. Betonarme temel ve döşemeli çelik karkas yapı, 2010 yapımı, iyi durumda. %100 dolu. Tüm altyapı giderlerini kiracı öder. Epiphany Commercial LP tarafından tutulmaktadır."
+      }
+    },
+    {
+      "id": "legacy-2930-9-ave-n",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "2930 9 Avenue N",
+        "tr": "2930 9 Avenue N"
+      },
+      "address": {
+        "en": "2930 9 Ave N, Lethbridge, Alberta",
+        "tr": "2930 9 Ave N, Lethbridge, Alberta"
+      },
+      "city": "Lethbridge",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 49.7126791,
+      "longitude": -112.8062289,
+      "assetClassId": "commercial",
+      "status": "commercial",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Industrial warehouse development, generating rental income. Steel frame structure with concrete foundation and floors, built 1973, good condition. 100% occupied. Held by Epiphany Commercial LP.",
+        "tr": "Kira geliri üreten sanayi deposu geliştirmesi. Betonarme temel ve döşemeli çelik karkas yapı, 1973 yapımı, iyi durumda. %100 dolu. Epiphany Commercial LP tarafından tutulmaktadır."
+      }
+    },
+    {
+      "id": "legacy-550-wt-hill-blvd-s",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "550 WT Hill Boulevard S",
+        "tr": "550 WT Hill Boulevard S"
+      },
+      "address": {
+        "en": "550 WT Hill Blvd S, Lethbridge, Alberta",
+        "tr": "550 WT Hill Blvd S, Lethbridge, Alberta"
+      },
+      "city": "Lethbridge",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 49.692402,
+      "longitude": -112.786965,
+      "assetClassId": "commercial",
+      "status": "commercial",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Suburban office development, generating rental income, and the location of the Epiphany Group head office. Steel frame structure with concrete foundation and floors, built 2005, great condition. 99% occupied. Held by Epiphany Commercial LP.",
+        "tr": "Kira geliri üreten banliyö ofis geliştirmesi ve Epiphany Group genel merkezinin bulunduğu yer. Betonarme temel ve döşemeli çelik karkas yapı, 2005 yapımı, çok iyi durumda. %99 dolu. Epiphany Commercial LP tarafından tutulmaktadır."
+      }
+    },
+    {
+      "id": "legacy-3174-34-st-n",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "3174 34 Street N",
+        "tr": "3174 34 Street N"
+      },
+      "address": {
+        "en": "3174 34 St N, Lethbridge, Alberta",
+        "tr": "3174 34 St N, Lethbridge, Alberta"
+      },
+      "city": "Lethbridge",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 49.7287604,
+      "longitude": -112.7932392,
+      "assetClassId": "commercial",
+      "status": "commercial",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Industrial warehouse development, generating rental income. Steel frame structure with concrete foundation and floors, built 2008, good condition. 100% occupied. Tenant pays all utilities. Held by Epiphany Commercial LP.",
+        "tr": "Kira geliri üreten sanayi deposu geliştirmesi. Betonarme temel ve döşemeli çelik karkas yapı, 2008 yapımı, iyi durumda. %100 dolu. Tüm altyapı giderlerini kiracı öder. Epiphany Commercial LP tarafından tutulmaktadır."
+      }
+    },
+    {
+      "id": "legacy-562-2-st-se",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "562 2 Street SE",
+        "tr": "562 2 Street SE"
+      },
+      "address": {
+        "en": "562 2 St SE, Medicine Hat, Alberta",
+        "tr": "562 2 St SE, Medicine Hat, Alberta"
+      },
+      "city": "Medicine Hat",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 50.0406057,
+      "longitude": -110.6770802,
+      "assetClassId": "commercial",
+      "status": "commercial",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Suburban office development, generating rental income. Timber frame structure with concrete foundation and floors, built 1928, average condition. 100% occupied. Tenant pays all utilities. Held by Epiphany Commercial LP.",
+        "tr": "Kira geliri üreten banliyö ofis geliştirmesi. Betonarme temel ve döşemeli ahşap karkas yapı, 1928 yapımı, ortalama durumda. %100 dolu. Tüm altyapı giderlerini kiracı öder. Epiphany Commercial LP tarafından tutulmaktadır."
+      }
+    },
+    {
+      "id": "legacy-638-isabelle-st",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "638 Isabelle Street",
+        "tr": "638 Isabelle Street"
+      },
+      "address": {
+        "en": "638 Isabelle St, Estevan, Saskatchewan",
+        "tr": "638 Isabelle St, Estevan, Saskatchewan"
+      },
+      "city": "Estevan",
+      "province": "Saskatchewan",
+      "country": "Canada",
+      "latitude": 49.1504519,
+      "longitude": -102.9876507,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, built 2011, great condition. 97% occupied. Held by Epiphany Multi-Family LP.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, 2011 yapımı, çok iyi durumda. %97 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır."
+      }
+    },
+    {
+      "id": "legacy-718-3-st",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "718 3 Street",
+        "tr": "718 3 Street"
+      },
+      "address": {
+        "en": "718 3 St, Estevan, Saskatchewan",
+        "tr": "718 3 St, Estevan, Saskatchewan"
+      },
+      "city": "Estevan",
+      "province": "Saskatchewan",
+      "country": "Canada",
+      "latitude": 49.1383966,
+      "longitude": -102.9923488,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, built 2014, great condition. 98% occupied. Held by Epiphany Multi-Family LP.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, 2014 yapımı, çok iyi durumda. %98 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır."
+      }
+    },
+    {
+      "id": "legacy-6602-48-st",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "6602 48 Street",
+        "tr": "6602 48 Street"
+      },
+      "address": {
+        "en": "6602 48 St, Cold Lake, Alberta",
+        "tr": "6602 48 St, Cold Lake, Alberta"
+      },
+      "city": "Cold Lake",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 54.4318754,
+      "longitude": -110.2020073,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "unitCount": 63,
+      "purchasePrice": 6300000,
+      "acquiredOn": "2023-06-07",
+      "ownershipNote": {
+        "en": "Apartment rental property, 63 units at $100,000 per door. Wood frame, built 2009, great condition. 97% occupied. Acquisition-year net operating income of $359,000 annualized rose to $467,000 in 2025, with $528,000 projected for 2026; cap rate 6.9% on fair market value. Acquired by Epiphany Multi-Family LP from Black Elm Financial LP, a related party, on 7 June 2023.",
+        "tr": "63 daireli apartman kiralık mülkü, kapı başına 100.000 $. Ahşap karkas, 2009 yapımı, çok iyi durumda. %97 dolu. Satın alma yılı yıllıklandırılmış net faaliyet geliri 359.000 $ iken 2025'te 467.000 $'a yükselmiş, 2026 için 528.000 $ öngörülmüştür; gerçeğe uygun piyasa değeri üzerinden kapitalizasyon oranı %6,9. 7 Haziran 2023'te ilişkili taraf olan Black Elm Financial LP'den Epiphany Multi-Family LP tarafından satın alınmıştır."
+      }
+    },
+    {
+      "id": "legacy-timber-lane",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "121, 129 & 137 Timber Lane",
+        "tr": "121, 129 ve 137 Timber Lane"
+      },
+      "address": {
+        "en": "121, 129, 137 Timber Lane, Hinton, Alberta",
+        "tr": "121, 129, 137 Timber Lane, Hinton, Alberta"
+      },
+      "city": "Hinton",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 53.3994178,
+      "longitude": -117.5859948,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "unitCount": 36,
+      "ownershipNote": {
+        "en": "Apartment rental property across three addresses, 36 units. Wood frame, built 1980, average condition. 100% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Üç adrese yayılan 36 daireli apartman kiralık mülkü. Ahşap karkas, 1980 yapımı, ortalama durumda. %100 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-5333-5-ave",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "5333 5 Avenue",
+        "tr": "5333 5 Avenue"
+      },
+      "address": {
+        "en": "5333 5 Ave, Edson, Alberta",
+        "tr": "5333 5 Ave, Edson, Alberta"
+      },
+      "city": "Edson",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 53.5868751,
+      "longitude": -116.4234832,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, built 1978, average condition. 86% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, 1978 yapımı, ortalama durumda. %86 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-5415-10-ave",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "5415 10 Avenue",
+        "tr": "5415 10 Avenue"
+      },
+      "address": {
+        "en": "5415 10 Ave, Edson, Alberta",
+        "tr": "5415 10 Ave, Edson, Alberta"
+      },
+      "city": "Edson",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 53.58778,
+      "longitude": -116.4396144,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, built 1978, average condition. 93% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, 1978 yapımı, ortalama durumda. %93 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-5506-10-ave",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "5506 10 Avenue",
+        "tr": "5506 10 Avenue"
+      },
+      "address": {
+        "en": "5506 10 Ave, Edson, Alberta",
+        "tr": "5506 10 Ave, Edson, Alberta"
+      },
+      "city": "Edson",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 53.586416,
+      "longitude": -116.4443199,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, built 1980, good condition. 91% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, 1980 yapımı, iyi durumda. %91 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-1015-57-st",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "1015 57 Street",
+        "tr": "1015 57 Street"
+      },
+      "address": {
+        "en": "1015 57 St, Edson, Alberta",
+        "tr": "1015 57 St, Edson, Alberta"
+      },
+      "city": "Edson",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 53.5771273,
+      "longitude": -116.4474219,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, built 1980, good condition. 89% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, 1980 yapımı, iyi durumda. %89 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-541-dufferin-ave",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "541 Dufferin Avenue",
+        "tr": "541 Dufferin Avenue"
+      },
+      "address": {
+        "en": "541 Dufferin Ave, Estevan, Saskatchewan",
+        "tr": "541 Dufferin Ave, Estevan, Saskatchewan"
+      },
+      "city": "Estevan",
+      "province": "Saskatchewan",
+      "country": "Canada",
+      "latitude": 49.1485764,
+      "longitude": -102.9819613,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, built 1983, good condition. 89% occupied. Utilities covered by tenants. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, 1983 yapımı, iyi durumda. %89 dolu. Altyapı giderleri kiracılar tarafından karşılanır. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-5112-54-ave",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "5112 54 Avenue",
+        "tr": "5112 54 Avenue"
+      },
+      "address": {
+        "en": "5112 54 Ave, Cold Lake, Alberta",
+        "tr": "5112 54 Ave, Cold Lake, Alberta"
+      },
+      "city": "Cold Lake",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 54.4179877,
+      "longitude": -110.2085781,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "purchasePrice": 1440000,
+      "acquiredOn": "2024-04-30",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, built 1985, good condition. 100% occupied. Acquired by Epiphany Multi-Family LP from Black Elm Financial LP, a related party, on 30 April 2024. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, 1985 yapımı, iyi durumda. %100 dolu. 30 Nisan 2024'te ilişkili taraf olan Black Elm Financial LP'den Epiphany Multi-Family LP tarafından satın alınmıştır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-604-21-st-s",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "604 21 Street S",
+        "tr": "604 21 Street S"
+      },
+      "address": {
+        "en": "604 21 St S, Lethbridge, Alberta",
+        "tr": "604 21 St S, Lethbridge, Alberta"
+      },
+      "city": "Lethbridge",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 49.6893692,
+      "longitude": -112.8114429,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "purchasePrice": 960000,
+      "acquiredOn": "2024-04-30",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, original structure 1958 with 40% of the south side added ten years later, good condition. 100% occupied. Acquired by Epiphany Multi-Family LP from Black Elm Financial LP, a related party, on 30 April 2024. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, özgün yapı 1958, güney cephenin %40'ı on yıl sonra eklenmiş, iyi durumda. %100 dolu. 30 Nisan 2024'te ilişkili taraf olan Black Elm Financial LP'den Epiphany Multi-Family LP tarafından satın alınmıştır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-542-5-st-se",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "542 5 Street SE",
+        "tr": "542 5 Street SE"
+      },
+      "address": {
+        "en": "542 5 St SE, Medicine Hat, Alberta",
+        "tr": "542 5 St SE, Medicine Hat, Alberta"
+      },
+      "city": "Medicine Hat",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 50.0379251,
+      "longitude": -110.6755288,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "purchasePrice": 930000,
+      "acquiredOn": "2024-04-30",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, built 1992, good condition. 100% occupied. Acquired by Epiphany Multi-Family LP from Black Elm Financial LP, a related party, on 30 April 2024. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, 1992 yapımı, iyi durumda. %100 dolu. 30 Nisan 2024'te ilişkili taraf olan Black Elm Financial LP'den Epiphany Multi-Family LP tarafından satın alınmıştır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-1201-99-st",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "1201 99 Street",
+        "tr": "1201 99 Street"
+      },
+      "address": {
+        "en": "1201 99 St, North Battleford, Saskatchewan",
+        "tr": "1201 99 St, North Battleford, Saskatchewan"
+      },
+      "city": "North Battleford",
+      "province": "Saskatchewan",
+      "country": "Canada",
+      "latitude": 52.7703369,
+      "longitude": -108.3004528,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, built 1983, average condition. 100% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, 1983 yapımı, ortalama durumda. %100 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-1551-107-st",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "1551 107 Street",
+        "tr": "1551 107 Street"
+      },
+      "address": {
+        "en": "1551 107 St, North Battleford, Saskatchewan",
+        "tr": "1551 107 St, North Battleford, Saskatchewan"
+      },
+      "city": "North Battleford",
+      "province": "Saskatchewan",
+      "country": "Canada",
+      "latitude": 52.78066,
+      "longitude": -108.28885,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, built 1977, average condition. 96% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, 1977 yapımı, ortalama durumda. %96 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-1901-pearson-ave",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "1901 Pearson Avenue",
+        "tr": "1901 Pearson Avenue"
+      },
+      "address": {
+        "en": "1901 Pearson Ave, North Battleford, Saskatchewan",
+        "tr": "1901 Pearson Ave, North Battleford, Saskatchewan"
+      },
+      "city": "North Battleford",
+      "province": "Saskatchewan",
+      "country": "Canada",
+      "latitude": 52.7849839,
+      "longitude": -108.2814794,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, built 1982, average condition. 100% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, 1982 yapımı, ortalama durumda. %100 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-10908-winder-cres",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "10908 Winder Crescent",
+        "tr": "10908 Winder Crescent"
+      },
+      "address": {
+        "en": "10908 Winder Cres, North Battleford, Saskatchewan",
+        "tr": "10908 Winder Cres, North Battleford, Saskatchewan"
+      },
+      "city": "North Battleford",
+      "province": "Saskatchewan",
+      "country": "Canada",
+      "latitude": 52.780639,
+      "longitude": -108.285675,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Load-bearing construction, built 1977, average condition. 100% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Taşıyıcı duvarlı yapı, 1977 yapımı, ortalama durumda. %100 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-10910-winder-cres",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "10910 Winder Crescent",
+        "tr": "10910 Winder Crescent"
+      },
+      "address": {
+        "en": "10910 Winder Cres, North Battleford, Saskatchewan",
+        "tr": "10910 Winder Cres, North Battleford, Saskatchewan"
+      },
+      "city": "North Battleford",
+      "province": "Saskatchewan",
+      "country": "Canada",
+      "latitude": 52.780854,
+      "longitude": -108.286073,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Load-bearing construction, built 1974, good condition. 96% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Taşıyıcı duvarlı yapı, 1974 yapımı, iyi durumda. %96 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-10912-winder-cres",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "10912 Winder Crescent",
+        "tr": "10912 Winder Crescent"
+      },
+      "address": {
+        "en": "10912 Winder Cres, North Battleford, Saskatchewan",
+        "tr": "10912 Winder Cres, North Battleford, Saskatchewan"
+      },
+      "city": "North Battleford",
+      "province": "Saskatchewan",
+      "country": "Canada",
+      "latitude": 52.78108,
+      "longitude": -108.286547,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Load-bearing construction, built 1974, good condition. 83% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Taşıyıcı duvarlı yapı, 1974 yapımı, iyi durumda. %83 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-2231-southview-dr",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "2231 Southview Drive",
+        "tr": "2231 Southview Drive"
+      },
+      "address": {
+        "en": "2231 Southview Dr, Medicine Hat, Alberta",
+        "tr": "2231 Southview Dr, Medicine Hat, Alberta"
+      },
+      "city": "Medicine Hat",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 50.0097037,
+      "longitude": -110.6590469,
+      "assetClassId": "multifamily",
+      "status": "stabilized",
+      "verificationStatus": "verified",
+      "ownershipNote": {
+        "en": "Apartment rental property. Wood frame, built 1977, good condition. 100% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "Apartman kiralık mülkü. Ahşap karkas, 1977 yapımı, iyi durumda. %100 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
+    },
+    {
+      "id": "legacy-3620-23-ave-s",
+      "offeringIds": [
+        "legacy-epiphany"
+      ],
+      "managerId": "epiphany-group",
+      "name": {
+        "en": "3620 23 Avenue S",
+        "tr": "3620 23 Avenue S"
+      },
+      "address": {
+        "en": "3620 23 Ave S, Lethbridge, Alberta",
+        "tr": "3620 23 Ave S, Lethbridge, Alberta"
+      },
+      "city": "Lethbridge",
+      "province": "Alberta",
+      "country": "Canada",
+      "latitude": 49.6699438,
+      "longitude": -112.8125103,
+      "assetClassId": "multifamily",
+      "status": "value-add",
+      "verificationStatus": "verified",
+      "unitCount": 30,
+      "ownershipNote": {
+        "en": "Apartment rental property, 30 units at $126,000 per door. Wood frame, built 1984, good condition. 100% occupied. A projected investment of $63,000 targets a 38.9% return and a $400,000 increase in value. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
+        "tr": "30 daireli apartman kiralık mülkü, kapı başına 126.000 $. Ahşap karkas, 1984 yapımı, iyi durumda. %100 dolu. Öngörülen 63.000 $ yatırımla %38,9 getiri ve 400.000 $ değer artışı hedeflenmektedir. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      }
     }
   ],
   "documents": [
     {
-      "id": "legacy-fact",
+      "id": "legacy-summary",
       "offeringId": "legacy-epiphany",
       "title": {
-        "en": "Class A Unit Fact Sheet",
-        "tr": "Class A Bilgi Formu"
+        "en": "Offering Summary - Class A",
+        "tr": "Teklif Özeti - Class A"
       },
       "description": {
-        "en": "January 30th, 2026",
-        "tr": "30 Ocak 2026"
+        "en": "9 July 2026",
+        "tr": "9 Temmuz 2026"
       },
-      "type": "fact-sheet",
-      "effectiveDate": "2026-01-30",
-      "version": "2026.01",
-      "sourceId": "legacy-fact-2026-01",
+      "type": "term-sheet",
+      "effectiveDate": "2026-07-09",
+      "version": "2026.07",
+      "sourceId": "legacy-summary-2026-07",
       "visibility": "public",
-      "href": "/capital/docs/legacy-class-a-fact-sheet-2026-01-30.pdf",
+      "href": "/capital/docs/legacy-offering-summary-class-a-2026-07-09.pdf",
       "bucket": "offering-public",
-      "path": "legacy-epiphany/docs/fact-sheet-2026-01-30.pdf"
+      "path": "legacy-epiphany/docs/offering-summary-class-a-2026-07-09.pdf"
     },
     {
       "id": "legacy-om",
@@ -457,25 +1709,580 @@
         "tr": "Teklif Muhtırası"
       },
       "description": {
-        "en": "September 2025 mid-year update",
-        "tr": "Eylül 2025 yıl ortası güncellemesi"
+        "en": "8 July 2026",
+        "tr": "8 Temmuz 2026"
       },
       "type": "offering-memorandum",
-      "effectiveDate": "2025-09-02",
-      "version": "2025.09",
+      "effectiveDate": "2026-07-08",
+      "version": "2026.07",
+      "sourceId": "legacy-om-2026-07",
+      "visibility": "approved-investor"
+    },
+    {
+      "id": "legacy-fact",
+      "offeringId": "legacy-epiphany",
+      "title": {
+        "en": "Class A Unit Fact Sheet",
+        "tr": "Class A Bilgi Formu"
+      },
+      "description": {
+        "en": "Q4 2025, issued 30 January 2026. For registered dealers and exempt market dealing representatives.",
+        "tr": "2025 4Ç, 30 Ocak 2026'da yayımlandı. Kayıtlı aracılar ve muaf piyasa işlem temsilcileri içindir."
+      },
+      "type": "fact-sheet",
+      "effectiveDate": "2026-01-30",
+      "version": "2026.01",
+      "sourceId": "legacy-fact-2026-01",
+      "visibility": "approved-investor"
+    },
+    {
+      "id": "legacy-term-sheet",
+      "offeringId": "legacy-epiphany",
+      "title": {
+        "en": "Term Sheet - Class A",
+        "tr": "Şartlar Belgesi - Class A"
+      },
+      "description": {
+        "en": "9 July 2026. For registered dealers and exempt market dealing representatives.",
+        "tr": "9 Temmuz 2026. Kayıtlı aracılar ve muaf piyasa işlem temsilcileri içindir."
+      },
+      "type": "term-sheet",
+      "effectiveDate": "2026-07-09",
+      "version": "2026.07",
+      "sourceId": "legacy-term-2026-07",
       "visibility": "approved-investor"
     },
     {
       "id": "legacy-presentation",
       "offeringId": "legacy-epiphany",
       "title": {
-        "en": "Investor Presentation",
-        "tr": "Yatırımcı Sunumu"
+        "en": "Investor Presentation - Class A",
+        "tr": "Yatırımcı Sunumu - Class A"
+      },
+      "description": {
+        "en": "9 July 2026",
+        "tr": "9 Temmuz 2026"
       },
       "type": "presentation",
-      "effectiveDate": "2025-09-02",
-      "version": "2025.09",
+      "effectiveDate": "2026-07-09",
+      "version": "2026.07",
+      "sourceId": "legacy-deck-2026-07",
       "visibility": "approved-investor"
+    }
+  ],
+  "strategyPoints": [
+    {
+      "id": "deal-access",
+      "kind": "strategy",
+      "label": {
+        "en": "Lower competition for deals",
+        "tr": "İşlemlerde daha az rekabet"
+      },
+      "body": {
+        "en": "Secondary and tertiary Prairie markets attract fewer institutional bidders than the large centres, so assets can be bought at more favourable prices.",
+        "tr": "Bozkırların ikincil ve üçüncül pazarları büyük merkezlere kıyasla daha az kurumsal talip çeker; bu da varlıkların daha uygun fiyatlarla alınmasını sağlar."
+      },
+      "sourceId": "legacy-deck-2026-07",
+      "sourcePage": 17
+    },
+    {
+      "id": "market-conditions",
+      "kind": "strategy",
+      "label": {
+        "en": "Favourable economics and landlord-friendly regulation",
+        "tr": "Elverişli ekonomi ve ev sahibi dostu düzenleme"
+      },
+      "body": {
+        "en": "Alberta and Saskatchewan combine affordability-driven tenant demand with a regulatory regime that does not cap rent increases the way rent-controlled provinces do.",
+        "tr": "Alberta ve Saskatchewan, uygun fiyat kaynaklı kiracı talebini, kira kontrollü eyaletlerin aksine kira artışlarını sınırlamayan bir düzenleme rejimiyle birleştirir."
+      },
+      "sourceId": "legacy-deck-2026-07",
+      "sourcePage": 17
+    },
+    {
+      "id": "local-expertise",
+      "kind": "strategy",
+      "label": {
+        "en": "The markets we know best",
+        "tr": "En iyi bildiğimiz pazarlar"
+      },
+      "body": {
+        "en": "Epiphany Group has operated from Lethbridge since 2018 and invests in the towns and cities where its team lives and works.",
+        "tr": "Epiphany Group 2018'den bu yana Lethbridge'den faaliyet göstermekte ve ekibinin yaşayıp çalıştığı kasaba ve şehirlere yatırım yapmaktadır."
+      },
+      "sourceId": "legacy-deck-2026-07",
+      "sourcePage": 17
+    },
+    {
+      "id": "growth-path",
+      "kind": "strategy",
+      "label": {
+        "en": "Expansion runway built in",
+        "tr": "İçkin büyüme alanı"
+      },
+      "body": {
+        "en": "Population inflows land first in rental housing: Statistics Canada recorded 52,690 new Albertans in the first three quarters of 2025, the only province still growing.",
+        "tr": "Nüfus girişleri önce kiralık konuta yansır: Statistics Canada, 2025'in ilk üç çeyreğinde 52.690 yeni Albertalı kaydetmiştir; Alberta hâlâ büyüyen tek eyalettir."
+      },
+      "metric": {
+        "en": "+52,690 new Albertans, first three quarters of 2025",
+        "tr": "2025'in ilk üç çeyreğinde +52.690 yeni Albertalı"
+      },
+      "sourceId": "legacy-deck-2026-07",
+      "sourcePage": 18
+    },
+    {
+      "id": "multifamily",
+      "kind": "differentiator",
+      "label": {
+        "en": "Multi-family",
+        "tr": "Çok konutlu"
+      },
+      "body": {
+        "en": "Well-located residential rental properties in secondary and tertiary Western Canadian markets, improved through operational efficiencies, targeted capital works and disciplined asset management. Priced for dynamic market demand.",
+        "tr": "Batı Kanada'nın ikincil ve üçüncül pazarlarında iyi konumlanmış konut kiralık mülkleri; operasyonel verimlilik, hedefli sermaye işleri ve disiplinli varlık yönetimiyle iyileştirilir. Değişken piyasa talebine göre fiyatlanır."
+      },
+      "metric": {
+        "en": "69% of AUM · 5.42% weighted cap rate · 4.40% vacancy",
+        "tr": "Yönetilen varlıkların %69'u · %5,42 ağırlıklı kapitalizasyon oranı · %4,40 boşluk"
+      },
+      "sourceId": "legacy-deck-2026-07",
+      "sourcePage": 13
+    },
+    {
+      "id": "commercial",
+      "kind": "differentiator",
+      "label": {
+        "en": "Commercial",
+        "tr": "Ticari"
+      },
+      "body": {
+        "en": "Industrial, retail and office assets anchored by strong tenants on long-term leases, concentrated in Lethbridge. Stable, long-term income from established businesses in strong locations.",
+        "tr": "Lethbridge'de yoğunlaşan, uzun vadeli kira sözleşmeleriyle güçlü kiracılara dayanan sanayi, perakende ve ofis varlıkları. Güçlü konumlardaki yerleşik işletmelerden istikrarlı, uzun vadeli gelir."
+      },
+      "metric": {
+        "en": "31% of AUM · 6.05% weighted cap rate · 3.39% vacancy",
+        "tr": "Yönetilen varlıkların %31'i · %6,05 ağırlıklı kapitalizasyon oranı · %3,39 boşluk"
+      },
+      "sourceId": "legacy-deck-2026-07",
+      "sourcePage": 13
+    },
+    {
+      "id": "cold-lake-value-add",
+      "kind": "initiative",
+      "label": {
+        "en": "Cold Lake repositioning",
+        "tr": "Cold Lake yeniden konumlandırma"
+      },
+      "body": {
+        "en": "6602 48 Street, Cold Lake: 63 units bought at $100,000 per door and repositioned through active management.",
+        "tr": "6602 48 Street, Cold Lake: kapı başına 100.000 $'dan alınan 63 daire, aktif yönetimle yeniden konumlandırıldı."
+      },
+      "metric": {
+        "en": "Net operating income $359K at acquisition to $467K in 2025, a 30% increase, with $528K projected for 2026",
+        "tr": "Net faaliyet geliri satın almada 359 bin $'dan 2025'te 467 bin $'a yükseldi (%30 artış); 2026 için 528 bin $ öngörülüyor"
+      },
+      "sourceId": "legacy-deck-2026-07",
+      "sourcePage": 19
+    },
+    {
+      "id": "lethbridge-value-add",
+      "kind": "initiative",
+      "label": {
+        "en": "Lethbridge value-add programme",
+        "tr": "Lethbridge değer artırma programı"
+      },
+      "body": {
+        "en": "3620 23 Avenue S, Lethbridge: 30 units bought at $126,000 per door, with a targeted capital programme under way.",
+        "tr": "3620 23 Avenue S, Lethbridge: kapı başına 126.000 $'dan alınan 30 daire; hedefli bir sermaye programı yürütülmektedir."
+      },
+      "metric": {
+        "en": "$63,000 projected investment for a 38.9% projected return and a $400,000 increase in value",
+        "tr": "Öngörülen 63.000 $ yatırımla %38,9 öngörülen getiri ve 400.000 $ değer artışı"
+      },
+      "sourceId": "legacy-deck-2026-07",
+      "sourcePage": 19
+    }
+  ],
+  "sources": [
+    {
+      "id": "legacy-om-2026-07",
+      "title": {
+        "en": "Epiphany Legacy Investment Mutual Fund Trust — Offering Memorandum, 8 July 2026",
+        "tr": "Epiphany Legacy Investment Mutual Fund Trust — Teklif Muhtırası, 8 Temmuz 2026"
+      },
+      "publisher": "Epiphany Legacy Investment Mutual Fund Trust",
+      "publishedOn": "2026-07-08",
+      "documentSlug": "legacy-om"
+    },
+    {
+      "id": "legacy-fs-2025-audit",
+      "title": {
+        "en": "Audited financial statements of the partnerships for the year ended 31 December 2025 (KPMG LLP), bound into the Offering Memorandum at Item 14",
+        "tr": "Ortaklıkların 31 Aralık 2025'te sona eren yıla ait denetlenmiş mali tabloları (KPMG LLP), Teklif Muhtırası Madde 14'e eklenmiştir"
+      },
+      "publisher": "KPMG LLP",
+      "publishedOn": "2025-12-31"
+    },
+    {
+      "id": "legacy-fact-2026-01",
+      "title": {
+        "en": "Legacy Investment — Class A Unit Fact Sheet, Q4 2025 (issued 30 January 2026)",
+        "tr": "Legacy Investment — Class A Birim Bilgi Formu, 2025 4Ç (30 Ocak 2026'da yayımlandı)"
+      },
+      "publisher": "Epiphany Group",
+      "publishedOn": "2026-01-30",
+      "documentSlug": "legacy-fact"
+    },
+    {
+      "id": "legacy-summary-2026-07",
+      "title": {
+        "en": "Legacy Investment — Offering Summary, Class A Units, 9 July 2026",
+        "tr": "Legacy Investment — Teklif Özeti, Class A Birimleri, 9 Temmuz 2026"
+      },
+      "publisher": "Epiphany Group",
+      "publishedOn": "2026-07-09",
+      "documentSlug": "legacy-summary"
+    },
+    {
+      "id": "legacy-term-2026-07",
+      "title": {
+        "en": "Legacy Investment — Term Sheet, Class A Units, 9 July 2026",
+        "tr": "Legacy Investment — Şartlar Belgesi, Class A Birimleri, 9 Temmuz 2026"
+      },
+      "publisher": "Epiphany Group",
+      "publishedOn": "2026-07-09",
+      "documentSlug": "legacy-term-sheet"
+    },
+    {
+      "id": "legacy-deck-2026-07",
+      "title": {
+        "en": "Legacy Investment — Investor Presentation, Class A, 9 July 2026",
+        "tr": "Legacy Investment — Yatırımcı Sunumu, Class A, 9 Temmuz 2026"
+      },
+      "publisher": "Epiphany Group",
+      "publishedOn": "2026-07-09",
+      "documentSlug": "legacy-presentation"
+    },
+    {
+      "id": "legacy-site-2026-07",
+      "title": {
+        "en": "Legacy Investment Trust — Offering Memorandum page",
+        "tr": "Legacy Investment Trust — Teklif Muhtırası sayfası"
+      },
+      "publisher": "Epiphany Group",
+      "publishedOn": "2026-07-23",
+      "url": "https://legacyinvestment.ca/mft-offering-memorandum/"
+    }
+  ],
+  "updateCadence": "quarterly",
+  "dataAsOf": "2026-03-31",
+  "dataPeriodLabel": "Q1 FY2026",
+  "managerPublicUrl": "https://legacyinvestment.ca/mft-offering-memorandum/",
+  "fundDefinedFacts": [
+    {
+      "id": "legacy-maximum-offering",
+      "label": {
+        "en": "Maximum offering",
+        "tr": "Azami teklif"
+      },
+      "value": {
+        "en": "$32,920,224 (6,707,327.16 Participating Preferred Trust Units). This offering is not subject to any minimum — you may be the only purchaser.",
+        "tr": "32.920.224 $ (6.707.327,16 İmtiyazlı Katılımcı Tröst Birimi). Bu teklif herhangi bir asgari tutara tabi değildir — tek alıcı siz olabilirsiniz."
+      },
+      "category": "term",
+      "sourceId": "legacy-om-2026-07",
+      "sourcePage": 3,
+      "effectiveDate": "2026-07-08",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-over-subscription",
+      "label": {
+        "en": "Over-subscription option",
+        "tr": "Fazla talep opsiyonu"
+      },
+      "value": {
+        "en": "If exercised in full the offering would total $47,359,804 (9,544,169.26 units). Units issued under the option may not exceed 35% of those intended to be issued at each price.",
+        "tr": "Tamamen kullanılırsa teklif toplamı 47.359.804 $ (9.544.169,26 birim) olur. Opsiyon kapsamında ihraç edilen birimler, her fiyattan ihraç edilmesi öngörülenlerin %35'ini aşamaz."
+      },
+      "category": "term",
+      "sourceId": "legacy-om-2026-07",
+      "sourcePage": 1,
+      "effectiveDate": "2026-07-08",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-unit-tranches",
+      "label": {
+        "en": "Unit price tranches",
+        "tr": "Birim fiyat dilimleri"
+      },
+      "value": {
+        "en": "$4.75 per Class A unit for up to 707,327 units (Second Tranche), then $5.00 per unit for up to 6,000,000 units (Third Tranche). The price difference reflects the lower risk as the Trust becomes better capitalised.",
+        "tr": "707.327 birime kadar Class A birimi başına 4,75 $ (İkinci Dilim), ardından 6.000.000 birime kadar birim başına 5,00 $ (Üçüncü Dilim). Fiyat farkı, Tröst daha iyi sermayelendikçe azalan riski yansıtır."
+      },
+      "category": "term",
+      "sourceId": "legacy-om-2026-07",
+      "sourcePage": 2,
+      "effectiveDate": "2026-07-08",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-nav-method",
+      "label": {
+        "en": "Net asset value",
+        "tr": "Net aktif değer"
+      },
+      "value": {
+        "en": "Calculated quarterly using the IFRS fair value model (IAS 40 Investment Property and IFRS 3), determined by the partnerships and the Administrator and approved by the Trustees. Third-party appraisals are obtained at least every three years.",
+        "tr": "IFRS gerçeğe uygun değer modeli (IAS 40 Yatırım Amaçlı Gayrimenkul ve IFRS 3) kullanılarak üç ayda bir hesaplanır; ortaklıklar ve Yönetici tarafından belirlenip Mütevelliler tarafından onaylanır. En az üç yılda bir üçüncü taraf değerleme alınır."
+      },
+      "category": "term",
+      "sourceId": "legacy-om-2026-07",
+      "sourcePage": 30,
+      "effectiveDate": "2026-07-08",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-asset-management-fee",
+      "label": {
+        "en": "Asset management fee",
+        "tr": "Varlık yönetim ücreti"
+      },
+      "value": {
+        "en": "1.5% of total assets under management, payable quarterly to Epiphany Consulting Services Ltd., an entity under common control with the general partner.",
+        "tr": "Yönetilen toplam varlıkların %1,5'i; genel ortakla ortak kontrol altındaki Epiphany Consulting Services Ltd.'ye üç ayda bir ödenir."
+      },
+      "category": "fee",
+      "sourceId": "legacy-fs-2025-audit",
+      "effectiveDate": "2025-12-31",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-property-management-fee",
+      "label": {
+        "en": "Property management fee",
+        "tr": "Mülk yönetim ücreti"
+      },
+      "value": {
+        "en": "Braemore Management Ltd. receives 7% of base rent monthly from Epiphany Commercial LP, capped at $1,000 per property, and 4% of gross rents from Epiphany Multi-Family LP plus a $400 annual caretaker fee per door.",
+        "tr": "Braemore Management Ltd., Epiphany Commercial LP'den aylık taban kiranın %7'sini (mülk başına 1.000 $ ile sınırlı) ve Epiphany Multi-Family LP'den brüt kiraların %4'ünü artı kapı başına yıllık 400 $ bakıcı ücretini alır."
+      },
+      "category": "fee",
+      "sourceId": "legacy-om-2026-07",
+      "sourcePage": 54,
+      "effectiveDate": "2026-07-08",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-redemption-notice",
+      "label": {
+        "en": "Redemption notice",
+        "tr": "İtfa bildirimi"
+      },
+      "value": {
+        "en": "Notices received by 1 December, 1 March, 1 June or 1 September are processed on the following 31 March, 30 June, 30 September or 31 December.",
+        "tr": "1 Aralık, 1 Mart, 1 Haziran veya 1 Eylül'e kadar alınan bildirimler, takip eden 31 Mart, 30 Haziran, 30 Eylül veya 31 Aralık'ta işleme alınır."
+      },
+      "category": "liquidity",
+      "sourceId": "legacy-om-2026-07",
+      "sourcePage": 18,
+      "effectiveDate": "2026-07-08",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-redemption-payment",
+      "label": {
+        "en": "Redemption payment",
+        "tr": "İtfa ödemesi"
+      },
+      "value": {
+        "en": "Paid on the following 30 April, 31 July, 31 October or 31 January after the processing date.",
+        "tr": "İşlem tarihinden sonraki 30 Nisan, 31 Temmuz, 31 Ekim veya 31 Ocak'ta ödenir."
+      },
+      "category": "liquidity",
+      "sourceId": "legacy-om-2026-07",
+      "sourcePage": 18,
+      "effectiveDate": "2026-07-08",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-redemption-suspension",
+      "label": {
+        "en": "Redemption suspension",
+        "tr": "İtfanın askıya alınması"
+      },
+      "value": {
+        "en": "For the first 12 months after units are acquired the Trustees may suspend redemptions for up to 12 months where prudent to preserve the value of the Trust's assets.",
+        "tr": "Birimlerin edinilmesinden sonraki ilk 12 ay boyunca Mütevelliler, Tröst varlıklarının değerini korumak için ihtiyatlı olduğunda itfaları 12 aya kadar askıya alabilir."
+      },
+      "category": "liquidity",
+      "sourceId": "legacy-om-2026-07",
+      "sourcePage": 63,
+      "effectiveDate": "2026-07-08",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-redemption-floor",
+      "label": {
+        "en": "Redemption price floor",
+        "tr": "İtfa fiyatı tabanı"
+      },
+      "value": {
+        "en": "Until the sixth anniversary of the Declaration of Trust, units acquired before aggregate gross subscriptions reached $20 million will not be redeemed below $5.00 per unit.",
+        "tr": "Tröst Sözleşmesinin altıncı yıl dönümüne kadar, toplam brüt abonelikler 20 milyon $'a ulaşmadan önce edinilen birimler birim başına 5,00 $'ın altında itfa edilmeyecektir."
+      },
+      "category": "liquidity",
+      "sourceId": "legacy-om-2026-07",
+      "sourcePage": 18,
+      "effectiveDate": "2026-07-08",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-jurisdictions",
+      "label": {
+        "en": "Jurisdictions",
+        "tr": "Yetki alanları"
+      },
+      "value": {
+        "en": "All Canadian provinces and territories except Quebec.",
+        "tr": "Quebec hariç tüm Kanada eyaletleri ve bölgeleri."
+      },
+      "category": "term",
+      "sourceId": "legacy-term-2026-07",
+      "sourcePage": 2,
+      "effectiveDate": "2026-07-09",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-closing",
+      "label": {
+        "en": "Closings",
+        "tr": "Kapanışlar"
+      },
+      "value": {
+        "en": "Monthly, or on such other date as the Trustees determine at their sole discretion.",
+        "tr": "Aylık veya Mütevellilerin tamamen kendi takdirleriyle belirleyecekleri başka bir tarihte."
+      },
+      "category": "term",
+      "sourceId": "legacy-summary-2026-07",
+      "sourcePage": 2,
+      "effectiveDate": "2026-07-09",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-administrator",
+      "label": {
+        "en": "Administrator",
+        "tr": "Yönetici"
+      },
+      "value": {
+        "en": "Pinnacle Canada Fund Services Ltd., also the Trust's recordkeeper, under an administrator agreement effective 1 March 2026.",
+        "tr": "1 Mart 2026'da yürürlüğe giren yönetici sözleşmesi kapsamında, aynı zamanda Tröstün kayıt tutucusu olan Pinnacle Canada Fund Services Ltd."
+      },
+      "category": "term",
+      "sourceId": "legacy-om-2026-07",
+      "sourcePage": 13,
+      "effectiveDate": "2026-07-08",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-banking-partners",
+      "label": {
+        "en": "Financing partners",
+        "tr": "Finansman ortakları"
+      },
+      "value": {
+        "en": "Peoples Trust Company, National Bank and Tallinn Capital provide the partnerships' senior debt.",
+        "tr": "Ortaklıkların kıdemli borcunu Peoples Trust Company, National Bank ve Tallinn Capital sağlar."
+      },
+      "category": "term",
+      "sourceId": "legacy-term-2026-07",
+      "sourcePage": 2,
+      "effectiveDate": "2026-07-09",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-reporting",
+      "label": {
+        "en": "Reporting",
+        "tr": "Raporlama"
+      },
+      "value": {
+        "en": "Quarterly management financial statements available on request within 60 days of quarter end; annual audited financial statements within 120 days of year end.",
+        "tr": "Üç aylık yönetim mali tabloları çeyrek sonundan itibaren 60 gün içinde talep üzerine; yıllık denetlenmiş mali tablolar yıl sonundan itibaren 120 gün içinde sunulur."
+      },
+      "category": "term",
+      "sourceId": "legacy-summary-2026-07",
+      "sourcePage": 2,
+      "effectiveDate": "2026-07-09",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-governing-law",
+      "label": {
+        "en": "Governing law",
+        "tr": "Uygulanacak hukuk"
+      },
+      "value": {
+        "en": "The laws of the Province of Alberta and the federal laws of Canada applicable therein.",
+        "tr": "Alberta Eyaleti hukuku ve orada uygulanan Kanada federal hukuku."
+      },
+      "category": "term",
+      "sourceId": "legacy-term-2026-07",
+      "sourcePage": 2,
+      "effectiveDate": "2026-07-09",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-trustee-independence",
+      "label": {
+        "en": "Trustee independence",
+        "tr": "Mütevelli bağımsızlığı"
+      },
+      "value": {
+        "en": "As at the date of the Offering Memorandum, one of the Trust's seven trustees would be considered Independent.",
+        "tr": "Teklif Muhtırası tarihi itibarıyla Tröstün yedi mütevellisinden biri Bağımsız kabul edilmektedir."
+      },
+      "category": "term",
+      "sourceId": "legacy-om-2026-07",
+      "sourcePage": 62,
+      "effectiveDate": "2026-07-08",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-trust-term",
+      "label": {
+        "en": "Trust term",
+        "tr": "Tröst süresi"
+      },
+      "value": {
+        "en": "The Trust continues until 2 September 2121 unless terminated earlier in accordance with the Declaration of Trust.",
+        "tr": "Tröst, Tröst Sözleşmesi uyarınca daha erken sonlandırılmadıkça 2 Eylül 2121'e kadar devam eder."
+      },
+      "category": "term",
+      "sourceId": "legacy-om-2026-07",
+      "sourcePage": 19,
+      "effectiveDate": "2026-07-08",
+      "approval": "approved-public"
+    },
+    {
+      "id": "legacy-fundserv",
+      "label": {
+        "en": "FundSERV code",
+        "tr": "FundSERV kodu"
+      },
+      "value": {
+        "en": "AXC 701",
+        "tr": "AXC 701"
+      },
+      "category": "term",
+      "sourceId": "legacy-fact-2026-01",
+      "sourcePage": 2,
+      "effectiveDate": "2026-01-30",
+      "approval": "approved-public",
+      "audience": "advisor"
     }
   ]
 }

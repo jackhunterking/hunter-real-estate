@@ -1,5 +1,5 @@
-import { tx } from "@/lib/i18n/localize";
-import type { Lang, LocalizedText } from "./types";
+import { tx } from "../i18n/localize.ts";
+import type { Lang, LocalizedText } from "./types.ts";
 
 /**
  * Classification taxonomies (strategy / asset class / region) are stored in

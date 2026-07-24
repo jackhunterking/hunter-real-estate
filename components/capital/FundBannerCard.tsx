@@ -50,18 +50,18 @@ export function FundBannerCard({
           // eslint-disable-next-line @next/next/no-img-element
           <img src={logo} alt="" className="absolute bottom-3 left-3 h-9 max-w-24 rounded bg-white object-contain p-1.5 shadow-sm" />
         )}
+        {/* The strategy sits on the banner rather than beside the title so the
+            header stays a single title + manager block at phone widths. */}
+        {strategyLabel && (
+          <span className="absolute right-2.5 top-2.5 inline-flex max-w-[55%] truncate rounded border border-white/25 bg-[#071c2c]/65 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-white backdrop-blur-sm">
+            {strategyLabel}
+          </span>
+        )}
       </div>
       <div className={compact ? "p-3.5" : "p-4"}>
-        <div className={`flex flex-wrap items-start justify-between gap-x-4 gap-y-2 ${compact ? "" : "mb-3"}`}>
-          <div className="min-w-0">
-            <h3 className="text-base font-semibold text-[#152b3b]">{name}</h3>
-            <p className="mt-1 text-xs text-[#75818a]">{manager}</p>
-          </div>
-          {strategyLabel && (
-            <span className="inline-flex shrink-0 rounded border border-[#dbe1e5] bg-[#f5f7f8] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#64727d]">
-              {strategyLabel}
-            </span>
-          )}
+        <div className={`min-w-0 ${compact ? "" : "mb-3"}`}>
+          <h3 className="text-base font-semibold leading-snug text-[#152b3b]">{name}</h3>
+          <p className="mt-1 text-xs text-[#75818a]">{manager}</p>
         </div>
         {!compact && (
           <p className="mt-3 line-clamp-2 min-h-10 text-xs leading-5 text-[#5f6d78]">{summary}</p>

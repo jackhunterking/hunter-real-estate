@@ -1,0 +1,133 @@
+"use client";
+
+/**
+ * Resources → Tools. The sidebar names the group; each tool names itself here
+ * and again as the title of its own page, so a tool can be renamed or added
+ * without touching the navigation.
+ *
+ * The qualification tool reads differently in each account view — a partner
+ * runs it on a client, an investor runs it on themselves — so it carries a
+ * second set of strings rather than a second card.
+ */
+
+import { useEffect } from "react";
+import Link from "next/link";
+import { usePostHog } from "posthog-js/react";
+import { ArrowRight, BadgeCheck, GitCompareArrows, Scale } from "lucide-react";
+import { useLang } from "@/lib/i18n/LanguageProvider";
+import { pick } from "@/lib/i18n/localize";
+import { canUseWorkspace } from "@/lib/capital/portal-access";
+import { NORTH_BASE } from "./NorthBrand";
+import { usePortalAccess } from "./PortalAccessProvider";
+import { PageHeader } from "./PortalUI";
+
+const COPY = {
+  en: {
+    title: "Tools",
+    description: "Calculators and checks that put a decision in present-tense terms. Every fund figure is a return the manager published — none of these tools forecast.",
+    tools: [
+      {
+        href: "/resources/tools/active-vs-passive",
+        name: "Active vs. Passive",
+        summary: "Rental property vs. an investment fund. What a condo or house nets each month after real expenses, against what the same cash actually earned in a fund.",
+      },
+      {
+        href: "/resources/tools/passive-vs-passive",
+        name: "Passive vs. Passive",
+        summary: "One fund against another, on the same cash. Published returns period by period, plus a side-by-side of the terms each fund publishes.",
+      },
+    ],
+    qualification: {
+      href: "/resources/investor-readiness",
+      professional: {
+        name: "Investor qualification",
+        summary: "Identify the Canadian financial category indicated by a client’s answers, regardless of where they live, and record the assessment on their file.",
+      },
+      investor: {
+        name: "Check your investor category",
+        summary: "Answer the questions yourself to see your preliminary Canadian financial category and Canadian offering OM investment ceiling.",
+      },
+    },
+    open: "Open tool",
+  },
+  tr: {
+    title: "Araçlar",
+    description: "Bir kararı bugünün rakamlarına döken hesaplayıcılar ve kontroller. Her fon rakamı yöneticinin yayımladığı bir getiridir; bu araçlar öngörü üretmez.",
+    tools: [
+      {
+        href: "/resources/tools/active-vs-passive",
+        name: "Aktif ve Pasif",
+        summary: "Kiralık mülk ile yatırım fonu. Bir condo ya da evin gerçek giderlerden sonra aylık net getirisi ile aynı nakdin bir fonda gerçekte kazandığı.",
+      },
+      {
+        href: "/resources/tools/passive-vs-passive",
+        name: "Pasif ve Pasif",
+        summary: "Aynı nakitle iki fonun karşılaştırması. Dönem dönem yayımlanan getiriler ve her fonun yayımladığı koşulların yan yana görünümü.",
+      },
+    ],
+    qualification: {
+      href: "/resources/investor-readiness",
+      professional: {
+        name: "Yatırımcı sınıflandırması",
+        summary: "Müşterinin nerede yaşadığına bakılmaksızın, yanıtlarının gösterdiği Kanada finansal kategorisini belirleyin ve değerlendirmeyi dosyasına kaydedin.",
+      },
+      investor: {
+        name: "Yatırımcı kategorinizi kontrol edin",
+        summary: "Ön Kanada finansal kategorinizi ve Kanada teklifi OM yatırım tavanınızı görmek için soruları kendiniz yanıtlayın.",
+      },
+    },
+    open: "Aracı aç",
+  },
+} as const;
+
+const ICONS = [Scale, GitCompareArrows];
+
+export function ToolsHub() {
+  const { lang } = useLang();
+  const c = pick(COPY, lang);
+  const posthog = usePostHog();
+  const { context, accountView } = usePortalAccess();
+
+  useEffect(() => {
+    posthog?.capture("hnc_tools_hub_opened", { language: lang });
+  }, [posthog, lang]);
+
+  const professionalMode = accountView === "professional" && canUseWorkspace(context, "professional");
+  const qualification = professionalMode ? c.qualification.professional : c.qualification.investor;
+  const tools = [
+    ...c.tools.map((tool, index) => ({ ...tool, icon: ICONS[index] ?? Scale })),
+    { href: c.qualification.href, ...qualification, icon: BadgeCheck },
+  ];
+
+  return (
+    <div>
+      <PageHeader title={c.title} />
+      <p className="-mt-3 mb-6 max-w-2xl text-sm leading-6 text-[#65727c]">{c.description}</p>
+
+      <div className="grid gap-5 xl:grid-cols-2">
+        {tools.map((tool) => {
+          const Icon = tool.icon;
+          return (
+            <article key={tool.href} className="group relative overflow-hidden rounded-lg border border-[#d8e0e4] bg-white shadow-[0_1px_2px_rgba(8,34,52,0.04)]">
+              <div className="h-1.5 bg-gradient-to-r from-[#c6a44b] via-[#e1c56f] to-[#0a4b72]" />
+              <div className="flex h-full flex-col p-6 sm:p-7">
+                <span className="inline-flex size-9 items-center justify-center rounded-full bg-[#eef4f7] text-[#0a4b72]">
+                  <Icon className="size-5" />
+                </span>
+                <h2 className="mt-5 font-serif text-2xl font-semibold leading-tight text-[#102c3f]">{tool.name}</h2>
+                <p className="mt-3 text-sm leading-6 text-[#5a6c77]">{tool.summary}</p>
+                <Link
+                  href={`${NORTH_BASE}${tool.href}`}
+                  className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#0a4b72] after:absolute after:inset-0"
+                >
+                  {c.open}
+                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
