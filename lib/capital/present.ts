@@ -7,7 +7,7 @@
  * of truth; Turkish display values are derived here at render time.
  */
 import { tx } from "../i18n/localize.ts";
-import { taxonomyColor, taxonomyLabel, type TaxonomyItem } from "./taxonomies.ts";
+import { taxonomyLabel, type TaxonomyItem } from "./taxonomies.ts";
 import type {
   ImageSlot,
   Lang,
@@ -237,12 +237,22 @@ function hashString(seed: string): number {
   return Math.abs(h);
 }
 
-function initialsFrom(label: string): string {
+export function initialsFrom(label: string): string {
   const words = label.replace(/[^\p{L}\p{N} ]/gu, " ").trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) return "HG";
   if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
   return (words[0][0] + words[words.length - 1][0]).toUpperCase();
 }
+
+/**
+ * Calm, consistent placeholder for a building that has no photo yet — one
+ * Legacy-navy tint everywhere, so a grid of not-yet-photographed buildings reads
+ * as a quiet set rather than a rainbow of per-building hues. The initials still
+ * come from `resolveImage`, so each tile stays distinguishable. Replaced per
+ * building by its real photo (or a Google Street View) as those arrive.
+ */
+export const BUILDING_PLACEHOLDER_GRADIENT =
+  "linear-gradient(135deg, #131f4a 0%, #1e3378 58%, #33509a 100%)";
 
 /** Deterministic muted gradient + initials fallback; uses `slot.src` when present. */
 export function resolveImage(
@@ -367,7 +377,6 @@ export type MapProperty = {
   latitude: number;
   longitude: number;
   listingUrl?: string;
-  accent: string;
   status: string;
   detail: string;
   verification: string;
@@ -406,7 +415,6 @@ export function buildMapProperties(
       latitude: p.latitude,
       longitude: p.longitude,
       listingUrl: p.listingUrl?.startsWith("http") && !p.listingUrl.includes("TODO") ? p.listingUrl : undefined,
-      accent: taxonomyColor(assetClasses, p.assetClassId),
       status: tx(STATUS[p.status], lang),
       detail: formatUnits(p, lang) ?? "",
       verification: tx(VERIFICATION[p.verificationStatus], lang),

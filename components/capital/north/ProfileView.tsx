@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { CheckCircle2, ChevronRight, CircleAlert, Globe2, Mail, MapPin, ShieldCheck, UserRound } from "lucide-react";
 import { canUseWorkspace } from "@/lib/capital/portal-access";
+import { PROFESSIONAL_WORKSPACE_ENABLED } from "@/lib/capital/feature-flags";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 import { NORTH_BASE } from "./NorthBrand";
@@ -199,10 +200,13 @@ export function ProfileView() {
         </Panel>
       </section>
 
-      {/* Professional access — a lean floating card, no section title. */}
-      <section aria-label={c.professionalAccess}>
-        <PartnerApplicationView embedded />
-      </section>
+      {/* Professional access — a lean floating card, no section title.
+          Paused this phase; the on-ramp returns when PROFESSIONAL_WORKSPACE_ENABLED is true. */}
+      {PROFESSIONAL_WORKSPACE_ENABLED && (
+        <section aria-label={c.professionalAccess}>
+          <PartnerApplicationView embedded />
+        </section>
+      )}
 
       {staff && (
         <section aria-label={c.staffAccess}>

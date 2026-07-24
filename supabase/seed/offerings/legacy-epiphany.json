@@ -875,14 +875,27 @@
       "city": "Lethbridge",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 49.7273654,
-      "longitude": -112.7890958,
+      "latitude": 49.7150944,
+      "longitude": -112.7883016,
       "assetClassId": "commercial",
       "status": "commercial",
       "verificationStatus": "verified",
       "ownershipNote": {
         "en": "Service industrial facility, generating rental income. Steel frame structure with concrete foundation and floors, built 1998, average condition. 100% occupied. Held by Epiphany Commercial LP.",
         "tr": "Kira geliri üreten hizmet amaçlı sanayi tesisi. Betonarme temel ve döşemeli çelik karkas yapı, 1998 yapımı, ortalama durumda. %100 dolu. Epiphany Commercial LP tarafından tutulmaktadır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-1105-36-st-n.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "1105 36 Street N — street view",
+            "tr": "1105 36 Street N — sokak görünümü"
+          },
+          "verifiedAt": "2024-06"
+        }
       }
     },
     {
@@ -902,14 +915,27 @@
       "city": "Lethbridge",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 49.7223226,
-      "longitude": -112.7901403,
+      "latitude": 49.7217529,
+      "longitude": -112.7867033,
       "assetClassId": "commercial",
       "status": "commercial",
       "verificationStatus": "verified",
       "ownershipNote": {
         "en": "Industrial warehouse development, generating rental income. Steel frame structure with concrete foundation and floors, built 2008, good condition. 100% occupied. Tenant pays all utilities. Held by Epiphany Commercial LP.",
         "tr": "Kira geliri üreten sanayi deposu geliştirmesi. Betonarme temel ve döşemeli çelik karkas yapı, 2008 yapımı, iyi durumda. %100 dolu. Tüm altyapı giderlerini kiracı öder. Epiphany Commercial LP tarafından tutulmaktadır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-3760-18-ave-n.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "3760 18 Avenue N — street view",
+            "tr": "3760 18 Avenue N — sokak görünümü"
+          },
+          "verifiedAt": "2023-10"
+        }
       }
     },
     {
@@ -937,6 +963,19 @@
       "ownershipNote": {
         "en": "Industrial retail development, generating rental income. Steel frame structure with concrete foundation and floors, built 1997, average condition. 70% occupied. Tenant pays all utilities. Held by Epiphany Commercial LP.",
         "tr": "Kira geliri üreten sanayi-perakende geliştirmesi. Betonarme temel ve döşemeli çelik karkas yapı, 1997 yapımı, ortalama durumda. %70 dolu. Tüm altyapı giderlerini kiracı öder. Epiphany Commercial LP tarafından tutulmaktadır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-3306-9-ave-n.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "3306 9 Avenue N — street view",
+            "tr": "3306 9 Avenue N — sokak görünümü"
+          },
+          "verifiedAt": "2024-06"
+        }
       }
     },
     {
@@ -964,6 +1003,19 @@
       "ownershipNote": {
         "en": "Suburban retail development, generating rental income. Steel frame structure with concrete foundation and floors, built 2011, good condition. 100% occupied. Held by Epiphany Commercial LP.",
         "tr": "Kira geliri üreten banliyö perakende geliştirmesi. Betonarme temel ve döşemeli çelik karkas yapı, 2011 yapımı, iyi durumda. %100 dolu. Epiphany Commercial LP tarafından tutulmaktadır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-495-wt-hill-blvd-s.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "Unit 15, 495 WT Hill Boulevard S — street view",
+            "tr": "Unit 15, 495 WT Hill Boulevard S — sokak görünümü"
+          },
+          "verifiedAt": "2022-07"
+        }
       }
     },
     {
@@ -991,6 +1043,19 @@
       "ownershipNote": {
         "en": "Strip centre retail development, generating rental income. Steel frame structure with brick foundation and concrete floors, built 1974, average condition. 100% occupied. Held by Epiphany Commercial LP.",
         "tr": "Kira geliri üreten şerit çarşı perakende geliştirmesi. Tuğla temel ve beton döşemeli çelik karkas yapı, 1974 yapımı, ortalama durumda. %100 dolu. Epiphany Commercial LP tarafından tutulmaktadır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-405-stafford-dr-n.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "405 Stafford Drive N — street view",
+            "tr": "405 Stafford Drive N — sokak görünümü"
+          },
+          "verifiedAt": "2024-06"
+        }
       }
     },
     {
@@ -1010,14 +1075,27 @@
       "city": "Lethbridge",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 49.7208135,
-      "longitude": -112.8216405,
+      "latitude": 49.7217811,
+      "longitude": -112.7872137,
       "assetClassId": "commercial",
       "status": "commercial",
       "verificationStatus": "verified",
       "ownershipNote": {
         "en": "Industrial warehouse development, generating rental income. Steel frame structure with concrete foundation and floors, built 2010, good condition. 100% occupied. Tenant pays all utilities. Held by Epiphany Commercial LP.",
         "tr": "Kira geliri üreten sanayi deposu geliştirmesi. Betonarme temel ve döşemeli çelik karkas yapı, 2010 yapımı, iyi durumda. %100 dolu. Tüm altyapı giderlerini kiracı öder. Epiphany Commercial LP tarafından tutulmaktadır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-3710-18-ave-n.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "3710 18 Avenue N — street view",
+            "tr": "3710 18 Avenue N — sokak görünümü"
+          },
+          "verifiedAt": "2023-10"
+        }
       }
     },
     {
@@ -1037,14 +1115,27 @@
       "city": "Lethbridge",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 49.7126791,
-      "longitude": -112.8062289,
+      "latitude": 49.712469,
+      "longitude": -112.7975954,
       "assetClassId": "commercial",
       "status": "commercial",
       "verificationStatus": "verified",
       "ownershipNote": {
         "en": "Industrial warehouse development, generating rental income. Steel frame structure with concrete foundation and floors, built 1973, good condition. 100% occupied. Held by Epiphany Commercial LP.",
         "tr": "Kira geliri üreten sanayi deposu geliştirmesi. Betonarme temel ve döşemeli çelik karkas yapı, 1973 yapımı, iyi durumda. %100 dolu. Epiphany Commercial LP tarafından tutulmaktadır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-2930-9-ave-n.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "2930 9 Avenue N — street view",
+            "tr": "2930 9 Avenue N — sokak görünümü"
+          },
+          "verifiedAt": "2022-07"
+        }
       }
     },
     {
@@ -1072,6 +1163,19 @@
       "ownershipNote": {
         "en": "Suburban office development, generating rental income, and the location of the Epiphany Group head office. Steel frame structure with concrete foundation and floors, built 2005, great condition. 99% occupied. Held by Epiphany Commercial LP.",
         "tr": "Kira geliri üreten banliyö ofis geliştirmesi ve Epiphany Group genel merkezinin bulunduğu yer. Betonarme temel ve döşemeli çelik karkas yapı, 2005 yapımı, çok iyi durumda. %99 dolu. Epiphany Commercial LP tarafından tutulmaktadır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-550-wt-hill-blvd-s.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "550 WT Hill Boulevard S — street view",
+            "tr": "550 WT Hill Boulevard S — sokak görünümü"
+          },
+          "verifiedAt": "2022-07"
+        }
       }
     },
     {
@@ -1091,14 +1195,27 @@
       "city": "Lethbridge",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 49.7287604,
-      "longitude": -112.7932392,
+      "latitude": 49.731918,
+      "longitude": -112.7937149,
       "assetClassId": "commercial",
       "status": "commercial",
       "verificationStatus": "verified",
       "ownershipNote": {
         "en": "Industrial warehouse development, generating rental income. Steel frame structure with concrete foundation and floors, built 2008, good condition. 100% occupied. Tenant pays all utilities. Held by Epiphany Commercial LP.",
         "tr": "Kira geliri üreten sanayi deposu geliştirmesi. Betonarme temel ve döşemeli çelik karkas yapı, 2008 yapımı, iyi durumda. %100 dolu. Tüm altyapı giderlerini kiracı öder. Epiphany Commercial LP tarafından tutulmaktadır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-3174-34-st-n.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "3174 34 Street N — street view",
+            "tr": "3174 34 Street N — sokak görünümü"
+          },
+          "verifiedAt": "2023-09"
+        }
       }
     },
     {
@@ -1126,6 +1243,19 @@
       "ownershipNote": {
         "en": "Suburban office development, generating rental income. Timber frame structure with concrete foundation and floors, built 1928, average condition. 100% occupied. Tenant pays all utilities. Held by Epiphany Commercial LP.",
         "tr": "Kira geliri üreten banliyö ofis geliştirmesi. Betonarme temel ve döşemeli ahşap karkas yapı, 1928 yapımı, ortalama durumda. %100 dolu. Tüm altyapı giderlerini kiracı öder. Epiphany Commercial LP tarafından tutulmaktadır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-562-2-st-se.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "562 2 Street SE — street view",
+            "tr": "562 2 Street SE — sokak görünümü"
+          },
+          "verifiedAt": "2025-05"
+        }
       }
     },
     {
@@ -1145,14 +1275,27 @@
       "city": "Estevan",
       "province": "Saskatchewan",
       "country": "Canada",
-      "latitude": 49.1504519,
-      "longitude": -102.9876507,
+      "latitude": 49.1502094,
+      "longitude": -102.9838295,
       "assetClassId": "multifamily",
       "status": "stabilized",
       "verificationStatus": "verified",
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, built 2011, great condition. 97% occupied. Held by Epiphany Multi-Family LP.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, 2011 yapımı, çok iyi durumda. %97 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-638-isabelle-st.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "638 Isabelle Street — street view",
+            "tr": "638 Isabelle Street — sokak görünümü"
+          },
+          "verifiedAt": "2025-09"
+        }
       }
     },
     {
@@ -1172,14 +1315,27 @@
       "city": "Estevan",
       "province": "Saskatchewan",
       "country": "Canada",
-      "latitude": 49.1383966,
-      "longitude": -102.9923488,
+      "latitude": 49.1356368,
+      "longitude": -102.9868373,
       "assetClassId": "multifamily",
       "status": "stabilized",
       "verificationStatus": "verified",
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, built 2014, great condition. 98% occupied. Held by Epiphany Multi-Family LP.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, 2014 yapımı, çok iyi durumda. %98 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-718-3-st.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "718 3 Street — street view",
+            "tr": "718 3 Street — sokak görünümü"
+          },
+          "verifiedAt": "2025-09"
+        }
       }
     },
     {
@@ -1215,7 +1371,9 @@
           "alt": {
             "en": "6602 48 Street, Cold Lake — apartment building",
             "tr": "6602 48 Street, Cold Lake — apartman binası"
-          }
+          },
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/6602-48-st-cold-lake.jpg"
         }
       },
       "ownershipNote": {
@@ -1249,6 +1407,19 @@
       "ownershipNote": {
         "en": "Apartment rental property across three addresses, 36 units. Wood frame, built 1980, average condition. 100% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Üç adrese yayılan 36 daireli apartman kiralık mülkü. Ahşap karkas, 1980 yapımı, ortalama durumda. %100 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-timber-lane.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "121, 129 & 137 Timber Lane — street view",
+            "tr": "121, 129 & 137 Timber Lane — sokak görünümü"
+          },
+          "verifiedAt": "2021-06"
+        }
       }
     },
     {
@@ -1268,14 +1439,27 @@
       "city": "Edson",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 53.5868751,
-      "longitude": -116.4234832,
+      "latitude": 53.5813337,
+      "longitude": -116.4417627,
       "assetClassId": "multifamily",
       "status": "stabilized",
       "verificationStatus": "verified",
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, built 1978, average condition. 86% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, 1978 yapımı, ortalama durumda. %86 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-5333-5-ave.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "5333 5 Avenue — street view",
+            "tr": "5333 5 Avenue — sokak görünümü"
+          },
+          "verifiedAt": "2021-06"
+        }
       }
     },
     {
@@ -1295,14 +1479,27 @@
       "city": "Edson",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 53.58778,
-      "longitude": -116.4396144,
+      "latitude": 53.5863949,
+      "longitude": -116.4434511,
       "assetClassId": "multifamily",
       "status": "stabilized",
       "verificationStatus": "verified",
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, built 1978, average condition. 93% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, 1978 yapımı, ortalama durumda. %93 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-5415-10-ave.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "5415 10 Avenue — street view",
+            "tr": "5415 10 Avenue — sokak görünümü"
+          },
+          "verifiedAt": "2021-06"
+        }
       }
     },
     {
@@ -1330,6 +1527,19 @@
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, built 1980, good condition. 91% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, 1980 yapımı, iyi durumda. %91 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-5506-10-ave.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "5506 10 Avenue — street view",
+            "tr": "5506 10 Avenue — sokak görünümü"
+          },
+          "verifiedAt": "2021-06"
+        }
       }
     },
     {
@@ -1349,14 +1559,27 @@
       "city": "Edson",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 53.5771273,
-      "longitude": -116.4474219,
+      "latitude": 53.5868488,
+      "longitude": -116.4471025,
       "assetClassId": "multifamily",
       "status": "stabilized",
       "verificationStatus": "verified",
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, built 1980, good condition. 89% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, 1980 yapımı, iyi durumda. %89 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-1015-57-st.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "1015 57 Street — street view",
+            "tr": "1015 57 Street — sokak görünümü"
+          },
+          "verifiedAt": "2021-06"
+        }
       }
     },
     {
@@ -1376,14 +1599,27 @@
       "city": "Estevan",
       "province": "Saskatchewan",
       "country": "Canada",
-      "latitude": 49.1485764,
-      "longitude": -102.9819613,
+      "latitude": 49.1506664,
+      "longitude": -102.9818514,
       "assetClassId": "multifamily",
       "status": "stabilized",
       "verificationStatus": "verified",
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, built 1983, good condition. 89% occupied. Utilities covered by tenants. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, 1983 yapımı, iyi durumda. %89 dolu. Altyapı giderleri kiracılar tarafından karşılanır. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-541-dufferin-ave.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "541 Dufferin Avenue — street view",
+            "tr": "541 Dufferin Avenue — sokak görünümü"
+          },
+          "verifiedAt": "2013-07"
+        }
       }
     },
     {
@@ -1413,6 +1649,19 @@
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, built 1985, good condition. 100% occupied. Acquired by Epiphany Multi-Family LP from Black Elm Financial LP, a related party, on 30 April 2024. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, 1985 yapımı, iyi durumda. %100 dolu. 30 Nisan 2024'te ilişkili taraf olan Black Elm Financial LP'den Epiphany Multi-Family LP tarafından satın alınmıştır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-5112-54-ave.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "5112 54 Avenue — street view",
+            "tr": "5112 54 Avenue — sokak görünümü"
+          },
+          "verifiedAt": "2024-06"
+        }
       }
     },
     {
@@ -1432,8 +1681,8 @@
       "city": "Lethbridge",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 49.6893692,
-      "longitude": -112.8114429,
+      "latitude": 49.6912994,
+      "longitude": -112.8118423,
       "assetClassId": "multifamily",
       "status": "stabilized",
       "verificationStatus": "verified",
@@ -1442,6 +1691,19 @@
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, original structure 1958 with 40% of the south side added ten years later, good condition. 100% occupied. Acquired by Epiphany Multi-Family LP from Black Elm Financial LP, a related party, on 30 April 2024. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, özgün yapı 1958, güney cephenin %40'ı on yıl sonra eklenmiş, iyi durumda. %100 dolu. 30 Nisan 2024'te ilişkili taraf olan Black Elm Financial LP'den Epiphany Multi-Family LP tarafından satın alınmıştır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-604-21-st-s.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "604 21 Street S — street view",
+            "tr": "604 21 Street S — sokak görünümü"
+          },
+          "verifiedAt": "2012-04"
+        }
       }
     },
     {
@@ -1471,6 +1733,19 @@
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, built 1992, good condition. 100% occupied. Acquired by Epiphany Multi-Family LP from Black Elm Financial LP, a related party, on 30 April 2024. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, 1992 yapımı, iyi durumda. %100 dolu. 30 Nisan 2024'te ilişkili taraf olan Black Elm Financial LP'den Epiphany Multi-Family LP tarafından satın alınmıştır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-542-5-st-se.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "542 5 Street SE — street view",
+            "tr": "542 5 Street SE — sokak görünümü"
+          },
+          "verifiedAt": "2025-05"
+        }
       }
     },
     {
@@ -1490,14 +1765,27 @@
       "city": "North Battleford",
       "province": "Saskatchewan",
       "country": "Canada",
-      "latitude": 52.7703369,
-      "longitude": -108.3004528,
+      "latitude": 52.7754077,
+      "longitude": -108.3009389,
       "assetClassId": "multifamily",
       "status": "stabilized",
       "verificationStatus": "verified",
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, built 1983, average condition. 100% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, 1983 yapımı, ortalama durumda. %100 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-1201-99-st.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "1201 99 Street — street view",
+            "tr": "1201 99 Street — sokak görünümü"
+          },
+          "verifiedAt": "2013-06"
+        }
       }
     },
     {
@@ -1525,6 +1813,19 @@
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, built 1977, average condition. 96% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, 1977 yapımı, ortalama durumda. %96 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-1551-107-st.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "1551 107 Street — street view",
+            "tr": "1551 107 Street — sokak görünümü"
+          },
+          "verifiedAt": "2024-05"
+        }
       }
     },
     {
@@ -1552,6 +1853,19 @@
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, built 1982, average condition. 100% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, 1982 yapımı, ortalama durumda. %100 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-1901-pearson-ave.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "1901 Pearson Avenue — street view",
+            "tr": "1901 Pearson Avenue — sokak görünümü"
+          },
+          "verifiedAt": "2013-06"
+        }
       }
     },
     {
@@ -1579,6 +1893,19 @@
       "ownershipNote": {
         "en": "Apartment rental property. Load-bearing construction, built 1977, average condition. 100% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Taşıyıcı duvarlı yapı, 1977 yapımı, ortalama durumda. %100 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-10908-winder-cres.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "10908 Winder Crescent — street view",
+            "tr": "10908 Winder Crescent — sokak görünümü"
+          },
+          "verifiedAt": "2024-05"
+        }
       }
     },
     {
@@ -1606,6 +1933,19 @@
       "ownershipNote": {
         "en": "Apartment rental property. Load-bearing construction, built 1974, good condition. 96% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Taşıyıcı duvarlı yapı, 1974 yapımı, iyi durumda. %96 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-10910-winder-cres.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "10910 Winder Crescent — street view",
+            "tr": "10910 Winder Crescent — sokak görünümü"
+          },
+          "verifiedAt": "2024-05"
+        }
       }
     },
     {
@@ -1633,6 +1973,19 @@
       "ownershipNote": {
         "en": "Apartment rental property. Load-bearing construction, built 1974, good condition. 83% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Taşıyıcı duvarlı yapı, 1974 yapımı, iyi durumda. %83 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-10912-winder-cres.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "10912 Winder Crescent — street view",
+            "tr": "10912 Winder Crescent — sokak görünümü"
+          },
+          "verifiedAt": "2024-05"
+        }
       }
     },
     {
@@ -1652,14 +2005,27 @@
       "city": "Medicine Hat",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 50.0097037,
-      "longitude": -110.6590469,
+      "latitude": 50.0183325,
+      "longitude": -110.6387,
       "assetClassId": "multifamily",
       "status": "stabilized",
       "verificationStatus": "verified",
       "ownershipNote": {
         "en": "Apartment rental property. Wood frame, built 1977, good condition. 100% occupied. Held by Epiphany Multi-Family LP. An environmental assessment found no liabilities but noted the building age means asbestos-containing materials are possible; no survey was conducted.",
         "tr": "Apartman kiralık mülkü. Ahşap karkas, 1977 yapımı, iyi durumda. %100 dolu. Epiphany Multi-Family LP tarafından tutulmaktadır. Çevresel değerlendirmede yükümlülük bulunmamış ancak bina yaşı nedeniyle asbest içeren malzeme olabileceği belirtilmiştir; inceleme yapılmamıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/street-view/legacy-2231-southview-dr.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "2231 Southview Drive — street view",
+            "tr": "2231 Southview Drive — sokak görünümü"
+          },
+          "verifiedAt": "2025-05"
+        }
       }
     },
     {
@@ -1679,8 +2045,8 @@
       "city": "Lethbridge",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 49.6699438,
-      "longitude": -112.8125103,
+      "latitude": 49.6696118,
+      "longitude": -112.7876913,
       "assetClassId": "multifamily",
       "status": "value-add",
       "verificationStatus": "verified",
@@ -1693,7 +2059,9 @@
           "alt": {
             "en": "3620 23 Avenue S, Lethbridge — apartment building",
             "tr": "3620 23 Avenue S, Lethbridge — apartman binası"
-          }
+          },
+          "bucket": "offering-public",
+          "path": "legacy-epiphany/media/3620-23-ave-s-lethbridge.jpg"
         }
       },
       "ownershipNote": {

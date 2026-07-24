@@ -22,6 +22,7 @@ import {
   X,
 } from "lucide-react";
 import { canUseWorkspace } from "@/lib/capital/portal-access";
+import { PROFESSIONAL_WORKSPACE_ENABLED } from "@/lib/capital/feature-flags";
 import { investmentBrandFor } from "@/lib/capital/investment-brand";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
@@ -155,6 +156,7 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (!PROFESSIONAL_WORKSPACE_ENABLED) return;
     if (
       pathname.includes("/professional") ||
       pathname.includes("/clients") ||
@@ -257,25 +259,27 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className={cn("border-t border-white/10 p-3", desktopCollapsed && "lg:p-2")}>
-          <div className={cn("mb-3", desktopCollapsed && "lg:hidden")}>
-            <p className="mb-1.5 px-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white/50">{c.accountView}</p>
-            <div className="flex h-9 items-center rounded-md border border-white/10 bg-white/5 p-0.5" role="group" aria-label={c.accountView}>
-              {(["investor", "professional"] as const).map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  onClick={() => switchAccountView(item)}
-                  className={cn(
-                    "h-8 flex-1 rounded px-1 text-[10px] font-bold uppercase tracking-[0.04em] transition-colors",
-                    accountView === item ? "bg-white text-[#0a2d46]" : "text-white/55 hover:text-white",
-                  )}
-                  aria-pressed={accountView === item}
-                >
-                  {item === "investor" ? c.accountViewInvestor : c.accountViewProfessional}
-                </button>
-              ))}
+          {PROFESSIONAL_WORKSPACE_ENABLED && (
+            <div className={cn("mb-3", desktopCollapsed && "lg:hidden")}>
+              <p className="mb-1.5 px-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white/50">{c.accountView}</p>
+              <div className="flex h-9 items-center rounded-md border border-white/10 bg-white/5 p-0.5" role="group" aria-label={c.accountView}>
+                {(["investor", "professional"] as const).map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => switchAccountView(item)}
+                    className={cn(
+                      "h-8 flex-1 rounded px-1 text-[10px] font-bold uppercase tracking-[0.04em] transition-colors",
+                      accountView === item ? "bg-white text-[#0a2d46]" : "text-white/55 hover:text-white",
+                    )}
+                    aria-pressed={accountView === item}
+                  >
+                    {item === "investor" ? c.accountViewInvestor : c.accountViewProfessional}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
           <div className={cn("relative rounded-md border border-white/10 bg-white/5", desktopCollapsed && "lg:border-0 lg:bg-transparent")}>
             <button type="button" onClick={() => setAccountOpen((open) => !open)} className={cn("flex w-full items-center gap-2 px-2.5 py-2 text-left text-white", desktopCollapsed && "lg:justify-center lg:px-0")} aria-expanded={accountOpen}>
               <span className="grid size-7 shrink-0 place-items-center rounded bg-[#e8edf1] text-[#0a2d46]"><UserRound className="size-3.5" /></span>

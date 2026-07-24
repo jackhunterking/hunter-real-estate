@@ -96,8 +96,6 @@ const COPY = {
   },
 } as const;
 
-const FUND_COLORS = ["#0f5b78", "#996c26", "#4f6d45", "#764d68", "#4f5f86"];
-
 type Aggregated = { position: { id: string; amount: number; status: string }; fund: OfferingBundle };
 
 /** Group a user's positions by offering, summing amounts. */
@@ -166,10 +164,9 @@ export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }
   const visualFunds = usingHeld ? heldFunds.map(({ fund }) => fund) : opportunities;
 
   const properties = useMemo(
-    () => visualFunds.flatMap((fund, index) => buildMapProperties(fund, lang, assetClasses).map((property) => ({
+    () => visualFunds.flatMap((fund) => buildMapProperties(fund, lang, assetClasses).map((property) => ({
       ...property,
       id: `${fund.id}:${property.id}`,
-      accent: FUND_COLORS[index % FUND_COLORS.length],
       offeringName: tx(fund.shortName, lang),
     }))),
     [visualFunds, lang, assetClasses],

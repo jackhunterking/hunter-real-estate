@@ -127,6 +127,38 @@ i {
   }
 }
 
+/* Portfolio building pins + clusters (FundMap). Leaflet + markercluster CSS are
+   loaded from CDN at runtime; these override the plugin's default look. */
+.leaflet-div-icon.legacy-pin-wrap,
+.leaflet-div-icon.legacy-cluster-wrap {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.legacy-pin {
+  filter: drop-shadow(0 3px 3px rgba(9, 26, 40, 0.35));
+  transition: transform 0.12s ease;
+}
+.legacy-pin svg {
+  display: block;
+}
+.legacy-pin-wrap:hover .legacy-pin:not(.is-selected) {
+  transform: translateY(-2px);
+}
+.legacy-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: #e23b2e;
+  color: #fff;
+  font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+  box-shadow: 0 0 0 6px rgba(226, 59, 46, 0.22), 0 2px 8px rgba(9, 26, 40, 0.3);
+}
+
 /* On-map building popup (FundMap). Leaflet CSS is loaded from CDN at runtime. */
 .fund-popup-wrap .leaflet-popup-content-wrapper {
   border-radius: 14px;
@@ -189,6 +221,29 @@ i {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+/* Icon-only "open in Google Maps" — bottom-right of the photo, mirroring the
+   fund badge; the same dark translucent pill as the close button. */
+.fund-popup-media .fund-popup-maps {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(9, 26, 40, 0.72);
+  color: #fff;
+  transition: background 0.15s ease;
+}
+.fund-popup-media .fund-popup-maps:hover {
+  background: rgba(9, 26, 40, 0.92);
+}
+.fund-popup-media .fund-popup-maps svg {
+  width: 15px;
+  height: 15px;
 }
 .fund-popup-body {
   display: flex;

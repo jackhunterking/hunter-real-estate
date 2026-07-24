@@ -3,6 +3,7 @@ import type {
   PartnerCommissionAllocationPercentage,
   PartnerTier,
 } from "./types";
+import { PROFESSIONAL_WORKSPACE_ENABLED } from "./feature-flags";
 
 export type PortalWorkspace = "investor" | "professional" | "operations";
 export type PreviewPersona = "investor" | "applicant" | "partner" | "firm-admin" | "hnc-admin";
@@ -444,6 +445,9 @@ export function firmRoles(context: PortalAccessContext) {
 export function canUseWorkspace(context: PortalAccessContext, workspace: PortalWorkspace) {
   if (context.user.accountStatus !== "active") return false;
   if (!context.user.emailVerified) return false;
+  // The professional / partner "middle layer" is paused this phase. Gate it here,
+  // ahead of the master_admin short-circuit, so it is hidden for staff too.
+  if (workspace === "professional" && !PROFESSIONAL_WORKSPACE_ENABLED) return false;
   if (hasPlatformRole(context.user, "master_admin")) return true;
   if (workspace === "investor") return true;
   if (workspace === "professional") return isPartnerActive(context);

@@ -1,0 +1,10 @@
+{
+  "legacy-1901-pearson-ave": { "heading": 45 },
+  "legacy-405-stafford-dr-n": { "heading": 90 },
+  "legacy-5112-54-ave": { "heading": 270 },
+  "legacy-550-wt-hill-blvd-s": { "heading": 45 },
+  "legacy-604-21-st-s": { "heading": 135 },
+  "legacy-1105-36-st-n": { "heading": 270 },
+  "legacy-3760-18-ave-n": { "locLat": 49.7223052, "locLng": -112.7871765, "heading": 151 },
+  "legacy-3710-18-ave-n": { "locLat": 49.7223082, "locLng": -112.7877353, "heading": 147 }
+}

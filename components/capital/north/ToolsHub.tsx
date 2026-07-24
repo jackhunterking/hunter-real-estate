@@ -28,17 +28,20 @@ const COPY = {
     tools: [
       {
         href: "/resources/tools/active-vs-passive",
-        name: "Active vs. Passive",
+        name: "Active vs. Passive Investments",
+        kind: "Calculator",
         summary: "Rental property vs. an investment fund. What a condo or house nets each month after real expenses, against what the same cash actually earned in a fund.",
       },
       {
         href: "/resources/tools/passive-vs-passive",
-        name: "Passive vs. Passive",
+        name: "Passive vs. Passive Investments",
+        kind: "Comparison",
         summary: "One fund against another, on the same cash. Published returns period by period, plus a side-by-side of the terms each fund publishes.",
       },
     ],
     qualification: {
       href: "/resources/investor-readiness",
+      kind: "Assessment",
       professional: {
         name: "Investor qualification",
         summary: "Identify the Canadian financial category indicated by a client’s answers, regardless of where they live, and record the assessment on their file.",
@@ -56,17 +59,20 @@ const COPY = {
     tools: [
       {
         href: "/resources/tools/active-vs-passive",
-        name: "Aktif ve Pasif",
+        name: "Aktif ve Pasif Yatırımlar",
+        kind: "Hesaplayıcı",
         summary: "Kiralık mülk ile yatırım fonu. Bir condo ya da evin gerçek giderlerden sonra aylık net getirisi ile aynı nakdin bir fonda gerçekte kazandığı.",
       },
       {
         href: "/resources/tools/passive-vs-passive",
-        name: "Pasif ve Pasif",
+        name: "Pasif ve Pasif Yatırımlar",
+        kind: "Karşılaştırma",
         summary: "Aynı nakitle iki fonun karşılaştırması. Dönem dönem yayımlanan getiriler ve her fonun yayımladığı koşulların yan yana görünümü.",
       },
     ],
     qualification: {
       href: "/resources/investor-readiness",
+      kind: "Değerlendirme",
       professional: {
         name: "Yatırımcı sınıflandırması",
         summary: "Müşterinin nerede yaşadığına bakılmaksızın, yanıtlarının gösterdiği Kanada finansal kategorisini belirleyin ve değerlendirmeyi dosyasına kaydedin.",
@@ -96,7 +102,7 @@ export function ToolsHub() {
   const qualification = professionalMode ? c.qualification.professional : c.qualification.investor;
   const tools = [
     ...c.tools.map((tool, index) => ({ ...tool, icon: ICONS[index] ?? Scale })),
-    { href: c.qualification.href, ...qualification, icon: BadgeCheck },
+    { href: c.qualification.href, kind: c.qualification.kind, ...qualification, icon: BadgeCheck },
   ];
 
   return (
@@ -108,21 +114,30 @@ export function ToolsHub() {
         {tools.map((tool) => {
           const Icon = tool.icon;
           return (
-            <article key={tool.href} className="group relative overflow-hidden rounded-lg border border-[#d8e0e4] bg-white shadow-[0_1px_2px_rgba(8,34,52,0.04)]">
-              <div className="h-1.5 bg-gradient-to-r from-[#c6a44b] via-[#e1c56f] to-[#0a4b72]" />
-              <div className="flex h-full flex-col p-6 sm:p-7">
-                <span className="inline-flex size-9 items-center justify-center rounded-full bg-[#eef4f7] text-[#0a4b72]">
+            <article
+              key={tool.href}
+              className="group relative flex flex-col overflow-hidden rounded-lg border border-[#d8e0e4] bg-white shadow-[0_1px_2px_rgba(8,34,52,0.04)] transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#a9c0d0] hover:shadow-[0_10px_24px_rgba(8,34,52,0.10)]"
+            >
+              <div className="flex items-center justify-between bg-[#0a3452] px-6 py-4 sm:px-7">
+                <span className="inline-flex size-10 items-center justify-center rounded-[10px] bg-white/10 text-[#bcd3e4]">
                   <Icon className="size-5" />
                 </span>
-                <h2 className="mt-5 font-serif text-2xl font-semibold leading-tight text-[#102c3f]">{tool.name}</h2>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8fa9bc]">{tool.kind}</span>
+              </div>
+              <div className="flex flex-1 flex-col p-6 sm:p-7">
+                <h2 className="font-serif text-2xl font-semibold leading-tight text-[#102c3f]">{tool.name}</h2>
                 <p className="mt-3 text-sm leading-6 text-[#5a6c77]">{tool.summary}</p>
-                <Link
-                  href={`${NORTH_BASE}${tool.href}`}
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#0a4b72] after:absolute after:inset-0"
-                >
-                  {c.open}
-                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                </Link>
+                <div className="mt-auto flex items-center justify-between border-t border-[#eef1f3] pt-4">
+                  <Link
+                    href={`${NORTH_BASE}${tool.href}`}
+                    className="text-sm font-semibold text-[#0a4b72] after:absolute after:inset-0"
+                  >
+                    {c.open}
+                  </Link>
+                  <span className="inline-flex size-8 items-center justify-center rounded-full bg-[#eef4f7] text-[#0a4b72] transition-colors group-hover:bg-[#0a4b72] group-hover:text-white">
+                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </div>
               </div>
             </article>
           );

@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import type { Lang, OfferingBundle, OfferingDocument, Property, ServiceProviders, SourcedValue } from "@/lib/capital/types";
 import type { DocumentTermGroup } from "@/lib/capital/key-facts";
-import { localizeVerification, primaryShareClass, resolveImage } from "@/lib/capital/present";
+import { BUILDING_PLACEHOLDER_GRADIENT, localizeVerification, primaryShareClass, resolveImage } from "@/lib/capital/present";
 import { computeInvestmentIncome } from "@/lib/capital/performance";
 import { CommaInput } from "@/components/capital/north/CompareUI";
 import { cn } from "@/lib/utils";
@@ -194,11 +194,16 @@ export function AssetGallery({ properties, lang }: { properties: Property[]; lan
       {properties.map((p) => {
         const image = resolveImage(p.media?.card ?? p.media?.gallery?.[0], p.id, tx(p.name, lang), lang);
         const verified = p.verificationStatus === "verified";
+        const address = tx(p.address, lang);
+        const cityProvince = `${p.city}, ${p.province}`;
+        // The address usually already names the city/province; only append it when
+        // it doesn't, so we never render "…Cold Lake, Alberta · Cold Lake, Alberta".
+        const location = address ? (address.includes(p.city) ? address : `${address} · ${cityProvince}`) : cityProvince;
         return (
           <figure key={p.id} className="overflow-hidden rounded-xl border border-border bg-card">
             <div
               className="relative flex aspect-[4/3] items-center justify-center"
-              style={image.src ? undefined : { backgroundImage: image.gradient }}
+              style={image.src ? undefined : { backgroundImage: BUILDING_PLACEHOLDER_GRADIENT }}
             >
               {image.src ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -215,10 +220,7 @@ export function AssetGallery({ properties, lang }: { properties: Property[]; lan
             </div>
             <figcaption className="p-3">
               <p className="truncate text-sm font-semibold text-foreground">{tx(p.name, lang)}</p>
-              <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                {tx(p.address, lang) ? `${tx(p.address, lang)} · ` : ""}
-                {p.city}, {p.province}
-              </p>
+              <p className="mt-0.5 truncate text-xs text-muted-foreground">{location}</p>
             </figcaption>
           </figure>
         );
