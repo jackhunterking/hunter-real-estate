@@ -299,7 +299,6 @@ export function PerformanceFrame({
 }) {
   const { lang } = useLang();
   const rows = (offering.performance ?? []).slice(-6);
-  const note = tx(offering.performanceNote, lang);
 
   return (
     <BrowserFrame label={c.frames.performance}>
@@ -339,7 +338,6 @@ export function PerformanceFrame({
               </tbody>
             </table>
           )}
-          {note && <p className="mt-3 text-[11px] leading-4 text-muted-foreground">{note}</p>}
         </div>
       </div>
     </BrowserFrame>

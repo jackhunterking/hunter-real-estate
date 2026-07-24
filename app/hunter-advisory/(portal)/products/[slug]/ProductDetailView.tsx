@@ -47,7 +47,6 @@ const COPY = {
     period: "Period", returnValue: "Return",
     aboutManager: "About the company", headquarters: "Headquarters", fundStructure: "Structure", companyWebsite: "Company website",
     trust: "Service providers", auditor: "Auditor", legalCounsel: "Legal counsel", appraiser: "Appraiser",
-    buildingHelp: "The real, rentable buildings this investment owns — on the map and below. Select a marker or card to view information; missing facts are shown as unavailable and are not inferred.",
     docsHelp: "Approved documents are kept with this offering so their source and version remain clear.",
     type: "Type", effective: "Effective date", version: "Version", source: "Source", open: "Open document", held: "Available through Hunter & Hunter Investment Advisors",
     noDocs: "No approved documents are available.",
@@ -70,7 +69,6 @@ const COPY = {
     period: "Dönem", returnValue: "Getiri",
     aboutManager: "Şirket hakkında", headquarters: "Merkez", fundStructure: "Yapı", companyWebsite: "Şirket web sitesi",
     trust: "Hizmet sağlayıcıları", auditor: "Denetçi", legalCounsel: "Hukuk müşaviri", appraiser: "Değerleme uzmanı",
-    buildingHelp: "Bu yatırımın sahip olduğu gerçek, kiralık binalar — haritada ve aşağıda. Bilgileri görmek için bir işaretçi veya kart seçin; eksik bilgiler mevcut değil olarak gösterilir ve tahmin edilmez.",
     docsHelp: "Onaylı belgeler, kaynak ve sürümlerinin açık kalması için bu seçenekle birlikte tutulur.",
     type: "Tür", effective: "Yürürlük tarihi", version: "Sürüm", source: "Kaynak", open: "Belgeyi aç", held: "Hunter & Hunter Investment Advisors üzerinden mevcut",
     noDocs: "Onaylı belge mevcut değil.",
@@ -228,7 +226,6 @@ function Performance({ offering }: { offering: OfferingBundle }) {
     value: item.value,
     note: tx(item.note, lang),
   }));
-  const note = tx(offering.trailingReturnsNote, lang);
 
   return (
     <div className="space-y-5">
@@ -266,7 +263,6 @@ function Performance({ offering }: { offering: OfferingBundle }) {
               </tbody>
             </table>
           </div>
-          {note && <p className="rounded-lg border border-border bg-secondary/40 px-4 py-3 text-xs leading-5 text-muted-foreground">{note}</p>}
         </>
       ) : (
         <div className="rounded-xl border border-border bg-card p-10 text-center text-sm text-muted-foreground">{c.noHistory}</div>
@@ -287,7 +283,7 @@ function Buildings({ offering }: { offering: OfferingBundle }) {
   const { lang, t } = useLang(); const c = pick(COPY, lang);
   return (
     <div className="space-y-4">
-      <SectionTitle title={t.capitalApp.map.portfolioBuildings} help={c.buildingHelp} />
+      <SectionTitle title={t.capitalApp.map.portfolioBuildings} />
       <FundMapEmbed offering={offering} />
     </div>
   );
