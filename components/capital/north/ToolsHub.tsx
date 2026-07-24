@@ -28,9 +28,9 @@ const COPY = {
     tools: [
       {
         href: "/resources/tools/active-vs-passive",
-        name: "Active vs. Passive Investments",
+        name: "Passive vs. Active Investments",
         kind: "Calculator",
-        summary: "Rental property vs. an investment fund. What a condo or house nets each month after real expenses, against what the same cash actually earned in a fund.",
+        summary: "An investment fund vs. rental property. What a condo or house nets each month after real expenses, against what the same cash actually earned in a fund.",
       },
       {
         href: "/resources/tools/passive-vs-passive",
@@ -59,9 +59,9 @@ const COPY = {
     tools: [
       {
         href: "/resources/tools/active-vs-passive",
-        name: "Aktif ve Pasif Yatırımlar",
+        name: "Pasif ve Aktif Yatırımlar",
         kind: "Hesaplayıcı",
-        summary: "Kiralık mülk ile yatırım fonu. Bir condo ya da evin gerçek giderlerden sonra aylık net getirisi ile aynı nakdin bir fonda gerçekte kazandığı.",
+        summary: "Yatırım fonu ile kiralık mülk. Bir condo ya da evin gerçek giderlerden sonra aylık net getirisi ile aynı nakdin bir fonda gerçekte kazandığı.",
       },
       {
         href: "/resources/tools/passive-vs-passive",

@@ -31,8 +31,8 @@ const RED = "#a24a3f";
 
 const COPY = {
   en: {
-    title: "Active vs. Passive",
-    description: "Rental property vs. an investment fund — the monthly cash flow of a rental against what the same cash actually earned in a fund.",
+    title: "Passive vs. Active",
+    description: "An investment fund vs. rental property — the monthly cash flow of a rental against what the same cash actually earned in a fund.",
     condo: "Condo",
     house: "House",
     reset: "Reset",
@@ -92,8 +92,8 @@ const COPY = {
     viewFund: "Investment details",
   },
   tr: {
-    title: "Aktif ve Pasif",
-    description: "Kiralık mülk ile yatırım fonu — bir kiralığın aylık nakit akışı ile aynı nakdin bir fonda gerçekte kazandığı.",
+    title: "Pasif ve Aktif",
+    description: "Yatırım fonu ile kiralık mülk — bir kiralığın aylık nakit akışı ile aynı nakdin bir fonda gerçekte kazandığı.",
     condo: "Condo",
     house: "Ev",
     reset: "Sıfırla",
