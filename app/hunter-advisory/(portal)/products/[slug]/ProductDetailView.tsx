@@ -226,7 +226,6 @@ function Performance({ offering }: { offering: OfferingBundle }) {
     value: item.value,
     note: tx(item.note, lang),
   }));
-  const note = tx(offering.trailingReturnsNote, lang);
 
   return (
     <div className="space-y-5">
@@ -264,7 +263,6 @@ function Performance({ offering }: { offering: OfferingBundle }) {
               </tbody>
             </table>
           </div>
-          {note && <p className="rounded-lg border border-border bg-secondary/40 px-4 py-3 text-xs leading-5 text-muted-foreground">{note}</p>}
         </>
       ) : (
         <div className="rounded-xl border border-border bg-card p-10 text-center text-sm text-muted-foreground">{c.noHistory}</div>
