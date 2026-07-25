@@ -1,20 +1,30 @@
 /**
  * Marketing copy for the Hunter & Hunter public landing page.
  *
- * English is the authored source of truth for launch. The bilingual shape is
- * preserved (`{ en, tr }`) so a Turkish / global-translation pass can be added
- * later without touching any read site — for now `tr` aliases `en`, so nothing
- * ever renders half-translated. Keep positional arrays (icons in the section
- * files) aligned by index to the arrays here.
+ * Plain-language, Instagram-first. English and Turkish are both authored in full
+ * (`{ en, tr }`) so the language dropdown can switch between them without any
+ * half-translated state. The audience is a cold visitor — often a Turkish
+ * speaker in Turkey who is still *exploring* — so copy leads with the concept in
+ * everyday words, keeps figures qualified, and is honest about eligibility.
+ *
+ * Keep positional arrays (icons in the section files) aligned by index to the
+ * arrays here. Keep entity names / registrations (Parvis, Exempt Market Dealer,
+ * NRD #74000) intact in every language.
  */
 
 export interface LandingCopy {
-  nav: { opportunities: string; platform: string; why: string };
-  actions: { getAccess: string; seeOpportunities: string; signIn: string };
+  nav: { opportunities: string; platform: string; why: string; how: string };
+  actions: {
+    getAccess: string;
+    seeOpportunities: string;
+    seeHowItWorks: string;
+    signIn: string;
+  };
   hero: {
     eyebrow: string;
     title: string;
     body: string;
+    stat: { value: string; label: string; note: string };
   };
   trustBar: { items: string[] };
   platform: {
@@ -29,12 +39,18 @@ export interface LandingCopy {
     title: string;
     items: { title: string; body: string }[];
   };
+  buildings: { eyebrow: string; title: string; body: string };
   ways: {
     eyebrow: string;
     title: string;
     caption: string;
     previewCaption: string;
     items: { title: string; body: string }[];
+  };
+  faq: {
+    eyebrow: string;
+    title: string;
+    items: { q: string; a: string }[];
   };
   final: { eyebrow: string; title: string; body: string };
   footer: {
@@ -88,99 +104,139 @@ const en: LandingCopy = {
     opportunities: "Opportunities",
     platform: "The platform",
     why: "Why real estate",
+    how: "How it works",
   },
   actions: {
     getAccess: "Get access",
     seeOpportunities: "See the opportunities",
+    seeHowItWorks: "See how it works",
     signIn: "Sign in",
   },
   hero: {
-    eyebrow: "Private real estate · By access",
+    eyebrow: "Real estate investing, made simple",
+    title: "Own a share of real Canadian buildings — and earn steady income.",
+    body: "We help everyday investors put money into real, income-producing property across Canada — with a licensed team guiding every step.",
     // Union of the published Class A target ranges of the open funds (Legacy
     // 12–15%, Lankin 10–14%), both approved-public in lib/capital/data.ts.
-    title: "Targeting 10–15% annual returns.",
-    body: "Institutional-level private real estate, curated for Canadian investors.",
+    stat: {
+      value: "10–15%",
+      label: "Target annual return",
+      note: "A target across current funds — not guaranteed.",
+    },
   },
   trustBar: {
     // Product-agnostic credibility only — no fund-specific figures here.
     items: [
-      "Institutional-grade Canadian real estate",
-      "Independently audited investments",
+      "Real Canadian real estate",
+      "Independently audited",
       "RRSP · TFSA · RESP eligible",
-      "Dealer-supervised by Parvis",
+      "Overseen by a licensed dealer (Parvis)",
     ],
   },
   platform: {
     eyebrow: "Inside the platform",
-    title: "This is what your money looks like from the inside.",
-    body: "The same workspace our investors sign into — real investments, real figures.",
+    title: "See exactly where your money goes.",
+    body: "The same simple dashboard our investors use — real properties, real numbers.",
     tabs: [
       {
-        label: "Frictionless access",
-        title: "Your portfolio on one calm screen",
-        body: "The investments you hold, their terms, and your distributions — no paperwork chase.",
+        label: "Simple dashboard",
+        title: "Your whole portfolio on one screen",
+        body: "What you own, the terms, and the income you've received — no paperwork chase.",
       },
       {
-        label: "Exclusive opportunities",
-        title: "Only what passes review makes the shelf",
-        body: "Every offering arrives with source-verified key facts, down to the fact sheet and page.",
+        label: "Vetted opportunities",
+        title: "Only reviewed deals make the shelf",
+        body: "Every opportunity comes with clear, source-checked key facts.",
       },
       {
-        label: "Capital growth",
-        title: "Published performance, not promises",
-        body: "Historical returns shown exactly as published.",
+        label: "Real performance",
+        title: "Published results, not promises",
+        body: "Past performance shown exactly as reported.",
       },
       {
-        label: "Tangible assets",
+        label: "Real buildings",
         title: "The actual buildings behind your money",
-        body: "Real photos, cities, and verification for the properties in the portfolio.",
+        body: "Real photos and locations for the properties you invest in.",
       },
     ],
   },
   featured: {
     eyebrow: "Open now",
     title: "Open for investment.",
-    body: "Get access to see full terms, documents, and the numbers behind each one.",
+    body: "Get access to see the full terms, documents, and numbers behind each one.",
     open: "Open now",
   },
   benefits: {
-    eyebrow: "Why private real estate",
-    title: "An integral part of high-performing portfolios.",
+    eyebrow: "Why real estate",
+    title: "Three simple reasons people invest.",
     items: [
       {
-        title: "Diversified portfolio",
-        body: "Real assets move on rents and land — not on headlines.",
+        title: "Passive income",
+        body: "The buildings earn rent from tenants — and your share is paid to you on a schedule.",
       },
       {
-        title: "Protection against inflation",
-        body: "Cash quietly loses to inflation. Buildings have historically kept pace.",
+        title: "Wealth protection",
+        body: "As cash slowly loses value to inflation, real property has historically held its worth.",
       },
       {
-        title: "Steady cash flow",
-        body: "Income-producing property pays you while you hold it — monthly, by design.",
-      },
-      {
-        title: "A hedge against volatility",
-        body: "Private holdings don't reprice with every market mood swing.",
+        title: "Real Canadian real estate",
+        body: "Actual apartment and commercial buildings you can see, in real Canadian cities.",
       },
     ],
   },
+  buildings: {
+    eyebrow: "Real, not a concept",
+    title: "See the actual buildings.",
+    body: "These are real properties in the current funds — with real photos and locations. Nothing abstract.",
+  },
   ways: {
-    eyebrow: "How to invest",
-    title: "From first look to first distribution.",
-    caption: "A guided path to becoming a partner — with a licensed advisory team beside you at every step.",
-    previewCaption: "A guided path to becoming a partner — with a licensed advisory team beside you at every step.",
+    eyebrow: "How it works",
+    title: "Getting started is simple.",
+    caption: "A guided path, with a licensed advisory team beside you at every step.",
+    previewCaption: "A guided path, with a licensed advisory team beside you at every step.",
     items: [
-      { title: "Find the opportunity", body: "Browse a short, curated shelf of vetted private real estate offerings." },
-      { title: "Review the details", body: "Open the full terms, documents, and the numbers behind each investment." },
-      { title: "Become a partner", body: "Commit through a simple, dealer-supervised onboarding with your advisor." },
-      { title: "Get paid", body: "Distributions are paid straight to your account on each investment's schedule." },
+      {
+        title: "Find an opportunity",
+        body: "Browse a short, curated list of vetted private real estate offerings.",
+      },
+      {
+        title: "Talk to a licensed advisor",
+        body: "Review the details together and ask anything before you commit.",
+      },
+      {
+        title: "Invest and get paid",
+        body: "Complete a simple, supervised sign-up — then receive income on schedule.",
+      },
+    ],
+  },
+  faq: {
+    eyebrow: "Good questions",
+    title: "Questions people ask first.",
+    items: [
+      {
+        q: "How much do I need to start?",
+        a: "Each opportunity sets its own minimum. You'll see the exact amount for each one when you get access.",
+      },
+      {
+        q: "How do I get paid?",
+        a: "The properties generate rental income, and your share is paid to your account on each investment's schedule.",
+      },
+      {
+        q: "Is this regulated? Is my money protected?",
+        a: "Investments are independently audited, and securities services are provided through Parvis Investment Services Inc., an Exempt Market Dealer (NRD #74000). Every investment still carries risk, including possible loss of principal.",
+      },
+      {
+        // TODO(jack/compliance): confirm the exact eligibility wording for
+        // non-resident / outside-Canada investors before launch.
+        q: "Can I invest from outside Canada?",
+        a: "These opportunities are built for Canadian investors and use Canadian accounts (RRSP · TFSA · RESP). If you're outside Canada, the best first step is to speak with our licensed advisory team about whether and how you can take part.",
+      },
     ],
   },
   final: {
     eyebrow: "By access",
-    title: "The door to private real estate is open.",
-    body: "Join a select group of investors putting their money into real, curated Canadian real estate — with an advisory team beside them.",
+    title: "The door to real estate is open.",
+    body: "Join a growing group of investors putting their money into real, curated Canadian real estate — with a licensed team beside them.",
   },
   footer: {
     rights: "© 2026 Hunter & Hunter Investment Advisors.",
@@ -230,9 +286,189 @@ const en: LandingCopy = {
   },
 };
 
-export const LANDING_COPY: { en: LandingCopy; tr: LandingCopy } = {
-  en,
-  // Turkish / global translation is a later pass; alias EN for now so the
-  // language toggle (currently hidden) never surfaces partial translations.
-  tr: en,
+// Turkish is authored in full (not a machine pass). Warm, plain language for a
+// Turkey-based visitor who is still exploring. Proper nouns and registrations
+// stay in their original form. Jack reviews for nuance before launch.
+const tr: LandingCopy = {
+  nav: {
+    opportunities: "Fırsatlar",
+    platform: "Platform",
+    why: "Neden gayrimenkul",
+    how: "Nasıl işliyor",
+  },
+  actions: {
+    getAccess: "Erişim alın",
+    seeOpportunities: "Fırsatları görün",
+    seeHowItWorks: "Nasıl işlediğini görün",
+    signIn: "Giriş yapın",
+  },
+  hero: {
+    eyebrow: "Gayrimenkul yatırımı, sadeleştirildi",
+    title: "Gerçek Kanada binalarından pay sahibi olun — ve düzenli gelir kazanın.",
+    body: "Kanada genelinde gerçek, gelir getiren gayrimenkullere yatırım yapmanıza yardımcı oluyoruz — her adımda lisanslı bir ekip yanınızda.",
+    stat: {
+      value: "%10–15",
+      label: "Hedeflenen yıllık getiri",
+      note: "Mevcut fonlardaki bir hedeftir — garanti değildir.",
+    },
+  },
+  trustBar: {
+    items: [
+      "Gerçek Kanada gayrimenkulü",
+      "Bağımsız denetimli",
+      "RRSP · TFSA · RESP uygun",
+      "Lisanslı aracı (Parvis) gözetiminde",
+    ],
+  },
+  platform: {
+    eyebrow: "Platformun içi",
+    title: "Paranızın tam olarak nereye gittiğini görün.",
+    body: "Yatırımcılarımızın kullandığı aynı sade panel — gerçek mülkler, gerçek rakamlar.",
+    tabs: [
+      {
+        label: "Sade panel",
+        title: "Tüm portföyünüz tek ekranda",
+        body: "Neye sahip olduğunuz, koşullar ve aldığınız gelir — evrak takibi yok.",
+      },
+      {
+        label: "İncelenmiş fırsatlar",
+        title: "Yalnızca incelenen fırsatlar listeye girer",
+        body: "Her fırsat, kaynağı doğrulanmış net temel bilgilerle gelir.",
+      },
+      {
+        label: "Gerçek performans",
+        title: "Vaat değil, yayınlanmış sonuçlar",
+        body: "Geçmiş performans, raporlandığı şekliyle gösterilir.",
+      },
+      {
+        label: "Gerçek binalar",
+        title: "Paranızın arkasındaki gerçek binalar",
+        body: "Yatırım yaptığınız mülklerin gerçek fotoğrafları ve konumları.",
+      },
+    ],
+  },
+  featured: {
+    eyebrow: "Şimdi açık",
+    title: "Yatırıma açık.",
+    body: "Her birinin tüm koşullarını, belgelerini ve rakamlarını görmek için erişim alın.",
+    open: "Şimdi açık",
+  },
+  benefits: {
+    eyebrow: "Neden gayrimenkul",
+    title: "İnsanların yatırım yapmasının üç basit nedeni.",
+    items: [
+      {
+        title: "Pasif gelir",
+        body: "Binalar kiracılardan kira kazanır — ve payınız düzenli olarak size ödenir.",
+      },
+      {
+        title: "Birikiminizi koruma",
+        body: "Nakit, enflasyon karşısında yavaşça değer kaybederken gayrimenkul geçmişte değerini korumuştur.",
+      },
+      {
+        title: "Gerçek Kanada gayrimenkulü",
+        body: "Gerçek Kanada şehirlerinde, görebileceğiniz gerçek konut ve ticari binalar.",
+      },
+    ],
+  },
+  buildings: {
+    eyebrow: "Kavram değil, gerçek",
+    title: "Gerçek binaları görün.",
+    body: "Bunlar mevcut fonlardaki gerçek mülkler — gerçek fotoğraflar ve konumlarla. Hiçbir şey soyut değil.",
+  },
+  ways: {
+    eyebrow: "Nasıl işliyor",
+    title: "Başlamak çok basit.",
+    caption: "Her adımda lisanslı bir danışman ekibinin yanınızda olduğu, rehberli bir yol.",
+    previewCaption: "Her adımda lisanslı bir danışman ekibinin yanınızda olduğu, rehberli bir yol.",
+    items: [
+      {
+        title: "Bir fırsat bulun",
+        body: "İncelenmiş özel gayrimenkul yatırımlarından oluşan kısa, seçilmiş bir listeye göz atın.",
+      },
+      {
+        title: "Lisanslı bir danışmanla konuşun",
+        body: "Detayları birlikte inceleyin ve karar vermeden önce her şeyi sorun.",
+      },
+      {
+        title: "Yatırım yapın ve gelir alın",
+        body: "Basit, gözetimli bir kayıt tamamlayın — ardından düzenli olarak gelir alın.",
+      },
+    ],
+  },
+  faq: {
+    eyebrow: "Güzel sorular",
+    title: "İnsanların ilk sorduğu sorular.",
+    items: [
+      {
+        q: "Başlamak için ne kadar gerekli?",
+        a: "Her fırsat kendi asgari tutarını belirler. Erişim aldığınızda her biri için kesin tutarı görürsünüz.",
+      },
+      {
+        q: "Gelirimi nasıl alırım?",
+        a: "Mülkler kira geliri üretir ve payınız her yatırımın takvimine göre hesabınıza ödenir.",
+      },
+      {
+        q: "Bu düzenlemeye tabi mi? Param güvende mi?",
+        a: "Yatırımlar bağımsız olarak denetlenir ve menkul kıymet hizmetleri, bir Exempt Market Dealer (NRD #74000) olan Parvis Investment Services Inc. aracılığıyla sağlanır. Yine de her yatırım, anaparanın kaybı dahil risk taşır.",
+      },
+      {
+        q: "Kanada dışından yatırım yapabilir miyim?",
+        a: "Bu fırsatlar Kanadalı yatırımcılar için tasarlanmıştır ve Kanada hesaplarını (RRSP · TFSA · RESP) kullanır. Kanada dışındaysanız, en iyi ilk adım, katılıp katılamayacağınızı ve nasıl katılabileceğinizi lisanslı danışman ekibimizle konuşmaktır.",
+      },
+    ],
+  },
+  final: {
+    eyebrow: "Erişimle",
+    title: "Gayrimenkulün kapısı açık.",
+    body: "Paralarını gerçek, seçilmiş Kanada gayrimenkulüne yatıran — yanlarında lisanslı bir ekip olan — büyüyen bir yatırımcı grubuna katılın.",
+  },
+  footer: {
+    rights: "© 2026 Hunter & Hunter Investment Advisors.",
+    risk:
+      "Hedeflenen getiriler ve IRR'ler garanti değildir. Geçmiş performans gelecekteki sonuçları göstermez ve her yatırım, anaparanın olası kaybı dahil risk taşır. Yatırım yapmadan önce ilgili ihraç belgelerini inceleyin.",
+    dealer:
+      "Menkul kıymet hizmetleri, bir Exempt Market Dealer olan Parvis Investment Services Inc. aracılığıyla sağlanır · NRD #74000.",
+    legalLink: "Hukuki bilgiler ve gizlilik",
+    parvisLink: "Parvis açıklamaları",
+  },
+  frames: {
+    portfolio: "Portföyünüz",
+    detail: "Fırsat özeti",
+    performance: "Performans",
+    buildings: "Binalar",
+    openFunds: "Yatırıma açık",
+    targetReturn: "Hedef getiri",
+    availableFunds: "Mevcut yatırımlar",
+    exampleFunds: "Ürün örnekleri",
+    historical: "Geçmiş performans",
+    historicalTag: "Geçmiş veri — tahmin değildir",
+    tabs: ["Genel bakış", "Performans", "Binalar", "Belgeler"],
+    factLabels: {
+      targetReturn: "Hedef getiri",
+      distribution: "Hedef dağıtım",
+      minimum: "Asgari yatırım",
+      risk: "Risk profili",
+      term: "Vade",
+      aum: "Yönetilen varlıklar",
+    },
+  },
+  card: {
+    open: "Şimdi açık",
+    targetReturn: "Hedef getiri",
+    minimum: "Asgari yatırım",
+    distribution: "Hedef dağıtım",
+    portfolio: "Portföy",
+    verifiedLocations: "doğrulanmış konum",
+    aum: "Yönetilen varlıklar",
+    term: "Vade",
+    reviewRequired: "Görmek için erişim alın",
+    verifiedAsOf: "Doğrulandı",
+    view: "Görmek için erişim alın",
+    accountNote: "Tüm koşullar ve belgeler, erişim aldığınızda açılır.",
+    previewLabel: "Fırsat özeti",
+    keyFacts: "Temel bilgiler",
+  },
 };
+
+export const LANDING_COPY: { en: LandingCopy; tr: LandingCopy } = { en, tr };

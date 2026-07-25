@@ -7,6 +7,10 @@
  * `./landing/*` (copy, primitives, mockups, product-frames, sections). The
  * export name and path are unchanged so `app/hunter-advisory/page.tsx` needs
  * no edits.
+ *
+ * Section order is tuned for a cold, mobile Instagram visitor: explain it in
+ * plain words → prove it's real (buildings) → show the simple path → offerings
+ * → credibility → answer the first questions → deeper product tour → convert.
  */
 
 import { useLang } from "@/lib/i18n/LanguageProvider";
@@ -15,13 +19,17 @@ import type { PublicOfferingPreview } from "@/lib/capital/types";
 import { LANDING_COPY } from "./landing/copy";
 import { deriveLandingData } from "./landing/primitives";
 import {
-  BenefitsAndWays,
+  BuildingsGallery,
+  FAQ,
   FeaturedOpportunities,
   FinalCta,
   Hero,
+  HowItWorks,
   LandingFooter,
   LandingHeader,
   PlatformTabs,
+  TrustBar,
+  WhyPillars,
 } from "./landing/sections";
 
 export function PublicLanding({
@@ -36,9 +44,9 @@ export function PublicLanding({
   const isPreview = offerings.length === 0;
 
   return (
-    // English-first marketing surface: pin lang so CSS uppercase casing doesn't
-    // apply Turkish rules (i → İ) to English labels on the tr-default site.
-    <div lang="en" className="min-h-screen bg-[#f5f7f7] text-[#122b3c]">
+    // Content language follows the active UI language so CSS casing rules match
+    // the text (English stays English; Turkish gets Turkish "İ" casing).
+    <div lang={lang} className="min-h-screen bg-[#f5f7f7] text-[#122b3c]">
       <LandingHeader c={c} hasOfferings={data.hasOfferings} />
       <main>
         <Hero
@@ -47,6 +55,12 @@ export function PublicLanding({
           hasOfferings={data.hasOfferings}
           backdrop={data.heroBackdrop}
         />
+        <WhyPillars c={c} images={data.galleryItems} />
+        <BuildingsGallery c={c} images={data.galleryItems} lang={lang} />
+        <HowItWorks c={c} />
+        {data.hasOfferings && <FeaturedOpportunities c={c} offerings={displayOfferings} />}
+        <TrustBar c={c} />
+        <FAQ c={c} />
         {displayOfferings.length > 0 && (
           <PlatformTabs
             c={c}
@@ -54,12 +68,6 @@ export function PublicLanding({
             isPreview={isPreview}
           />
         )}
-        {data.hasOfferings && <FeaturedOpportunities c={c} offerings={displayOfferings} />}
-        <BenefitsAndWays
-          c={c}
-          images={data.galleryItems}
-          hasOfferings={data.hasOfferings}
-        />
         <FinalCta c={c} />
       </main>
       <LandingFooter c={c} />

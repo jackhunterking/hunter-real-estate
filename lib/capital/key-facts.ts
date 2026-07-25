@@ -73,9 +73,12 @@ export function allPublishedFacts(offering: OfferingBundle, share?: ShareClass):
 }
 
 /**
- * The eight facts, always in this order. Fund-published `target` facts win over
- * the derived share-class values so the fund's own wording is what appears;
- * a row is omitted rather than shown empty when its value is missing.
+ * The eight facts, always in this order. The catalogue labels always win: every
+ * offering shows the same "Projected return" / "Distribution" wording, and the
+ * value is read from the structured share-class field and tightened to one lean,
+ * comparable shape — a fund's own free-text `target` label never rewrites the
+ * row, so two offerings never disagree on how the same fact is presented. A row
+ * is omitted rather than shown empty when its value is missing.
  */
 export function buildEssentialKeyFacts(
   offering: OfferingBundle,
@@ -87,11 +90,6 @@ export function buildEssentialKeyFacts(
   const add = (label: string, value?: string | null, provenance?: SourcedValue, note?: string) => {
     if (value) rows.push({ label, value, provenance, note });
   };
-
-  const targets = investorFacts(allPublishedFacts(offering, share), share?.id).filter(
-    (fact) => fact.category === "target",
-  );
-  const target = (match: RegExp) => targets.find((fact) => match.test(fact.label.en));
 
   add(copy.aum, offering.aum ? String(offering.aum.value) : null, offering.aum);
   add(copy.inception, offering.inceptionDate ? formatDate(offering.inceptionDate, lang) : null);
@@ -107,28 +105,20 @@ export function buildEssentialKeyFacts(
     share?.minimumInvestment,
   );
 
-  // A fund's own published `target` fact is shown verbatim — it carries wording
-  // the fund chose (price-point splits, "target only" caveats) that must not be
-  // reshaped. The derived share-class phrase is a marketing sentence, so it is
-  // tightened to the lean shape the masthead and cards already use.
-  const publishedReturn = target(/return/i);
-  if (publishedReturn) {
-    rows.push({ label: tx(publishedReturn.label, lang), value: tx(publishedReturn.value, lang) });
-  } else {
-    add(copy.projectedReturn, share?.targetReturn ? tightRange(share.targetReturn.value) : null, share?.targetReturn);
-  }
+  // Return and distribution read from the structured share-class fields and are
+  // tightened to the lean, comparable shape the masthead and cards already use.
+  // A fund's own free-text `target` fact never rewrites these rows — that is what
+  // let two offerings show the same fact under different labels. The fund's fuller
+  // wording still lives in the Offering Memorandum a reader can open.
+  add(copy.projectedReturn, share?.targetReturn ? tightRange(share.targetReturn.value) : null, share?.targetReturn);
 
-  const publishedDistribution = target(/distribution/i);
-  if (publishedDistribution) {
-    rows.push({ label: tx(publishedDistribution.label, lang), value: tx(publishedDistribution.value, lang) });
-  } else {
-    const derivedDistribution = share?.targetDistribution?.value ?? share?.distributionPerUnit?.value ?? tx(offering.distributionFrequency, lang);
-    add(
-      copy.distribution,
-      derivedDistribution ? tightDistribution(derivedDistribution, lang) : null,
-      share?.targetDistribution ?? share?.distributionPerUnit,
-    );
-  }
+  const derivedDistribution =
+    share?.targetDistribution?.value ?? share?.distributionPerUnit?.value ?? tx(offering.distributionFrequency, lang);
+  add(
+    copy.distribution,
+    derivedDistribution ? tightDistribution(derivedDistribution, lang) : null,
+    share?.targetDistribution ?? share?.distributionPerUnit,
+  );
 
   add(copy.unitPrice, share?.unitPrice ? formatCurrencyCad(share.unitPrice.value, lang) : null, share?.unitPrice);
 

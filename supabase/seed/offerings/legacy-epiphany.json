@@ -715,40 +715,6 @@
       },
       "fundDefinedFacts": [
         {
-          "id": "legacy-class-a-total-return",
-          "label": {
-            "en": "Targeted total return",
-            "tr": "Hedeflenen toplam getiri"
-          },
-          "value": {
-            "en": "12%-15% a year. This is a target only and is not published in the Offering Memorandum.",
-            "tr": "Yılda %12-15. Bu yalnızca bir hedeftir ve Teklif Muhtırasında yayımlanmamıştır."
-          },
-          "category": "target",
-          "shareClassId": "legacy-class-a",
-          "sourceId": "legacy-summary-2026-07",
-          "sourcePage": 2,
-          "effectiveDate": "2026-07-09",
-          "approval": "approved-public"
-        },
-        {
-          "id": "legacy-class-a-preferred-distribution",
-          "label": {
-            "en": "Preferential distribution",
-            "tr": "İmtiyazlı dağıtım"
-          },
-          "value": {
-            "en": "Up to 8.2% a year for units purchased at $4.75, or up to 7.8% for units purchased at $5.00. Paid quarterly, beginning to accrue the month after purchase.",
-            "tr": "4,75 $'dan alınan birimler için yılda %8,2'ye kadar, 5,00 $'dan alınanlar için %7,8'e kadar. Üç ayda bir ödenir; satın alımı izleyen ay tahakkuk etmeye başlar."
-          },
-          "category": "target",
-          "shareClassId": "legacy-class-a",
-          "sourceId": "legacy-om-2026-07",
-          "sourcePage": 2,
-          "effectiveDate": "2026-07-08",
-          "approval": "approved-public"
-        },
-        {
           "id": "legacy-class-a-minimum",
           "label": {
             "en": "Minimum subscription",

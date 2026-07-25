@@ -113,6 +113,43 @@ test("Key facts is a fixed list of eight, whatever the fund publishes", () => {
   );
 });
 
+test("a fund's own return/distribution wording never rewrites the catalogue labels", () => {
+  // An offering that publishes `target` facts labelled the way a fund might — the
+  // exact shape that used to override the row and make two offerings disagree.
+  const withFundLabels = {
+    ...offering,
+    fundDefinedFacts: [
+      ...offering.fundDefinedFacts,
+      fact({
+        id: "fund-total-return",
+        category: "target",
+        label: t("Targeted total return"),
+        value: t("12%-15% a year. This is a target only and is not published in the Offering Memorandum."),
+      }),
+      fact({
+        id: "fund-preferred-distribution",
+        category: "target",
+        label: t("Preferential distribution"),
+        value: t("Up to 8.2% a year for units purchased at $4.75, or up to 7.8% for units purchased at $5.00."),
+      }),
+    ],
+  } as unknown as OfferingBundle;
+
+  const rows = buildEssentialKeyFacts(withFundLabels, share, "en", COPY);
+  const returnRow = rows.find((row) => row.label === COPY.projectedReturn);
+  const distributionRow = rows.find((row) => row.label === COPY.distribution);
+
+  // The catalogue labels win — the fund's free-text labels never appear.
+  assert.ok(returnRow, "return row must use the catalogue label 'Projected return'");
+  assert.ok(distributionRow, "distribution row must use the catalogue label 'Distribution'");
+  assert.equal(rows.some((row) => /Targeted total return|Preferential distribution/.test(row.label)), false);
+
+  // Values come from the structured share-class fields, tightened — never the
+  // fund's caveat prose or price-point split.
+  assert.equal(returnRow?.value, "10–14%");
+  assert.doesNotMatch(JSON.stringify(rows), /target only|Offering Memorandum|\$5\.00/);
+});
+
 test("no fee, commission, channel or redemption term reaches Key facts", () => {
   const rows = buildEssentialKeyFacts(offering, share, "en", COPY);
   const text = JSON.stringify(rows);

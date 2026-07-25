@@ -162,10 +162,10 @@
     "approval": "approved-public"
   },
   "unitsTotal": {
-    "value": 1434,
+    "value": 1692,
     "classification": "current",
-    "asOfDate": "2026-03-31",
-    "sourceId": "lankin-fact-2026-q1",
+    "asOfDate": "2026-07-23",
+    "sourceId": "lankin-site-2026-07",
     "sourcePage": 1,
     "approval": "approved-public"
   },
@@ -620,14 +620,14 @@
         "tr": "Park Centre Place"
       },
       "address": {
-        "en": "2014 Sherwood Drive, Edmonton, Alberta",
-        "tr": "2014 Sherwood Drive, Edmonton, Alberta"
+        "en": "2014 Sherwood Drive, Sherwood Park, Alberta",
+        "tr": "2014 Sherwood Drive, Sherwood Park, Alberta"
       },
-      "city": "Edmonton",
+      "city": "Sherwood Park",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 53.5695097,
-      "longitude": -113.295488,
+      "latitude": 53.5269543,
+      "longitude": -113.2932749,
       "assetClassId": "multifamily",
       "status": "new-construction",
       "verificationStatus": "verified",
@@ -635,6 +635,18 @@
       "ownershipNote": {
         "en": "Built 2023. 927 sq ft average. 165 of 177 units rented as at 10 March 2026; average rent $2,067 per unit.",
         "tr": "2023 yapımı. Ortalama 927 sq ft. 10 Mart 2026 itibarıyla 177 dairenin 165'i kiralık; daire başına ortalama kira 2.067 $."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "lankin-apartment-reit/media/deck/lankin-park-centre-place.jpg",
+          "kind": "photo",
+          "sourceId": "lankin-deck-2026-03",
+          "alt": {
+            "en": "Park Centre Place — Lankin",
+            "tr": "Park Centre Place — Lankin"
+          }
+        }
       }
     },
     {
@@ -664,6 +676,18 @@
       "ownershipNote": {
         "en": "Built 1963. 650 sq ft average. 107 of 110 units rented as at 10 March 2026; average rent $1,795 per unit.",
         "tr": "1963 yapımı. Ortalama 650 sq ft. 10 Mart 2026 itibarıyla 110 dairenin 107'si kiralık; daire başına ortalama kira 1.795 $."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "lankin-apartment-reit/media/deck/lankin-huron-heights.jpg",
+          "kind": "photo",
+          "sourceId": "lankin-deck-2026-03",
+          "alt": {
+            "en": "Huron Heights — Lankin",
+            "tr": "Huron Heights — Lankin"
+          }
+        }
       }
     },
     {
@@ -683,8 +707,8 @@
       "city": "Brampton",
       "province": "Ontario",
       "country": "Canada",
-      "latitude": 43.6918117,
-      "longitude": -79.7454388,
+      "latitude": 43.6917742,
+      "longitude": -79.748543,
       "assetClassId": "multifamily",
       "status": "stabilized",
       "verificationStatus": "verified",
@@ -692,6 +716,18 @@
       "ownershipNote": {
         "en": "Built 1976. 948 sq ft average, including 91 townhouses. 224 of 242 units rented as at 10 March 2026; average rent $1,753 per unit.",
         "tr": "1976 yapımı. 91 sıra ev dahil ortalama 948 sq ft. 10 Mart 2026 itibarıyla 242 dairenin 224'ü kiralık; daire başına ortalama kira 1.753 $."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "lankin-apartment-reit/media/deck/lankin-orenda-court.jpg",
+          "kind": "photo",
+          "sourceId": "lankin-deck-2026-03",
+          "alt": {
+            "en": "Orenda Court — Lankin",
+            "tr": "Orenda Court — Lankin"
+          }
+        }
       }
     },
     {
@@ -720,6 +756,18 @@
       "ownershipNote": {
         "en": "Built 1982. 1,009 sq ft average. 211 of 219 units rented as at 10 March 2026; average rent $1,840 per unit.",
         "tr": "1982 yapımı. Ortalama 1.009 sq ft. 10 Mart 2026 itibarıyla 219 dairenin 211'i kiralık; daire başına ortalama kira 1.840 $."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "lankin-apartment-reit/media/deck/lankin-4-silver-maple.jpg",
+          "kind": "photo",
+          "sourceId": "lankin-deck-2026-03",
+          "alt": {
+            "en": "4 Silver Maple Court — Lankin",
+            "tr": "4 Silver Maple Court — Lankin"
+          }
+        }
       }
     },
     {
@@ -739,8 +787,8 @@
       "city": "Edmonton",
       "province": "Alberta",
       "country": "Canada",
-      "latitude": 53.5493425,
-      "longitude": -113.542861,
+      "latitude": 53.5633648,
+      "longitude": -113.5431001,
       "assetClassId": "multifamily",
       "status": "new-construction",
       "verificationStatus": "verified",
@@ -748,6 +796,18 @@
       "ownershipNote": {
         "en": "Built 2022. 976 sq ft average. 88 of 89 units rented as at 10 March 2026; average rent $1,896 per unit.",
         "tr": "2022 yapımı. Ortalama 976 sq ft. 10 Mart 2026 itibarıyla 89 dairenin 88'i kiralık; daire başına ortalama kira 1.896 $."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "lankin-apartment-reit/media/deck/lankin-greenstone-park.jpg",
+          "kind": "photo",
+          "sourceId": "lankin-deck-2026-03",
+          "alt": {
+            "en": "Greenstone Park — Lankin",
+            "tr": "Greenstone Park — Lankin"
+          }
+        }
       }
     },
     {
@@ -778,6 +838,18 @@
       "ownershipNote": {
         "en": "Built 1971. 811 sq ft average. 116 of 118 units rented as at 10 March 2026; average rent $1,591 per unit.",
         "tr": "1971 yapımı. Ortalama 811 sq ft. 10 Mart 2026 itibarıyla 118 dairenin 116'sı kiralık; daire başına ortalama kira 1.591 $."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "lankin-apartment-reit/media/deck/lankin-darcel-avenue.jpg",
+          "kind": "photo",
+          "sourceId": "lankin-deck-2026-03",
+          "alt": {
+            "en": "Darcel Avenue — Lankin",
+            "tr": "Darcel Avenue — Lankin"
+          }
+        }
       }
     },
     {
@@ -808,6 +880,18 @@
       "ownershipNote": {
         "en": "Built 1975. 743 sq ft average. 132 of 140 units rented as at 10 March 2026; average rent $1,870 per unit.",
         "tr": "1975 yapımı. Ortalama 743 sq ft. 10 Mart 2026 itibarıyla 140 dairenin 132'si kiralık; daire başına ortalama kira 1.870 $."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "lankin-apartment-reit/media/deck/lankin-queen-frederica.jpg",
+          "kind": "photo",
+          "sourceId": "lankin-deck-2026-03",
+          "alt": {
+            "en": "Queen Frederica — Lankin",
+            "tr": "Queen Frederica — Lankin"
+          }
+        }
       }
     },
     {
@@ -838,6 +922,18 @@
       "ownershipNote": {
         "en": "Built 1982. 1,007 sq ft average. Held through 6 Silver Maple JV LP, a joint venture. 324 of 339 units rented as at 10 March 2026; average rent $1,869 per unit. Secured by a $97,750,000 credit facility at 6.25%, maturing 1 January 2027.",
         "tr": "1982 yapımı. Ortalama 1.007 sq ft. Bir ortak girişim olan 6 Silver Maple JV LP aracılığıyla tutulmaktadır. 10 Mart 2026 itibarıyla 339 dairenin 324'ü kiralık; daire başına ortalama kira 1.869 $. 1 Ocak 2027 vadeli, %6,25 faizli 97.750.000 $ kredi ile teminatlandırılmıştır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "lankin-apartment-reit/media/deck/lankin-6-silver-maple.jpg",
+          "kind": "photo",
+          "sourceId": "lankin-deck-2026-03",
+          "alt": {
+            "en": "6 Silver Maple Court — Lankin",
+            "tr": "6 Silver Maple Court — Lankin"
+          }
+        }
       }
     },
     {
@@ -847,8 +943,8 @@
       ],
       "managerId": "lankin-investments",
       "name": {
-        "en": "The Riverwood",
-        "tr": "The Riverwood"
+        "en": "1551 Lycée Place",
+        "tr": "1551 Lycée Place"
       },
       "address": {
         "en": "1551 Lycée Place, Ottawa, Ontario K1G 0E5",
@@ -867,6 +963,19 @@
       "ownershipNote": {
         "en": "23-storey concrete high-rise; 115 one-bedroom and 143 two-bedroom suites. Acquired May 2026, after the date of the 1 May 2026 Offering Memorandum, and therefore not described in it.",
         "tr": "23 katlı betonarme yüksek yapı; 115 adet 1+1 ve 143 adet 2+1 daire. 1 Mayıs 2026 tarihli Teklif Muhtırasından sonra, Mayıs 2026'da satın alınmıştır ve bu nedenle muhtırada yer almamaktadır."
+      },
+      "media": {
+        "card": {
+          "bucket": "offering-public",
+          "path": "lankin-apartment-reit/media/street-view/lankin-riverwood-ottawa.jpg",
+          "kind": "photo",
+          "sourceId": "google-street-view",
+          "alt": {
+            "en": "1551 Lycée Place — street view",
+            "tr": "1551 Lycée Place — sokak görünümü"
+          },
+          "verifiedAt": "2024-10"
+        }
       }
     }
   ],

@@ -16,17 +16,22 @@ import {
   BadgeCheck,
   Banknote,
   Building2,
+  ChevronDown,
   HandCoins,
   KeyRound,
   Layers,
+  MapPin,
   PiggyBank,
   ShieldCheck,
-  Umbrella,
+  TrendingUp,
   type LucideIcon,
 } from "lucide-react";
 import type { PublicOfferingPreview } from "@/lib/capital/types";
+import { tx } from "@/lib/i18n/localize";
+import type { Lang } from "@/lib/i18n/dictionaries";
 import { NORTH_BASE, NorthBrand, ParvisCoBrand } from "../NorthBrand";
 import type { LandingCopy } from "./copy";
+import { LanguageMenu } from "./LanguageMenu";
 import {
   Reveal,
   SectionHeader,
@@ -51,35 +56,38 @@ const SIGN_UP = `${NORTH_BASE}/sign-up?path=investor`;
 export function LandingHeader({ c, hasOfferings }: { c: LandingCopy; hasOfferings: boolean }) {
   return (
     <header className="sticky top-0 z-40 border-b border-[#e0e6ea] bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-5 px-4 sm:px-8">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 sm:px-8">
         <NorthBrand dark showCoBrand={false} />
         <nav aria-label="Landing" className="hidden items-center gap-6 lg:flex">
+          <a href="#why" className="text-xs font-semibold text-[#52636f] transition-colors hover:text-[#0a2d46]">
+            {c.nav.why}
+          </a>
+          <a href="#how" className="text-xs font-semibold text-[#52636f] transition-colors hover:text-[#0a2d46]">
+            {c.nav.how}
+          </a>
           {hasOfferings && (
             <a href="#opportunities" className="text-xs font-semibold text-[#52636f] transition-colors hover:text-[#0a2d46]">
               {c.nav.opportunities}
             </a>
           )}
-          <a href="#platform" className="text-xs font-semibold text-[#52636f] transition-colors hover:text-[#0a2d46]">
-            {c.nav.platform}
-          </a>
-          <a href="#why" className="text-xs font-semibold text-[#52636f] transition-colors hover:text-[#0a2d46]">
-            {c.nav.why}
-          </a>
         </nav>
         <div className="flex items-center gap-2">
+          {/* Soft, low-pressure primary action for cold visitors — the committed
+              "Get access" now lives in the hero and closing sections. */}
+          <a
+            href="#how"
+            className="hidden h-10 items-center gap-1.5 rounded-md border border-[#d8dee2] px-3.5 text-sm font-semibold text-[#0a2d46] transition-colors hover:bg-[#eef2f4] sm:inline-flex"
+          >
+            {c.actions.seeHowItWorks}
+          </a>
           <Link
             href={`${NORTH_BASE}/sign-in`}
             className="hidden h-10 items-center rounded-md px-3 text-sm font-semibold text-[#0a2d46] hover:bg-[#eef2f4] sm:inline-flex"
           >
             {c.actions.signIn}
           </Link>
-          <Link
-            href={SIGN_UP}
-            className="inline-flex h-10 items-center gap-1.5 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#123f5e]"
-          >
-            {c.actions.getAccess}
-            <ArrowRight className="size-4" />
-          </Link>
+          {/* Language selector sits in the prominent top-right corner. */}
+          <LanguageMenu />
         </div>
       </div>
     </header>
@@ -117,10 +125,23 @@ export function Hero({
       <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.02fr_0.98fr]">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#d6b96e]">{c.hero.eyebrow}</p>
-          <h1 className="mt-5 max-w-2xl font-serif text-4xl font-semibold leading-[1.05] sm:text-[3.5rem]">
+          <h1 className="mt-5 max-w-2xl font-serif text-4xl font-semibold leading-[1.08] sm:text-[3rem]">
             {c.hero.title}
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-white/70 sm:text-lg">{c.hero.body}</p>
+
+          {/* Return figure kept as a small, clearly-qualified stat — not the
+              headline — so it reads as honest, not a promise. */}
+          <div className="mt-7 inline-flex items-center gap-3 rounded-xl border border-white/12 bg-white/5 px-4 py-3">
+            <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-white/5 text-[#d6b96e] ring-1 ring-white/10">
+              <TrendingUp className="size-5" aria-hidden />
+            </span>
+            <span className="leading-tight">
+              <span className="font-serif text-2xl font-semibold text-white">{c.hero.stat.value}</span>
+              <span className="ml-2 text-sm font-medium text-white/75">{c.hero.stat.label}</span>
+              <span className="mt-0.5 block text-[11px] text-white/50">{c.hero.stat.note}</span>
+            </span>
+          </div>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
@@ -130,12 +151,12 @@ export function Hero({
               {c.actions.getAccess}
               <ArrowRight className="size-4" />
             </Link>
-            <Link
-              href={hasOfferings ? "#opportunities" : SIGN_UP}
+            <a
+              href="#how"
               className="inline-flex h-12 items-center rounded-md border border-white/24 px-6 text-sm font-semibold text-white transition-colors hover:bg-white/10"
             >
-              {c.actions.seeOpportunities}
-            </Link>
+              {c.actions.seeHowItWorks}
+            </a>
           </div>
 
           <div className="mt-8 border-t border-white/12 pt-5">
@@ -377,29 +398,20 @@ export function FeaturedOpportunities({
 /* Benefits + ways to invest                                           */
 /* ------------------------------------------------------------------ */
 
-export function BenefitsAndWays({
-  c,
-  images,
-  hasOfferings,
-}: {
-  c: LandingCopy;
-  images: FootprintImage[];
-  hasOfferings: boolean;
-}) {
-  const benefitIcons: LucideIcon[] = [Layers, Umbrella, HandCoins, ShieldCheck];
-  const wayIcons: LucideIcon[] = [Building2, BadgeCheck, HandCoins, Banknote];
-
+/** Three plain-language reasons people invest, each topped with a real photo. */
+export function WhyPillars({ c, images }: { c: LandingCopy; images: FootprintImage[] }) {
+  const icons: LucideIcon[] = [HandCoins, ShieldCheck, Building2];
   return (
     <SectionShell id="why" variant="white">
       <SectionHeader eyebrow={c.benefits.eyebrow} title={c.benefits.title} center />
-      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {c.benefits.items.map((item, i) => {
-          const Icon = benefitIcons[i] ?? Layers;
+          const Icon = icons[i] ?? HandCoins;
           const image = images[i % Math.max(images.length, 1)];
           return (
             <Reveal key={item.title} delay={i * 70}>
               <article className="h-full overflow-hidden rounded-2xl border border-[#dbe1e5] bg-white">
-                <div className="relative h-24 overflow-hidden bg-[#0a2d46]">
+                <div className="relative h-28 overflow-hidden bg-[#0a2d46]">
                   {image?.src ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -416,8 +428,8 @@ export function BenefitsAndWays({
                     <Icon className="size-5" />
                   </span>
                 </div>
-                <div className="p-5">
-                  <h3 className="text-base font-semibold text-[#152b3b]">{item.title}</h3>
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-[#152b3b]">{item.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-[#63737d]">{item.body}</p>
                 </div>
               </article>
@@ -425,33 +437,105 @@ export function BenefitsAndWays({
           );
         })}
       </div>
+    </SectionShell>
+  );
+}
 
-      <div className="mt-16">
-        <SectionHeader
-          eyebrow={c.ways.eyebrow}
-          title={c.ways.title}
-          body={hasOfferings ? c.ways.caption : c.ways.previewCaption}
-        />
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {c.ways.items.map((item, i) => {
-            const Icon = wayIcons[i] ?? Building2;
-            return (
-              <Reveal key={item.title} delay={i * 70}>
-                <article className="flex h-full flex-col rounded-2xl border border-[#dbe1e5] bg-[#fbfcfc] p-6">
-                  <div className="flex items-center justify-between">
-                    <span className="grid size-11 place-items-center rounded-xl bg-[#0a2d46] text-[#d6b96e]">
-                      <Icon className="size-5" />
-                    </span>
-                    <span className="font-serif text-2xl font-semibold tabular-nums text-[#d6b96e]">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                  </div>
-                  <h3 className="mt-4 text-base font-semibold text-[#152b3b]">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-[#63737d]">{item.body}</p>
-                </article>
-              </Reveal>
-            );
-          })}
+/** The trust anchor: real building photos, captioned with name + city. */
+export function BuildingsGallery({
+  c,
+  images,
+  lang,
+}: {
+  c: LandingCopy;
+  images: FootprintImage[];
+  lang: Lang;
+}) {
+  const shots = images.slice(0, 8);
+  if (shots.length === 0) return null;
+  return (
+    <SectionShell id="buildings" variant="light" className="border-y border-[#dfe5e8]">
+      <SectionHeader eyebrow={c.buildings.eyebrow} title={c.buildings.title} body={c.buildings.body} />
+      <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {shots.map((img, i) => (
+          <Reveal key={`${img.src}-${i}`} delay={(i % 4) * 60}>
+            <figure className="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-[#dbe1e5] bg-[#0a2d46]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={img.src}
+                alt={tx(img.alt, lang) || tx(img.title, lang)}
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#071c2c]/80 via-[#071c2c]/10 to-transparent" />
+              <figcaption className="absolute inset-x-0 bottom-0 p-3.5">
+                <p className="truncate text-sm font-semibold text-white">{tx(img.title, lang)}</p>
+                <p className="mt-0.5 flex items-center gap-1 text-xs text-white/75">
+                  <MapPin className="size-3 shrink-0" aria-hidden />
+                  <span className="truncate">{tx(img.subtitle, lang)}</span>
+                </p>
+              </figcaption>
+            </figure>
+          </Reveal>
+        ))}
+      </div>
+    </SectionShell>
+  );
+}
+
+/** Three simple steps, jargon-free. */
+export function HowItWorks({ c }: { c: LandingCopy }) {
+  const icons: LucideIcon[] = [Layers, BadgeCheck, Banknote];
+  return (
+    <SectionShell id="how" variant="white">
+      <SectionHeader eyebrow={c.ways.eyebrow} title={c.ways.title} body={c.ways.caption} center />
+      <div className="mx-auto mt-10 grid max-w-5xl gap-4 sm:grid-cols-3">
+        {c.ways.items.map((item, i) => {
+          const Icon = icons[i] ?? Building2;
+          return (
+            <Reveal key={item.title} delay={i * 80}>
+              <article className="flex h-full flex-col rounded-2xl border border-[#dbe1e5] bg-[#fbfcfc] p-6">
+                <div className="flex items-center justify-between">
+                  <span className="grid size-11 place-items-center rounded-xl bg-[#0a2d46] text-[#d6b96e]">
+                    <Icon className="size-5" />
+                  </span>
+                  <span className="font-serif text-2xl font-semibold tabular-nums text-[#d6b96e]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <h3 className="mt-4 text-base font-semibold text-[#152b3b]">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-[#63737d]">{item.body}</p>
+              </article>
+            </Reveal>
+          );
+        })}
+      </div>
+    </SectionShell>
+  );
+}
+
+/** Plain-language FAQ — directly answers the questions a cold visitor asks. */
+export function FAQ({ c }: { c: LandingCopy }) {
+  return (
+    <SectionShell id="faq" variant="light" className="border-t border-[#dfe5e8]">
+      <div className="mx-auto max-w-3xl">
+        <SectionHeader eyebrow={c.faq.eyebrow} title={c.faq.title} center />
+        <div className="mt-10 space-y-3">
+          {c.faq.items.map((item) => (
+            <details
+              key={item.q}
+              className="group rounded-2xl border border-[#dbe1e5] bg-white px-5 transition-shadow open:shadow-[0_20px_50px_-40px_rgba(7,28,44,0.6)]"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left text-base font-semibold text-[#152b3b] marker:content-none [&::-webkit-details-marker]:hidden">
+                {item.q}
+                <ChevronDown
+                  className="size-5 shrink-0 text-[#0a4b72] transition-transform group-open:rotate-180"
+                  aria-hidden
+                />
+              </summary>
+              <p className="pb-5 text-sm leading-6 text-[#5a6a74]">{item.a}</p>
+            </details>
+          ))}
         </div>
       </div>
     </SectionShell>

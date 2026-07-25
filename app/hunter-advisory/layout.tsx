@@ -24,14 +24,21 @@ export const metadata: Metadata = {
 };
 
 export default async function HunterAdvisoryLayout({ children }: { children: React.ReactNode }) {
-  // Hunter & Hunter is an English-first, global-audience experience. Default to
-  // English with its own persisted key so it stays independent of the
-  // Turkish-first main site; a language toggle can re-enable TR later.
-  // Classification taxonomies (strategy/asset class/region labels + colors) are
-  // read from Supabase and provided to both the landing and portal trees.
+  // Hunter & Hunter is a global-audience experience with its own persisted
+  // language key (independent of the Turkish-first main site). It defaults to
+  // English but auto-detects the visitor's browser language on first visit, so
+  // Turkish viewers (e.g. discovering us from Instagram in Turkey) land in
+  // Turkish. The header language dropdown lets anyone switch, and that choice
+  // is remembered. Classification taxonomies (strategy/asset class/region
+  // labels + colors) are read from Supabase and provided to both trees.
   const taxonomies = await getTaxonomies();
   return (
-    <LanguageProvider defaultLang="en" storageKey="hunter-advisory-lang">
+    <LanguageProvider
+      defaultLang="en"
+      storageKey="hunter-advisory-lang"
+      autoDetect
+      detectLangs={["tr", "en"]}
+    >
       <TaxonomyProvider value={taxonomies}>
         <LangBoundary>{children}</LangBoundary>
       </TaxonomyProvider>
