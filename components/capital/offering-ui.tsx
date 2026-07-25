@@ -371,7 +371,7 @@ const INCOME_CALC_COPY = {
   },
 } as const;
 
-const INCOME_PRESETS = [100000, 500000, 1000000];
+const INCOME_PRESETS = [100000, 500000, 1000000, 2000000, 5000000];
 const INCOME_DEFAULT_AMOUNT = 500000;
 
 function presetLabel(value: number): string {
