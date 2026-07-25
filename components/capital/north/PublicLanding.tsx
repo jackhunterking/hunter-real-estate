@@ -9,8 +9,9 @@
  * no edits.
  *
  * Section order is tuned for a cold, mobile Instagram visitor: explain it in
- * plain words → prove it's real (buildings) → show the simple path → offerings
- * → credibility → answer the first questions → deeper product tour → convert.
+ * plain words → set it against the alternatives (compare) → prove it's real
+ * (buildings) → show the simple path → offerings → credibility → answer the
+ * first questions → deeper product tour → convert.
  */
 
 import { useLang } from "@/lib/i18n/LanguageProvider";
@@ -24,6 +25,7 @@ import {
   FeaturedOpportunities,
   FinalCta,
   Hero,
+  HowItCompares,
   HowItWorks,
   LandingFooter,
   LandingHeader,
@@ -56,6 +58,7 @@ export function PublicLanding({
           backdrop={data.heroBackdrop}
         />
         <WhyPillars c={c} images={data.galleryItems} />
+        <HowItCompares c={c} />
         <BuildingsGallery c={c} images={data.galleryItems} lang={lang} />
         <HowItWorks c={c} />
         {data.hasOfferings && <FeaturedOpportunities c={c} offerings={displayOfferings} />}

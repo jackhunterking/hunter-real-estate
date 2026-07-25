@@ -16,14 +16,17 @@ import {
   BadgeCheck,
   Banknote,
   Building2,
+  CheckCircle2,
   ChevronDown,
   HandCoins,
   KeyRound,
   Layers,
   MapPin,
+  MinusCircle,
   PiggyBank,
   ShieldCheck,
   TrendingUp,
+  XCircle,
   type LucideIcon,
 } from "lucide-react";
 import type { PublicOfferingPreview } from "@/lib/capital/types";
@@ -61,6 +64,9 @@ export function LandingHeader({ c, hasOfferings }: { c: LandingCopy; hasOffering
         <nav aria-label="Landing" className="hidden items-center gap-6 lg:flex">
           <a href="#why" className="text-xs font-semibold text-[#52636f] transition-colors hover:text-[#0a2d46]">
             {c.nav.why}
+          </a>
+          <a href="#compare" className="text-xs font-semibold text-[#52636f] transition-colors hover:text-[#0a2d46]">
+            {c.nav.compare}
           </a>
           <a href="#how" className="text-xs font-semibold text-[#52636f] transition-colors hover:text-[#0a2d46]">
             {c.nav.how}
@@ -436,6 +442,225 @@ export function WhyPillars({ c, images }: { c: LandingCopy; images: FootprintIma
             </Reveal>
           );
         })}
+      </div>
+    </SectionShell>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* How it compares — the three paths, head to head                     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Tone per cell, index-aligned to `c.compare.rows`. Decorative only — the cell
+ * text carries the whole meaning, so the icons are `aria-hidden`.
+ *
+ * Deliberately not a clean sweep: public markets genuinely win on entry cost,
+ * liquidity and no-debt, and saying so is what makes the rest of the table
+ * believable. Keep it honest when editing rows.
+ */
+type CompareTone = "good" | "mixed" | "poor";
+
+const COMPARE_TONES: { self: CompareTone; hnc: CompareTone; markets: CompareTone }[] = [
+  { self: "mixed", hnc: "good", markets: "mixed" }, // what you own
+  { self: "poor", hnc: "good", markets: "mixed" }, // who does the work
+  { self: "mixed", hnc: "good", markets: "mixed" }, // where income comes from
+  { self: "poor", hnc: "good", markets: "good" }, // getting started
+  { self: "poor", hnc: "good", markets: "mixed" }, // how you get in
+  { self: "poor", hnc: "good", markets: "good" }, // debt in your name
+  { self: "poor", hnc: "good", markets: "mixed" }, // spreading the risk
+  { self: "mixed", hnc: "good", markets: "mixed" }, // day-to-day swings
+  { self: "poor", hnc: "good", markets: "good" }, // registered accounts
+  { self: "poor", hnc: "good", markets: "good" }, // getting out
+];
+
+const TONE_ICON: Record<CompareTone, LucideIcon> = {
+  good: CheckCircle2,
+  mixed: MinusCircle,
+  poor: XCircle,
+};
+
+/** Gold is reserved for our own column so the eye lands there first. */
+function toneColor(tone: CompareTone, highlight: boolean) {
+  if (tone === "good") return highlight ? "text-[#c5a34d]" : "text-[#0a4b72]";
+  if (tone === "mixed") return "text-[#9aa7b0]";
+  return "text-[#a2704a]";
+}
+
+function CompareCellBody({
+  text,
+  tone,
+  highlight = false,
+}: {
+  text: string;
+  tone: CompareTone;
+  highlight?: boolean;
+}) {
+  const Icon = TONE_ICON[tone];
+  return (
+    <span className="flex gap-2.5">
+      <Icon className={`mt-0.5 size-4 shrink-0 ${toneColor(tone, highlight)}`} aria-hidden />
+      <span className={highlight ? "font-medium text-[#1c3143]" : ""}>{text}</span>
+    </span>
+  );
+}
+
+/**
+ * One column's answer on mobile. Deliberately flat — a left rule instead of a
+ * nested card, and the tone icon beside the column label rather than the prose,
+ * so ten attributes stay a scroll rather than a trek.
+ */
+function CompareMobileLine({
+  column,
+  text,
+  tone,
+  highlight = false,
+}: {
+  column: string;
+  text: string;
+  tone: CompareTone;
+  highlight?: boolean;
+}) {
+  const Icon = TONE_ICON[tone];
+  return (
+    <li
+      className={`border-l-2 py-1.5 pl-3 ${
+        highlight ? "rounded-r-md border-[#c5a34d] bg-[#c5a34d]/8 pr-3" : "border-[#e6ebee]"
+      }`}
+    >
+      <p className="flex items-center gap-1.5">
+        <Icon className={`size-3.5 shrink-0 ${toneColor(tone, highlight)}`} aria-hidden />
+        <span
+          className={`text-[10px] font-bold uppercase tracking-[0.1em] ${
+            highlight ? "text-[#a8873a]" : "text-[#8291a0]"
+          }`}
+        >
+          {column}
+        </span>
+      </p>
+      <p className={`mt-1 text-[13px] leading-5 ${highlight ? "text-[#40515e]" : "text-[#5a6a74]"}`}>
+        {text}
+      </p>
+    </li>
+  );
+}
+
+/**
+ * Head-to-head table: buying a rental yourself vs. investing with us vs. public
+ * markets. Argument-based by design — no index or fund return figures appear
+ * here (see the `compare` block in `copy.ts`).
+ *
+ * Two renderings of the same `c.compare.rows`: a semantic table from `md` up,
+ * and stacked per-attribute cards below it, because the audience arrives on a
+ * phone and a three-column scroll-table is unreadable at that width. The hidden
+ * variant is `display:none`, so only one is ever in the accessibility tree.
+ */
+export function HowItCompares({ c }: { c: LandingCopy }) {
+  const cols = c.compare.columns;
+  const tones = (i: number) => COMPARE_TONES[i] ?? { self: "mixed" as const, hnc: "good" as const, markets: "mixed" as const };
+
+  return (
+    <SectionShell id="compare" variant="deep">
+      <SectionHeader
+        eyebrow={c.compare.eyebrow}
+        title={c.compare.title}
+        body={c.compare.body}
+        tone="gold"
+        center
+        invert
+      />
+
+      <Reveal className="mt-10">
+        <div className="overflow-hidden rounded-2xl border border-[#dbe1e5] bg-white">
+          {/* Desktop: the real table. */}
+          <div className="hidden md:block">
+            <table className="w-full table-fixed text-left">
+              <caption className="sr-only">{c.compare.title}</caption>
+              <thead>
+                <tr className="border-b border-[#e2e8eb]">
+                  <th
+                    scope="col"
+                    className="w-[19%] px-5 py-4 align-bottom text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]"
+                  >
+                    {c.compare.rowHeader}
+                  </th>
+                  <th scope="col" className="w-[27%] px-4 py-4 align-bottom text-sm font-semibold text-[#52636f]">
+                    {cols.self}
+                  </th>
+                  <th
+                    scope="col"
+                    className="w-[27%] border-x border-[#e2e8eb] border-t-2 border-t-[#c5a34d] bg-[#f6f9fa] px-4 pb-4 pt-3 align-bottom"
+                  >
+                    <span className="block text-[10px] font-bold uppercase tracking-[0.12em] text-[#a8873a]">
+                      {c.compare.hncBadge}
+                    </span>
+                    <span className="mt-1 block text-sm font-semibold text-[#0a2d46]">{cols.hnc}</span>
+                  </th>
+                  <th scope="col" className="w-[27%] px-4 py-4 align-bottom text-sm font-semibold text-[#52636f]">
+                    {cols.markets}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#eef2f4]">
+                {c.compare.rows.map((row, i) => {
+                  const t = tones(i);
+                  return (
+                    <tr key={row.label}>
+                      <th
+                        scope="row"
+                        className="px-5 py-4 align-top text-xs font-semibold text-[#67757f]"
+                      >
+                        {row.label}
+                      </th>
+                      <td className="px-4 py-4 align-top text-sm leading-6 text-[#5a6a74]">
+                        <CompareCellBody text={row.self} tone={t.self} />
+                      </td>
+                      <td className="border-x border-[#e2e8eb] bg-[#f6f9fa] px-4 py-4 align-top text-sm leading-6 text-[#40515e]">
+                        <CompareCellBody text={row.hnc} tone={t.hnc} highlight />
+                      </td>
+                      <td className="px-4 py-4 align-top text-sm leading-6 text-[#5a6a74]">
+                        <CompareCellBody text={row.markets} tone={t.markets} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile: the same rows, stacked. Our column is listed first so the
+              answer that matters is the one read first. */}
+          <div className="divide-y divide-[#eef2f4] md:hidden">
+            {c.compare.rows.map((row, i) => {
+              const t = tones(i);
+              return (
+                <Reveal key={row.label} delay={(i % 4) * 40}>
+                  <div className="px-4 py-4">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#67757f]">
+                      {row.label}
+                    </p>
+                    <ul className="mt-2.5 space-y-2">
+                      <CompareMobileLine column={cols.hnc} text={row.hnc} tone={t.hnc} highlight />
+                      <CompareMobileLine column={cols.self} text={row.self} tone={t.self} />
+                      <CompareMobileLine column={cols.markets} text={row.markets} tone={t.markets} />
+                    </ul>
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </Reveal>
+
+      <div className="mt-6 flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+        <p className="max-w-3xl text-[11px] leading-5 text-white/55">{c.compare.note}</p>
+        <a
+          href="#how"
+          className="inline-flex h-11 shrink-0 items-center gap-2 self-start rounded-md border border-white/24 px-5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+        >
+          {c.compare.cta}
+          <ArrowRight className="size-4" />
+        </a>
       </div>
     </SectionShell>
   );

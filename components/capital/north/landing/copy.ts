@@ -13,7 +13,13 @@
  */
 
 export interface LandingCopy {
-  nav: { opportunities: string; platform: string; why: string; how: string };
+  nav: {
+    opportunities: string;
+    platform: string;
+    why: string;
+    how: string;
+    compare: string;
+  };
   actions: {
     getAccess: string;
     seeOpportunities: string;
@@ -38,6 +44,25 @@ export interface LandingCopy {
     eyebrow: string;
     title: string;
     items: { title: string; body: string }[];
+  };
+  /**
+   * Head-to-head comparison of the three ways a visitor can get real-estate
+   * exposure. Deliberately argument-based: no index or market return figures
+   * appear here, because we neither source nor maintain them. Every claim is a
+   * structural characteristic of the three paths, not a performance promise.
+   */
+  compare: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    /** Screen-reader label for the attribute column (visually empty). */
+    rowHeader: string;
+    columns: { self: string; hnc: string; markets: string };
+    /** Small pill on the highlighted middle column. */
+    hncBadge: string;
+    rows: { label: string; self: string; hnc: string; markets: string }[];
+    note: string;
+    cta: string;
   };
   buildings: { eyebrow: string; title: string; body: string };
   ways: {
@@ -105,6 +130,7 @@ const en: LandingCopy = {
     platform: "The platform",
     why: "Why real estate",
     how: "How it works",
+    compare: "How it compares",
   },
   actions: {
     getAccess: "Get access",
@@ -183,6 +209,82 @@ const en: LandingCopy = {
         body: "Actual apartment and commercial buildings you can see, in real Canadian cities.",
       },
     ],
+  },
+  compare: {
+    eyebrow: "Compare the three paths",
+    title: "Buy a rental yourself. Buy stocks. Or invest this way.",
+    body: "Most people weighing real estate are really choosing between three things. Here is what each one actually asks of you — and what it gives back.",
+    rowHeader: "What you're comparing",
+    columns: {
+      self: "Buying a rental yourself",
+      hnc: "Investing with us",
+      markets: "Stocks & index funds",
+    },
+    hncBadge: "Our approach",
+    rows: [
+      {
+        label: "What you own",
+        self: "One property, at one address, in one city.",
+        hnc: "A share of a portfolio of real, income-producing Canadian buildings.",
+        markets: "A slice of hundreds of listed companies — no building behind it.",
+      },
+      {
+        label: "Who does the work",
+        self: "You. Tenants, repairs, vacancies, the 2 a.m. call.",
+        hnc: "Professional managers run the buildings. You hold the shares.",
+        markets: "Nobody you can reach. You watch the price and wait.",
+      },
+      {
+        label: "Where the income comes from",
+        self: "Rent — once the mortgage, taxes, repairs and vacancy are paid.",
+        hnc: "Rent from occupied buildings, paid to you on the offering's schedule.",
+        markets: "Dividends, if and when the companies choose to pay them.",
+      },
+      {
+        label: "Getting started",
+        self: "Down payment, land transfer tax, legal and closing costs — usually a large lump sum.",
+        hnc: "A set minimum per offering. You see the exact amount once you have access.",
+        markets: "Almost any amount, on your own, with no one reviewing the fit.",
+      },
+      {
+        label: "How you get in",
+        self: "Searching, offers, financing, lawyers, inspections — often months of it.",
+        hnc: "A guided sign-up with a licensed advisory team beside you at every step.",
+        markets: "Instant — and entirely on you if it's the wrong holding.",
+      },
+      {
+        label: "Debt in your name",
+        self: "A mortgage you personally guarantee, plus the rate risk that comes with it.",
+        hnc: "None. You invest cash and are never on the hook for a loan.",
+        markets: "None.",
+      },
+      {
+        label: "Spreading the risk",
+        self: "One building, one tenant pool, one local market.",
+        hnc: "Many buildings across Canadian cities, inside one investment.",
+        markets: "Broad — but all of it sitting inside public markets at once.",
+      },
+      {
+        label: "Day-to-day swings",
+        self: "No daily price, and genuinely hard to value between sales.",
+        hnc: "Not repriced minute by minute — held for the term, valued periodically.",
+        markets: "Prices move every second, with every headline.",
+      },
+      {
+        label: "RRSP · TFSA · RESP",
+        self: "A rental property generally can't be held in a registered account.",
+        hnc: "Eligible for RRSP, TFSA and RESP.",
+        markets: "Eligible.",
+      },
+      {
+        label: "Getting out",
+        self: "List it, wait months for a buyer, then pay commissions and closing costs.",
+        hnc: "A stated term, with the redemption terms published up front before you invest.",
+        markets: "Sell on any trading day — at whatever the market pays that morning.",
+      },
+    ],
+    note: "A general comparison of three ways to hold real-estate exposure — not a forecast, and not investment advice. Private investments are not publicly traded, are far less liquid than listed shares, and carry risk including possible loss of principal. Terms differ by offering; review the offering documents before investing.",
+    cta: "See how it works",
   },
   buildings: {
     eyebrow: "Real, not a concept",
@@ -295,6 +397,7 @@ const tr: LandingCopy = {
     platform: "Platform",
     why: "Neden gayrimenkul",
     how: "Nasıl işliyor",
+    compare: "Karşılaştırma",
   },
   actions: {
     getAccess: "Erişim alın",
@@ -370,6 +473,82 @@ const tr: LandingCopy = {
         body: "Gerçek Kanada şehirlerinde, görebileceğiniz gerçek konut ve ticari binalar.",
       },
     ],
+  },
+  compare: {
+    eyebrow: "Üç yolu karşılaştırın",
+    title: "Kendiniz kiralık alın. Hisse alın. Ya da bu şekilde yatırım yapın.",
+    body: "Gayrimenkulü düşünen çoğu kişi aslında üç seçenek arasında karar veriyor. İşte her birinin sizden istedikleri — ve karşılığında verdikleri.",
+    rowHeader: "Karşılaştırılan konu",
+    columns: {
+      self: "Kendiniz kiralık almak",
+      hnc: "Bizimle yatırım yapmak",
+      markets: "Hisse ve endeks fonları",
+    },
+    hncBadge: "Bizim yaklaşımımız",
+    rows: [
+      {
+        label: "Neye sahip olursunuz",
+        self: "Tek şehirde, tek adreste, tek bir mülk.",
+        hnc: "Gerçek, gelir getiren Kanada binalarından oluşan bir portföyün payı.",
+        markets: "Yüzlerce borsa şirketinden küçük bir dilim — arkasında bina yok.",
+      },
+      {
+        label: "İşi kim yapar",
+        self: "Siz. Kiracılar, tamirat, boş kalan aylar, gece 2'deki telefon.",
+        hnc: "Binaları profesyonel yöneticiler işletir. Siz payları tutarsınız.",
+        markets: "Ulaşabileceğiniz kimse yok. Fiyata bakar ve beklersiniz.",
+      },
+      {
+        label: "Gelir nereden gelir",
+        self: "Kiradan — ipotek, vergi, tamirat ve boş aylar ödendikten sonra kalan.",
+        hnc: "Dolu binaların kirasından; payınız yatırımın takvimine göre size ödenir.",
+        markets: "Temettüden — şirketler ödemeyi seçerse ve seçtiği zaman.",
+      },
+      {
+        label: "Başlangıç maliyeti",
+        self: "Peşinat, tapu devir vergisi, avukat ve kapanış masrafları — genelde büyük bir toplu tutar.",
+        hnc: "Her fırsatın belirlediği bir asgari tutar. Kesin rakamı erişim aldığınızda görürsünüz.",
+        markets: "Neredeyse her tutar — tek başınıza, uygunluğunu inceleyen kimse olmadan.",
+      },
+      {
+        label: "Nasıl girersiniz",
+        self: "Arama, teklif, kredi, avukat, ekspertiz — çoğu zaman aylar sürer.",
+        hnc: "Her adımda lisanslı bir danışman ekibinin yanınızda olduğu, rehberli bir kayıt.",
+        markets: "Anında — ve yanlış bir yatırımsa sorumluluk tamamen sizde.",
+      },
+      {
+        label: "Adınıza borç",
+        self: "Şahsen kefil olduğunuz bir ipotek ve beraberinde gelen faiz riski.",
+        hnc: "Yok. Nakit yatırım yaparsınız; hiçbir kredinin altına girmezsiniz.",
+        markets: "Yok.",
+      },
+      {
+        label: "Riski dağıtmak",
+        self: "Tek bina, tek kiracı havuzu, tek yerel piyasa.",
+        hnc: "Tek bir yatırımın içinde, Kanada şehirlerine yayılmış birçok bina.",
+        markets: "Geniş — ama tamamı aynı anda halka açık piyasaların içinde.",
+      },
+      {
+        label: "Günlük dalgalanma",
+        self: "Günlük bir fiyatı yok; iki satış arasında değerini bilmek gerçekten zor.",
+        hnc: "Dakika dakika yeniden fiyatlanmaz — vade boyunca tutulur, dönemsel olarak değerlenir.",
+        markets: "Fiyatlar her saniye, her haber başlığıyla birlikte hareket eder.",
+      },
+      {
+        label: "RRSP · TFSA · RESP",
+        self: "Kiralık bir mülk genellikle kayıtlı bir hesapta tutulamaz.",
+        hnc: "RRSP, TFSA ve RESP için uygundur.",
+        markets: "Uygundur.",
+      },
+      {
+        label: "Nasıl çıkarsınız",
+        self: "İlana koyarsınız, aylarca alıcı beklersiniz, sonra komisyon ve kapanış masrafı ödersiniz.",
+        hnc: "Belirli bir vade; geri alım koşulları siz yatırım yapmadan önce açıkça yayınlanır.",
+        markets: "Her işlem gününde satarsınız — o sabah piyasa ne veriyorsa o fiyattan.",
+      },
+    ],
+    note: "Gayrimenkul riskini taşımanın üç yolunun genel bir karşılaştırmasıdır — tahmin değildir ve yatırım tavsiyesi değildir. Özel yatırımlar halka açık olarak işlem görmez, borsa hisselerine kıyasla çok daha az likittir ve anaparanın olası kaybı dahil risk taşır. Koşullar her fırsatta farklıdır; yatırım yapmadan önce ihraç belgelerini inceleyin.",
+    cta: "Nasıl işlediğini görün",
   },
   buildings: {
     eyebrow: "Kavram değil, gerçek",
