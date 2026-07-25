@@ -5,6 +5,12 @@
  */
 
 export const tr = {
+  siteMeta: {
+    title: "Hunter Group Real Estate, Toronto Merkezli Türk Emlak Grubu",
+    description:
+      "Toronto merkezli Türk emlak grubu. Jack & Tara Hunter, RE/MAX Hallmark ile Toronto ve GTA'da alım, satım ve yatırım.",
+    siteName: "Hunter Group Real Estate",
+  },
   nav: {
     home: "Anasayfa",
     about: "Hakkımızda",
@@ -886,6 +892,12 @@ export const tr = {
 export type Dictionary = typeof tr;
 
 export const en: Dictionary = {
+  siteMeta: {
+    title: "Hunter Group Real Estate — Toronto & GTA Real Estate",
+    description:
+      "A Toronto-based real estate group. Jack & Tara Hunter, with RE/MAX Hallmark, help you buy, sell, and invest across Toronto and the GTA.",
+    siteName: "Hunter Group Real Estate",
+  },
   nav: {
     home: "Home",
     about: "About",
@@ -1739,6 +1751,12 @@ export const en: Dictionary = {
  * Brand names, licensing terms, and regulatory references are kept verbatim.
  */
 export const fr: Dictionary = {
+  siteMeta: {
+    title: "Hunter Group Real Estate — Immobilier à Toronto et dans le GTA",
+    description:
+      "Un groupe immobilier basé à Toronto. Jack et Tara Hunter, avec RE/MAX Hallmark, vous accompagnent pour acheter, vendre et investir à Toronto et dans le GTA.",
+    siteName: "Hunter Group Real Estate",
+  },
   nav: {
     home: "Accueil",
     about: "À propos",
@@ -2622,6 +2640,12 @@ export const fr: Dictionary = {
  * Brand names, licensing terms, and regulatory references are kept verbatim.
  */
 export const es: Dictionary = {
+  siteMeta: {
+    title: "Hunter Group Real Estate — Bienes raíces en Toronto y el GTA",
+    description:
+      "Un grupo inmobiliario con sede en Toronto. Jack y Tara Hunter, con RE/MAX Hallmark, te ayudan a comprar, vender e invertir en Toronto y el GTA.",
+    siteName: "Hunter Group Real Estate",
+  },
   nav: {
     home: "Inicio",
     about: "Nosotros",

@@ -67,9 +67,9 @@ test("an unknown or missing section falls back to the overview", () => {
 
 test("the retired operations inbox and legacy /admin/* stubs are gone", () => {
   const gone = [
-    "app/hunter-advisory/(portal)/operations/page.tsx",
+    "app/[locale]/hunter-advisory/(portal)/operations/page.tsx",
     ...["audit", "commissions", "firm-memberships", "firms", "interests", "leads", "license-verifications", "partner-applications"]
-      .map((name) => `app/hunter-advisory/(portal)/admin/${name}/page.tsx`),
+      .map((name) => `app/[locale]/hunter-advisory/(portal)/admin/${name}/page.tsx`),
   ];
   for (const path of gone) {
     assert.throws(() => read(path), `${path} should have been deleted, not left as a redirect stub`);

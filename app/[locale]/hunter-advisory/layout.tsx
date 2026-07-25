@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 import { TaxonomyProvider } from "@/components/capital/north/TaxonomyProvider";
 import { LangBoundary } from "@/components/capital/north/LangBoundary";
 import { getTaxonomies } from "@/lib/capital/taxonomies-server";
@@ -24,24 +23,17 @@ export const metadata: Metadata = {
 };
 
 export default async function HunterAdvisoryLayout({ children }: { children: React.ReactNode }) {
-  // Hunter & Hunter is a global-audience experience with its own persisted
-  // language key (independent of the Turkish-first main site). It defaults to
-  // English but auto-detects the visitor's browser language on first visit, so
-  // Turkish viewers (e.g. discovering us from Instagram in Turkey) land in
-  // Turkish. The header language dropdown lets anyone switch, and that choice
-  // is remembered. Classification taxonomies (strategy/asset class/region
-  // labels + colors) are read from Supabase and provided to both trees.
+  // Hunter & Hunter is a global-audience experience. Locale is now owned by the
+  // URL (`/{locale}/hunter-advisory`) and negotiated from the visitor's device
+  // language in middleware, so the portal no longer mounts its own language
+  // provider — it inherits the app-wide locale. English-first entry is expressed
+  // by linking to `/en/hunter-advisory`. Classification taxonomies
+  // (strategy/asset class/region labels + colors) are read from Supabase and
+  // provided to the subtree.
   const taxonomies = await getTaxonomies();
   return (
-    <LanguageProvider
-      defaultLang="en"
-      storageKey="hunter-advisory-lang"
-      autoDetect
-      detectLangs={["tr", "en"]}
-    >
-      <TaxonomyProvider value={taxonomies}>
-        <LangBoundary>{children}</LangBoundary>
-      </TaxonomyProvider>
-    </LanguageProvider>
+    <TaxonomyProvider value={taxonomies}>
+      <LangBoundary>{children}</LangBoundary>
+    </TaxonomyProvider>
   );
 }
