@@ -7,10 +7,13 @@ import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react";
 import { HUNTER_ADVISORY_HOSTS } from "@/lib/capital/advisory-domain";
 
 function isHunterAdvisoryRoute(pathname: string, hostname: string) {
+  // Paths are locale-prefixed (/en/hunter-advisory, /tr/hunter-advisory, ...);
+  // strip a leading locale segment before matching the advisory subtree.
+  const withoutLocale = pathname.replace(/^\/(tr|en|fr|es)(?=\/|$)/, "");
   return (
     HUNTER_ADVISORY_HOSTS.has(hostname.toLowerCase()) ||
-    pathname === "/hunter-advisory" ||
-    pathname.startsWith("/hunter-advisory/")
+    withoutLocale === "/hunter-advisory" ||
+    withoutLocale.startsWith("/hunter-advisory/")
   );
 }
 

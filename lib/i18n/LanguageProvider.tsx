@@ -1,14 +1,7 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { dictionaries, tr, type Dictionary, type Lang } from "./dictionaries";
 
 interface LanguageContextValue {
@@ -24,108 +17,34 @@ const LanguageContext = createContext<LanguageContextValue>({
 });
 
 /**
- * Coordinates ownership of the document-level `<html lang>` attribute between
- * nested providers. Browsers make CSS `text-transform` (e.g. uppercase labels)
- * locale-aware from `<html lang>` — so if it says "tr" while English content is
- * shown, uppercased labels render Turkish casing (dotted "İ" for "i"). The site
- * mounts a Turkish-first root provider around everything, and the English-first
- * advisory portal mounts its own provider inside it. The *innermost* (most
- * specific) provider must win, so each provider hands its children a "claim"
- * object; a nested provider marks its ancestor's claim taken on mount, and any
- * provider whose claim was taken stops writing `<html lang>`.
+ * Bridges the URL-derived locale (owned by next-intl routing) into the existing
+ * dictionary context that ~60 components consume via `useT()`/`useLang()`.
+ *
+ * Language is now **server-authoritative**: the active locale comes from the URL
+ * (`/en/…`, `/tr/…`), not from `localStorage`, so the server renders the correct
+ * language and search engines index each locale. Switching language navigates to
+ * the same route under the new locale prefix; next-intl persists that choice in
+ * the `NEXT_LOCALE` cookie so it survives the visitor's next visit. First-visit
+ * detection from the device/browser `Accept-Language` happens in middleware.
  */
-type HtmlLangClaim = { taken: boolean };
-const HtmlLangClaimContext = createContext<HtmlLangClaim | null>(null);
-
-const STORAGE_KEY = "hunter-lang";
-
 export function LanguageProvider({
   children,
-  defaultLang = "tr",
-  storageKey = STORAGE_KEY,
-  autoDetect = false,
-  detectLangs = ["tr", "en"],
+  lang,
 }: {
   children: React.ReactNode;
-  /** Initial language before any persisted preference loads. */
-  defaultLang?: Lang;
-  /** localStorage key for the persisted preference. Use a distinct key to
-   *  scope a section's language independently (e.g. English-first advisory). */
-  storageKey?: string;
-  /** When true and no preference is stored yet, pick the initial language from
-   *  the visitor's browser languages (opt-in; the Turkish-first root site does
-   *  not use it). Anything outside `detectLangs` falls back to `defaultLang`. */
-  autoDetect?: boolean;
-  /** Candidate languages auto-detect is allowed to choose from, by base tag. */
-  detectLangs?: Lang[];
+  /** Active locale, resolved from the URL by the [locale] layout. */
+  lang: Lang;
 }) {
-  const [lang, setLangState] = useState<Lang>(defaultLang);
-
-  const parentClaim = useContext(HtmlLangClaimContext);
-  // Stable per-instance claim handed down to descendants. A nested provider
-  // flips its ancestor's `taken` so only the deepest provider drives `<html lang>`.
-  const ownClaim = useRef<HtmlLangClaim>({ taken: false }).current;
-
-  // Resolve the initial language on mount: a stored preference always wins;
-  // otherwise, when auto-detect is on, greet the visitor in their browser
-  // language (e.g. Turkish phones land in Turkish) before falling back to the
-  // default. Persisting only happens when the visitor chooses via `setLang`.
-  const detectKey = detectLangs.join(",");
-  useEffect(() => {
-    const isKnown = (value: string) =>
-      Object.prototype.hasOwnProperty.call(dictionaries, value);
-    try {
-      const stored = window.localStorage.getItem(storageKey);
-      if (stored && isKnown(stored)) {
-        setLangState(stored as Lang);
-        return;
-      }
-      if (autoDetect && typeof navigator !== "undefined") {
-        const allowed = detectKey.split(",").filter(Boolean);
-        const candidates =
-          navigator.languages && navigator.languages.length
-            ? navigator.languages
-            : [navigator.language];
-        for (const tag of candidates) {
-          const base = (tag || "").toLowerCase().split("-")[0];
-          if (allowed.includes(base) && isKnown(base)) {
-            setLangState(base as Lang);
-            return;
-          }
-        }
-      }
-    } catch {
-      /* ignore storage errors */
-    }
-  }, [storageKey, autoDetect, detectKey]);
-
-  // Tell the nearest ancestor provider (if any) to yield `<html lang>` ownership
-  // to us — we're the deeper, more specific provider for this subtree. Child
-  // effects flush before parent effects, so the ancestor sees this before its
-  // own sync effect runs and skips writing.
-  useEffect(() => {
-    if (parentClaim) parentClaim.taken = true;
-  }, [parentClaim]);
-
-  // Keep `<html lang>` in sync with the active language — unless a nested
-  // provider has claimed ownership. Runs on mount too, so the default language
-  // (e.g. the advisory portal's English) is reflected instead of the static
-  // server-rendered value.
-  useEffect(() => {
-    if (ownClaim.taken) return;
-    document.documentElement.lang = lang;
-  }, [lang, ownClaim]);
+  const router = useRouter();
+  const pathname = usePathname();
 
   const setLang = useCallback(
     (next: Lang) => {
-      setLangState(next);
-      try {
-        window.localStorage.setItem(storageKey, next);
-      } catch {
-        /* ignore */
-      }
+      // `pathname` here is locale-stripped; next-intl re-adds the new prefix and
+      // updates the NEXT_LOCALE cookie.
+      router.replace(pathname, { locale: next });
     },
-    [storageKey],
+    [router, pathname],
   );
 
   const t = dictionaries[lang];
@@ -137,9 +56,7 @@ export function LanguageProvider({
 
   return (
     <LanguageContext.Provider value={value}>
-      <HtmlLangClaimContext.Provider value={ownClaim}>
-        {children}
-      </HtmlLangClaimContext.Provider>
+      {children}
     </LanguageContext.Provider>
   );
 }

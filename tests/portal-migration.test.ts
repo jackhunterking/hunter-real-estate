@@ -23,12 +23,14 @@ const partnerRedesignMigration = readFileSync(
 );
 
 test("advisory application uses the canonical route tree only", () => {
-  assert.equal(existsSync(resolve(root, "app/hunter-advisory/page.tsx")), true);
+  assert.equal(existsSync(resolve(root, "app/[locale]/hunter-advisory/page.tsx")), true);
   assert.equal(existsSync(resolve(root, "app/hunter-north-capital")), false);
   const middleware = readFileSync(resolve(root, "middleware.ts"), "utf8");
   assert.match(middleware, /const ADVISORY_PREFIX = "\/hunter-advisory"/);
   assert.match(middleware, /const ADVISORY_HOME_URL = "https:\/\/hunterhunteradvisors\.com\/"/);
-  assert.match(middleware, /request\.nextUrl\.pathname === "\/investing"/);
+  // Legacy /investing is redirected off the locale-stripped path now that routes
+  // are locale-prefixed (see stripLocale() in middleware.ts).
+  assert.match(middleware, /rest === "\/investing"/);
   assert.doesNotMatch(middleware, /hunter-north-capital/);
 });
 
@@ -151,7 +153,7 @@ test("firm access never becomes referral ownership permission", () => {
   assert.match(referralPolicy, /owner_user_id = \(select auth\.uid\(\)\)/);
   assert.doesNotMatch(referralPolicy, /has_org_role/);
   assert.equal(
-    existsSync(resolve(root, "app/hunter-advisory/(portal)/firm/clients")),
+    existsSync(resolve(root, "app/[locale]/hunter-advisory/(portal)/firm/clients")),
     false,
   );
 });
