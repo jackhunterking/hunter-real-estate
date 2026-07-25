@@ -1,13 +1,15 @@
 "use client";
 
 /**
- * Compact Turkish / English language dropdown for the landing header.
+ * Compact language dropdown for the landing header — all four site locales
+ * (Türkçe / English / Français / Español).
  *
- * Reads `lang` / `setLang` from the advisory `LanguageProvider` (its own
- * persisted key). Built as a real dropdown — flag + language name — rather than
- * a bare toggle, so a first-time Instagram visitor immediately recognises it as
- * "pick your language". Styled in the landing's own light-header palette; kept
- * to TR/EN today, but the list is data-driven so FR/ES can be added later.
+ * Reads `lang` / `setLang` from `LanguageProvider`; `setLang` navigates to the
+ * same route under the chosen locale prefix (and sets the NEXT_LOCALE cookie).
+ * Built as a real dropdown — flag + language name — rather than a bare toggle,
+ * so a first-time Instagram visitor immediately recognises it as "pick your
+ * language". Styled in the landing's own light-header palette; the list is
+ * data-driven via `OPTIONS`.
  */
 
 import { useEffect, useId, useRef, useState } from "react";
@@ -46,11 +48,32 @@ function FlagEN() {
   );
 }
 
+function FlagFR() {
+  return (
+    <svg viewBox="0 0 30 20" className="h-3.5 w-5 rounded-[2px]" aria-hidden="true">
+      <rect width="10" height="20" x="0" fill="#0055A4" />
+      <rect width="10" height="20" x="10" fill="#fff" />
+      <rect width="10" height="20" x="20" fill="#EF4135" />
+    </svg>
+  );
+}
+
+function FlagES() {
+  return (
+    <svg viewBox="0 0 30 20" className="h-3.5 w-5 rounded-[2px]" aria-hidden="true">
+      <rect width="30" height="20" fill="#AA151B" />
+      <rect width="30" height="10" y="5" fill="#F1BF00" />
+    </svg>
+  );
+}
+
 type LangOption = { code: Lang; short: string; label: string; Flag: () => React.ReactElement };
 
 const OPTIONS: LangOption[] = [
   { code: "tr", short: "TR", label: "Türkçe", Flag: FlagTR },
   { code: "en", short: "EN", label: "English", Flag: FlagEN },
+  { code: "fr", short: "FR", label: "Français", Flag: FlagFR },
+  { code: "es", short: "ES", label: "Español", Flag: FlagES },
 ];
 
 export function LanguageMenu({ className = "" }: { className?: string }) {
