@@ -1,5 +1,5 @@
 import { calendarYearReturns, parsePerformancePercentage } from "./performance.ts";
-import type { LocalizedText, OfferingBundle } from "./types";
+import type { LocalizedText, OfferingBundle, PublicOfferingPreview } from "./types";
 
 /**
  * Pure, server-safe engine for the "Compare Investments" resource tool.
@@ -270,5 +270,64 @@ export function toFundComparable(bundle: OfferingBundle): FundComparable | null 
     inceptionDate: bundle.inceptionDate,
     dataPeriodLabel: bundle.dataPeriodLabel,
     dataAsOf: bundle.dataAsOf,
+  };
+}
+
+/**
+ * Public-landing sibling of `toFundComparable`: builds the same client-safe
+ * comparable from the gated `PublicOfferingPreview` projection instead of a full
+ * `OfferingBundle`, so the public income simulator reuses the exact period model
+ * and math as the signed-in Passive tools. `performance` carries the same
+ * `{ period, value }[]` the portal reads from `trailingReturns`. Returns null
+ * when a fund has no usable published calendar-year returns.
+ */
+export function publicPreviewToFundComparable(
+  offering: PublicOfferingPreview,
+): FundComparable | null {
+  const years = calendarYearReturns(offering.performance).slice().sort((a, b) => b.year - a.year);
+
+  let inception: number | null = null;
+  for (const row of offering.performance ?? []) {
+    if (/since inception|kurulu/i.test(`${row.period.en} ${row.period.tr}`)) {
+      inception = parsePerformancePercentage(row.value);
+      break;
+    }
+  }
+
+  const periods: FundPeriod[] = [];
+  years.forEach((entry, index) => {
+    periods.push({
+      key: `year-${entry.year}`,
+      role: index === 0 ? "last" : index === 1 ? "prior" : "older",
+      year: entry.year,
+      pct: entry.pct,
+    });
+  });
+  const inceptionPct = inception ?? (years.length ? years.reduce((sum, y) => sum + y.pct, 0) / years.length : null);
+  if (inceptionPct !== null) {
+    periods.push({ key: "since-inception", role: "inception", pct: inceptionPct, derived: inception === null });
+  }
+
+  if (!periods.length) return null;
+
+  return {
+    id: offering.id,
+    slug: offering.slug,
+    shortName: offering.shortName,
+    managerName: offering.managerName,
+    logoSrc: offering.media?.logo?.src,
+    periods,
+    targetReturnPhrase: offering.targetReturn
+      ? { en: offering.targetReturn.value, tr: offering.targetReturn.value }
+      : undefined,
+    minimumInvestment: offering.minimumInvestment?.value,
+    terms: {
+      targetReturn: offering.targetReturn?.value,
+      targetDistribution: offering.targetDistribution?.value,
+      term: offering.term?.value,
+      riskProfile: offering.riskProfile,
+      registeredAccountTypes: offering.registeredAccountTypes,
+      aum: offering.aum ? String(offering.aum.value) : undefined,
+    },
   };
 }

@@ -4,7 +4,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { tx } from "@/lib/i18n/localize";
-import { BUILDING_PLACEHOLDER_GRADIENT, initialsFrom, type MapProperty } from "@/lib/capital/present";
+import {
+  BUILDING_PLACEHOLDER_GRADIENT,
+  initialsFrom,
+  isRendering,
+  localizeRendering,
+  type MapProperty,
+} from "@/lib/capital/present";
 import { cn } from "@/lib/utils";
 import { loadLeafletCluster } from "./leaflet-loader";
 
@@ -92,7 +98,13 @@ function clusterIcon(L: Record<string, any>, count: number) {
  * the single-investment embed — the fund is already the page you're on, so the
  * tag would only repeat it.
  */
-function buildPopupContent(p: MapProperty, viewListingLabel: string, openInMapsLabel: string, showOffering: boolean) {
+function buildPopupContent(
+  p: MapProperty,
+  viewListingLabel: string,
+  openInMapsLabel: string,
+  renderingLabel: string,
+  showOffering: boolean,
+) {
   const el = document.createElement("div");
   el.className = "fund-popup";
 
@@ -106,6 +118,14 @@ function buildPopupContent(p: MapProperty, viewListingLabel: string, openInMapsL
     img.alt = p.name;
     img.loading = "lazy";
     media.appendChild(img);
+    // An architect's rendering is labelled as one, so the popup never reads as
+    // a photograph of a building that looks like this today.
+    if (isRendering(p.image)) {
+      const tag = document.createElement("span");
+      tag.className = "fund-popup-rendering";
+      tag.textContent = renderingLabel;
+      media.appendChild(tag);
+    }
   } else {
     const placeholder = document.createElement("div");
     placeholder.style.cssText =
@@ -196,6 +216,8 @@ export function FundMap({
   viewListingLabelRef.current = t.capitalApp.portfolio.viewListing;
   const openInMapsLabelRef = useRef(t.capitalApp.portfolio.openInMaps);
   openInMapsLabelRef.current = t.capitalApp.portfolio.openInMaps;
+  const renderingLabelRef = useRef(localizeRendering(lang));
+  renderingLabelRef.current = localizeRendering(lang);
   const [status, setStatus] = useState<Status>("loading");
 
   // Stable fingerprint of the marker data. The parent recomputes `properties`
@@ -288,7 +310,7 @@ export function FundMap({
       });
       marker.on("click", () => onSelectRef.current(p.id));
       marker.bindTooltip(p.name, { direction: "top" });
-      marker.bindPopup(buildPopupContent(p, viewListingLabelRef.current, openInMapsLabelRef.current, variant !== "embed"), {
+      marker.bindPopup(buildPopupContent(p, viewListingLabelRef.current, openInMapsLabelRef.current, renderingLabelRef.current, variant !== "embed"), {
         maxWidth: 272,
         minWidth: 272,
         closeButton: true,
@@ -408,12 +430,19 @@ export function FundMap({
                 )}
               >
                 {p.image?.src ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={p.image.src}
-                    alt={tx(p.image.alt, lang) ?? p.name}
-                    className="aspect-[4/3] w-full rounded-md border border-border object-cover"
-                  />
+                  <span className="relative block">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={p.image.src}
+                      alt={tx(p.image.alt, lang) ?? p.name}
+                      className="aspect-[4/3] w-full rounded-md border border-border object-cover"
+                    />
+                    {isRendering(p.image) && (
+                      <span className="absolute inset-x-0 bottom-0 rounded-b-md bg-background/85 px-1 py-0.5 text-center text-[9px] font-semibold leading-tight text-muted-foreground">
+                        {localizeRendering(lang)}
+                      </span>
+                    )}
+                  </span>
                 ) : (
                   <div
                     className="flex aspect-[4/3] w-full items-center justify-center rounded-md border border-border"

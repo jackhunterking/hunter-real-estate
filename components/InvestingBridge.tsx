@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
-import { DealerDisclosure } from "@/components/capital/north/DealerDisclosure";
+import { DisclosureBar } from "@/components/capital/north/DisclosureBar";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 
@@ -44,7 +44,7 @@ export function InvestingBridge() {
               <Link href={HNC_URL} className="inline-flex h-12 items-center gap-2 bg-[#d8bf7a] px-5 text-sm font-bold text-[#071c2c]">{c.continue}<ArrowRight className="size-4" /></Link>
               <Link href="/" className="inline-flex h-12 items-center gap-2 border border-white/20 px-5 text-sm font-semibold"><ArrowLeft className="size-4" />{c.back}</Link>
             </div>
-            <DealerDisclosure level="short" tone="dark" className="mt-8 max-w-xl border-t border-white/12 pt-6" />
+            <DisclosureBar tone="dark" className="mt-8 max-w-xl border-t border-white/12 pt-6" />
           </div>
           <aside className="border-t border-white/12 bg-[#f5f1e7] p-7 text-[#1e3545] sm:p-10 lg:border-l lg:border-t-0 lg:p-12">
             <ShieldCheck className="size-8 text-[#8f7030]" />

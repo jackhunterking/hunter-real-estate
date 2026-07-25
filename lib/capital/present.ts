@@ -61,6 +61,21 @@ export function localizeVerification(status: Property["verificationStatus"], lan
   return tx(VERIFICATION[status], lang);
 }
 
+const RENDERING: LocalizedText = { en: "Artist's rendering", tr: "Mimari görsel" };
+
+/**
+ * A building card must never pass an architect's rendering off as a photograph.
+ * Slots carrying `kind: "render"` (a not-yet-built or just-completed asset with
+ * no honest photo of it) get this badge; everything else is a real photo.
+ */
+export function isRendering(slot: ImageSlot | undefined): boolean {
+  return slot?.kind === "render";
+}
+
+export function localizeRendering(lang: Lang) {
+  return tx(RENDERING, lang);
+}
+
 /* ------------------------------------------------------------------ */
 /* Number / currency / units formatting                               */
 /* ------------------------------------------------------------------ */

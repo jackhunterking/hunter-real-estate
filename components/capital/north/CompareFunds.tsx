@@ -15,7 +15,7 @@ import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
 import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
 import { Panel, money } from "@/components/capital/north/PortalUI";
-import { DealerDisclosure } from "@/components/capital/north/DealerDisclosure";
+import { DisclosureBar } from "@/components/capital/north/DisclosureBar";
 import { FundSelect, HeroCashFlow, PrimaryAmountField, ToolHeader } from "@/components/capital/north/CompareUI";
 
 const BLUE = "#0a4b72";
@@ -267,7 +267,7 @@ export function CompareFunds({ funds }: { funds: FundComparable[] }) {
           <TermsTable fundA={fundA} fundB={fundB} lang={lang} c={c} />
         </Panel>
 
-        <DealerDisclosure level="short" className="px-1" />
+        <DisclosureBar coBrand={false} className="px-1" />
       </div>
     </div>
   );

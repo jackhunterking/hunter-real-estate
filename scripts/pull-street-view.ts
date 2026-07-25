@@ -48,7 +48,13 @@ const report = args.includes("--report");
 const force = args.includes("--force");
 const localIdx = args.indexOf("--local");
 const localDir = localIdx >= 0 ? args[localIdx + 1] : null;
-const slugArg = args.find((a) => !a.startsWith("--") && a !== localDir);
+// `--only a,b` re-pulls exactly these building ids and nothing else. Use it to
+// replace a specific card — an architect's rendering, an aerial, a Street View
+// aimed at the wrong side — without touching the images already curated.
+const onlyIdx = args.indexOf("--only");
+const onlyArg = onlyIdx >= 0 ? args[onlyIdx + 1] : null;
+const only: Set<string> | null = onlyArg ? new Set(onlyArg.split(",").map((id) => id.trim()).filter(Boolean)) : null;
+const slugArg = args.find((a) => !a.startsWith("--") && a !== localDir && a !== onlyArg);
 
 const key = process.env.GOOGLE_MAPS_API_KEY;
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -124,8 +130,11 @@ async function main() {
     let pulled = 0, skipped = 0, none = 0, skiplisted = 0, missing = 0, changed = false;
 
     for (const p of props) {
-      if (hasImage(p) && !force) { skipped++; continue; }
-      if (skip.has(p.id)) { skiplisted++; continue; }
+      // `--only` is an explicit, curated re-pull: it overrides both the
+      // has-an-image short-circuit and the skiplist for the ids it names.
+      if (only && !only.has(p.id)) { skipped++; continue; }
+      if (hasImage(p) && !force && !only) { skipped++; continue; }
+      if (skip.has(p.id) && !only) { skiplisted++; continue; }
       missing++;
       if (report) { console.log(`  · needs pull: ${p.id}  (${txt(p.name)})`); continue; }
 

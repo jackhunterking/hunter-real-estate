@@ -14,7 +14,7 @@ import {
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { TurnstileField } from "@/components/TurnstileField";
-import { DealerDisclosure } from "./DealerDisclosure";
+import { DisclosureBar } from "./DisclosureBar";
 import { NORTH_BASE, NorthBrand, ParvisCoBrand } from "./NorthBrand";
 
 const COPY = {
@@ -613,7 +613,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
           <LockKeyhole className="size-3.5" aria-hidden />
           {c.secured}
         </p>
-        <DealerDisclosure level="short" className="mt-6 max-w-[560px] text-center" />
+        <DisclosureBar align="center" coBrand={false} className="mt-6 max-w-[560px]" />
       </div>
     </main>
   );

@@ -20,6 +20,14 @@ export const INVESTMENT_BRAND = {
     primary: "Hunter & Hunter",
     descriptor: "Investment Advisors",
     poweredBy: "Powered by",
+    // One-line surface disclosure. Everything else stays folded into the
+    // `Disclosures` panel so no screen carries a wall of legal prose.
+    registrationLine:
+      "Jack Hunter, registered Dealing Representative at Parvis Investment Services Inc.",
+    disclosuresToggle: "Disclosures",
+    riskLine:
+      "Targets are not guaranteed. Private-market investments carry risk, including loss of principal. Review the offering documents before investing.",
+    legalLink: "Legal & privacy",
     microDisclosure:
       "Securities services through Parvis Investment Services Inc. · NRD #74000.",
     shortDisclosure:
@@ -41,6 +49,12 @@ export const INVESTMENT_BRAND = {
     primary: "Hunter & Hunter",
     descriptor: "Investment Advisors",
     poweredBy: "Powered by",
+    registrationLine:
+      "Jack Hunter, Parvis Investment Services Inc. bünyesinde kayıtlı Dealing Representative.",
+    disclosuresToggle: "Açıklamalar",
+    riskLine:
+      "Hedefler garanti değildir. Özel piyasa yatırımları, anapara kaybı dahil risk taşır. Yatırımdan önce ihraç belgelerini inceleyin.",
+    legalLink: "Hukuki bilgiler ve gizlilik",
     microDisclosure:
       "Menkul kıymet hizmetleri Parvis Investment Services Inc. aracılığıyla sunulur · NRD No. 74000.",
     shortDisclosure:

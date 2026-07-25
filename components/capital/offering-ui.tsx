@@ -17,11 +17,19 @@ import {
   type LucideIcon,
   MapPin,
   MapPinned,
+  PencilRuler,
   Presentation,
 } from "lucide-react";
 import type { Lang, OfferingBundle, OfferingDocument, Property, ServiceProviders, SourcedValue } from "@/lib/capital/types";
 import type { DocumentTermGroup } from "@/lib/capital/key-facts";
-import { BUILDING_PLACEHOLDER_GRADIENT, localizeVerification, primaryShareClass, resolveImage } from "@/lib/capital/present";
+import {
+  BUILDING_PLACEHOLDER_GRADIENT,
+  isRendering,
+  localizeRendering,
+  localizeVerification,
+  primaryShareClass,
+  resolveImage,
+} from "@/lib/capital/present";
 import { computeInvestmentIncome } from "@/lib/capital/performance";
 import { CommaInput } from "@/components/capital/north/CompareUI";
 import { cn } from "@/lib/utils";
@@ -192,13 +200,14 @@ export function AssetGallery({ properties, lang }: { properties: Property[]; lan
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {properties.map((p) => {
-        const image = resolveImage(p.media?.card ?? p.media?.gallery?.[0], p.id, tx(p.name, lang), lang);
+        const slot = p.media?.card ?? p.media?.gallery?.[0];
+        const image = resolveImage(slot, p.id, tx(p.name, lang), lang);
         const verified = p.verificationStatus === "verified";
-        const address = tx(p.address, lang);
-        const cityProvince = `${p.city}, ${p.province}`;
-        // The address usually already names the city/province; only append it when
-        // it doesn't, so we never render "…Cold Lake, Alberta · Cold Lake, Alberta".
-        const location = address ? (address.includes(p.city) ? address : `${address} · ${cityProvince}`) : cityProvince;
+        const rendering = isRendering(slot);
+        // A building is identified by its street address, never by a marketing
+        // name — `p.name` carries the street line, so the caption below it only
+        // needs the city and province.
+        const location = `${p.city}, ${p.province}`;
         return (
           <figure key={p.id} className="overflow-hidden rounded-xl border border-border bg-card">
             <div
@@ -215,6 +224,12 @@ export function AssetGallery({ properties, lang }: { properties: Property[]; lan
                 <span className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-semibold text-[color:var(--ok)] shadow-sm">
                   <CheckCircle2 className="size-3" aria-hidden />
                   {localizeVerification(p.verificationStatus, lang)}
+                </span>
+              )}
+              {image.src && rendering && (
+                <span className="absolute bottom-2.5 right-2.5 inline-flex items-center gap-1 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground shadow-sm">
+                  <PencilRuler className="size-3" aria-hidden />
+                  {localizeRendering(lang)}
                 </span>
               )}
             </div>
@@ -346,7 +361,7 @@ export function ServiceProvidersCard({
 
 const INCOME_CALC_COPY = {
   en: {
-    title: "See it on your amount",
+    title: "Simulate your investment",
     help: "Enter an amount to see what it would have earned in this fund — looking back, not a projection.",
     tag: "Historical—not a forecast",
     amountLabel: "Amount invested",
@@ -358,7 +373,7 @@ const INCOME_CALC_COPY = {
     average: "Average / yr",
   },
   tr: {
-    title: "Kendi tutarınızda görün",
+    title: "Yatırımınızı simüle edin",
     help: "Bu yatırımda ne kazandırmış olacağını görmek için bir tutar girin — geriye dönük, bir öngörü değil.",
     tag: "Geçmiş bilgi—tahmin değildir",
     amountLabel: "Yatırılan tutar",

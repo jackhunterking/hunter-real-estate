@@ -24,7 +24,7 @@ import { PageHeader } from "./PortalUI";
 const COPY = {
   en: {
     title: "Tools",
-    description: "Calculators and checks that put a decision in present-tense terms. Every fund figure is a return the manager published — none of these tools forecast.",
+    description: "Calculators built on published manager figures. None of them forecast.",
     tools: [
       {
         href: "/resources/tools/active-vs-passive",
@@ -55,7 +55,7 @@ const COPY = {
   },
   tr: {
     title: "Araçlar",
-    description: "Bir kararı bugünün rakamlarına döken hesaplayıcılar ve kontroller. Her fon rakamı yöneticinin yayımladığı bir getiridir; bu araçlar öngörü üretmez.",
+    description: "Yöneticinin yayımladığı rakamlara dayanan hesaplayıcılar. Öngörü üretmezler.",
     tools: [
       {
         href: "/resources/tools/active-vs-passive",

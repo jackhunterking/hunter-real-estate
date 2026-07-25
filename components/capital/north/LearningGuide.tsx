@@ -14,8 +14,8 @@ import { pick, tx } from "@/lib/i18n/localize";
 import { NORTH_BASE } from "./NorthBrand";
 
 const COPY = {
-  en: { back: "Learning centre", contents: "In this guide", minutes: "min read", reviewed: "Reviewed", sources: "Sources and further reading", accessed: "Accessed", related: "Related tool", relatedTitle: "Check your investor category", relatedBody: "Use the preliminary qualification tool to understand the Canadian financial category indicated by your answers.", open: "Open qualification", version: "Version" },
-  tr: { back: "Bilgi merkezi", contents: "Bu rehberde", minutes: "dk okuma", reviewed: "İnceleme", sources: "Kaynaklar ve ek okuma", accessed: "Erişim", related: "İlgili araç", relatedTitle: "Yatırımcı kategorinizi kontrol edin", relatedBody: "Yanıtlarınızın işaret ettiği Kanada finansal kategorisini anlamak için ön yeterlilik aracını kullanın.", open: "Yeterlilik aracını aç", version: "Sürüm" },
+  en: { back: "Learning centre", contents: "In this guide", minutes: "min read", reviewed: "Reviewed", sources: "Sources and further reading", accessed: "Accessed", related: "Related tool", relatedTitle: "Check your investor category", relatedBody: "See the Canadian financial category your answers indicate.", open: "Open qualification", version: "Version" },
+  tr: { back: "Bilgi merkezi", contents: "Bu rehberde", minutes: "dk okuma", reviewed: "İnceleme", sources: "Kaynaklar ve ek okuma", accessed: "Erişim", related: "İlgili araç", relatedTitle: "Yatırımcı kategorinizi kontrol edin", relatedBody: "Yanıtlarınızın işaret ettiği Kanada finansal kategorisini görün.", open: "Yeterlilik aracını aç", version: "Sürüm" },
 } as const;
 
 function anchor(value: string) {

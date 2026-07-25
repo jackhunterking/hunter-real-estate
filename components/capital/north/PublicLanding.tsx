@@ -4,9 +4,8 @@
  * Hunter & Hunter public entry / marketing page.
  *
  * This is a thin orchestrator: the marketing narrative lives in
- * `./landing/*` (copy, primitives, mockups, product-frames, sections). The
- * export name and path are unchanged so `app/hunter-advisory/page.tsx` needs
- * no edits.
+ * `./landing/*` (copy, primitives, mockups, sections). The export name and
+ * path are unchanged so `app/hunter-advisory/page.tsx` needs no edits.
  *
  * Section order is tuned for a cold, mobile Instagram visitor: explain it in
  * plain words → set it against the alternatives (compare) → prove it's real
@@ -29,7 +28,7 @@ import {
   HowItWorks,
   LandingFooter,
   LandingHeader,
-  PlatformTabs,
+  Simulator,
   TrustBar,
   WhyPillars,
 } from "./landing/sections";
@@ -43,7 +42,6 @@ export function PublicLanding({
   const c = pick(LANDING_COPY, lang);
   const displayOfferings = offerings;
   const data = deriveLandingData(displayOfferings);
-  const isPreview = offerings.length === 0;
 
   return (
     // Content language follows the active UI language so CSS casing rules match
@@ -53,27 +51,21 @@ export function PublicLanding({
       <main>
         <Hero
           c={c}
-          offerings={displayOfferings.slice(0, 2)}
+          offerings={displayOfferings}
           hasOfferings={data.hasOfferings}
           backdrop={data.heroBackdrop}
         />
         <WhyPillars c={c} images={data.galleryItems} />
+        {data.hasOfferings && <Simulator c={c} offerings={displayOfferings} />}
         <HowItCompares c={c} />
         <BuildingsGallery c={c} images={data.galleryItems} lang={lang} />
         <HowItWorks c={c} />
         {data.hasOfferings && <FeaturedOpportunities c={c} offerings={displayOfferings} />}
         <TrustBar c={c} />
         <FAQ c={c} />
-        {displayOfferings.length > 0 && (
-          <PlatformTabs
-            c={c}
-            offerings={displayOfferings.slice(0, 2)}
-            isPreview={isPreview}
-          />
-        )}
         <FinalCta c={c} />
       </main>
-      <LandingFooter c={c} />
+      <LandingFooter />
     </div>
   );
 }

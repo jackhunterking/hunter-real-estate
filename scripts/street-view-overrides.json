@@ -7,5 +7,6 @@
   "legacy-1105-36-st-n": { "heading": 270 },
   "legacy-3760-18-ave-n": { "locLat": 49.7223052, "locLng": -112.7871765, "heading": 151 },
   "legacy-3710-18-ave-n": { "locLat": 49.7223082, "locLng": -112.7877353, "heading": 147 },
-  "lankin-riverwood-ottawa": { "locLat": 45.4077999, "locLng": -75.6637836, "heading": 50, "pitch": 10, "fov": 72 }
+  "lankin-riverwood-ottawa": { "locLat": 45.4077999, "locLng": -75.6637836, "heading": 50, "pitch": 10, "fov": 72 },
+  "lankin-huron-heights": { "locLat": 44.0647, "locLng": -79.44478, "heading": 305 }
 }

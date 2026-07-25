@@ -616,8 +616,8 @@
       ],
       "managerId": "lankin-investments",
       "name": {
-        "en": "Park Centre Place",
-        "tr": "Park Centre Place"
+        "en": "2014 Sherwood Drive",
+        "tr": "2014 Sherwood Drive"
       },
       "address": {
         "en": "2014 Sherwood Drive, Sherwood Park, Alberta",
@@ -640,11 +640,11 @@
         "card": {
           "bucket": "offering-public",
           "path": "lankin-apartment-reit/media/deck/lankin-park-centre-place.jpg",
-          "kind": "photo",
+          "kind": "render",
           "sourceId": "lankin-deck-2026-03",
           "alt": {
-            "en": "Park Centre Place — Lankin",
-            "tr": "Park Centre Place — Lankin"
+            "en": "2014 Sherwood Drive — artist's rendering",
+            "tr": "2014 Sherwood Drive — mimari görsel"
           }
         }
       }
@@ -656,8 +656,8 @@
       ],
       "managerId": "lankin-investments",
       "name": {
-        "en": "Huron Heights",
-        "tr": "Huron Heights"
+        "en": "75-77 Huron Heights Drive",
+        "tr": "75-77 Huron Heights Drive"
       },
       "address": {
         "en": "75-77 Huron Heights Drive, Newmarket, Ontario",
@@ -680,13 +680,14 @@
       "media": {
         "card": {
           "bucket": "offering-public",
-          "path": "lankin-apartment-reit/media/deck/lankin-huron-heights.jpg",
+          "path": "lankin-apartment-reit/media/street-view/lankin-huron-heights.jpg",
           "kind": "photo",
-          "sourceId": "lankin-deck-2026-03",
+          "sourceId": "google-street-view",
           "alt": {
-            "en": "Huron Heights — Lankin",
-            "tr": "Huron Heights — Lankin"
-          }
+            "en": "75-77 Huron Heights Drive — street view",
+            "tr": "75-77 Huron Heights Drive — sokak görünümü"
+          },
+          "verifiedAt": "2024-08"
         }
       }
     },
@@ -697,8 +698,8 @@
       ],
       "managerId": "lankin-investments",
       "name": {
-        "en": "Orenda Court",
-        "tr": "Orenda Court"
+        "en": "75-90 Orenda Court",
+        "tr": "75-90 Orenda Court"
       },
       "address": {
         "en": "75-90 Orenda Court, Brampton, Ontario",
@@ -724,8 +725,8 @@
           "kind": "photo",
           "sourceId": "lankin-deck-2026-03",
           "alt": {
-            "en": "Orenda Court — Lankin",
-            "tr": "Orenda Court — Lankin"
+            "en": "75-90 Orenda Court — Lankin",
+            "tr": "75-90 Orenda Court — Lankin"
           }
         }
       }
@@ -777,8 +778,8 @@
       ],
       "managerId": "lankin-investments",
       "name": {
-        "en": "Greenstone Park",
-        "tr": "Greenstone Park"
+        "en": "11350 128 Street NW",
+        "tr": "11350 128 Street NW"
       },
       "address": {
         "en": "11350 128 Street NW, Edmonton, Alberta",
@@ -800,13 +801,14 @@
       "media": {
         "card": {
           "bucket": "offering-public",
-          "path": "lankin-apartment-reit/media/deck/lankin-greenstone-park.jpg",
+          "path": "lankin-apartment-reit/media/street-view/lankin-greenstone-park.jpg",
           "kind": "photo",
-          "sourceId": "lankin-deck-2026-03",
+          "sourceId": "google-street-view",
           "alt": {
-            "en": "Greenstone Park — Lankin",
-            "tr": "Greenstone Park — Lankin"
-          }
+            "en": "11350 128 Street NW — street view",
+            "tr": "11350 128 Street NW — sokak görünümü"
+          },
+          "verifiedAt": "2025-06"
         }
       }
     },
@@ -817,8 +819,8 @@
       ],
       "managerId": "lankin-investments",
       "name": {
-        "en": "Darcel Avenue",
-        "tr": "Darcel Avenue"
+        "en": "7110 Darcel Avenue",
+        "tr": "7110 Darcel Avenue"
       },
       "address": {
         "en": "7110 Darcel Avenue, Mississauga, Ontario",
@@ -846,8 +848,8 @@
           "kind": "photo",
           "sourceId": "lankin-deck-2026-03",
           "alt": {
-            "en": "Darcel Avenue — Lankin",
-            "tr": "Darcel Avenue — Lankin"
+            "en": "7110 Darcel Avenue — Lankin",
+            "tr": "7110 Darcel Avenue — Lankin"
           }
         }
       }
@@ -859,8 +861,8 @@
       ],
       "managerId": "lankin-investments",
       "name": {
-        "en": "Queen Frederica",
-        "tr": "Queen Frederica"
+        "en": "3045 Queen Frederica Drive",
+        "tr": "3045 Queen Frederica Drive"
       },
       "address": {
         "en": "3045 Queen Frederica Drive, Mississauga, Ontario",
@@ -888,8 +890,8 @@
           "kind": "photo",
           "sourceId": "lankin-deck-2026-03",
           "alt": {
-            "en": "Queen Frederica — Lankin",
-            "tr": "Queen Frederica — Lankin"
+            "en": "3045 Queen Frederica Drive — Lankin",
+            "tr": "3045 Queen Frederica Drive — Lankin"
           }
         }
       }
