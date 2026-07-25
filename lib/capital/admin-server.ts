@@ -55,24 +55,22 @@ export type AdminDirectories = {
   users: AdminUserRow[];
   taxonomies: AdminTaxonomyRow[];
   interests: AdminRecordRow[];
-  memberships: AdminRecordRow[];
   email: AdminRecordRow[];
   legal: AdminRecordRow[];
 };
 
 const EMPTY: AdminDirectories = {
-  users: [], taxonomies: [], interests: [], memberships: [], email: [], legal: [],
+  users: [], taxonomies: [], interests: [], email: [], legal: [],
 };
 
 export async function loadAdminDirectories(): Promise<AdminDirectories> {
   const supabase = await createSupabaseServerClient();
   if (!supabase) return EMPTY;
 
-  const [users, taxonomies, interests, memberships, email, legal] = await Promise.all([
+  const [users, taxonomies, interests, email, legal] = await Promise.all([
     supabase.from("admin_users").select("*").order("created_at", { ascending: false }),
     supabase.from("admin_taxonomies").select("*").order("kind").order("sort_order"),
     supabase.from("admin_investment_interests").select("*").order("created_at", { ascending: false }).limit(250),
-    supabase.from("admin_firm_memberships").select("*").order("requested_at", { ascending: false }).limit(250),
     supabase.from("admin_email_delivery").select("*").order("created_at", { ascending: false }).limit(250),
     supabase.from("admin_legal_documents").select("*").order("effective_at", { ascending: false }).limit(250),
   ]);
@@ -114,20 +112,6 @@ export async function loadAdminDirectories(): Promise<AdminDirectories> {
         Investor: row.display_name, Email: row.email, Investment: row.offering_id,
         Message: row.message, "Preferred channel": row.preferred_channel,
         "Contact consent": row.contact_consent_at, "Reviewer notes": row.reviewer_notes,
-      },
-    })),
-    memberships: (memberships.data ?? []).map((row) => ({
-      id: row.id,
-      title: row.display_name ?? row.registered_name ?? row.work_email ?? row.id,
-      subtitle: row.organization_name ?? row.organization_id,
-      status: row.status,
-      date: row.requested_at,
-      details: {
-        Firm: row.organization_name, Roles: (row.roles ?? []).join(", "),
-        "Work email": row.work_email, "Licence type": row.licence_type,
-        "Licence number": row.masked_licence_number,
-        "Verification": row.verification_status,
-        Approved: row.approved_at, Ended: row.ended_at,
       },
     })),
     email: (email.data ?? []).map((row) => ({

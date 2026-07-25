@@ -5,7 +5,6 @@ import { join } from "node:path";
 import {
   ADMIN_SECTIONS,
   ADMIN_SECTION_GROUPS,
-  LEGACY_ADMIN_PATHS,
   adminSection,
   adminSectionsByGroup,
   isAdminSectionId,
@@ -40,9 +39,10 @@ test("every declared group actually holds sections", () => {
 });
 
 test("queue sections name a module the operations_queue view emits", () => {
-  // The view is recreated in full by 20260723190000; these are the `module`
-  // literals it selects. A queue section naming anything else renders empty.
-  const emitted = new Set(["requests", "professional", "licences", "firms", "payments", "leads", "audit", "freshness"]);
+  // The view is last recreated (trimmed to the investor relationship) by
+  // 20260725120200; these are the `module` literals it now selects. A queue
+  // section naming anything else renders empty.
+  const emitted = new Set(["requests", "leads", "audit", "freshness"]);
   for (const section of ADMIN_SECTIONS) {
     if (section.kind !== "queue") continue;
     assert.ok(section.queueModule, `${section.id} is a queue section with no module`);
@@ -65,22 +65,14 @@ test("an unknown or missing section falls back to the overview", () => {
   assert.equal(isAdminSectionId("nope"), false);
 });
 
-test("every legacy /admin/* path maps to a section that still exists", () => {
-  for (const [path, target] of Object.entries(LEGACY_ADMIN_PATHS)) {
-    assert.ok(isAdminSectionId(target), `${path} redirects to the unknown section ${target}`);
-  }
-});
-
-test("the retired routes redirect into the console instead of rendering", () => {
-  const operations = read("app/hunter-advisory/(portal)/operations/page.tsx");
-  assert.match(operations, /redirect\(/);
-  assert.match(operations, /\/hunter-advisory\/admin/);
-  // The old `?module=` query used the same keys as sections, so it forwards.
-  assert.match(operations, /section=\$\{encodeURIComponent\(module\)\}/);
-
-  for (const path of Object.keys(LEGACY_ADMIN_PATHS)) {
-    const stub = read(`app/hunter-advisory/(portal)/admin/${path}/page.tsx`);
-    assert.match(stub, /redirect\("\/hunter-advisory\/admin\?section=/, `${path} still points at the old route`);
+test("the retired operations inbox and legacy /admin/* stubs are gone", () => {
+  const gone = [
+    "app/hunter-advisory/(portal)/operations/page.tsx",
+    ...["audit", "commissions", "firm-memberships", "firms", "interests", "leads", "license-verifications", "partner-applications"]
+      .map((name) => `app/hunter-advisory/(portal)/admin/${name}/page.tsx`),
+  ];
+  for (const path of gone) {
+    assert.throws(() => read(path), `${path} should have been deleted, not left as a redirect stub`);
   }
 });
 
@@ -128,7 +120,6 @@ test("admin directory views are read through the admin-gated api views", () => {
     "admin_users",
     "admin_taxonomies",
     "admin_investment_interests",
-    "admin_firm_memberships",
     "admin_email_delivery",
     "admin_legal_documents",
   ]) {

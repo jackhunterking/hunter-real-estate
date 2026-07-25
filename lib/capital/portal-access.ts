@@ -3,7 +3,7 @@ import type {
   PartnerCommissionAllocationPercentage,
   PartnerTier,
 } from "./types";
-import { PROFESSIONAL_WORKSPACE_ENABLED } from "./feature-flags";
+import { PROFESSIONAL_WORKSPACE_ENABLED } from "./feature-flags.ts";
 
 export type PortalWorkspace = "investor" | "professional" | "operations";
 export type PreviewPersona = "investor" | "applicant" | "partner" | "firm-admin" | "hnc-admin";
@@ -213,7 +213,12 @@ export type InvestmentApplication = {
   id: string;
   userId: string;
   offeringId: string;
+  /** Invested amount (CAD) = shareQuantity × unit price, or a legacy indicative amount. */
   amount: number;
+  /** The subscribed share class (primary class when a single class is on offer). */
+  shareClassId?: string;
+  /** Whole units the investor indicated intent to subscribe for. Absent on legacy rows. */
+  shareQuantity?: number;
   accountType?: "individual" | "entity";
   preferredContactChannel?: "email" | "phone" | "whatsapp";
   contactConsentAt?: string;

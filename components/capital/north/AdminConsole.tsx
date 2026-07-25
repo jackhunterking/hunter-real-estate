@@ -3,22 +3,18 @@
 /**
  * The master Admin console — one page for every administrative surface.
  *
- * Replaces the old Operations inbox, which put eleven modules in a single flat
- * tab strip and shared a name with eight `/admin/*` routes that were only
- * redirects back into it. Sections are declared once in
- * lib/capital/admin-sections.ts; this component renders the grouped rail from
- * that registry and mounts either the shared queue view or the section's own
- * panel.
- *
- * The queue itself, its detail drawer and the firm-approve / mark-paid actions
- * are carried over unchanged — only their container moved.
+ * Sections are declared once in lib/capital/admin-sections.ts; this component
+ * renders the grouped rail from that registry and mounts either the shared queue
+ * view or the section's own panel. The console is investor-relationship first:
+ * the Investors section mirrors what each investor sees and carries the controls
+ * to manage their requests and transaction status.
  */
 import { useMemo, useState } from "react";
 import {
-  Banknote, BookOpen, Building2, CalendarClock, ClipboardCheck, FileSearch, Gauge,
-  LayoutDashboard, Landmark, Mail, Scale, Search, ShieldCheck, Tags, UserCheck, Users, X,
+  BookOpen, CalendarClock, ClipboardCheck, FileSearch, LayoutDashboard, Landmark,
+  Mail, Scale, Search, ShieldCheck, Tags, UserCheck, Users, X,
 } from "lucide-react";
-import type { LocalizedText } from "@/lib/capital/types";
+import type { OfferingBundle } from "@/lib/capital/types";
 import type { LearningAdminResource } from "@/lib/capital/learning";
 import type { OfferingAdminRow } from "@/lib/capital/offering-admin-server";
 import type { AdminDirectories } from "@/lib/capital/admin-server";
@@ -30,11 +26,11 @@ import { hasPlatformRole } from "@/lib/capital/portal-access";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
-import { FundCommissionScheduleManager } from "./FundCommissionScheduleManager";
 import { LearningContentManager } from "./LearningContentManager";
 import { OfferingContentManager } from "./OfferingContentManager";
 import { OfferingDataFreshness } from "./OfferingDataFreshness";
 import { AdminOverview } from "./admin/AdminOverview";
+import { AdminInvestors } from "./admin/AdminInvestors";
 import { RecordTable } from "./admin/RecordTable";
 import { TaxonomyManager } from "./admin/TaxonomyManager";
 import { UsersAndRoles } from "./admin/UsersAndRoles";
@@ -42,9 +38,7 @@ import { usePortalAccess } from "./PortalAccessProvider";
 import { PageHeader, Panel, shortDate } from "./PortalUI";
 
 /** Queue modules emitted by `api.operations_queue`. */
-export type QueueModule =
-  | "requests" | "professional" | "licences" | "firms"
-  | "payments" | "leads" | "audit" | "freshness";
+export type QueueModule = "requests" | "leads" | "audit" | "freshness";
 
 export type OperationsQueueItem = {
   id: string;
@@ -58,10 +52,8 @@ export type OperationsQueueItem = {
 
 const SECTION_ICONS: Record<AdminSectionId, typeof ShieldCheck> = {
   overview: LayoutDashboard,
-  offerings: Landmark, freshness: CalendarClock, "fund-schedules": Gauge, taxonomies: Tags,
-  requests: ClipboardCheck, interests: FileSearch, professional: UserCheck, licences: ShieldCheck, users: Users,
-  firms: Building2, memberships: Users,
-  payments: Banknote,
+  offerings: Landmark, freshness: CalendarClock, taxonomies: Tags,
+  investors: Users, requests: ClipboardCheck, interests: FileSearch, users: UserCheck,
   content: BookOpen,
   leads: FileSearch,
   audit: FileSearch, email: Mail, legal: Scale,
@@ -71,22 +63,14 @@ const COPY = {
   en: {
     eyebrow: "Hunter & Hunter Investment Advisors staff",
     title: "Admin",
-    description: "One console for investments, people, firms, payments, content and system records.",
+    description: "One console for investors, investments, content and system records.",
     search: "Search this queue", noItems: "No items match these filters.",
-    close: "Close", approveFirm: "Approve firm record", approvePayment: "Approve payment",
-    markPaid: "Mark paid", paymentRef: "Payment reference",
-    required: "Required role", compliance: "Compliance", finance: "Finance", platform: "Platform admin",
-    jumpTo: "Jump to section",
+    close: "Close", jumpTo: "Jump to section",
     descriptions: {
       requests: "Investors asking to invest in a published investment.",
-      professional: "Licensed professionals applying for partner access.",
-      licences: "Registry checks run against professional applications.",
-      firms: "Firms applying for or holding an approved record.",
-      payments: "Commission entries awaiting approval or payment.",
       leads: "Enquiries captured from the public site.",
       audit: "Every privileged action recorded on the platform.",
       interests: "Investors who registered interest in an investment.",
-      memberships: "People attached to an approved firm.",
       email: "Delivery state for every transactional email the platform sent.",
       legal: "Published versions of the platform's legal documents.",
     },
@@ -94,22 +78,14 @@ const COPY = {
   tr: {
     eyebrow: "Hunter & Hunter Investment Advisors ekibi",
     title: "Yönetim",
-    description: "Yatırımlar, kişiler, firmalar, ödemeler, içerik ve sistem kayıtları için tek konsol.",
+    description: "Yatırımcılar, yatırımlar, içerik ve sistem kayıtları için tek konsol.",
     search: "Bu kuyrukta ara", noItems: "Bu filtrelerle eşleşen kayıt yok.",
-    close: "Kapat", approveFirm: "Firma kaydını onayla", approvePayment: "Ödemeyi onayla",
-    markPaid: "Ödendi olarak işaretle", paymentRef: "Ödeme referansı",
-    required: "Gerekli rol", compliance: "Uyum", finance: "Finans", platform: "Platform yöneticisi",
-    jumpTo: "Bölüme git",
+    close: "Kapat", jumpTo: "Bölüme git",
     descriptions: {
       requests: "Yayımlanmış bir yatırıma yatırım yapmak isteyen yatırımcılar.",
-      professional: "İş ortağı erişimi için başvuran lisanslı profesyoneller.",
-      licences: "Profesyonel başvuruları için yapılan sicil kontrolleri.",
-      firms: "Kayıt için başvuran veya onaylı kaydı olan firmalar.",
-      payments: "Onay veya ödeme bekleyen komisyon kayıtları.",
       leads: "Genel siteden toplanan talepler.",
       audit: "Platformda kaydedilen tüm ayrıcalıklı işlemler.",
       interests: "Bir yatırıma ilgi kaydeden yatırımcılar.",
-      memberships: "Onaylı bir firmaya bağlı kişiler.",
       email: "Platformun gönderdiği her işlem e-postasının teslim durumu.",
       legal: "Platformun hukuki belgelerinin yayımlanmış sürümleri.",
     },
@@ -127,19 +103,18 @@ export function AdminConsole({
 }: {
   initialSection?: AdminSectionId;
   initialQueue?: OperationsQueueItem[];
-  offerings?: { id: string; name: LocalizedText }[];
+  offerings?: OfferingBundle[];
   offeringAdmin?: OfferingAdminRow[];
   learningResources?: LearningAdminResource[];
   directories: AdminDirectories;
   backendConfigured?: boolean;
 }) {
   const { lang } = useLang();
-  const { currentUser, decideOrganization, updateCommissionStatus, markCommissionPaid } = usePortalAccess();
+  const { currentUser, dataset } = usePortalAccess();
   const c = investorTerminology(pick(COPY, lang));
   const [section, setSection] = useState<AdminSectionId>(initialSection);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<OperationsQueueItem | null>(null);
-  const [paymentReference, setPaymentReference] = useState("");
   const isAdmin = hasPlatformRole(currentUser, "master_admin");
 
   const active = adminSection(section);
@@ -166,22 +141,10 @@ export function AdminConsole({
       .sort((a, b) => Date.parse(b.date || "1970-01-01") - Date.parse(a.date || "1970-01-01"));
   }, [active.queueModule, byModule, query]);
 
-  async function runAction(action: "firm" | "approve-payment" | "paid") {
-    if (!selected) return;
-    const id = selected.id.split(":").slice(1).join(":");
-    if (action === "firm") await decideOrganization(id, "active", "Approved from the Admin console.");
-    if (action === "approve-payment") await updateCommissionStatus(id, "approved");
-    if (action === "paid") await markCommissionPaid(id, paymentReference);
-    setSelected(null);
-  }
-
   if (!isAdmin) {
     return <div>
-      {/* PageHeader accepts `description` but renders only the title, so the
-        console's own subtitle is written here rather than changing the shared
-        component and shifting every other page. */}
-    <PageHeader title={c.title} />
-    <p className="-mt-4 mb-6 max-w-3xl text-sm leading-6 text-[#657681]">{c.description}</p>
+      <PageHeader title={c.title} />
+      <p className="-mt-4 mb-6 max-w-3xl text-sm leading-6 text-[#657681]">{c.description}</p>
     </div>;
   }
 
@@ -194,8 +157,7 @@ export function AdminConsole({
     <PageHeader title={c.title} />
     <p className="-mt-4 mb-6 max-w-3xl text-sm leading-6 text-[#657681]">{c.description}</p>
 
-    {/* Under lg the rail collapses to a single select — eighteen sections do not
-        fit in a horizontal strip on a phone. */}
+    {/* Under lg the rail collapses to a single select. */}
     <label className="mb-4 block lg:hidden">
       <span className="sr-only">{c.jumpTo}</span>
       <select value={section} onChange={(e) => setSection(e.target.value as AdminSectionId)}
@@ -261,6 +223,7 @@ export function AdminConsole({
             queueCounts={counts}
             offerings={offeringAdmin}
             users={directories.users}
+            investments={dataset.investments}
             recent={(byModule.get("audit") ?? []).slice(0, 8).map((item) => ({
               id: item.id, title: item.title, summary: item.summary, date: item.date,
             }))}
@@ -268,14 +231,13 @@ export function AdminConsole({
           />
         )}
 
+        {active.id === "investors" && <AdminInvestors users={directories.users} investments={dataset.investments} offerings={offerings} />}
         {active.id === "offerings" && <OfferingContentManager offerings={offeringAdmin} backendConfigured={backendConfigured} />}
         {active.id === "freshness" && <OfferingDataFreshness offerings={offeringAdmin} backendConfigured={backendConfigured} onEdit={() => setSection("offerings")} />}
-        {active.id === "fund-schedules" && <FundCommissionScheduleManager offerings={offerings} backendConfigured={backendConfigured} />}
         {active.id === "taxonomies" && <TaxonomyManager taxonomies={directories.taxonomies} />}
         {active.id === "content" && <LearningContentManager resources={learningResources} backendConfigured={backendConfigured} />}
         {active.id === "users" && <UsersAndRoles users={directories.users} />}
         {active.id === "interests" && <RecordTable title={tx(active.label, lang)} description={descriptions.interests} rows={directories.interests} />}
-        {active.id === "memberships" && <RecordTable title={tx(active.label, lang)} description={descriptions.memberships} rows={directories.memberships} />}
         {active.id === "email" && <RecordTable title={tx(active.label, lang)} description={descriptions.email} rows={directories.email} />}
         {active.id === "legal" && <RecordTable title={tx(active.label, lang)} description={descriptions.legal} rows={directories.legal} />}
 
@@ -344,25 +306,6 @@ export function AdminConsole({
                 </div>
               ))}
           </dl>
-          <div className="mt-7 border-t border-[#e5e9ec] pt-5">
-            {selected.module === "firms" && selected.status === "pending" && (
-              <button type="button" onClick={() => runAction("firm")} className="h-10 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white">{c.approveFirm}</button>
-            )}
-            {selected.module === "payments" && selected.status === "draft" && (
-              <button type="button" onClick={() => runAction("approve-payment")} className="h-10 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white">{c.approvePayment}</button>
-            )}
-            {selected.module === "payments" && selected.status === "approved" && (
-              <div className="flex gap-2">
-                <input value={paymentReference} onChange={(event) => setPaymentReference(event.target.value)} placeholder={c.paymentRef}
-                  className="h-10 min-w-0 flex-1 rounded-md border border-[#ccd5db] px-3 text-sm" />
-                <button type="button" disabled={!paymentReference.trim()} onClick={() => runAction("paid")}
-                  className="h-10 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white disabled:opacity-50">{c.markPaid}</button>
-              </div>
-            )}
-            <p className="mt-4 text-xs text-[#78848d]">
-              {c.required}: {selected.module === "payments" ? c.finance : selected.module === "audit" ? c.platform : c.compliance}
-            </p>
-          </div>
         </aside>
       </div>
     )}

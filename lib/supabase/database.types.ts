@@ -714,8 +714,16 @@ export type Database = {
           p_preferred_contact_method: Database["app"]["Enums"]["contact_channel"];
           p_contact_consent: boolean;
           p_note: string;
+          p_share_quantity?: number | null;
         };
         Returns: string;
+      };
+      set_investment_status: {
+        Args: {
+          p_application_id: string;
+          p_new_status: string;
+        };
+        Returns: undefined;
       };
       create_fund_commission_schedule: {
         Args: {

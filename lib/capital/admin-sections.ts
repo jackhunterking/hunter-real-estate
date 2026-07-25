@@ -1,10 +1,9 @@
 /**
  * The Admin console's section registry.
  *
- * One declaration per section drives four things at once: the grouped rail, the
- * `?section=` allowlist on the route, the overview's attention counts, and the
- * redirect targets of the legacy `/admin/*` and `/operations` URLs. Adding a
- * section later is one entry here, not five edits spread across the app.
+ * One declaration per section drives three things at once: the grouped rail, the
+ * `?section=` allowlist on the route, and the overview's attention counts. Adding
+ * a section later is one entry here, not several edits spread across the app.
  *
  * Deliberately data-only — no React, no icons. `tests/admin-console.test.ts`
  * imports this directly in Node, and the icon map lives with the component that
@@ -16,8 +15,6 @@ export type AdminSectionGroup =
   | "overview"
   | "investments"
   | "people"
-  | "firms"
-  | "money"
   | "content"
   | "growth"
   | "system";
@@ -30,10 +27,8 @@ export type AdminSectionKind = "overview" | "queue" | "panel";
 
 export type AdminSectionId =
   | "overview"
-  | "offerings" | "freshness" | "fund-schedules" | "taxonomies"
-  | "requests" | "interests" | "professional" | "licences" | "users"
-  | "firms" | "memberships"
-  | "payments"
+  | "offerings" | "freshness" | "taxonomies"
+  | "investors" | "requests" | "interests" | "users"
   | "content"
   | "leads"
   | "audit" | "email" | "legal";
@@ -53,8 +48,6 @@ export const ADMIN_SECTION_GROUPS: { id: AdminSectionGroup; label: LocalizedText
   { id: "overview", label: { en: "", tr: "" } },
   { id: "investments", label: { en: "Investments", tr: "Yatırımlar" } },
   { id: "people", label: { en: "People", tr: "Kişiler" } },
-  { id: "firms", label: { en: "Firms", tr: "Firmalar" } },
-  { id: "money", label: { en: "Money", tr: "Finans" } },
   { id: "content", label: { en: "Content", tr: "İçerik" } },
   { id: "growth", label: { en: "Growth", tr: "Büyüme" } },
   { id: "system", label: { en: "System", tr: "Sistem" } },
@@ -68,22 +61,16 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   // Not a queue section — the panel reads offering rows directly. The
   // `freshness` branch of operations_queue still feeds the overview's counts.
   { id: "freshness", group: "investments", kind: "panel", label: { en: "Data freshness", tr: "Veri güncelliği" } },
-  { id: "fund-schedules", group: "investments", kind: "panel", label: { en: "Commission schedules", tr: "Komisyon programları" } },
   { id: "taxonomies", group: "investments", kind: "panel", label: { en: "Taxonomies", tr: "Sınıflandırmalar" },
     hint: { en: "Strategy, asset class and region tags", tr: "Strateji, varlık sınıfı ve bölge etiketleri" } },
 
-  // People — everyone who asks for something, and who can act on the platform.
+  // People — the investors and their relationship with the platform.
+  { id: "investors", group: "people", kind: "panel", label: { en: "Investors", tr: "Yatırımcılar" },
+    hint: { en: "Each investor's portfolio, requests and transaction status", tr: "Her yatırımcının portföyü, talepleri ve işlem durumu" } },
   { id: "requests", group: "people", kind: "queue", queueModule: "requests", label: { en: "Investor requests", tr: "Yatırımcı talepleri" } },
   { id: "interests", group: "people", kind: "panel", label: { en: "Investment interests", tr: "Yatırım ilgileri" } },
-  { id: "professional", group: "people", kind: "queue", queueModule: "professional", label: { en: "Professional applications", tr: "Profesyonel başvuruları" } },
-  { id: "licences", group: "people", kind: "queue", queueModule: "licences", label: { en: "Licence checks", tr: "Lisans kontrolleri" } },
   { id: "users", group: "people", kind: "panel", label: { en: "Users & roles", tr: "Kullanıcılar ve roller" },
     hint: { en: "Grant or remove platform admin", tr: "Platform yöneticiliği ver veya kaldır" } },
-
-  { id: "firms", group: "firms", kind: "queue", queueModule: "firms", label: { en: "Firm records", tr: "Firma kayıtları" } },
-  { id: "memberships", group: "firms", kind: "panel", label: { en: "Firm memberships", tr: "Firma üyelikleri" } },
-
-  { id: "payments", group: "money", kind: "queue", queueModule: "payments", label: { en: "Payments", tr: "Ödemeler" } },
 
   { id: "content", group: "content", kind: "panel", label: { en: "Learning centre", tr: "Bilgi merkezi" } },
 
@@ -107,19 +94,3 @@ export function isAdminSectionId(value: string | undefined): value is AdminSecti
 export function adminSectionsByGroup(group: AdminSectionGroup): AdminSection[] {
   return ADMIN_SECTIONS.filter((section) => section.group === group);
 }
-
-/**
- * Where the retired URLs land. `/operations?module=x` used the same keys as the
- * section ids, so most map to themselves; the eight `/admin/<x>` stubs used
- * their own names and are translated here.
- */
-export const LEGACY_ADMIN_PATHS: Record<string, AdminSectionId> = {
-  "license-verifications": "licences",
-  "partner-applications": "professional",
-  "firm-memberships": "memberships",
-  firms: "firms",
-  commissions: "payments",
-  interests: "interests",
-  leads: "leads",
-  audit: "audit",
-};

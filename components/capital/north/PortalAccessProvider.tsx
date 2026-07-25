@@ -20,6 +20,7 @@ import {
   visibleCommissions,
   visibleMemberDirectory,
   type CommissionEntry,
+  type InvestmentApplication,
   type FirmMembershipRole,
   type FirmAffiliationStatus,
   type LicenseVerificationStatus,
@@ -139,6 +140,10 @@ type PortalAccessValue = {
   updateCommissionStatus: (
     commissionId: string,
     status: "approved" | "void",
+  ) => Promise<void>;
+  setInvestmentStatus: (
+    applicationId: string,
+    status: InvestmentApplication["status"],
   ) => Promise<void>;
 };
 
@@ -728,6 +733,38 @@ export function PortalAccessProvider({
     }));
   }
 
+  async function setInvestmentStatus(
+    applicationId: string,
+    status: InvestmentApplication["status"],
+  ) {
+    if (backendConfigured) {
+      await persistPortalAction("setInvestmentStatus", { applicationId, status });
+      window.location.reload();
+      return;
+    }
+    const now = timestamp();
+    setDataset((current) => ({
+      ...copyDataset(current),
+      investments: current.investments.map((investment) =>
+        investment.id === applicationId
+          ? { ...investment, status, updatedAt: now }
+          : investment,
+      ),
+      auditEvents: [
+        {
+          id: `audit-${Date.now()}`,
+          actorUserId: currentUser.id,
+          action: `investment_application.${status}`,
+          entityType: "investment_application",
+          entityId: applicationId,
+          summary: `Investment status changed to ${status}.`,
+          occurredAt: now,
+        },
+        ...current.auditEvents,
+      ],
+    }));
+  }
+
   const value = useMemo<PortalAccessValue>(
     () => ({
       dataset,
@@ -755,6 +792,7 @@ export function PortalAccessProvider({
       createCommission,
       markCommissionPaid,
       updateCommissionStatus,
+      setInvestmentStatus,
     }),
     // Actions intentionally close over the latest render state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
