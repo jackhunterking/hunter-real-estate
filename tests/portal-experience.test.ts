@@ -248,3 +248,33 @@ test("the Admin console exposes controlled learning content to platform admins o
   assert.match(manager, /request_changes/);
   assert.match(manager, /author cannot approve/i);
 });
+
+test("the landing comparison table is fully authored in both languages", async () => {
+  const { LANDING_COPY } = await import("../components/capital/north/landing/copy.ts");
+  const sections = read("components/capital/north/landing/sections.tsx");
+
+  // Every row must exist in both languages — the copy file's contract is "no
+  // half-translated state", and a missing Turkish row would silently drop a
+  // whole argument for the visitor this page is written for.
+  assert.equal(LANDING_COPY.en.compare.rows.length, LANDING_COPY.tr.compare.rows.length);
+  assert.ok(LANDING_COPY.en.compare.rows.length > 0);
+  for (const lang of ["en", "tr"] as const) {
+    for (const row of LANDING_COPY[lang].compare.rows) {
+      for (const field of [row.label, row.self, row.hnc, row.markets]) {
+        assert.ok(field.trim().length > 0, `empty ${lang} comparison cell in "${row.label}"`);
+      }
+    }
+  }
+
+  // The tone icons are a positional array in the section file and must stay
+  // index-aligned to the rows above.
+  const tones = sections.match(/const COMPARE_TONES[\s\S]*?\n\];/)?.[0] ?? "";
+  assert.equal(
+    [...tones.matchAll(/\{ self: "/g)].length,
+    LANDING_COPY.en.compare.rows.length,
+  );
+
+  // No index or market performance figures belong in this section.
+  const compareCopy = JSON.stringify([LANDING_COPY.en.compare, LANDING_COPY.tr.compare]);
+  assert.doesNotMatch(compareCopy, /S&P|TSX|\d+(?:[.,]\d+)?\s?%|%\s?\d/);
+});
