@@ -127,7 +127,7 @@ const en: LandingCopy = {
   hero: {
     eyebrow: "Real estate investing, made simple",
     title: "A share of real Canadian buildings.",
-    body: "Income-producing property, a licensed team, and a minimum you can actually start with.",
+    body: "These buildings collect rent every month. You own a share of it, and you can start small.",
     // Union of the published Class A target ranges of the open funds (Legacy
     // 12–15%, Lankin 10–14%), both approved-public in lib/capital/data.ts.
     stat: {
@@ -357,7 +357,7 @@ const tr: LandingCopy = {
   hero: {
     eyebrow: "Gayrimenkul yatırımı, sadeleştirildi",
     title: "Gerçek Kanada binalarından bir pay.",
-    body: "Gelir getiren gayrimenkul, lisanslı bir ekip ve gerçekten başlayabileceğiniz bir alt limit.",
+    body: "Bu binalar her ay kira geliri toplar. Siz de bir payına sahip olursunuz — üstelik küçük bir tutarla başlayabilirsiniz.",
     stat: {
       value: "%10–15",
       label: "Hedeflenen yıllık getiri",

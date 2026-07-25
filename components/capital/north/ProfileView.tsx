@@ -5,6 +5,7 @@ import { CheckCircle2, ChevronRight, CircleAlert, Globe2, Mail, MapPin, ShieldCh
 import { canUseWorkspace } from "@/lib/capital/portal-access";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
+import { LanguageSelect } from "./LanguageSelect";
 import { NORTH_BASE } from "./NorthBrand";
 import { PageHeader, Panel, SectionHeader } from "./PortalUI";
 import { usePortalAccess } from "./PortalAccessProvider";
@@ -32,8 +33,6 @@ const COPY = {
     residence: "İkamet bölgesi",
     notProvided: "Belirtilmedi",
     language: "Tercih edilen dil",
-    turkish: "Türkçe",
-    english: "English",
     professionalAccess: "Profesyonel erişim",
     professionalAccessMeta: "Lisans, firma bağlantısı ve profesyonel çalışma alanı durumunuz.",
     staffAccess: "Ekip erişimi",
@@ -61,14 +60,66 @@ const COPY = {
     residence: "Residence jurisdiction",
     notProvided: "Not provided",
     language: "Preferred language",
-    turkish: "Türkçe",
-    english: "English",
     professionalAccess: "Professional access",
     professionalAccessMeta: "Your licence, firm association, and professional workspace status.",
     staffAccess: "Staff access",
     adminConsole: "Admin console",
     adminConsoleMeta: "Investments, people, firms, payments, content and system records.",
     openAdminConsole: "Open the Admin console",
+  },
+  fr: {
+    title: "Profil",
+    description: "Gérez les informations de votre compte, votre statut de vérification et votre accès professionnel.",
+    accountType: "Type de compte",
+    investorType: "Type d'investisseur",
+    accountStatus: "Statut du compte",
+    active: "Actif",
+    suspended: "Suspendu",
+    investorAccount: "Compte investisseur",
+    individual: "Investisseur individuel",
+    entity: "Investisseur — personne morale",
+    accountInformation: "Informations du compte",
+    accountDetails: "Détails du compte",
+    accountHolder: "Titulaire du compte",
+    email: "Adresse courriel",
+    verified: "Vérifiée",
+    unverified: "Non vérifiée",
+    residence: "Territoire de résidence",
+    notProvided: "Non renseigné",
+    language: "Langue préférée",
+    professionalAccess: "Accès professionnel",
+    professionalAccessMeta: "Votre permis, votre firme et le statut de votre espace professionnel.",
+    staffAccess: "Accès de l'équipe",
+    adminConsole: "Console d'administration",
+    adminConsoleMeta: "Placements, personnes, firmes, paiements, contenus et registres système.",
+    openAdminConsole: "Ouvrir la console d'administration",
+  },
+  es: {
+    title: "Perfil",
+    description: "Gestione la información de su cuenta, su estado de verificación y su acceso profesional.",
+    accountType: "Tipo de cuenta",
+    investorType: "Tipo de inversor",
+    accountStatus: "Estado de la cuenta",
+    active: "Activa",
+    suspended: "Suspendida",
+    investorAccount: "Cuenta de inversor",
+    individual: "Inversor individual",
+    entity: "Inversor persona jurídica",
+    accountInformation: "Información de la cuenta",
+    accountDetails: "Detalles de la cuenta",
+    accountHolder: "Titular de la cuenta",
+    email: "Correo electrónico",
+    verified: "Verificado",
+    unverified: "Sin verificar",
+    residence: "Jurisdicción de residencia",
+    notProvided: "No indicado",
+    language: "Idioma preferido",
+    professionalAccess: "Acceso profesional",
+    professionalAccessMeta: "Su licencia, su firma y el estado de su espacio profesional.",
+    staffAccess: "Acceso del equipo",
+    adminConsole: "Consola de administración",
+    adminConsoleMeta: "Inversiones, personas, firmas, pagos, contenidos y registros del sistema.",
+    openAdminConsole: "Abrir la consola de administración",
   },
 } as const;
 
@@ -79,7 +130,7 @@ function initials(name: string) {
 }
 
 export function ProfileView() {
-  const { lang, setLang } = useLang();
+  const { lang } = useLang();
   const { currentUser, context } = usePortalAccess();
   const c = pick(COPY, lang);
   // The Admin console has no place in the sidebar; staff open it from here, and
@@ -141,7 +192,10 @@ export function ProfileView() {
 
       <section aria-label={c.accountDetails}>
         <SectionHeader title={c.accountDetails} />
-        <Panel className="overflow-hidden">
+        {/* No `overflow-hidden` here: the language dropdown opens out of the
+            last row and must not be clipped. Rows carry no background of their
+            own, so nothing bleeds past the rounded corners without it. */}
+        <Panel>
           <dl className="divide-y divide-[#eaeef1]">
             {/* Investor type lives with the account fields; Re-check updates it. */}
             <div className="flex min-w-0 items-center gap-3.5 px-5 py-4 sm:px-6">
@@ -168,7 +222,8 @@ export function ProfileView() {
                 </div>
               </div>
             ))}
-            {/* Language is changed right here in the profile (no menu-bar switch). */}
+            {/* Language is changed right here in the profile (no menu-bar
+                switch) — same four-locale dropdown the landing header uses. */}
             <div className="flex min-w-0 items-center gap-3.5 px-5 py-4 sm:px-6">
               <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[#eef2f4] text-[#31546a]">
                 <Globe2 className="size-[17px]" />
@@ -176,21 +231,7 @@ export function ProfileView() {
               <div className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-x-4 gap-y-2">
                 <dt className="text-xs text-[#77838c]">{c.language}</dt>
                 <dd>
-                  <div className="inline-flex rounded-md border border-[#d5dde2] p-0.5" role="group" aria-label={c.language}>
-                    {(["tr", "en"] as const).map((item) => (
-                      <button
-                        key={item}
-                        type="button"
-                        onClick={() => setLang(item)}
-                        aria-pressed={lang === item}
-                        className={`rounded px-2.5 py-1 text-xs font-semibold transition ${
-                          lang === item ? "bg-[#0a2d46] text-white" : "text-[#5a6b76] hover:text-[#0a2d46]"
-                        }`}
-                      >
-                        {item === "tr" ? c.turkish : c.english}
-                      </button>
-                    ))}
-                  </div>
+                  <LanguageSelect variant="inline" ariaLabel={c.language} />
                 </dd>
               </div>
             </div>

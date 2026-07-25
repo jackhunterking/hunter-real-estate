@@ -9,7 +9,7 @@
  * product mockups are the REAL portal components fed with real offering data.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -45,7 +45,7 @@ import { DisclosureBar } from "../DisclosureBar";
 import { FundSelect, HeroCashFlow, PrimaryAmountField } from "../CompareUI";
 import { Panel, money } from "../PortalUI";
 import type { LandingCopy } from "./copy";
-import { LanguageMenu } from "./LanguageMenu";
+import { LanguageSelect } from "../LanguageSelect";
 import {
   Reveal,
   SectionHeader,
@@ -89,7 +89,7 @@ export function LandingHeader({ c, hasOfferings }: { c: LandingCopy; hasOffering
             {c.actions.signIn}
           </Link>
           {/* Language selector sits in the prominent top-right corner. */}
-          <LanguageMenu />
+          <LanguageSelect variant="compact" />
         </div>
       </div>
     </header>
@@ -377,21 +377,7 @@ export function Simulator({
             c={c}
           />
         </div>
-
-        <div className="flex items-center justify-between gap-3 border-t border-[#e2e8eb] bg-[#f8fafb] px-5 py-3">
-          <p className="max-w-[46ch] text-[11px] leading-4 text-[#8291a0]">{c.simulator.disclaimer}</p>
-          <Link
-            href={`${NORTH_BASE}/sign-up?offering=${encodeURIComponent(fund.slug)}&path=investor`}
-            className="shrink-0 text-xs font-semibold text-[#0a4b72] hover:underline"
-          >
-            {c.simulator.cta} →
-          </Link>
-        </div>
       </Panel>
-
-      <div className="mx-auto mt-4 max-w-2xl">
-        <DisclosureBar coBrand={false} className="px-1" />
-      </div>
     </SectionShell>
   );
 }
