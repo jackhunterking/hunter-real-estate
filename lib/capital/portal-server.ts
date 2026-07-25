@@ -80,7 +80,7 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
       .select("id,beneficiary_type,beneficiary_user_id,beneficiary_organization_id,redacted_referral_reference,offering_id,gross_distribution_commission_amount,allocation_percentage,tier_at_funding,amount,currency,earning_period,funded_at,distribution_commission_received_at,status,approved_at,paid_at,payment_reference,fund_commission_schedule_id"),
     supabase
       .from("investment_applications")
-      .select("id,user_id,offering_id,amount,account_type,preferred_contact_channel,contact_consent_at,note,submitted_at,status,updated_at"),
+      .select("id,user_id,offering_id,amount,share_class_id,share_quantity,account_type,preferred_contact_channel,contact_consent_at,note,submitted_at,status,updated_at"),
     supabase
       .from("investment_interest_requests")
       .select("id,user_id,offering_id,status,preferred_channel,message,created_at,updated_at"),
@@ -259,6 +259,8 @@ export async function loadPortalSnapshot(): Promise<PortalSnapshot | null> {
       userId: investment.user_id,
       offeringId: investment.offering_id,
       amount: Number(investment.amount),
+      shareClassId: investment.share_class_id ?? undefined,
+      shareQuantity: investment.share_quantity === null ? undefined : Number(investment.share_quantity),
       accountType: investment.account_type ?? undefined,
       preferredContactChannel: investment.preferred_contact_channel ?? undefined,
       contactConsentAt: investment.contact_consent_at ?? undefined,

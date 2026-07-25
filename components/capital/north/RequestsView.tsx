@@ -18,6 +18,7 @@ const COPY = {
     funded: "Funded",
     closed: "Closed",
     amount: "Indicative amount",
+    units: "units",
     request: "Request",
     status: "Status",
     date: "Date",
@@ -32,6 +33,7 @@ const COPY = {
     funded: "Fonlandı",
     closed: "Kapandı",
     amount: "Gösterge tutarı",
+    units: "birim",
     request: "Talep",
     status: "Durum",
     date: "Tarih",
@@ -102,7 +104,10 @@ export function RequestsView({ offerings }: { offerings: OfferingBundle[] }) {
 
                   <dl className="min-w-0 lg:col-start-2 lg:row-start-1">
                     <dt className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#82909a] lg:sr-only">{c.amount}</dt>
-                    <dd className="mt-1 text-sm font-semibold tabular-nums text-[#284152] lg:mt-0">{request.amount > 0 ? money(request.amount, lang) : "—"}</dd>
+                    <dd className="mt-1 text-sm font-semibold tabular-nums text-[#284152] lg:mt-0">
+                      {request.amount > 0 ? money(request.amount, lang) : "—"}
+                      {request.shareQuantity ? <span className="ml-1.5 font-normal text-[#77838b]">· {request.shareQuantity.toLocaleString(lang === "tr" ? "tr-TR" : "en-CA")} {c.units}</span> : null}
+                    </dd>
                   </dl>
 
                   <div className="justify-self-end text-right lg:col-start-4 lg:row-start-1">

@@ -45,7 +45,7 @@ export default async function HunterAdminPage({ searchParams }: { searchParams: 
     <AdminConsole
       initialSection={isAdminSectionId(requested) ? (requested as AdminSectionId) : "overview"}
       initialQueue={initialQueue}
-      offerings={offerings.map((offering) => ({ id: offering.id, name: offering.name }))}
+      offerings={offerings}
       offeringAdmin={offeringAdmin}
       learningResources={learningResources}
       directories={directories}

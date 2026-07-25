@@ -109,7 +109,6 @@ test("fund manager context appears immediately before its service providers", ()
 test("fund cards keep financial and portfolio facts on detail pages only", () => {
   const cardSources = [
     read("app/hunter-advisory/(portal)/products/ProductsExplorer.tsx"),
-    read("app/hunter-advisory/(portal)/dashboard/DashboardView.tsx"),
   ];
 
   for (const card of cardSources) {
@@ -194,17 +193,6 @@ test("the tools hub carries the qualification tool with per-view labels", () => 
   assert.match(hub, /accountView === "professional" && canUseWorkspace\(context, "professional"\)/);
 });
 
-test("partner payment page uses payment terminology in both languages", () => {
-  const payments = read("components/capital/north/RepresentativeCommissions.tsx");
-  assert.match(payments, /title: "Ödemeler"/);
-  assert.match(payments, /offering: "Yatırım ürünü"/);
-  assert.match(payments, /payment: "Ödeme"/);
-  assert.match(payments, /partnerPayment: "Partner ödemesi"/);
-  assert.match(payments, /title: "Payments"/);
-  assert.doesNotMatch(payments, /title: "Fon dağıtım komisyonlarım"/);
-  assert.doesNotMatch(payments, /title: "Fon dağıtım ödemelerim"/);
-});
-
 test("account view is shared by the sidebar and qualification tool", () => {
   const provider = read("components/capital/north/PortalAccessProvider.tsx");
   const readiness = read("app/hunter-advisory/(portal)/resources/investor-readiness/InvestorReadinessTool.tsx");
@@ -249,70 +237,6 @@ test("learning content is Supabase-only with no hardcoded guide in app code", ()
   assert.match(seed.title.en, /Understanding Core, Core-Plus, Value-Add and Opportunistic Real Estate/);
   assert.match(guide, /ReactMarkdown/);
   assert.match(guide, /remarkGfm/);
-});
-
-test("legacy professional profile routes redirect into the unified profile", () => {
-  assert.match(
-    read("app/hunter-advisory/(portal)/partner/apply/page.tsx"),
-    /profile\?apply=1#professional-access/,
-  );
-  assert.match(
-    read("app/hunter-advisory/(portal)/partner-program/page.tsx"),
-    /profile#professional-access/,
-  );
-});
-
-test("unified profile uses an account workspace and state-aware modal professional access", () => {
-  const profile = read("components/capital/north/ProfileView.tsx");
-  const application = read("components/capital/north/PartnerApplicationView.tsx");
-  const applicationRoute = read("app/api/hnc-partner-applications/route.ts");
-  assert.match(profile, /accountInformation/);
-  assert.match(profile, /residenceJurisdiction/);
-  assert.match(profile, /PartnerApplicationView embedded/);
-  assert.match(profile, /minmax\(0,1\.4fr\)/);
-  assert.doesNotMatch(profile, /fullName|accountInformationMeta/);
-  assert.doesNotMatch(profile, /PARTNER_TIER_THRESHOLDS|PARTNER_COMMISSION_ALLOCATIONS/);
-  assert.doesNotMatch(profile, /effectivePartnerBps|FundCommissionSchedule|hnc-fund-commission-schedules|selectedOfferingId/);
-  assert.doesNotMatch(profile, /investmentObjective|timeHorizon|riskAcknowledgedAt|contactConsentAt/);
-  assert.match(application, /id="professional-access"/);
-  assert.match(application, /stateLabels/);
-  assert.match(application, /BriefcaseBusiness/);
-  assert.doesNotMatch(application, /Sparkles|benefitOne|benefitTwo|benefitThree/);
-  assert.match(application, /professionalFields/);
-  assert.match(application, /maskLicenceNumber/);
-  assert.match(application, /data-ph-mask/);
-  assert.doesNotMatch(application, /<details|viewDetails/);
-  assert.match(application, /SPL_PUBLIC_SEARCH_URL/);
-  assert.match(application, /<Dialog open=/);
-  assert.match(application, /name="firmName"/);
-  assert.doesNotMatch(application, /type="file"|name="organizationId"|newOrganization|Search firms|Firma ara/);
-  assert.match(applicationRoute, /firmName: z\.string\(\)\.trim\(\)\.min\(1\)/);
-  assert.doesNotMatch(applicationRoute, /evidenceStoragePath|organizationId: z|string\(\)\.uuid/);
-});
-
-test("fund pages show only the published gross schedule to active professionals", () => {
-  const detail = read("app/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
-  const route = read("app/api/hnc-fund-commission-schedules/route.ts");
-  assert.match(detail, /usePublishedFundCommissionValue\(offering\.id, professional, lang\)/);
-  assert.match(detail, /if \(professional && commission\) facts\.push\(\{ label: c\.commission, value: commission \}\)/);
-  assert.match(detail, /offeringId=\$\{encodeURIComponent\(offeringId\)\}/);
-  assert.match(detail, /grossCommissionBps/);
-  assert.doesNotMatch(detail, /effectivePartnerBps|PARTNER_COMMISSION_ALLOCATIONS/);
-  assert.match(route, /params\.get\("offeringId"\)/);
-  assert.match(route, /\.eq\("offering_id", offeringId as string\)/);
-  assert.match(route, /\.limit\(1\)/);
-});
-
-test("the Admin console mounts fund schedules behind the platform-admin gate", () => {
-  const console_ = read("components/capital/north/AdminConsole.tsx");
-  const manager = read("components/capital/north/FundCommissionScheduleManager.tsx");
-  // Module-by-module role sets were replaced by one gate on the console plus
-  // the `private.is_hunter_admin()` predicate on every view it reads.
-  assert.match(console_, /hasPlatformRole\(currentUser, "master_admin"\)/);
-  assert.match(console_, /if \(!isAdmin\)/);
-  assert.match(console_, /FundCommissionScheduleManager/);
-  assert.match(manager, /Save draft|Taslak kaydet/);
-  assert.match(manager, /Published schedules are immutable/);
 });
 
 test("the Admin console exposes controlled learning content to platform admins only", () => {

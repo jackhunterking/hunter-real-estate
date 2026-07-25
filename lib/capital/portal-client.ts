@@ -8,6 +8,7 @@ const routes: Record<string, { url: string; method: "POST" | "PATCH" }> = {
   decideOrganization: { url: "/api/hnc-organizations", method: "PATCH" },
   createCommission: { url: "/api/hnc-commissions", method: "POST" },
   setCommissionStatus: { url: "/api/hnc-commissions", method: "PATCH" },
+  setInvestmentStatus: { url: "/api/hnc-investment-status", method: "PATCH" },
   createReferral: { url: "/api/hnc-referrals", method: "POST" },
   markReferralContacted: { url: "/api/hnc-referrals", method: "PATCH" },
   registerReferralDocument: { url: "/api/hnc-referral-documents", method: "POST" },

@@ -14,6 +14,8 @@ import { ArrowRight, CalendarClock, TriangleAlert } from "lucide-react";
 import type { AdminSectionId } from "@/lib/capital/admin-sections";
 import type { OfferingAdminRow } from "@/lib/capital/offering-admin-server";
 import type { AdminUserRow } from "@/lib/capital/admin-server";
+import type { InvestmentApplication } from "@/lib/capital/portal-access";
+import { formatMoneyCompact } from "@/lib/capital/present";
 import { scoreOfferingCompleteness } from "@/lib/capital/field-catalogue";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
@@ -29,8 +31,8 @@ const COPY = {
     recent: "Recent activity", noRecent: "No activity recorded yet.",
     open: "Open",
     tiles: {
-      requests: "Investor requests", professional: "Professional applications",
-      licences: "Licence checks", firms: "Firm records", payments: "Payments", leads: "Leads",
+      capital: "Total committed capital", positions: "Funded positions",
+      requests: "Requests awaiting action", leads: "Leads",
     },
     overdue: "overdue for review", dueSoon: "due for review soon", unscheduled: "with no review schedule",
     incomplete: "investment profile(s) below 100%", missingRequired: "missing required fields",
@@ -44,8 +46,8 @@ const COPY = {
     recent: "Son faaliyet", noRecent: "Henüz faaliyet kaydı yok.",
     open: "Aç",
     tiles: {
-      requests: "Yatırımcı talepleri", professional: "Profesyonel başvuruları",
-      licences: "Lisans kontrolleri", firms: "Firma kayıtları", payments: "Ödemeler", leads: "Potansiyel müşteriler",
+      capital: "Toplam taahhüt edilen sermaye", positions: "Fonlanan pozisyonlar",
+      requests: "İşlem bekleyen talepler", leads: "Potansiyel müşteriler",
     },
     overdue: "incelemesi gecikmiş", dueSoon: "incelemesi yaklaşan", unscheduled: "inceleme planı olmayan",
     incomplete: "yatırım profili %100'ün altında", missingRequired: "zorunlu alan eksik",
@@ -56,21 +58,35 @@ const COPY = {
 
 type AttentionItem = { id: string; label: string; tone: "warn" | "bad"; section: AdminSectionId };
 
+const AWAITING_STATUSES = new Set(["submitted", "compliance_review", "approved_for_subscription", "accepted"]);
+
 export function AdminOverview({
   queueCounts,
   offerings,
   users,
+  investments,
   recent,
   onOpen,
 }: {
   queueCounts: OverviewQueueCounts;
   offerings: OfferingAdminRow[];
   users: AdminUserRow[];
+  investments: InvestmentApplication[];
   recent: { id: string; title: string; summary: string; date: string }[];
   onOpen: (section: AdminSectionId) => void;
 }) {
   const { lang } = useLang();
   const c = pick(COPY, lang);
+
+  const funded = investments.filter((investment) => investment.status === "funded");
+  const totalCommitted = funded.reduce((sum, investment) => sum + investment.amount, 0);
+  const awaiting = investments.filter((investment) => AWAITING_STATUSES.has(investment.status)).length;
+  const capitalTiles: { key: string; label: string; display: string; active: boolean; section: AdminSectionId }[] = [
+    { key: "capital", label: c.tiles.capital, display: totalCommitted > 0 ? formatMoneyCompact(totalCommitted, lang) : "—", active: totalCommitted > 0, section: "investors" },
+    { key: "positions", label: c.tiles.positions, display: String(funded.length), active: funded.length > 0, section: "investors" },
+    { key: "requests", label: c.tiles.requests, display: String(awaiting), active: awaiting > 0, section: "requests" },
+    { key: "leads", label: c.tiles.leads, display: String(queueCounts.leads ?? 0), active: (queueCounts.leads ?? 0) > 0, section: "leads" },
+  ];
 
   const { attention, incomplete } = useMemo(() => {
     const items: AttentionItem[] = [];
@@ -109,9 +125,9 @@ export function AdminOverview({
       <p className="mt-1 text-sm leading-6 text-[#657681]">{c.description}</p>
     </div>
 
-    <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
-      {(["requests", "professional", "licences", "firms", "payments", "leads"] as const).map((key) => (
-        <Tile key={key} label={c.tiles[key]} value={queueCounts[key] ?? 0} onOpen={() => onOpen(key)} />
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {capitalTiles.map((tile) => (
+        <Tile key={tile.key} label={tile.label} display={tile.display} active={tile.active} onOpen={() => onOpen(tile.section)} />
       ))}
     </div>
 
@@ -177,14 +193,13 @@ export function AdminOverview({
   </section>;
 }
 
-function Tile({ label, value, onOpen }: { label: string; value: number; onOpen: () => void }) {
-  const active = value > 0;
+function Tile({ label, display, active, onOpen }: { label: string; display: string; active: boolean; onOpen: () => void }) {
   return (
     <button type="button" onClick={onOpen}
       className={`rounded-lg border p-4 text-left transition ${
-        active ? "border-[#e2cf9f] bg-[#fdf9ef]" : "border-[#d9e1e5] bg-white"
+        active ? "border-[#cfe0ea] bg-[#f2f7fa]" : "border-[#d9e1e5] bg-white"
       } hover:border-[#8aaabd]`}>
-      <span className={`block text-2xl font-semibold tabular-nums ${active ? "text-[#8a6d24]" : "text-[#9aa8b1]"}`}>{value}</span>
+      <span className={`block text-2xl font-semibold tabular-nums ${active ? "text-[#123f5e]" : "text-[#9aa8b1]"}`}>{display}</span>
       <span className="mt-1 block text-[11px] font-semibold leading-4 text-[#657681]">{label}</span>
     </button>
   );

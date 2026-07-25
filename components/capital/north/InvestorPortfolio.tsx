@@ -7,6 +7,7 @@ import type { Lang, OfferingBundle } from "@/lib/capital/types";
 import type { InvestmentApplication } from "@/lib/capital/portal-access";
 import { buildMapProperties, formatCurrencyCad, formatMoneyCompact, primaryShareClass } from "@/lib/capital/present";
 import { latestPublished12mReturn, parseTargetMidpoint, portfolioMonthlyIncome, type MonthlyIncomeBreakdown } from "@/lib/capital/performance";
+import { unitPriceOf, impliedShares } from "@/lib/capital/shares";
 import { requestStage } from "@/lib/capital/investment-requests";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
@@ -41,6 +42,7 @@ const COPY = {
     incomeGrowth: "Growth",
     positionsTitle: "Your positions",
     committed: "committed",
+    units: "units",
     reviewBadge: "In review",
     fundedBadge: "Funded",
     viewFund: "View investment",
@@ -78,6 +80,7 @@ const COPY = {
     incomeGrowth: "Büyüme",
     positionsTitle: "Pozisyonlarınız",
     committed: "taahhüt",
+    units: "birim",
     reviewBadge: "İncelemede",
     fundedBadge: "Fonlandı",
     viewFund: "Yatırımı gör",
@@ -96,18 +99,30 @@ const COPY = {
   },
 } as const;
 
-type Aggregated = { position: { id: string; amount: number; status: string }; fund: OfferingBundle };
+type Aggregated = { position: { id: string; amount: number; shareQuantity: number; status: string }; fund: OfferingBundle };
 
-/** Group a user's positions by offering, summing amounts. */
-function aggregate(offerings: OfferingBundle[], positions: { id: string; offeringId: string; amount: number; status: string }[]): Aggregated[] {
+/** Group a user's positions by offering, summing committed amounts and whole units. */
+function aggregate(offerings: OfferingBundle[], positions: { id: string; offeringId: string; amount: number; shareQuantity?: number; status: string }[]): Aggregated[] {
   return offerings.flatMap((fund) => {
     const held = positions.filter((position) => position.offeringId === fund.id);
     if (!held.length) return [];
     return [{
-      position: { id: held[0].id, amount: held.reduce((sum, p) => sum + p.amount, 0), status: held[0].status },
+      position: {
+        id: held[0].id,
+        amount: held.reduce((sum, p) => sum + p.amount, 0),
+        shareQuantity: held.reduce((sum, p) => sum + (p.shareQuantity ?? 0), 0),
+        status: held[0].status,
+      },
       fund,
     }];
   });
+}
+
+/** Whole units for a position — real subscribed units, else implied from a legacy amount. */
+function positionShares(position: { amount: number; shareQuantity: number }, fund: OfferingBundle): number {
+  if (position.shareQuantity > 0) return position.shareQuantity;
+  const implied = impliedShares(position.amount, unitPriceOf(fund));
+  return implied != null ? Math.round(implied) : 0;
 }
 
 /** "≈ 12.7%" / "≈ %12,7". Trailing ".0" trimmed. */
@@ -129,28 +144,39 @@ function weightedAverage(rows: { amount: number; r: number }[]): number | null {
 // Fixed id/date keep SSR and client render identical (no hydration mismatch).
 const PREVIEW_AMOUNTS = [145000, 90000, 210000, 60000];
 function previewHoldings(offerings: OfferingBundle[], userId: string): InvestmentApplication[] {
-  return offerings.slice(0, 3).map((offering, index) => ({
-    id: `preview-${offering.id}`,
-    userId,
-    offeringId: offering.id,
-    amount: PREVIEW_AMOUNTS[index] ?? 100000,
-    status: index === 2 ? "submitted" : "funded",
-    updatedAt: "2026-01-01T00:00:00.000Z",
-  }));
+  return offerings.slice(0, 3).map((offering, index) => {
+    const budget = PREVIEW_AMOUNTS[index] ?? 100000;
+    const price = unitPriceOf(offering);
+    const shareQuantity = price ? Math.floor(budget / price) : undefined;
+    return {
+      id: `preview-${offering.id}`,
+      userId,
+      offeringId: offering.id,
+      // Invested amount follows the whole-share rule, matching the real flow.
+      amount: price && shareQuantity ? Math.round(shareQuantity * price * 100) / 100 : budget,
+      shareQuantity,
+      status: index === 2 ? "submitted" : "funded",
+      updatedAt: "2026-01-01T00:00:00.000Z",
+    };
+  });
 }
 
-export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }) {
+export function InvestorPortfolio({ offerings, viewAsUserId, investments }: { offerings: OfferingBundle[]; viewAsUserId?: string; investments?: InvestmentApplication[] }) {
   const { lang } = useLang();
   const { currentUser, dataset, previewEnabled, backendConfigured } = usePortalAccess();
   const { assetClasses, strategies } = useTaxonomies();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const c = pick(COPY, lang);
 
-  const realMine = dataset.investments.filter((investment) => investment.userId === currentUser.id);
+  // `viewAsUserId` renders another investor's portfolio verbatim for the admin
+  // mirror; without it this is the signed-in investor's own portfolio.
+  const targetUserId = viewAsUserId ?? currentUser.id;
+  const source = investments ?? dataset.investments;
+  const realMine = source.filter((investment) => investment.userId === targetUserId);
   // In dev-preview (no backend) with no real holdings, show seeded sample
-  // positions so the funded experience is visible. Real data is never touched.
-  const mine = previewEnabled && !backendConfigured && realMine.length === 0 && offerings.length > 0
-    ? previewHoldings(offerings, currentUser.id)
+  // positions so the funded experience is visible. Never seed the admin mirror.
+  const mine = !viewAsUserId && previewEnabled && !backendConfigured && realMine.length === 0 && offerings.length > 0
+    ? previewHoldings(offerings, targetUserId)
     : realMine;
   const heldFunds = aggregate(offerings, mine.filter((i) => i.status === "funded"));
   const reviewFunds = aggregate(offerings, mine.filter((i) => requestStage(i.status) === "in-review"));
@@ -261,8 +287,10 @@ export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }
         <section className="mt-8">
           <h2 className="mb-3 text-lg font-semibold text-[#193143]">{c.positionsTitle}</h2>
           <div className="grid gap-5 md:grid-cols-2">
-            {positions.map(({ position, fund, review }) =>
-              renderFundCard(
+            {positions.map(({ position, fund, review }) => {
+              const shares = positionShares(position, fund);
+              const price = unitPriceOf(fund);
+              return renderFundCard(
                 `${fund.id}-${review ? "review" : "held"}`,
                 fund,
                 <div>
@@ -277,14 +305,20 @@ export function InvestorPortfolio({ offerings }: { offerings: OfferingBundle[] }
                       {c.viewFund}<ArrowRight className="size-3.5" />
                     </Link>
                   </div>
-                  {!review && (
+                  {shares > 0 && (
                     <p className="mt-2 text-sm font-semibold text-[#172d3d]">
-                      {formatMoneyCompact(position.amount, lang)} <span className="font-normal text-[#7a8790]">{c.committed}</span>
+                      {shares.toLocaleString(lang === "tr" ? "tr-TR" : "en-CA")}{" "}
+                      <span className="font-normal text-[#7a8790]">{c.units}{price != null ? ` @ ${formatCurrencyCad(price, lang)}` : ""}</span>
+                    </p>
+                  )}
+                  {!review && (
+                    <p className={cn("text-sm text-[#5c6b76]", shares > 0 ? "mt-0.5" : "mt-2")}>
+                      {formatMoneyCompact(position.amount, lang)} <span className="text-[#7a8790]">{c.committed}</span>
                     </p>
                   )}
                 </div>,
-              ),
-            )}
+              );
+            })}
           </div>
         </section>
       )}
