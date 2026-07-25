@@ -371,8 +371,8 @@ const INCOME_CALC_COPY = {
   },
 } as const;
 
-const INCOME_PRESETS = [10000, 25000, 100000, 500000, 1000000];
-const INCOME_DEFAULT_AMOUNT = 25000;
+const INCOME_PRESETS = [100000, 500000, 1000000];
+const INCOME_DEFAULT_AMOUNT = 500000;
 
 function presetLabel(value: number): string {
   if (value >= 1_000_000) return `$${value / 1_000_000}M`;
