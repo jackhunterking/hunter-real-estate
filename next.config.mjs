@@ -1,4 +1,8 @@
 import { PHASE_DEVELOPMENT_SERVER } from 'next/constants.js';
+import createNextIntlPlugin from 'next-intl/plugin';
+
+// Points next-intl at the server request config (locale + messages).
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const createNextConfig = (phase) => ({
@@ -43,4 +47,6 @@ const createNextConfig = (phase) => ({
   skipTrailingSlashRedirect: true,
 });
 
-export default createNextConfig;
+// Config is a function of `phase`, so apply the next-intl plugin to the
+// *returned* config object for each phase rather than to the factory itself.
+export default (phase) => withNextIntl(createNextConfig(phase));
