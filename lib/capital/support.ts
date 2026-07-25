@@ -7,13 +7,6 @@ export function buildHncWhatsAppUrl(context?: string) {
   return `https://wa.me/${HNC_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
-export type HncChatProvider = "disabled" | "custom";
-
-export const HNC_CHAT_PROVIDER: HncChatProvider =
-  process.env.NEXT_PUBLIC_HNC_CHAT_PROVIDER === "custom" ? "custom" : "disabled";
-
-export const HNC_CHAT_WIDGET_ID =
-  process.env.NEXT_PUBLIC_HNC_CHAT_WIDGET_ID?.trim() ?? "";
-
-export const HNC_CHAT_ENABLED =
-  HNC_CHAT_PROVIDER !== "disabled" && Boolean(HNC_CHAT_WIDGET_ID);
+// Live chat is Intercom, mounted app-wide by components/intercom/IntercomMessenger.tsx
+// and configured in lib/intercom/config.ts. The unused HNC_CHAT_* scaffold that
+// used to sit here was removed so there is a single answer to "is chat on?".

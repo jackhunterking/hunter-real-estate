@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 import { routing } from "@/i18n/routing";
 import { dictionaries, type Lang } from "@/lib/i18n/dictionaries";
 import { PostHogProvider } from "../providers";
+import { IntercomMessenger } from "@/components/intercom/IntercomMessenger";
 import "../globals.css";
 import "../theme.css";
 
@@ -102,6 +103,10 @@ export default async function LocaleLayout({
             <LanguageProvider lang={locale}>{children}</LanguageProvider>
           </NextIntlClientProvider>
         </PostHogProvider>
+        {/* Intercom Messenger — anonymous on the marketing site, identified
+            (with a server-signed HS256 JWT) once a portal session exists. It
+            renders nothing itself, so it sits outside the providers. */}
+        <IntercomMessenger locale={locale} />
       </body>
     </html>
   );
