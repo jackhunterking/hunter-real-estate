@@ -15,7 +15,7 @@ import { PageHeader } from "./PortalUI";
 const COPY = {
   en: {
     title: "Learning centre",
-    description: "Clear, source-based guides for understanding real estate strategies, terms and investment decisions. Educational information only—not personalized advice.",
+    description: "Source-based guides on real estate strategies and terms. Educational only.",
     featured: "Featured guide",
     search: "Search guides",
     empty: "No published guides are available yet.",
@@ -26,7 +26,7 @@ const COPY = {
   },
   tr: {
     title: "Bilgi merkezi",
-    description: "Gayrimenkul stratejilerini, terimleri ve yatırım kararlarını anlamaya yönelik açık ve kaynaklı rehberler. Yalnızca eğitim amaçlıdır; kişisel tavsiye değildir.",
+    description: "Gayrimenkul stratejileri ve terimleri üzerine kaynaklı rehberler. Yalnızca eğitim amaçlıdır.",
     featured: "Öne çıkan rehber",
     search: "Rehberlerde ara",
     empty: "Henüz yayımlanmış rehber bulunmuyor.",

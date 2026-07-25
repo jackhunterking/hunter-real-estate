@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, LockKeyhole } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
-import { DealerDisclosure } from "./DealerDisclosure";
+import { DisclosureBar } from "./DisclosureBar";
 import { NORTH_BASE, NorthBrand, ParvisCoBrand } from "./NorthBrand";
 import {
   InvestorSelfCheckFlow,
@@ -200,7 +200,7 @@ export function OnboardingFlow({
           <LockKeyhole className="size-3.5" aria-hidden />
           {c.secured}
         </p>
-        <DealerDisclosure level="short" className="mt-6 max-w-[560px] text-center" />
+        <DisclosureBar align="center" coBrand={false} className="mt-6 max-w-[560px]" />
       </div>
     </main>
   );

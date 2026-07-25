@@ -32,13 +32,27 @@ export interface LandingCopy {
     body: string;
     stat: { value: string; label: string; note: string };
   };
-  trustBar: { items: string[] };
-  platform: {
+  simulator: {
     eyebrow: string;
     title: string;
     body: string;
-    tabs: { label: string; title: string; body: string }[];
+    amountLabel: string;
+    fundLabel: string;
+    perYear: string;
+    perMonth: string;
+    invested: string;
+    returnLabel: string;
+    tableCaption: string;
+    colPeriod: string;
+    colReturn: string;
+    colPerYear: string;
+    colPerMonth: string;
+    sinceInception: string;
+    averageOfYears: string;
+    disclaimer: string;
+    cta: string;
   };
+  trustBar: { items: string[] };
   featured: { eyebrow: string; title: string; body: string; open: string };
   benefits: {
     eyebrow: string;
@@ -78,34 +92,6 @@ export interface LandingCopy {
     items: { q: string; a: string }[];
   };
   final: { eyebrow: string; title: string; body: string };
-  footer: {
-    rights: string;
-    risk: string;
-    dealer: string;
-    legalLink: string;
-    parvisLink: string;
-  };
-  frames: {
-    portfolio: string;
-    detail: string;
-    performance: string;
-    buildings: string;
-    openFunds: string;
-    targetReturn: string;
-    availableFunds: string;
-    exampleFunds: string;
-    historical: string;
-    historicalTag: string;
-    tabs: string[];
-    factLabels: {
-      targetReturn: string;
-      distribution: string;
-      minimum: string;
-      risk: string;
-      term: string;
-      aum: string;
-    };
-  };
   card: {
     open: string;
     targetReturn: string;
@@ -140,8 +126,8 @@ const en: LandingCopy = {
   },
   hero: {
     eyebrow: "Real estate investing, made simple",
-    title: "Own a share of real Canadian buildings — and earn steady income.",
-    body: "We help everyday investors put money into real, income-producing property across Canada — with a licensed team guiding every step.",
+    title: "A share of real Canadian buildings.",
+    body: "Income-producing property, a licensed team, and a minimum you can actually start with.",
     // Union of the published Class A target ranges of the open funds (Legacy
     // 12–15%, Lankin 10–14%), both approved-public in lib/capital/data.ts.
     stat: {
@@ -150,6 +136,26 @@ const en: LandingCopy = {
       note: "A target across current funds — not guaranteed.",
     },
   },
+  simulator: {
+    eyebrow: "Try it first",
+    title: "See what your money could earn.",
+    body: "Pick a fund, an amount, and a period. Every figure is a return the fund actually published — what it would have paid on your cash, per year and per month.",
+    amountLabel: "Amount to invest",
+    fundLabel: "Fund",
+    perYear: "/yr",
+    perMonth: "/mo",
+    invested: "invested",
+    returnLabel: "return",
+    tableCaption: "Published returns by period — tap a row",
+    colPeriod: "Period",
+    colReturn: "Return",
+    colPerYear: "Earned / yr",
+    colPerMonth: "Earned / mo",
+    sinceInception: "Since inception",
+    averageOfYears: "Average of published years",
+    disclaimer: "Every figure is a return the fund published — not a forecast, not guaranteed. Past returns are not a prediction of future results.",
+    cta: "See the fund",
+  },
   trustBar: {
     // Product-agnostic credibility only — no fund-specific figures here.
     items: [
@@ -157,33 +163,6 @@ const en: LandingCopy = {
       "Independently audited",
       "RRSP · TFSA · RESP eligible",
       "Overseen by a licensed dealer (Parvis)",
-    ],
-  },
-  platform: {
-    eyebrow: "Inside the platform",
-    title: "See exactly where your money goes.",
-    body: "The same simple dashboard our investors use — real properties, real numbers.",
-    tabs: [
-      {
-        label: "Simple dashboard",
-        title: "Your whole portfolio on one screen",
-        body: "What you own, the terms, and the income you've received — no paperwork chase.",
-      },
-      {
-        label: "Vetted opportunities",
-        title: "Only reviewed deals make the shelf",
-        body: "Every opportunity comes with clear, source-checked key facts.",
-      },
-      {
-        label: "Real performance",
-        title: "Published results, not promises",
-        body: "Past performance shown exactly as reported.",
-      },
-      {
-        label: "Real buildings",
-        title: "The actual buildings behind your money",
-        body: "Real photos and locations for the properties you invest in.",
-      },
     ],
   },
   featured: {
@@ -340,36 +319,6 @@ const en: LandingCopy = {
     title: "The door to real estate is open.",
     body: "Join a growing group of investors putting their money into real, curated Canadian real estate — with a licensed team beside them.",
   },
-  footer: {
-    rights: "© 2026 Hunter & Hunter Investment Advisors.",
-    risk:
-      "Target returns and IRRs are not guaranteed. Past performance does not predict future results, and every investment carries risk, including possible loss of principal. Review the applicable offering documents before investing.",
-    dealer:
-      "Securities services are provided through Parvis Investment Services Inc., an Exempt Market Dealer · NRD #74000.",
-    legalLink: "Legal & privacy",
-    parvisLink: "Parvis disclosures",
-  },
-  frames: {
-    portfolio: "Your portfolio",
-    detail: "Offering overview",
-    performance: "Performance",
-    buildings: "Buildings",
-    openFunds: "Open for investment",
-    targetReturn: "Target return",
-    availableFunds: "Available investments",
-    exampleFunds: "Product examples",
-    historical: "Historical performance",
-    historicalTag: "Historical—not a forecast",
-    tabs: ["Overview", "Performance", "Buildings", "Documents"],
-    factLabels: {
-      targetReturn: "Target return",
-      distribution: "Target distribution",
-      minimum: "Minimum investment",
-      risk: "Risk profile",
-      term: "Investment term",
-      aum: "Assets under management",
-    },
-  },
   card: {
     open: "Open now",
     targetReturn: "Target return",
@@ -407,13 +356,33 @@ const tr: LandingCopy = {
   },
   hero: {
     eyebrow: "Gayrimenkul yatırımı, sadeleştirildi",
-    title: "Gerçek Kanada binalarından pay sahibi olun — ve düzenli gelir kazanın.",
-    body: "Kanada genelinde gerçek, gelir getiren gayrimenkullere yatırım yapmanıza yardımcı oluyoruz — her adımda lisanslı bir ekip yanınızda.",
+    title: "Gerçek Kanada binalarından bir pay.",
+    body: "Gelir getiren gayrimenkul, lisanslı bir ekip ve gerçekten başlayabileceğiniz bir alt limit.",
     stat: {
       value: "%10–15",
       label: "Hedeflenen yıllık getiri",
       note: "Mevcut fonlardaki bir hedeftir — garanti değildir.",
     },
+  },
+  simulator: {
+    eyebrow: "Önce deneyin",
+    title: "Paranızın ne kazanabileceğini görün.",
+    body: "Bir fon, bir tutar ve bir dönem seçin. Her rakam fonun gerçekte yayımladığı bir getiridir — bu paranın yılda ve ayda ne ödeyeceğini gösterir.",
+    amountLabel: "Yatırılacak tutar",
+    fundLabel: "Fon",
+    perYear: "/yıl",
+    perMonth: "/ay",
+    invested: "yatırıldı",
+    returnLabel: "getiri",
+    tableCaption: "Döneme göre yayımlanan getiriler — bir satıra dokunun",
+    colPeriod: "Dönem",
+    colReturn: "Getiri",
+    colPerYear: "Yıllık kazanç",
+    colPerMonth: "Aylık kazanç",
+    sinceInception: "Kuruluştan bu yana",
+    averageOfYears: "Yayımlanan yılların ortalaması",
+    disclaimer: "Her rakam fonun yayımladığı bir getiridir — öngörü değildir, garanti edilmez. Geçmiş getiriler gelecekteki sonuçların göstergesi değildir.",
+    cta: "Fonu görün",
   },
   trustBar: {
     items: [
@@ -421,33 +390,6 @@ const tr: LandingCopy = {
       "Bağımsız denetimli",
       "RRSP · TFSA · RESP uygun",
       "Lisanslı aracı (Parvis) gözetiminde",
-    ],
-  },
-  platform: {
-    eyebrow: "Platformun içi",
-    title: "Paranızın tam olarak nereye gittiğini görün.",
-    body: "Yatırımcılarımızın kullandığı aynı sade panel — gerçek mülkler, gerçek rakamlar.",
-    tabs: [
-      {
-        label: "Sade panel",
-        title: "Tüm portföyünüz tek ekranda",
-        body: "Neye sahip olduğunuz, koşullar ve aldığınız gelir — evrak takibi yok.",
-      },
-      {
-        label: "İncelenmiş fırsatlar",
-        title: "Yalnızca incelenen fırsatlar listeye girer",
-        body: "Her fırsat, kaynağı doğrulanmış net temel bilgilerle gelir.",
-      },
-      {
-        label: "Gerçek performans",
-        title: "Vaat değil, yayınlanmış sonuçlar",
-        body: "Geçmiş performans, raporlandığı şekliyle gösterilir.",
-      },
-      {
-        label: "Gerçek binalar",
-        title: "Paranızın arkasındaki gerçek binalar",
-        body: "Yatırım yaptığınız mülklerin gerçek fotoğrafları ve konumları.",
-      },
     ],
   },
   featured: {
@@ -601,36 +543,6 @@ const tr: LandingCopy = {
     eyebrow: "Erişimle",
     title: "Gayrimenkulün kapısı açık.",
     body: "Paralarını gerçek, seçilmiş Kanada gayrimenkulüne yatıran — yanlarında lisanslı bir ekip olan — büyüyen bir yatırımcı grubuna katılın.",
-  },
-  footer: {
-    rights: "© 2026 Hunter & Hunter Investment Advisors.",
-    risk:
-      "Hedeflenen getiriler ve IRR'ler garanti değildir. Geçmiş performans gelecekteki sonuçları göstermez ve her yatırım, anaparanın olası kaybı dahil risk taşır. Yatırım yapmadan önce ilgili ihraç belgelerini inceleyin.",
-    dealer:
-      "Menkul kıymet hizmetleri, bir Exempt Market Dealer olan Parvis Investment Services Inc. aracılığıyla sağlanır · NRD #74000.",
-    legalLink: "Hukuki bilgiler ve gizlilik",
-    parvisLink: "Parvis açıklamaları",
-  },
-  frames: {
-    portfolio: "Portföyünüz",
-    detail: "Fırsat özeti",
-    performance: "Performans",
-    buildings: "Binalar",
-    openFunds: "Yatırıma açık",
-    targetReturn: "Hedef getiri",
-    availableFunds: "Mevcut yatırımlar",
-    exampleFunds: "Ürün örnekleri",
-    historical: "Geçmiş performans",
-    historicalTag: "Geçmiş veri — tahmin değildir",
-    tabs: ["Genel bakış", "Performans", "Binalar", "Belgeler"],
-    factLabels: {
-      targetReturn: "Hedef getiri",
-      distribution: "Hedef dağıtım",
-      minimum: "Asgari yatırım",
-      risk: "Risk profili",
-      term: "Vade",
-      aum: "Yönetilen varlıklar",
-    },
   },
   card: {
     open: "Şimdi açık",

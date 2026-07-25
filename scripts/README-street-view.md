@@ -39,7 +39,24 @@ node --env-file=.env.local scripts/pull-street-view.ts legacy-epiphany
 
 # Re-pull even buildings that already have an image
 node --env-file=.env.local scripts/pull-street-view.ts --force
+
+# Re-pull exactly these buildings (overrides both "already has an image" and the
+# skiplist) — use it to replace one bad card without touching the curated ones
+node --env-file=.env.local scripts/pull-street-view.ts --only lankin-greenstone-park,lankin-huron-heights
 ```
+
+## Renderings are never passed off as photos
+
+An investor-deck image is sometimes an **architect's rendering**, not a photograph —
+typical for an asset built in the last year or two, where Street View still shows the
+construction site. A rendering may stay on the card, but it must be marked:
+set `"kind": "render"` on that `media.card` in the seed (the alt text should say so
+too). Every building card and map popup then shows an "Artist's rendering" tag.
+`"kind": "photo"` means it really is a photo of that building.
+
+Aerials are not used either — a top-down drone shot doesn't identify a building at
+card size. Prefer, in order: a real ground-level photo → Street View of the exact
+address → a labelled rendering → the placeholder tile.
 
 ## Curation
 

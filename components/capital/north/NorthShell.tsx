@@ -27,7 +27,7 @@ import { investmentBrandFor } from "@/lib/capital/investment-brand";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 import { cn } from "@/lib/utils";
-import { DealerDisclosure } from "./DealerDisclosure";
+import { DisclosureBar } from "./DisclosureBar";
 import { usePortalAccess } from "./PortalAccessProvider";
 import { NORTH_BASE, NorthBrand, ParvisCoBrand } from "./NorthBrand";
 
@@ -318,11 +318,8 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
             </div>
           )}
         </main>
-        <footer className="border-t border-[#dfe4e9] bg-white px-4 py-5 text-xs text-[#6b7680] sm:px-6 lg:px-8">
-          <div className="mx-auto grid w-full max-w-[1500px] gap-3 md:grid-cols-[auto_1fr] md:items-start">
-            <p>© 2026 {brand.name}.</p>
-            <DealerDisclosure level="micro" className="max-w-3xl md:justify-self-end md:text-right md:[&_div]:justify-end" />
-          </div>
+        <footer className="border-t border-[#dfe4e9] bg-white px-4 py-4 sm:px-6 lg:px-8">
+          <DisclosureBar copyright coBrand={false} className="mx-auto w-full max-w-[1500px]" />
         </footer>
       </div>
     </div>

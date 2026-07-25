@@ -222,6 +222,24 @@ i {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* "Artist's rendering" — top-left, so a not-yet-photographed building is never
+   mistaken for a photo. Bottom corners are taken by the fund badge and the
+   maps link. */
+.fund-popup-media .fund-popup-rendering {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  max-width: calc(100% - 20px);
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #3d4b57;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 /* Icon-only "open in Google Maps" — bottom-right of the photo, mirroring the
    fund badge; the same dark translucent pill as the close button. */
 .fund-popup-media .fund-popup-maps {

@@ -47,6 +47,31 @@ export function parseTargetMidpoint(text: string): number | null {
 }
 
 /**
+ * Low/high band of a free-text target-return string, as numbers.
+ * "10%-14% targeted annual net return" → { lo: 10, hi: 14 };
+ * "8% annually" → { lo: 8, hi: 8 }; "Open-ended fund" → null.
+ *
+ * Powers the public income simulator: cash × a *published* rate, shown as a
+ * range — never a forecast. Mirrors `parseTargetMidpoint`'s parsing so the two
+ * never disagree about what a fund's target says.
+ */
+export function parseTargetBand(text: string): { lo: number; hi: number } | null {
+  if (!text) return null;
+  const range = text.match(/(\d+(?:[.,]\d+)?)\s*%?\s*[-–—]\s*(\d+(?:[.,]\d+)?)\s*%/);
+  if (range) {
+    const a = Number(range[1].replace(",", "."));
+    const b = Number(range[2].replace(",", "."));
+    if (Number.isFinite(a) && Number.isFinite(b)) return { lo: Math.min(a, b), hi: Math.max(a, b) };
+  }
+  const single = text.match(/(\d+(?:[.,]\d+)?)\s*%/);
+  if (single) {
+    const n = Number(single[1].replace(",", "."));
+    if (Number.isFinite(n)) return { lo: n, hi: n };
+  }
+  return null;
+}
+
+/**
  * A defensible "published last-12-month" return for one fund, as a number.
  *
  * Trailing-return series are heterogeneous: some funds publish cumulative

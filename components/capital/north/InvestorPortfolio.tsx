@@ -24,7 +24,7 @@ const COPY = {
   en: {
     title: "Portfolio",
     description:
-      "An overview of the investments you hold and the opportunities open to you. Figures are your committed amounts and each investment's published targets and returns—not income received or live market value.",
+      "Your committed amounts and each investment's published figures—not income received or market value.",
     totalInvested: "Total invested",
     totalInvestedNote: "Amount you've committed across your investments—not current value or income received.",
     avgPastReturn: "Avg. past return (12 mo)",
@@ -48,21 +48,21 @@ const COPY = {
     viewFund: "View investment",
     startTitle: "Start your portfolio",
     startBody:
-      "You don't hold any investments yet. Explore the opportunities below—review each investment's assets, locations, and terms—then request to invest.",
+      "Explore the opportunities below, then request to invest.",
     moreTitle: "More opportunities",
     moreBody: "Available investments you can add to your portfolio.",
     viewOffering: "View details",
     buildings: "buildings",
     geographyTitle: "Geography",
-    couldHoldNote: "Based on the opportunities below—shown for illustration, not owned.",
+    couldHoldNote: "Illustrative—not owned.",
     mapHeld: "Where your assets are located",
-    mapOpp: "Where these opportunities are located",
-    mapHelp: "Select a marker or building card to see the property, its photo, and location.",
+    mapOpp: "Your investment locations",
+    mapHelp: "Select a marker or card to see the property.",
   },
   tr: {
     title: "Portföy",
     description:
-      "Sahip olduğunuz yatırımların ve size açık fırsatların genel görünümü. Gösterilen rakamlar taahhüt ettiğiniz tutarlar ile her yatırımın yayımladığı hedef ve getirilerdir—elde edilen gelir veya canlı piyasa değeri değildir.",
+      "Taahhüt ettiğiniz tutarlar ve her yatırımın yayımladığı rakamlar—elde edilen gelir veya piyasa değeri değildir.",
     totalInvested: "Toplam yatırılan",
     totalInvestedNote: "Yatırımlarınıza taahhüt ettiğiniz tutar—güncel değer veya elde edilen gelir değil.",
     avgPastReturn: "Ort. geçmiş getiri (12 ay)",
@@ -86,16 +86,16 @@ const COPY = {
     viewFund: "Yatırımı gör",
     startTitle: "Portföyünüzü oluşturun",
     startBody:
-      "Henüz bir yatırıma sahip değilsiniz. Aşağıdaki fırsatları inceleyin—her yatırımın varlıklarını, konumlarını ve koşullarını gözden geçirin—ardından yatırım talep edin.",
+      "Aşağıdaki fırsatları inceleyin, ardından yatırım talep edin.",
     moreTitle: "Diğer fırsatlar",
     moreBody: "Portföyünüze ekleyebileceğiniz mevcut yatırımlar.",
     viewOffering: "Detayları gör",
     buildings: "bina",
     geographyTitle: "Coğrafya",
-    couldHoldNote: "Aşağıdaki fırsatlara dayanır—örnek amaçlıdır, sahip olunmaz.",
+    couldHoldNote: "Örnek amaçlı—sahip olunmaz.",
     mapHeld: "Varlıklarınızın konumları",
     mapOpp: "Bu fırsatların konumları",
-    mapHelp: "Mülkü, fotoğrafını ve konumunu görmek için bir işaretçi veya bina kartı seçin.",
+    mapHelp: "Mülkü görmek için bir işaretçi veya kart seçin.",
   },
 } as const;
 
