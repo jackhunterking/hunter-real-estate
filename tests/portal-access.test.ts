@@ -11,12 +11,31 @@ import {
   visibleMemberDirectory,
   type PortalAccessContext,
   type PortalDataset,
+  type PortalWorkspace,
 } from "../lib/capital/portal-access.ts";
+import { PROFESSIONAL_WORKSPACE_ENABLED } from "../lib/capital/feature-flags.ts";
 import {
   DEMO_PERSONA_USER_IDS,
   demoUserForPersona,
   initialPortalDataset,
 } from "./fixtures/portal-personas.ts";
+
+/**
+ * The professional / partner middle layer is paused this phase, so
+ * `canUseWorkspace` withholds it from everyone — staff included. That changes
+ * which workspaces are *handed out*, not who has earned one: `isPartnerActive`,
+ * `professionalProfileState` and every activation gate still run, and are
+ * asserted directly below.
+ *
+ * Expectations that name the professional workspace go through this helper so
+ * the suite states the same invariant in both states, and flipping
+ * PROFESSIONAL_WORKSPACE_ENABLED back on needs no edit here.
+ */
+function granted(workspaces: PortalWorkspace[]) {
+  return PROFESSIONAL_WORKSPACE_ENABLED
+    ? workspaces
+    : workspaces.filter((workspace) => workspace !== "professional");
+}
 
 function datasetCopy(): PortalDataset {
   return structuredClone(initialPortalDataset);
@@ -37,7 +56,7 @@ test("every verified user starts with investor access only unless another worksp
 test("partner access requires application, SPL, firm, organization, and account gates together", () => {
   const active = context("partner");
   assert.equal(isPartnerActive(active), true);
-  assert.deepEqual(availableWorkspaces(active), ["investor", "professional"]);
+  assert.deepEqual(availableWorkspaces(active), granted(["investor", "professional"]));
 
   const withoutFirm = datasetCopy();
   withoutFirm.affiliations = withoutFirm.affiliations.map((item) =>
@@ -140,13 +159,14 @@ test("master admins can open every workspace, but that is visibility only — no
   // separate approval to open the investor or professional workspaces. Staff
   // now see all three, because operating the platform means being able to see
   // what each audience sees.
-  assert.deepEqual(availableWorkspaces(admin), ["investor", "professional", "operations"]);
+  assert.deepEqual(availableWorkspaces(admin), granted(["investor", "professional", "operations"]));
   assert.equal(canAccessPath(admin, "/hunter-advisory/admin"), true);
   assert.equal(canAccessPath(admin, "/hunter-advisory/admin/license-verifications"), true);
   // /operations survives only as a redirect into the console.
   assert.equal(canAccessPath(admin, "/hunter-advisory/operations"), true);
   assert.equal(canAccessPath(admin, "/hunter-advisory/portfolio"), true);
-  assert.equal(canAccessPath(admin, "/hunter-advisory/clients"), true);
+  // /clients is a professional route, so it closes with the middle layer.
+  assert.equal(canAccessPath(admin, "/hunter-advisory/clients"), PROFESSIONAL_WORKSPACE_ENABLED);
 
   // The load-bearing half: seeing the professional workspace must never imply
   // the admin is a licensed, firm-affiliated partner. Everything that acts on
@@ -189,9 +209,15 @@ test("the Admin console is closed to everyone without the operations workspace",
 });
 
 test("nobody lands in the console — staff open it from Profile", () => {
-  assert.equal(defaultPortalPath(context("hnc-admin")), "/professional");
-  assert.equal(defaultPortalPath(context("partner")), "/professional");
+  // While the middle layer is paused everyone lands in /portfolio; the point
+  // that holds either way is that no one is dropped into /admin by signing in.
+  const professionalLanding = PROFESSIONAL_WORKSPACE_ENABLED ? "/professional" : "/portfolio";
+  assert.equal(defaultPortalPath(context("hnc-admin")), professionalLanding);
+  assert.equal(defaultPortalPath(context("partner")), professionalLanding);
   assert.equal(defaultPortalPath(context("investor")), "/portfolio");
+  for (const persona of ["hnc-admin", "partner", "investor"] as const) {
+    assert.doesNotMatch(defaultPortalPath(context(persona)), /admin|operations/);
+  }
 });
 
 test("registry surnames retain submitted text while duplicate matching uses Turkish normalization", () => {
