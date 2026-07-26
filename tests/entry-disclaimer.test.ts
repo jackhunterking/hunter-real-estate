@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -98,13 +99,23 @@ test("unreviewed locales fall back to English rather than guessing", () => {
   assert.equal(entryDisclaimerFor("en"), ENTRY_DISCLAIMER.en);
 });
 
-test("the notice stays off until compliance has approved the wording", () => {
+test("the notice is live", () => {
   const flags = read("lib/capital/feature-flags.ts");
-  assert.match(
-    flags,
-    /export const ENTRY_DISCLAIMER_ENABLED: boolean = false;/,
-    "flip this deliberately, after Parvis sign-off — not by accident",
-  );
+  assert.match(flags, /export const ENTRY_DISCLAIMER_ENABLED: boolean = true;/);
+});
+
+test("wording cannot change without bumping the version", () => {
+  // Visitors are held to the exact text they acknowledged. Editing a paragraph
+  // while leaving ENTRY_DISCLAIMER_VERSION alone would leave everyone carrying
+  // an acknowledgement of copy that no longer exists — so the digest is pinned
+  // here. If Parvis returns edits: apply them, bump the version, then update
+  // this hash and the version below in the same commit.
+  const digest = createHash("sha256")
+    .update(JSON.stringify([ENTRY_DISCLAIMER.en.paragraphs, ENTRY_DISCLAIMER.tr.paragraphs]))
+    .digest("hex")
+    .slice(0, 16);
+  assert.equal(digest, "7834d24441b5fd60", "copy changed — bump ENTRY_DISCLAIMER_VERSION");
+  assert.equal(ENTRY_DISCLAIMER_VERSION, 1);
 });
 
 test("it is mounted on the advisory surface only", () => {

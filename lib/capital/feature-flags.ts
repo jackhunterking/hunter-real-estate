@@ -10,11 +10,10 @@ export const PROFESSIONAL_WORKSPACE_ENABLED: boolean = false;
  * The one-time entry acknowledgement on the advisory surface
  * (components/capital/north/EntryDisclaimer.tsx).
  *
- * Off until Parvis compliance has approved the wording. Parvis is the registered
- * dealer and supervises this marketing, and the repo already holds this line —
- * `PARVIS_RELATIONSHIP.compensationDisclosure` ships empty for the same reason.
- * The copy in lib/capital/entry-disclaimer.ts is a complete draft; flip this to
- * `true` once it comes back approved, and bump ENTRY_DISCLAIMER_VERSION if
- * compliance changed any wording.
+ * Live at Jack's direction. Parvis is the registered dealer and supervises this
+ * marketing, so if their compliance review returns edits, change the copy in
+ * lib/capital/entry-disclaimer.ts and bump ENTRY_DISCLAIMER_VERSION — every
+ * visitor then re-acknowledges the revised wording rather than carrying an
+ * acknowledgement of text that no longer exists.
  */
-export const ENTRY_DISCLAIMER_ENABLED: boolean = false;
+export const ENTRY_DISCLAIMER_ENABLED: boolean = true;
