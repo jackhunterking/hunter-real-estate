@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { jwtVerify, SignJWT } from "jose";
+import { jwtVerify } from "jose";
 import {
   INTERCOM_API_BASE,
   INTERCOM_APP_ID,
@@ -11,6 +11,7 @@ import {
   INTERCOM_SESSION_DURATION_MS,
   intercomBootSettings,
 } from "../lib/intercom/config.ts";
+import { TOKEN_TTL_SECONDS, signIntercomIdentity } from "../lib/intercom/sign-identity.ts";
 
 const root = join(import.meta.dirname, "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
@@ -58,32 +59,27 @@ test("only the signed token is added to an authenticated boot", () => {
 });
 
 test("the identity token is an HS256 JWT carrying the mandatory user_id", async () => {
-  const source = read("lib/intercom/identity-server.ts");
+  // Round-trips the real signing function, so a swapped algorithm or a dropped
+  // expiry fails here rather than in Intercom's error log.
+  const secret = "test-messenger-secret";
+  const token = await signIntercomIdentity({ user_id: "user-123", email: "a@b.com" }, secret);
+  const { payload, protectedHeader } = await jwtVerify(token, new TextEncoder().encode(secret));
   // Intercom accepts HS256 only, and rejects any token without user_id.
-  assert.match(source, /const ALGORITHM = "HS256"/);
-  assert.match(source, /claims: Record<string, string \| number> = \{ user_id: user\.id \}/);
-
-  // Round-trip the same construction the module uses, so a swapped algorithm or
-  // a dropped expiry fails here rather than in Intercom's error log.
-  const secret = new TextEncoder().encode("test-messenger-secret");
-  const token = await new SignJWT({ user_id: "user-123", email: "a@b.com" })
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("600s")
-    .sign(secret);
-  const { payload, protectedHeader } = await jwtVerify(token, secret);
   assert.equal(protectedHeader.alg, "HS256");
   assert.equal(payload.user_id, "user-123");
+  assert.equal(payload.email, "a@b.com");
   assert.ok(payload.exp && payload.iat && payload.exp > payload.iat, "the token must expire");
+
+  // The session half must still put user_id in the claims it hands over.
+  const source = read("lib/intercom/identity-server.ts");
+  assert.match(source, /const claims: IntercomClaims = \{ user_id: user\.id \}/);
 });
 
 test("the token expires well inside Intercom's replay window", () => {
-  const source = read("lib/intercom/identity-server.ts");
-  const ttl = Number(source.match(/TOKEN_TTL_SECONDS = (\d+)/)?.[1]);
   // Intercom's guidance: long enough for a full round trip (floor ~5 min),
   // short enough that a leaked token is near-worthless.
-  assert.ok(ttl >= 300, "under Intercom's 5-minute floor, tokens expire in flight");
-  assert.ok(ttl <= 3600, "a token valid for hours defeats the point of signing it");
+  assert.ok(TOKEN_TTL_SECONDS >= 300, "under Intercom's 5-minute floor, tokens expire in flight");
+  assert.ok(TOKEN_TTL_SECONDS <= 3600, "a token valid for hours defeats the point of signing it");
 });
 
 test("an unsigned session is left anonymous, never identified", () => {
@@ -116,6 +112,15 @@ test("the Messenger secret is server-only and never public", () => {
   assert.ok(
     !read("components/intercom/IntercomMessenger.tsx").includes("MESSENGER_SECRET"),
     "the client component must not reference the signing secret",
+  );
+
+  // sign-identity.ts deliberately carries no `server-only` guard so scripts and
+  // tests can exercise the real signing. That is safe only while it takes the
+  // secret as an argument — the moment it reads one itself, an accidental
+  // client import would pull the secret toward the browser bundle.
+  assert.ok(
+    !read("lib/intercom/sign-identity.ts").includes("process.env"),
+    "the signing module must receive the secret, never read it",
   );
 });
 

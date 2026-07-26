@@ -1,7 +1,7 @@
 import "server-only";
 
-import { SignJWT } from "jose";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { type IntercomClaims, signIntercomIdentity } from "./sign-identity";
 
 /**
  * Intercom Messenger security, JWT flavour (the workspace's Security tab shows
@@ -9,22 +9,10 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
  * expects).
  *
  * The JWT is signed with the workspace's Messenger API secret and handed to the
- * browser as `intercom_user_jwt`. Every identifying attribute travels *inside*
- * the signature: anything sent alongside it in the boot call is client-editable,
- * which is exactly what identity verification exists to prevent.
+ * browser as `intercom_user_jwt`. This module owns the *session* half — reading
+ * the secret and establishing who the caller actually is; the signing itself
+ * lives in ./sign-identity.
  */
-
-// Intercom only accepts HS256 for Messenger JWTs.
-const ALGORITHM = "HS256";
-
-/**
- * The token authenticates a single boot call — Intercom then issues its own
- * session cookie (7 days by default, tightened via `session_duration`), so the
- * JWT never needs to outlive the request that carries it. Intercom's floor is
- * ~5 minutes; 10 leaves room for a slow round trip without widening the replay
- * window meaningfully.
- */
-const TOKEN_TTL_SECONDS = 600;
 
 export type IntercomIdentity = {
   /**
@@ -74,18 +62,14 @@ export async function loadIntercomIdentity(): Promise<IntercomIdentity | null> {
   const createdAt = user.created_at ? Date.parse(user.created_at) : NaN;
 
   // `user_id` is mandatory — Intercom rejects a token without it.
-  const claims: Record<string, string | number> = { user_id: user.id };
+  const claims: IntercomClaims = { user_id: user.id };
   const email = profile?.email ?? user.email;
   if (email) claims.email = email;
   if (name) claims.name = name;
   // Unix seconds, the format Intercom expects for created_at.
   if (!Number.isNaN(createdAt)) claims.created_at = Math.floor(createdAt / 1000);
 
-  const intercom_user_jwt = await new SignJWT(claims)
-    .setProtectedHeader({ alg: ALGORITHM })
-    .setIssuedAt()
-    .setExpirationTime(`${TOKEN_TTL_SECONDS}s`)
-    .sign(new TextEncoder().encode(secret));
+  const intercom_user_jwt = await signIntercomIdentity(claims, secret);
 
   return { userId: user.id, intercom_user_jwt };
 }
