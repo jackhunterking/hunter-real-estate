@@ -52,7 +52,11 @@ export const TERMINAL_THEMES: Record<TerminalMode, TerminalTheme> = {
     ok: "#5cb488",
     warn: "#d9a457",
     bar: "#4a6b8f",
-    vehicles: ["#6d86d6", "#22a892", "#9a7bd1", "#b8724f"],
+    // Ordered so the FIRST TWO are the most separable pair, not the prettiest
+    // sequence: with two funds those are the only colours on screen, and
+    // blue against teal is the classic pair a deuteranope cannot split.
+    // Blue against warm survives every common colour-vision deficiency.
+    vehicles: ["#6d86d6", "#b8724f", "#9a7bd1", "#22a892"],
   },
   light: {
     mode: "light",
@@ -71,7 +75,11 @@ export const TERMINAL_THEMES: Record<TerminalMode, TerminalTheme> = {
     ok: "#2f6f4f",
     warn: "#9a6f1e",
     bar: "#7d92a8",
-    vehicles: ["#3a55a6", "#0a8f7d", "#8a5cc4", "#a8562f"],
+    // Ordered so the FIRST TWO are the most separable pair, not the prettiest
+    // sequence: with two funds those are the only colours on screen, and
+    // blue against teal is the classic pair a deuteranope cannot split.
+    // Blue against warm survives every common colour-vision deficiency.
+    vehicles: ["#3a55a6", "#a8562f", "#8a5cc4", "#0a8f7d"],
   },
 };
 
