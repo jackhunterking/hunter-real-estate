@@ -273,7 +273,7 @@ export function AssetNetwork({
 
   // The swipe needs shorter labels than the desktop rail: a phone header has no
   // room for "Buildings behind them" spelled out twice.
-  const mobileCopy: MobileCopy = {
+  const mobileCopy: MobileCopy = useMemo(() => ({
     you: lang === "tr" ? "Siz" : "You",
     vehicles: c.vehicles,
     markets: c.markets,
@@ -314,7 +314,7 @@ export function AssetNetwork({
         : "A hollow dot means verification is still partial. A dash means the count is not published, never zero.",
     residential: c.residential,
     commercial: c.commercial,
-  };
+  }), [c, lang]);
 
   const investorOptions = useMemo(
     () => fundedInvestorOptions(users, investments, currentUserId),
