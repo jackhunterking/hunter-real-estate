@@ -35,11 +35,16 @@ import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import type { OfferingBundle } from "@/lib/capital/types";
 import type { InvestmentApplication } from "@/lib/capital/portal-access";
 import type { AdminUserRow } from "@/lib/capital/admin-server";
-import { primaryShareClass } from "@/lib/capital/present";
-import { unitPriceOf, impliedShares } from "@/lib/capital/shares";
-import { scoreOfferingCompleteness } from "@/lib/capital/field-catalogue";
+import {
+  buildVehicles,
+  fundedInvestorOptions,
+  type Building,
+  type Focus,
+  type Vehicle,
+} from "./asset-graph";
+export type { Building, Focus, Vehicle } from "./asset-graph";
 import { useLang } from "@/lib/i18n/LanguageProvider";
-import { pick, tx } from "@/lib/i18n/localize";
+import { pick } from "@/lib/i18n/localize";
 import type { Lang } from "@/lib/capital/types";
 import { PageHeader } from "./PortalUI";
 import { NetworkGraph, type GraphNode } from "./AssetNetworkGraph";
@@ -197,50 +202,6 @@ const COPY = {
   },
 } as const;
 
-const CADENCE_MONTHS: Record<string, number> = {
-  quarterly: 3,
-  "semi-annual": 6,
-  annual: 12,
-  "ad-hoc": 12,
-};
-
-export type Vehicle = {
-  id: string;
-  short: string;
-  name: string;
-  color: string;
-  held: boolean;
-  committed: number;
-  /** Undefined when no unit price is published — never zero. */
-  units?: number;
-  unitPrice?: number;
-  aum?: string;
-  unitsTotal?: number;
-  targetReturn?: string;
-  targetDistribution?: string;
-  minimum?: number;
-  periodLabel?: string;
-  dataAsOf?: string;
-  cadenceMonths?: number;
-  /** Discrete published figures. Never plotted as a series — see the header. */
-  returns: { period: string; value: string }[];
-  returnsBasis?: string;
-  completeness: number;
-  buildings: Building[];
-};
-
-export type Building = {
-  id: string;
-  name: string;
-  city: string;
-  province: string;
-  assetClassId: string;
-  condition: string;
-  verification: string;
-  units?: number;
-  vehicleId: string;
-};
-
 type Freshness = { state: "current" | "due-soon" | "overdue"; label: string };
 
 function freshnessOf(v: Vehicle, c: (typeof COPY)["en"]): Freshness | null {
@@ -269,8 +230,6 @@ function money(value: number, lang: Lang) {
 function num(value: number, lang: Lang) {
   return new Intl.NumberFormat(lang === "tr" ? "tr-TR" : "en-CA").format(value);
 }
-
-export type Focus = { type: "vehicle" | "market"; key: string } | null;
 
 /** useLayoutEffect on the client, useEffect on the server — avoids the SSR warning. */
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -319,80 +278,16 @@ export function AssetNetwork({
 
   const theme = TERMINAL_THEMES[mode];
 
-  const investorOptions = useMemo(() => {
-    const funded = new Set(investments.filter((i) => i.status === "funded").map((i) => i.userId));
-    return users
-      .filter((u) => funded.has(u.userId) && u.userId !== currentUserId)
-      .map((u) => ({ id: u.userId, label: u.displayName || u.email }));
-  }, [users, investments, currentUserId]);
+  const investorOptions = useMemo(
+    () => fundedInvestorOptions(users, investments, currentUserId),
+    [users, investments, currentUserId],
+  );
 
   const palette = theme.vehicles;
-  const { vehicles, usingHeld } = useMemo(() => {
-    const mine = investments.filter((i) => i.userId === targetUserId && i.status === "funded");
-
-    type Held = { offering: OfferingBundle; committed: number; units?: number };
-    const held: Held[] = offerings
-      .map((offering): Held | null => {
-        const rows = mine.filter((i) => i.offeringId === offering.id);
-        if (!rows.length) return null;
-        const price = unitPriceOf(offering);
-        const committed = rows.reduce((sum, r) => sum + r.amount, 0);
-        // Units only exist when a price is published (`unitPrice` is merely
-        // `recommended` in the catalogue) or the subscription recorded them.
-        const recorded = rows.reduce((sum, r) => sum + (r.shareQuantity ?? 0), 0);
-        const implied = price ? impliedShares(committed, price) : null;
-        const units = recorded > 0 ? recorded : implied != null ? Math.round(implied) : undefined;
-        return { offering, committed, units };
-      })
-      .filter((x): x is Held => x != null);
-
-    const source: Held[] = held.length
-      ? held
-      : offerings
-          .filter((o) => o.status === "available")
-          .map((offering) => ({ offering, committed: 0, units: undefined }));
-
-    const list: Vehicle[] = source.map(({ offering, committed, units }, index) => {
-      const shareClass = primaryShareClass(offering);
-      return {
-        id: offering.id,
-        short: tx(offering.shortName, lang),
-        name: tx(offering.name, lang),
-        color: palette[index % palette.length],
-        held: held.length > 0,
-        committed,
-        units,
-        unitPrice: unitPriceOf(offering) ?? undefined,
-        aum: offering.aum?.value,
-        unitsTotal: offering.unitsTotal?.value,
-        targetReturn: shareClass?.targetReturn?.value,
-        targetDistribution: shareClass?.targetDistribution?.value,
-        minimum: shareClass?.minimumInvestment?.value,
-        periodLabel: offering.dataPeriodLabel,
-        dataAsOf: offering.dataAsOf,
-        cadenceMonths: offering.updateCadence ? CADENCE_MONTHS[offering.updateCadence] : undefined,
-        returns: (offering.trailingReturns ?? []).map((r) => ({
-          period: tx(r.period, lang),
-          value: r.value,
-        })),
-        returnsBasis: offering.trailingReturnsNote ? tx(offering.trailingReturnsNote, lang) : undefined,
-        completeness: scoreOfferingCompleteness(offering).percent,
-        buildings: offering.properties.map((p) => ({
-          id: `${offering.id}:${p.id}`,
-          name: tx(p.name, lang),
-          city: p.city,
-          province: p.province,
-          assetClassId: p.assetClassId,
-          condition: p.status,
-          verification: p.verificationStatus,
-          units: p.unitCount,
-          vehicleId: offering.id,
-        })),
-      };
-    });
-
-    return { vehicles: list, usingHeld: held.length > 0 };
-  }, [offerings, investments, targetUserId, lang, palette]);
+  const { vehicles, usingHeld } = useMemo(
+    () => buildVehicles({ offerings, investments, targetUserId, lang, palette }),
+    [offerings, investments, targetUserId, lang, palette],
+  );
 
   const buildings = useMemo(() => vehicles.flatMap((v) => v.buildings), [vehicles]);
   const totalCommitted = vehicles.reduce((sum, v) => sum + v.committed, 0);
