@@ -463,8 +463,8 @@ code {
       <div>
         <h4>Structure</h4>
         <p>
-          What you hold and what sits inside it. Buildings carry their real asset class as a shape &mdash; disc
-          for residential, square for commercial &mdash; so composition reads without a second colour scale.
+          What you hold and what sits inside it. Every building is the same dot &mdash; colour tells you which
+          fund it came through, and the rest of its record is a hover away rather than another visual code.
         </p>
       </div>
       <div>
@@ -822,11 +822,11 @@ code {
     ctx.closePath();
   }
 
-  /* Shape carries asset class so hue can stay reserved for fund identity. */
-  function marker(ctx, x, y, r, assetClass) {
+  /* One mark, everywhere: a dot. Asset class is carried by position in the
+     exposure view and by the tooltip elsewhere — never by shape. */
+  function marker(ctx, x, y, r) {
     ctx.beginPath();
-    if (assetClass === "commercial") ctx.rect(x - r * 0.88, y - r * 0.88, r * 1.76, r * 1.76);
-    else ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.arc(x, y, r, 0, Math.PI * 2);
   }
 
   function setKey(id, items) {
@@ -958,7 +958,7 @@ code {
         var r = 4.6;
         ctx.globalAlpha = n.live ? 1 : 0.4;
         ctx.fillStyle = buildingColor(n);
-        marker(ctx, n.x, n.y, r, n.data.ac);
+        marker(ctx, n.x, n.y, r);
         ctx.fill();
         ctx.globalAlpha = 1;
       });
@@ -1145,7 +1145,6 @@ code {
           { c: "#5f78c4", t: "Lankin" },
           { c: "#1c9d8b", t: "Epiphany" },
           { c: GREY, t: "No position held" },
-          { c: DIM, sq: true, t: "Square = commercial, disc = residential" },
           { c: GOLD, dash: true, t: "Scheduled distribution date" }
         ]);
       }
@@ -1154,7 +1153,7 @@ code {
         ? "Committed dollars · published raise"
         : mode === "provenance"
           ? "Verification · data freshness"
-          : "Holdings · asset class";
+          : "Holdings · buildings by fund";
     }
 
     document.querySelectorAll("#a-modes button").forEach(function (btn) {
@@ -1215,11 +1214,12 @@ code {
         var x = ox + (b.lng - minL) * s;
         var y = oy + (maxY - mercator(b.lat)) * s;
         var near = null;
-        // Cluster only same fund AND same asset class — a block holding nine
-        // commercial units and one residential is two facts, not one dot.
+        // Cluster by fund and proximity only. Splitting a block by asset class
+        // made sense when shape showed the difference; with one mark it would
+        // just be two identical dots for no visible reason. The mix goes in the
+        // tooltip instead.
         for (var i = 0; i < dots.length; i++) {
-          if (dots[i].fund.key === b.f && dots[i].data.ac === b.ac &&
-              Math.hypot(dots[i].x - x, dots[i].y - y) < 14) { near = dots[i]; break; }
+          if (dots[i].fund.key === b.f && Math.hypot(dots[i].x - x, dots[i].y - y) < 14) { near = dots[i]; break; }
         }
         if (near) {
           near.members.push(b);
@@ -1509,7 +1509,7 @@ code {
       // dots
       dots.forEach(function (d) {
         ctx.fillStyle = d.fund.color;
-        marker(ctx, d.x, d.y, d.r, d.data.ac);
+        marker(ctx, d.x, d.y, d.r);
         ctx.fill();
         ctx.strokeStyle = "#101a33";
         ctx.lineWidth = 1.8;
@@ -1561,10 +1561,16 @@ code {
       });
       if (!best) return null;
       if (best.members.length > 1) {
+        // Shape no longer shows asset class, so the cluster states its own mix.
+        var mix = {};
+        best.members.forEach(function (m) { mix[m.ac] = (mix[m.ac] || 0) + 1; });
+        var mixText = Object.keys(mix).map(function (k) {
+          return mix[k] + " " + ASSET_LABEL[k].toLowerCase();
+        }).join(" · ");
         return {
           x: best.x, y: best.y,
           html: "<b>" + best.data.c + "</b><span>" + best.members.length + " buildings sharing this block<br>" +
-            best.members[0].n + "</span><em>via " + best.fund.short + "</em>"
+            mixText + "</span><em>via " + best.fund.short + "</em>"
         };
       }
       var b = best.data;
@@ -1583,12 +1589,13 @@ code {
         : mode === "exposure"
           ? "Province × asset class"
           : "Published condition";
-      setKey("b-key", [
-        { c: "#5f78c4", t: "Lankin (9)" },
-        { c: "#1c9d8b", t: "Epiphany (30)" },
-        { c: DIM, sq: true, t: "Square = commercial" },
-        { c: DIM, t: "Disc = residential" }
-      ]);
+      var key = [
+        { c: "#5f78c4", t: "Lankin (9 buildings)" },
+        { c: "#1c9d8b", t: "Epiphany (30 buildings)" }
+      ];
+      // The count badge only exists where dots merge, which is geography alone.
+      if (mode === "geography") key.push({ c: DIM, t: "Number = buildings sharing a location" });
+      setKey("b-key", key);
     }
 
     document.querySelectorAll("#b-modes button").forEach(function (btn) {
