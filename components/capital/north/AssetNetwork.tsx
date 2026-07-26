@@ -603,7 +603,11 @@ export function AssetNetwork({
                     here competes with the ones that answer where the money is
                     concentrated. */}
                 <div className="grid grid-cols-2 gap-x-4 px-3 py-3 sm:grid-cols-1">
-                  <Rollup title={c.byMarket} rows={rollup((b) => b.city, (b) => b.city)} c={c} />
+                  <Rollup
+                    title={c.byMarket}
+                    rows={rollup((b) => b.city, (b) => `${b.city}, ${b.province}`)}
+                    c={c}
+                  />
                   <Rollup title={c.byProvince} rows={rollup((b) => b.province, (b) => b.province)} c={c} />
                 </div>
               </>

@@ -24,7 +24,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import type { Lang } from "@/lib/capital/types";
-import type { Building, Vehicle } from "./asset-graph";
+import { provinceCode, type Building, type Vehicle } from "./asset-graph";
 import type { TerminalTheme } from "./asset-network-theme";
 
 export type MobileCopy = {
@@ -376,7 +376,10 @@ export function AssetNetworkMobile({
           // Once opened out every market is named; inside the band only the
           // largest fit, which is what left the rest as anonymous dots.
           if (st.expand > 0.55 || n.market!.items.length >= 3) {
-            let t = `${n.market!.city} ${n.market!.items.length}`;
+            // "North Battleford, Saskatchewan" cannot fit beside a node, so the
+            // canvas carries the code and the list underneath spells it out.
+            const place = `${n.market!.city}, ${provinceCode(n.market!.province)}`;
+            let t = `${place} ${n.market!.items.length}`;
             while (t.length > 4 && ctx.measureText(t).width > room) t = t.slice(0, -1);
             plate(t, n.x + 8, n.y);
           }
@@ -721,7 +724,15 @@ export function AssetNetworkMobile({
             {shownMarkets.map((m) => (
               <Bar
                 key={m.city}
-                label={<><Mark src={vehicles.find((v) => v.id === m.vehicleId)?.logo} alt="" /><span className="truncate">{m.city}</span></>}
+                label={
+                  <>
+                    <Mark src={vehicles.find((v) => v.id === m.vehicleId)?.logo} alt="" />
+                    <span className="truncate">
+                      {m.city}
+                      <span className="text-[color:var(--t-ink-3)]">, {m.province}</span>
+                    </span>
+                  </>
+                }
                 right={String(m.items.length)}
                 frac={m.items.length / top}
                 colour={colourOf(m.vehicleId)}

@@ -21,12 +21,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Lang } from "@/lib/capital/types";
 import type { Building, Focus, Vehicle } from "./AssetNetwork";
+import { provinceCode } from "./asset-graph";
 import type { TerminalTheme } from "./asset-network-theme";
 
 export type GraphNode =
   | { kind: "subject"; x: number; y: number; r: number; label: string }
   | { kind: "vehicle"; x: number; y: number; r: number; vehicle: Vehicle }
-  | { kind: "market"; x: number; y: number; r: number; city: string; count: number; color: string }
+  | { kind: "market"; x: number; y: number; r: number; city: string; province: string; count: number; color: string }
   | { kind: "asset"; x: number; y: number; r: number; building: Building; color: string };
 
 type Edge = { a: GraphNode; b: GraphNode; width: number; color: string };
@@ -83,7 +84,7 @@ export function NetworkGraph({
 
   // Ordering markets by vehicle keeps the tiers from crossing.
   const marketOrder = useMemo(() => {
-    const out: { city: string; count: number; color: string }[] = [];
+    const out: { city: string; province: string; count: number; color: string }[] = [];
     vehicles.forEach((v) => {
       const cities: string[] = [];
       v.buildings.forEach((b) => {
@@ -92,6 +93,7 @@ export function NetworkGraph({
       cities
         .map((city) => ({
           city,
+          province: v.buildings.find((b) => b.city === city)?.province ?? "",
           count: v.buildings.filter((b) => b.city === city).length,
           color: v.color,
         }))
@@ -167,6 +169,7 @@ export function NetworkGraph({
           const node: GraphNode = {
             kind: "market",
             city: m.city,
+            province: m.province,
             count: m.count,
             color: m.color,
             x: xs[2],
@@ -292,7 +295,11 @@ export function NetworkGraph({
           ctx.textAlign = compact ? "right" : "left";
           ctx.fillStyle = theme.ink;
           ctx.fillText(
-            fit(ctx, `${n.city}  ${n.count}`, compact ? n.x - n.r - cols[1] - 12 : 150),
+            fit(
+              ctx,
+              `${n.city}, ${provinceCode(n.province)}  ${n.count}`,
+              compact ? n.x - n.r - cols[1] - 12 : 168,
+            ),
             compact ? n.x - n.r - 7 : n.x + n.r + 7,
             n.y + 3,
           );
@@ -395,7 +402,7 @@ export function NetworkGraph({
               ].filter(Boolean),
             });
           } else if (n.kind === "market") {
-            setTip({ x: n.x, y: n.y, title: n.city, lines: [`${n.count} buildings`] });
+            setTip({ x: n.x, y: n.y, title: `${n.city}, ${n.province}`, lines: [`${n.count} buildings`] });
           } else {
             setTip({
               x: n.x,
