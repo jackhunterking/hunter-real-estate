@@ -1,4 +1,4 @@
-import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
+import { PORTAL_URL } from "@/lib/portal-link";
 
 export type EmailJobTemplate = {
   id: string;
@@ -23,12 +23,6 @@ const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://jackhunter.com";
 const appSender =
   process.env.RESEND_FROM_EMAIL ?? "Hunter Group <hello@updates.jackhunter.com>";
-// The display name is the new brand; the ADDRESS stays on the domain Resend
-// has actually verified. Move it to @noreply.equitymarket.io only once that
-// domain shows DKIM/SPF green, or auth and intake email stops delivering.
-const capitalSender =
-  process.env.RESEND_CAPITAL_FROM_EMAIL ??
-  "Equity Market <advisors@noreply.hunterhunteradvisors.com>";
 const replyTo = process.env.RESEND_REPLY_TO ?? "hello@jackhunter.com";
 
 function escapeHtml(value: unknown) {
@@ -47,16 +41,9 @@ function shell(params: {
   body: string;
   actionLabel: string;
   actionUrl: string;
-  investmentBrand?: boolean;
 }) {
-  const investmentName = "Equity Market";
-  const brandHeader = params.investmentBrand
-    ? `<div style="color:#fff;font-size:16px;font-weight:700;letter-spacing:-.01em">Equity Market</div>
-       <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16);color:#9eabb3;font-size:8px;letter-spacing:.1em;text-transform:uppercase">Powered by <span style="margin-left:7px;color:#e7ecef;font-size:12px;font-weight:700;letter-spacing:.16em">PARVIS</span></div>`
-    : "Hunter Group";
-  const footer = params.investmentBrand
-    ? `${params.language === "tr" ? "Menkul kıymet hizmetleri Parvis Investment Services Inc. aracılığıyla sunulur" : "Securities services through Parvis Investment Services Inc."} · NRD #74000.<br>${investmentName} · ${params.language === "tr" ? "Parvis açıklamaları" : "Parvis disclosures"}`
-    : "Questions? Reply to this email or contact hello@jackhunter.com.";
+  const brandHeader = "Hunter Group";
+  const footer = "Questions? Reply to this email or contact hello@jackhunter.com.";
   const html = `<!doctype html>
 <html lang="${params.language}">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
@@ -77,7 +64,13 @@ function shell(params: {
     </td></tr>
   </table>
 </body></html>`;
-  const text = `${params.investmentBrand ? `${investmentName}\nPowered by Parvis\n\n` : ""}${params.eyebrow}\n\n${params.title}\n\n${params.body}\n\n${params.actionLabel}: ${params.actionUrl}${params.investmentBrand ? "\n\nSecurities services through Parvis Investment Services Inc. · NRD #74000.\nParvis disclosures" : ""}`;
+  const text = `${params.eyebrow}
+
+${params.title}
+
+${params.body}
+
+${params.actionLabel}: ${params.actionUrl}`;
   return { html, text };
 }
 
@@ -119,22 +112,23 @@ export function renderEmailJob(job: EmailJobTemplate): RenderedEmail {
     };
   }
 
-  const reference = `EM-${job.relatedEntityId.replaceAll("-", "").slice(0, 6).toUpperCase()}`;
-  const isReadiness = job.templateKey === "readiness-alert";
+  // The investor portal renders its own intake and readiness alerts, in its own
+  // app. A job of that kind can still be claimed here, because both apps drain
+  // app.email_jobs — so it is passed through with the guide shell rather than
+  // dropped silently.
   const content = shell({
-    language: "en",
-    eyebrow: "Secure portal notification",
-    title: isReadiness ? "New investor-readiness submission" : "New capital intake",
-    body: `A new submission (${reference}) is ready for review. Sign in to the protected portal to view the details.`,
-    actionLabel: "Open lead inbox",
-    actionUrl: `${siteUrl}${INVESTMENT_BASE_PATH}/admin/leads`,
-    investmentBrand: true,
+    language,
+    eyebrow: "Notification",
+    title: "A new submission is ready for review",
+    body: "Sign in to the portal to view the details.",
+    actionLabel: "Open the portal",
+    actionUrl: PORTAL_URL,
   });
   return {
-    from: capitalSender,
+    from: appSender,
     replyTo,
     to: job.recipient,
-    subject: `New Equity Market intake · ${reference}`,
+    subject: "New submission",
     ...content,
   };
 }

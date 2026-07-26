@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import styles from "./Nav.module.css";
-import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
+import { PORTAL_URL } from "@/lib/portal-link";
 
 /* Inline flag glyphs (kept small + simple so they read cleanly at 18×12px) */
 function FlagTR() {
@@ -101,7 +101,7 @@ export default function Nav({ overlayHero = false }: NavProps) {
     { href: "/rehber/alici", label: t.nav.servicesMenu.buy },
     { href: "/rehber/satici", label: t.nav.servicesMenu.sell },
     { href: "/mortgage", label: t.nav.servicesMenu.mortgage },
-    { href: INVESTMENT_BASE_PATH, label: t.nav.servicesMenu.invest },
+    { href: PORTAL_URL, label: t.nav.servicesMenu.invest },
   ];
 
   useEffect(() => {

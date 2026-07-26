@@ -1,16 +1,15 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
 import { INTENTS } from "@/lib/mortgage/intents";
-import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 
 const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://jackhunter.com"
 ).replace(/\/$/, "");
 
 /**
- * Public, indexable routes (locale-agnostic, no leading locale). The gated
- * advisory portal `(portal)` routes are intentionally excluded — they live
- * behind auth. Each path below is emitted once per locale with a full hreflang
+ * Public, indexable routes (locale-agnostic, no leading locale). The investor
+ * portal has its own app, domain and sitemap.
+ * Each path below is emitted once per locale with a full hreflang
  * alternates cluster (every locale + `x-default` → the default locale) so search
  * engines index and cross-link all four language versions.
  */
@@ -26,7 +25,6 @@ const PUBLIC_PATHS: string[] = [
   "/gizlilik",
   "/kullanim-kosullari",
   "/reklam-aciklamasi",
-  INVESTMENT_BASE_PATH,
 ];
 
 function languagesFor(path: string): Record<string, string> {

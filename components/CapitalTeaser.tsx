@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useT } from "@/lib/i18n/LanguageProvider";
 import styles from "./CapitalTeaser.module.css";
-import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
+import { PORTAL_URL } from "@/lib/portal-link";
 
 /* Small JV diagram (matches the Equity Market experience) */
 function JVMark() {
@@ -86,7 +86,7 @@ export default function CapitalTeaser() {
             </div>
           </div>
 
-          <Link href={INVESTMENT_BASE_PATH} className={styles.cta}>
+          <Link href={PORTAL_URL} className={styles.cta}>
             {c.cta}
             <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
               <path

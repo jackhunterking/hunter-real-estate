@@ -1,20 +1,26 @@
 # Working in this repo
 
-## Two businesses, one repo
+## What this repo is
 
-- **Equity Market** (`equitymarket.io`, `/equity-market`) — the investor portal.
-  Jack Hunter's Parvis-approved trade name for private-market investing;
-  securities activity runs through Parvis Investment Services Inc. Its code
-  lives in `app/[locale]/equity-market/`, `components/equity-market/` and
-  `lib/equity-market/`, and its name comes from `INVESTMENT_BRAND` in
-  `lib/equity-market/investment-brand.ts` — never hardcode it.
-- **Hunter Group Real Estate** (`jackhunter.com`) — the real-estate and mortgage
-  site. Different business, different regulator (FSRA), and it keeps the Hunter
-  brand.
+**Hunter Group Real Estate** (`jackhunter.com`) — the real-estate and mortgage
+site. RE/MAX Hallmark for real estate, Real Mortgage Associates for mortgages.
 
-The two are interleaved in `lib/i18n/dictionaries.ts` and `lib/email/templates.ts`,
-so never run a blanket find/replace on "Hunter". `tests/rebrand-guard.test.ts`
-fails if a retired brand token reappears in portal source.
+The **Equity Market** investor portal used to live here and no longer does. It
+is a separate business with a separate regulator, and moved to its own repo:
+`github.com/jackhunterking/equity-market`. Anything about offerings, investors,
+Supabase schema or securities disclosure belongs there, not here.
+
+What is left of that relationship in this repo:
+
+- `lib/portal-link.ts` — the one place the portal's URL is defined. Set
+  `NEXT_PUBLIC_PORTAL_URL` when the portal's domain changes; do not hardcode it.
+- `middleware.ts` 301s every path the portal used to occupy
+  (`/equity-market`, `/hunter-advisory`, `/investing`, the legacy capital
+  routes) to that domain.
+- `lib/email/templates.ts` and `app/api/cron/email-jobs` still drain
+  `app.email_jobs`, which is shared with the portal. Jobs are claimed atomically
+  and sent with a Resend idempotency key, so both apps draining it is safe.
+  The Supabase **migrations** live in the portal repo, which owns the schema.
 
 ## Social media
 
@@ -26,9 +32,9 @@ when the request is a single line or doesn't use the word "post". The skill
 carries Jack's voice, the compliance tier gate, and the render pipeline; drafting
 without it produces work that gets sent back.
 
-Social output still carries the Hunter brand — the rename covered the portal
-only, so the social kit and the portal now advertise different names. Treat that
-as an open item, not a bug to "fix" mid-post.
+Social output carries the Hunter brand. The investor portal rebranded to Equity
+Market and moved out, so the two now advertise different names — that is the
+current state, not a bug to "fix" mid-post.
 
 This does not cover Jack ve Tara (Turkish, separate business) — that has its own
 skill.

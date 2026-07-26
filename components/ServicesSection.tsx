@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useT } from "@/lib/i18n/LanguageProvider";
 import { RMA } from "@/lib/mortgage/identity";
 import styles from "./ServicesSection.module.css";
-import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
+import { PORTAL_URL } from "@/lib/portal-link";
 
 export default function ServicesSection() {
   const t = useT();
@@ -41,7 +41,7 @@ export default function ServicesSection() {
             <span className={styles.cardCta}>{s.mortgage.cta} →</span>
           </Link>
 
-          <Link href={INVESTMENT_BASE_PATH} className={styles.card}>
+          <Link href={PORTAL_URL} className={styles.card}>
             <span className={styles.cardTag}>{s.invest.tag}</span>
             <h3 className={styles.cardTitle}>{s.invest.title}</h3>
             <p className={styles.cardDesc}>{s.invest.desc}</p>
