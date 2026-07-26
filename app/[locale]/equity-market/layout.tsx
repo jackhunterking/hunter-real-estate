@@ -3,22 +3,17 @@ import { TaxonomyProvider } from "@/components/equity-market/portal/TaxonomyProv
 import { LangBoundary } from "@/components/equity-market/portal/LangBoundary";
 import { EntryDisclaimer } from "@/components/equity-market/portal/EntryDisclaimer";
 import { getTaxonomies } from "@/lib/equity-market/taxonomies-server";
+// Canonical origin follows the domain cutover switch, so canonical and OG
+// links never point at a host that does not resolve yet.
+import { PORTAL_ORIGIN } from "@/lib/equity-market/portal-domain";
 import "./portal.css";
-
-// NEXT_PUBLIC_HNC_SITE_URL is the previous name; read both until the Vercel
-// environment is cut over, then drop the fallback.
-const PORTAL_URL = (
-  process.env.NEXT_PUBLIC_PORTAL_SITE_URL ??
-  process.env.NEXT_PUBLIC_HNC_SITE_URL ??
-  "https://equitymarket.io"
-).replace(/\/$/, "");
 
 export const metadata: Metadata = {
   title: { absolute: "Equity Market" },
   description:
     "Equity Market, powered by Parvis, provides a clearer view of Canadian private real estate and alternative investments.",
   alternates: {
-    canonical: PORTAL_URL,
+    canonical: PORTAL_ORIGIN,
   },
   // The root layout points the favicon at the real-estate brandmark for the
   // whole site; the portal is a different brand and overrides it here.
@@ -26,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Equity Market",
     description: "Equity Market, powered by Parvis, presents Canadian private-market opportunities with source-led research and a human-supported process.",
-    url: PORTAL_URL,
+    url: PORTAL_ORIGIN,
     siteName: "Equity Market",
     type: "website",
     // English-first: this is a global-audience product, not a Turkish one.

@@ -36,6 +36,9 @@ const ALLOWED = [
   // them. RETIRED_PORTAL_HOSTS is the allowlist middleware 301s away from.
   /RETIRED_PORTAL_PREFIXES|hunter-advisory/,
   /hunterhunteradvisors\.com"|hunternorthcapital\.com"/,
+  // Sender addresses stay on the domain Resend has verified until the cutover;
+  // only the display name is rebranded. See lib/email/templates.ts.
+  /advisors@noreply\.hunterhunteradvisors\.com/,
 ];
 
 const FORBIDDEN: [RegExp, string][] = [

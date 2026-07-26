@@ -61,3 +61,53 @@ The platform implementation completed these checks before handoff:
 - Desktop and mobile journey checks passed.
 
 For a fresh checkout, run `npm run verify` before deployment after restoring the required environment configuration.
+
+## Equity Market domain cutover
+
+The rename shipped before `equitymarket.io` existed, so the domain switch is a
+configuration change, not a deploy. Until it is flipped, the portal keeps
+serving on `hunterhunteradvisors.com` (and the `hunternorthcapital.com` alias)
+exactly as before — only the brand, the in-app path and the internal naming
+changed.
+
+`NEXT_PUBLIC_PORTAL_DOMAIN_CUTOVER` is the switch, read in
+`lib/equity-market/portal-domain.ts`. Unset (today):
+
+- all six hosts serve the portal at their root; nothing redirects
+- `PORTAL_ORIGIN` — canonical and OG URLs — is `https://www.hunterhunteradvisors.com`
+- auth and intake email send from `@noreply.hunterhunteradvisors.com`, the
+  domain Resend has verified, under the display name "Equity Market"
+
+### Flip it when, and only when, all of these are true
+
+1. `equitymarket.io` resolves and is attached to the Vercel project, with
+   `hunterhunteradvisors.com` still attached so it can serve its 301.
+2. Resend shows `equitymarket.io` verified (DKIM + SPF green) and the
+   `noreply.equitymarket.io` sending subdomain exists.
+3. The Supabase **dashboard** — Auth → URL Configuration — has Site URL
+   `https://equitymarket.io` and the new redirect URLs. `supabase/config.toml`
+   is local-only for the hosted project.
+
+### The flip, in one change
+
+- Vercel env: `NEXT_PUBLIC_PORTAL_DOMAIN_CUTOVER=true` and
+  `NEXT_PUBLIC_PORTAL_SITE_URL=https://equitymarket.io`
+- `RESEND_CAPITAL_FROM_EMAIL="Equity Market <advisors@noreply.equitymarket.io>"`
+- Supabase dashboard SMTP sender: `auth@noreply.equitymarket.io`
+- Redeploy. `hunterhunteradvisors.com/*` then 301s to `equitymarket.io/*`,
+  path and query intact, and the portal has a single canonical origin.
+
+### Required before the FIRST deploy, cutover or not
+
+The portal's in-app path moved, so the Supabase dashboard redirect allowlist
+needs `https://jackhunter.com/equity-market/auth/confirm` and its `www` form
+added, or sign-up confirmation from the real-estate site bounces. Keep the
+`/hunter-advisory/auth/confirm` entries until unexpired links have aged out.
+
+### Also renamed, no fallback
+
+`PORTAL_REQUIRE_AUTH` replaces `HNC_REQUIRE_AUTH` and
+`NEXT_PUBLIC_PORTAL_SITE_URL` replaces `NEXT_PUBLIC_HNC_SITE_URL`. Both old
+names are still read as a fallback; add the new ones in Vercel, then remove the
+fallback in `app/[locale]/equity-market/(portal)/layout.tsx` and
+`lib/equity-market/portal-domain.ts`.

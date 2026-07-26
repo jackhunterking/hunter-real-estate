@@ -7,12 +7,10 @@ import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 
-// NEXT_PUBLIC_HNC_SITE_URL is the previous name; read both until the Vercel
-// environment is cut over, then drop the fallback.
-const PORTAL_URL =
-  process.env.NEXT_PUBLIC_PORTAL_SITE_URL ??
-  process.env.NEXT_PUBLIC_HNC_SITE_URL ??
-  INVESTMENT_BASE_PATH;
+// An in-app path, not an absolute URL: this link is rendered on the
+// real-estate site, and the portal is reachable there under its base path
+// regardless of which domain the cutover has reached.
+const PORTAL_URL = INVESTMENT_BASE_PATH;
 
 const COPY = {
   tr: {

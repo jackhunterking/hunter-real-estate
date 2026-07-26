@@ -165,13 +165,19 @@ additional_redirect_urls = [
   "http://localhost:3000/equity-market/auth/confirm",
   "https://jackhunter.com/equity-market/auth/confirm",
   "https://www.jackhunter.com/equity-market/auth/confirm",
+  # Ready for the cutover; harmless until equitymarket.io resolves.
   "https://equitymarket.io/auth/confirm",
   "https://www.equitymarket.io/auth/confirm",
-  # Retired hosts. Middleware 301s them to equitymarket.io, but a confirmation
-  # link already sitting in someone's inbox still lands here first, so these
-  # stay allow-listed until those links have expired.
+  # The domains serving the portal TODAY. They keep serving until
+  # NEXT_PUBLIC_PORTAL_DOMAIN_CUTOVER is set, and even after that a confirmation
+  # link already sitting in an inbox lands here first — so these stay
+  # allow-listed until those links have expired.
   "https://hunterhunteradvisors.com/auth/confirm",
   "https://www.hunterhunteradvisors.com/auth/confirm",
+  "https://hunternorthcapital.com/auth/confirm",
+  "https://www.hunternorthcapital.com/auth/confirm",
+  # The former in-app prefix on the real-estate site, 301'd but still linked
+  # from unexpired emails.
   "https://jackhunter.com/hunter-advisory/auth/confirm",
   "https://www.jackhunter.com/hunter-advisory/auth/confirm"
 ]
@@ -257,7 +263,9 @@ host = "smtp.resend.com"
 port = 465
 user = "resend"
 pass = "env(RESEND_SUPABASE_AUTH_API_KEY)"
-admin_email = "auth@noreply.equitymarket.io"
+# Display name is the new brand; the address waits on Resend verifying
+# equitymarket.io. Switch both together at the domain cutover.
+admin_email = "auth@noreply.hunterhunteradvisors.com"
 sender_name = "Equity Market Account Security"
 
 [auth.email.template.invite]

@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  PORTAL_DOMAIN_CUTOVER,
   PORTAL_HOSTS,
+  PORTAL_ORIGIN,
   RETIRED_PORTAL_HOSTS,
   portalAuthRedirectUrl,
   portalPublicPath,
@@ -9,23 +11,38 @@ import {
   safePortalNext,
 } from "../lib/equity-market/portal-domain.ts";
 
-test("the portal has exactly one canonical host", () => {
+test("the new domain serves the portal, and the base path holds elsewhere", () => {
   assert.equal(isPortalHost("www.equitymarket.io"), true);
   assert.equal(isPortalHost("equitymarket.io:443"), true);
   assert.equal(portalPublicPath("www.equitymarket.io", "/sign-in"), "/sign-in");
   assert.equal(portalPublicPath("jackhunter.com", "/sign-in"), "/equity-market/sign-in");
 });
 
-test("retired portal hosts are redirect-only and never serve the portal", () => {
-  // A host in both sets would serve the portal on two canonical origins at
-  // once, which is what the middleware 301 exists to prevent.
-  for (const host of RETIRED_PORTAL_HOSTS) {
-    assert.equal(isPortalHost(host), false, `${host} must not serve the portal`);
-    assert.equal(PORTAL_HOSTS.has(host), false);
+test("before the cutover the current domains keep serving and nothing redirects", () => {
+  // The rename ships before equitymarket.io resolves. Redirecting the live
+  // domains to a host that does not exist yet would take the portal down, so
+  // until NEXT_PUBLIC_PORTAL_DOMAIN_CUTOVER is set they must still serve.
+  assert.equal(PORTAL_DOMAIN_CUTOVER, false, "this suite describes the pre-cutover state");
+  assert.equal(RETIRED_PORTAL_HOSTS.size, 0);
+  for (const host of [
+    "hunterhunteradvisors.com",
+    "www.hunterhunteradvisors.com",
+    "hunternorthcapital.com",
+    "www.hunternorthcapital.com",
+  ]) {
+    assert.equal(isPortalHost(host), true, `${host} must keep serving the portal`);
   }
-  assert.equal(RETIRED_PORTAL_HOSTS.has("hunterhunteradvisors.com"), true);
-  assert.equal(RETIRED_PORTAL_HOSTS.has("www.hunterhunteradvisors.com"), true);
-  assert.equal(RETIRED_PORTAL_HOSTS.has("hunternorthcapital.com"), true);
+  // Canonical links point at a host that actually answers.
+  assert.equal(PORTAL_ORIGIN, "https://www.hunterhunteradvisors.com");
+});
+
+test("a host is never both served and redirected", () => {
+  // The invariant that survives the cutover in either direction: a host in both
+  // sets would serve the portal on two origins at once, or redirect to itself.
+  for (const host of RETIRED_PORTAL_HOSTS) {
+    assert.equal(PORTAL_HOSTS.has(host), false, `${host} is in both sets`);
+    assert.equal(isPortalHost(host), false);
+  }
 });
 
 test("auth callbacks use the visible host route contract", () => {

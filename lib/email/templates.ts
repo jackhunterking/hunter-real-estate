@@ -23,9 +23,12 @@ const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://jackhunter.com";
 const appSender =
   process.env.RESEND_FROM_EMAIL ?? "Hunter Group <hello@updates.jackhunter.com>";
+// The display name is the new brand; the ADDRESS stays on the domain Resend
+// has actually verified. Move it to @noreply.equitymarket.io only once that
+// domain shows DKIM/SPF green, or auth and intake email stops delivering.
 const capitalSender =
   process.env.RESEND_CAPITAL_FROM_EMAIL ??
-  "Equity Market <advisors@noreply.equitymarket.io>";
+  "Equity Market <advisors@noreply.hunterhunteradvisors.com>";
 const replyTo = process.env.RESEND_REPLY_TO ?? "hello@jackhunter.com";
 
 function escapeHtml(value: unknown) {

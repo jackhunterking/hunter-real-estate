@@ -33,7 +33,13 @@ test("advisory application uses the canonical route tree only", () => {
     readFileSync(resolve(root, "lib/equity-market/investment-brand.ts"), "utf8"),
     /export const INVESTMENT_BASE_PATH = "\/equity-market"/,
   );
-  assert.match(middleware, /const PORTAL_ORIGIN = "https:\/\/equitymarket\.io"/);
+  // The origin follows the cutover switch rather than being hardcoded, so the
+  // rename can ship before equitymarket.io resolves.
+  assert.match(
+    middleware,
+    /import \{[\s\S]*?PORTAL_ORIGIN[\s\S]*?\} from "@\/lib\/equity-market\/portal-domain"/,
+  );
+  assert.doesNotMatch(middleware, /PORTAL_ORIGIN = "https/);
   // The retired prefix keeps a 301 rather than disappearing.
   assert.match(middleware, /RETIRED_PORTAL_PREFIXES = \["\/hunter-advisory"\]/);
   // Legacy /investing is redirected off the locale-stripped path now that routes

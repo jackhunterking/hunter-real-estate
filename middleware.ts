@@ -4,6 +4,7 @@ import { routing } from "@/i18n/routing";
 import { refreshSupabaseSession } from "@/lib/supabase/middleware";
 import {
   PORTAL_HOSTS,
+  PORTAL_ORIGIN,
   RETIRED_PORTAL_HOSTS,
 } from "@/lib/equity-market/portal-domain";
 import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
@@ -17,7 +18,6 @@ const JACK_HOSTS = new Set([
   "www.jackvetara.com",
 ]);
 const PORTAL_PREFIX = INVESTMENT_BASE_PATH;
-const PORTAL_ORIGIN = "https://equitymarket.io";
 const PORTAL_HOME_URL = `${PORTAL_ORIGIN}/`;
 
 // Paths the portal used to live under, on the main site. Each 301s to the
@@ -53,6 +53,10 @@ export async function middleware(request: NextRequest) {
   // Runs before locale negotiation: a request that reaches a former portal
   // domain leaves for the canonical one immediately, path and query intact, so
   // the portal is never reachable on two hostnames at once.
+  //
+  // Empty until NEXT_PUBLIC_PORTAL_DOMAIN_CUTOVER is set, so before the cutover
+  // the former domains keep serving the portal rather than redirecting to a
+  // host that does not resolve yet.
   if (RETIRED_PORTAL_HOSTS.has(host)) {
     return NextResponse.redirect(
       new URL(
