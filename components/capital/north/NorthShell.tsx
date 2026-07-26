@@ -18,6 +18,7 @@ import {
   UserRound,
   UsersRound,
   WalletCards,
+  Waypoints,
   Wrench,
   X,
 } from "lucide-react";
@@ -58,6 +59,7 @@ const COPY = {
     ],
     learning: ["/resources/learning", "Bilgi merkezi", BookOpen],
     tools: ["/resources/tools", "Araçlar", Wrench],
+    assetNetwork: "Varlık ağı",
     account: "Hesap",
     accountView: "Hesap görünümü",
     accountViewInvestor: "Yatırımcı",
@@ -85,6 +87,7 @@ const COPY = {
     ],
     learning: ["/resources/learning", "Learning centre", BookOpen],
     tools: ["/resources/tools", "Tools", Wrench],
+    assetNetwork: "Asset network",
     account: "Account",
     accountView: "Account view",
     accountViewInvestor: "Investor",
@@ -138,8 +141,18 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
           items: [c.learning, c.tools].map(([href, label, icon]) => ({ href, label, icon })),
         }]
       : []),
-    // The Admin console is deliberately absent from the rail — staff reach it
-    // from inside Profile, so the nav reads the same for every account.
+    // The Admin console itself stays out of the rail — staff reach it from
+    // inside Profile, so the nav reads the same for every account. The Asset
+    // network is the exception: it is a trial surface with no other entry
+    // point, and burying it inside the console made it unfindable. Gated on the
+    // operations workspace, so it renders for master_admin only.
+    ...(operations
+      ? [{
+          id: "operations" as const,
+          label: c.groups.operations,
+          items: [{ href: "/admin?section=network", label: c.assetNetwork, icon: Waypoints }],
+        }]
+      : []),
     {
       id: "account",
       label: c.account,
@@ -233,7 +246,10 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
                       || pathname.startsWith(`${fullHref}/`)
                       // The qualification tool is reached from Tools but keeps
                       // its own route, so Tools stays lit while it is open.
-                      || (href === "/resources/tools" && pathname.startsWith(`${NORTH_BASE}/resources/investor-readiness`));
+                      || (href === "/resources/tools" && pathname.startsWith(`${NORTH_BASE}/resources/investor-readiness`))
+                      // Items carrying a query (the Asset network section) can
+                      // never equal `pathname`, which has none — match the route.
+                      || (href.includes("?") && pathname === `${NORTH_BASE}${href.split("?")[0]}`);
                     return (
                       <Link
                         key={href}
