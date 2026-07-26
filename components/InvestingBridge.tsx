@@ -5,8 +5,9 @@ import { ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
 import { DisclosureBar } from "@/components/capital/north/DisclosureBar";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
+import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
 
-const HNC_URL = process.env.NEXT_PUBLIC_HNC_SITE_URL ?? "/hunter-advisory";
+const HNC_URL = process.env.NEXT_PUBLIC_HNC_SITE_URL ?? INVESTMENT_BASE_PATH;
 
 const COPY = {
   tr: {

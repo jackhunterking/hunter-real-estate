@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useT } from "@/lib/i18n/LanguageProvider";
 import styles from "./Footer.module.css";
+import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
 
 const WA_URL = "https://wa.me/16473913311";
 
@@ -18,7 +19,7 @@ export default function Footer() {
     { href: "/#hizmetler", label: n.services },
     { href: "/mortgage", label: n.mortgage },
     { href: "/rehber/ogren", label: t.ogren.label },
-    { href: "/hunter-advisory", label: n.capital },
+    { href: INVESTMENT_BASE_PATH, label: n.capital },
     { href: "/#kaynaklar", label: n.resources },
     { href: "/#iletisim", label: n.contact },
   ];

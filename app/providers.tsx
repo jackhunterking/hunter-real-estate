@@ -5,15 +5,16 @@ import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react";
 import { HUNTER_ADVISORY_HOSTS } from "@/lib/capital/advisory-domain";
+import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
 
 function isHunterAdvisoryRoute(pathname: string, hostname: string) {
-  // Paths are locale-prefixed (/en/hunter-advisory, /tr/hunter-advisory, ...);
-  // strip a leading locale segment before matching the advisory subtree.
+  // Paths are locale-prefixed (/en/<portal>, /tr/<portal>, ...); strip a leading
+  // locale segment before matching the portal subtree.
   const withoutLocale = pathname.replace(/^\/(tr|en|fr|es)(?=\/|$)/, "");
   return (
     HUNTER_ADVISORY_HOSTS.has(hostname.toLowerCase()) ||
-    withoutLocale === "/hunter-advisory" ||
-    withoutLocale.startsWith("/hunter-advisory/")
+    withoutLocale === INVESTMENT_BASE_PATH ||
+    withoutLocale.startsWith(`${INVESTMENT_BASE_PATH}/`)
   );
 }
 

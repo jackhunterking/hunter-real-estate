@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
+import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
 
 export const dynamic = "force-dynamic";
 
 export default async function HunterNorthProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  redirect(`/hunter-advisory/investments/${slug}`);
+  redirect(`${INVESTMENT_BASE_PATH}/investments/${slug}`);
 }

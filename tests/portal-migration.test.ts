@@ -26,7 +26,13 @@ test("advisory application uses the canonical route tree only", () => {
   assert.equal(existsSync(resolve(root, "app/[locale]/hunter-advisory/page.tsx")), true);
   assert.equal(existsSync(resolve(root, "app/hunter-north-capital")), false);
   const middleware = readFileSync(resolve(root, "middleware.ts"), "utf8");
-  assert.match(middleware, /const ADVISORY_PREFIX = "\/hunter-advisory"/);
+  // The prefix has exactly one definition (lib/capital/investment-brand.ts);
+  // middleware must derive it rather than re-declare the literal.
+  assert.match(middleware, /const ADVISORY_PREFIX = INVESTMENT_BASE_PATH/);
+  assert.match(
+    readFileSync(resolve(root, "lib/capital/investment-brand.ts"), "utf8"),
+    /export const INVESTMENT_BASE_PATH = "\/hunter-advisory"/,
+  );
   assert.match(middleware, /const ADVISORY_HOME_URL = "https:\/\/hunterhunteradvisors\.com\/"/);
   // Legacy /investing is redirected off the locale-stripped path now that routes
   // are locale-prefixed (see stripLocale() in middleware.ts).

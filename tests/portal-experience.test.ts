@@ -177,7 +177,10 @@ test("public landing receives only approved offering previews and global documen
   // serviceProviders, and it projects a boolean — never the auditor's identity.
   assert.doesNotMatch(projection, /^\s*(?:documents|risks|serviceProviders|complianceProfile):/m);
   assert.match(projection, /audited: Boolean\(offering\.serviceProviders\?\.auditor\)/);
-  assert.match(read("app/[locale]/hunter-advisory/(portal)/documents/page.tsx"), /hunter-advisory\/investments/);
+  assert.match(
+    read("app/[locale]/hunter-advisory/(portal)/documents/page.tsx"),
+    /redirect\(`\$\{INVESTMENT_BASE_PATH\}\/investments`\)/,
+  );
 });
 
 test("profile is a permanent sidebar destination instead of an account-popover action", () => {

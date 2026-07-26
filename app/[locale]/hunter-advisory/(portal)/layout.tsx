@@ -4,6 +4,7 @@ import { PortalAccessProvider } from "@/components/capital/north/PortalAccessPro
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { loadPortalSnapshot } from "@/lib/capital/portal-server";
 import { PROFESSIONAL_WORKSPACE_ENABLED } from "@/lib/capital/feature-flags";
+import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
@@ -12,7 +13,7 @@ export const metadata = {
 };
 
 // Routes that make up the professional / partner "middle layer" paused this phase.
-// Matched on the path segment right after the /hunter-advisory prefix so investor
+// Matched on the path segment right after the portal base path so investor
 // paths (portfolio, investments, requests, resources, profile, home) and staff
 // admin/operations are untouched.
 const PAUSED_MIDDLE_LAYER_SEGMENTS = new Set([
@@ -27,8 +28,8 @@ const PAUSED_MIDDLE_LAYER_SEGMENTS = new Set([
 
 function isPausedMiddleLayerPath(pathnameWithPrefix: string) {
   const path = pathnameWithPrefix.split("?")[0];
-  const suffix = path.startsWith("/hunter-advisory")
-    ? path.slice("/hunter-advisory".length)
+  const suffix = path.startsWith(INVESTMENT_BASE_PATH)
+    ? path.slice(INVESTMENT_BASE_PATH.length)
     : path;
   const segment = suffix.replace(/^\/+/, "").split("/")[0];
   return PAUSED_MIDDLE_LAYER_SEGMENTS.has(segment);
@@ -41,7 +42,7 @@ export default async function HunterNorthPortalLayout({ children }: { children: 
   if (!PROFESSIONAL_WORKSPACE_ENABLED) {
     const requestedPath = (await headers()).get("x-hnc-path") ?? "";
     if (isPausedMiddleLayerPath(requestedPath)) {
-      redirect("/hunter-advisory/portfolio");
+      redirect(`${INVESTMENT_BASE_PATH}/portfolio`);
     }
   }
 
@@ -52,11 +53,11 @@ export default async function HunterNorthPortalLayout({ children }: { children: 
     process.env.HNC_REQUIRE_AUTH === "true";
   if (requireAuth && (!configured || !snapshot)) {
     const requestedPath = (await headers()).get("x-hnc-path");
-    const next = requestedPath?.startsWith("/hunter-advisory/") ? `?next=${encodeURIComponent(requestedPath)}` : "";
-    redirect(`/hunter-advisory/sign-in${next}`);
+    const next = requestedPath?.startsWith(`${INVESTMENT_BASE_PATH}/`) ? `?next=${encodeURIComponent(requestedPath)}` : "";
+    redirect(`${INVESTMENT_BASE_PATH}/sign-in${next}`);
   }
   if (snapshot?.user.onboardingStatus === "pending") {
-    redirect("/hunter-advisory/onboarding");
+    redirect(`${INVESTMENT_BASE_PATH}/onboarding`);
   }
 
   return (

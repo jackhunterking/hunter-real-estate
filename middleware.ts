@@ -3,6 +3,7 @@ import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { refreshSupabaseSession } from "@/lib/supabase/middleware";
 import { HUNTER_ADVISORY_HOSTS } from "@/lib/capital/advisory-domain";
+import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
 
 // Keep the existing dedicated-domain aliases working while the public brand and
 // canonical application path move to Hunter & Hunter Investment Advisors.
@@ -12,7 +13,7 @@ const JACK_HOSTS = new Set([
   "jackvetara.com",
   "www.jackvetara.com",
 ]);
-const ADVISORY_PREFIX = "/hunter-advisory";
+const ADVISORY_PREFIX = INVESTMENT_BASE_PATH;
 const ADVISORY_HOME_URL = "https://hunterhunteradvisors.com/";
 
 // Owns locale negotiation (Accept-Language on first visit), prefix insertion,
@@ -107,8 +108,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(destination, 307);
   }
 
-  // The public path the app logic keys off — locale-stripped, so existing
-  // `startsWith("/hunter-advisory")` checks in the portal layout keep working.
+  // The public path the app logic keys off — locale-stripped, so the existing
+  // `startsWith(INVESTMENT_BASE_PATH)` checks in the portal layout keep working.
   const publicSuffix = advisoryRequest
     ? rest.slice(ADVISORY_PREFIX.length)
     : rest;
@@ -120,7 +121,7 @@ export async function middleware(request: NextRequest) {
   let response: NextResponse;
   if (dedicatedHost) {
     // Clean path on the dedicated host maps to the locale-prefixed portal route
-    // on disk: /{locale}/hunter-advisory/...
+    // on disk: /{locale}{INVESTMENT_BASE_PATH}/...
     const destination = request.nextUrl.clone();
     destination.pathname = `/${activeLocale}${ADVISORY_PREFIX}${rest === "/" ? "" : rest}`;
     response = NextResponse.rewrite(destination, {

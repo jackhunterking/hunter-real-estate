@@ -1,3 +1,5 @@
+import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
+
 export type EmailJobTemplate = {
   id: string;
   recipient: string;
@@ -123,7 +125,7 @@ export function renderEmailJob(job: EmailJobTemplate): RenderedEmail {
     title: isReadiness ? "New investor-readiness submission" : "New capital intake",
     body: `A new submission (${reference}) is ready for review. Sign in to the protected portal to view the details.`,
     actionLabel: "Open lead inbox",
-    actionUrl: `${siteUrl}/hunter-advisory/admin/leads`,
+    actionUrl: `${siteUrl}${INVESTMENT_BASE_PATH}/admin/leads`,
     investmentBrand: true,
   });
   return {

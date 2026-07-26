@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
 import { INTENTS } from "@/lib/mortgage/intents";
+import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
 
 const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://jackhunter.com"
@@ -25,7 +26,7 @@ const PUBLIC_PATHS: string[] = [
   "/gizlilik",
   "/kullanim-kosullari",
   "/reklam-aciklamasi",
-  "/hunter-advisory",
+  INVESTMENT_BASE_PATH,
 ];
 
 function languagesFor(path: string): Record<string, string> {
