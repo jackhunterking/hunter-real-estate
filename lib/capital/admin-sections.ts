@@ -27,7 +27,7 @@ export type AdminSectionKind = "overview" | "queue" | "panel";
 
 export type AdminSectionId =
   | "overview"
-  | "offerings" | "freshness" | "taxonomies"
+  | "offerings" | "freshness" | "taxonomies" | "network"
   | "investors" | "requests" | "interests" | "users"
   | "content"
   | "leads"
@@ -63,6 +63,11 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   { id: "freshness", group: "investments", kind: "panel", label: { en: "Data freshness", tr: "Veri güncelliği" } },
   { id: "taxonomies", group: "investments", kind: "panel", label: { en: "Taxonomies", tr: "Sınıflandırmalar" },
     hint: { en: "Strategy, asset class and region tags", tr: "Strateji, varlık sınıfı ve bölge etiketleri" } },
+  // Trial surface. Admin-only by virtue of living here — `canAccessPath` gates
+  // every /admin path on the operations workspace. Removing this one entry
+  // removes the section from the rail and the `?section=` allowlist together.
+  { id: "network", group: "investments", kind: "panel", label: { en: "Asset network", tr: "Varlık ağı" },
+    hint: { en: "Holdings drawn as a connected map — trial", tr: "Pozisyonların bağlantılı haritası — deneme" } },
 
   // People — the investors and their relationship with the platform.
   { id: "investors", group: "people", kind: "panel", label: { en: "Investors", tr: "Yatırımcılar" },
