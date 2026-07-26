@@ -1,7 +1,7 @@
 import { PARVIS_RELATIONSHIP } from "./investment-brand.ts";
 
 /**
- * The acknowledgement a visitor sees once, on first entry to the Hunter & Hunter
+ * The acknowledgement a visitor sees once, on first entry to the Equity Market
  * advisory surface.
  *
  * What this is NOT, deliberately: an accredited-investor gate. Asking a stranger
@@ -19,10 +19,10 @@ import { PARVIS_RELATIONSHIP } from "./investment-brand.ts";
  * acknowledgement of an older version re-prompts, so nobody is bound by a
  * disclaimer they never read.
  */
-export const ENTRY_DISCLAIMER_VERSION = 2;
+export const ENTRY_DISCLAIMER_VERSION = 3;
 
 /** localStorage key holding `{ version, acknowledgedAt }`. */
-export const ENTRY_DISCLAIMER_STORAGE_KEY = "hnc.entry-disclaimer";
+export const ENTRY_DISCLAIMER_STORAGE_KEY = "em.entry-disclaimer";
 
 /** Where "Leave this site" sends someone who does not want to continue. */
 export const ENTRY_DISCLAIMER_EXIT_URL = "https://jackhunter.com";
@@ -39,7 +39,7 @@ export const ENTRY_DISCLAIMER = {
     // actually verify; everything else that used to sit here now lives behind
     // the disclosure link.
     paragraphs: [
-      `Hunter & Hunter Investment Advisors is the trade name of ${representativeName}, registered in Ontario as a Dealing Representative of ${legalName} (NRD #${nrdNumber}), an ${registrationCategory}. Securities activity is carried out through and supervised by Parvis, and only where Parvis is registered.`,
+      `Equity Market is the trade name of ${representativeName}, registered in Ontario as a Dealing Representative of ${legalName} (NRD #${nrdNumber}), an ${registrationCategory}. Securities activity is carried out through and supervised by Parvis, and only where Parvis is registered.`,
       "This site is for information and education. It is not an offer or a prospectus, and it is not investment, legal, or tax advice. Browsing it does not establish your eligibility or suitability and does not complete a transaction.",
       "Private-market securities are speculative and illiquid. You may lose some or all of your investment, and targets are not guaranteed.",
     ],
@@ -52,7 +52,7 @@ export const ENTRY_DISCLAIMER = {
     eyebrow: "Önemli bilgilendirme",
     title: "Devam etmeden önce",
     paragraphs: [
-      `Hunter & Hunter Investment Advisors, ${representativeName}'ın ticari adıdır. ${representativeName}, Ontario'da ${legalName} (NRD No. ${nrdNumber}) bünyesinde kayıtlı bir Dealing Representative'tir; Parvis bir Exempt Market Dealer olarak kayıtlıdır. Menkul kıymet faaliyetleri Parvis aracılığıyla, Parvis gözetiminde ve yalnızca Parvis'in kayıtlı olduğu yerlerde yürütülür.`,
+      `Equity Market, ${representativeName}'ın ticari adıdır. ${representativeName}, Ontario'da ${legalName} (NRD No. ${nrdNumber}) bünyesinde kayıtlı bir Dealing Representative'tir; Parvis bir Exempt Market Dealer olarak kayıtlıdır. Menkul kıymet faaliyetleri Parvis aracılığıyla, Parvis gözetiminde ve yalnızca Parvis'in kayıtlı olduğu yerlerde yürütülür.`,
       "Bu site bilgilendirme ve eğitim amaçlıdır. Bir teklif ya da izahname değildir; yatırım, hukuk veya vergi danışmanlığı niteliği taşımaz. Siteyi görüntülemek uygunluğunuzu ya da yerindeliğinizi kesinleştirmez ve bir işlemi tamamlamaz.",
       "Özel piyasa menkul kıymetleri spekülatif ve likit değildir. Yatırımınızın bir kısmını veya tamamını kaybedebilirsiniz ve hedefler garanti edilmez.",
     ],

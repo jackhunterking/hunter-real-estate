@@ -9,8 +9,11 @@ const read = (path: string) => readFileSync(resolve(root, path), "utf8");
 
 test("investment brand configuration carries the approved bilingual dealer relationship", () => {
   const brand = read("lib/equity-market/investment-brand.ts");
-  assert.match(brand, /Hunter & Hunter Investment Advisors/);
-  assert.doesNotMatch(brand, /Hunter & Hunter Yatırım Danışmanlığı/);
+  assert.match(brand, /name: "Equity Market"/);
+  // The wordmark is the name alone — a descriptor line would reintroduce the
+  // two-line lockup the rebrand removed.
+  assert.match(brand, /descriptor: ""/);
+  assert.doesNotMatch(brand, /Hunter & Hunter/);
   assert.match(brand, /Jack Hunter/);
   assert.match(brand, /Dealing Representative/);
   assert.match(brand, /Parvis Investment Services Inc\./);
@@ -45,7 +48,7 @@ test("Parvis co-brand assets are local and auth emails use the minority lockup",
     "recovery",
   ]) {
     const html = read(`supabase/templates/${template}.html`);
-    assert.match(html, /Hunter &amp; Hunter/);
+    assert.match(html, /Equity Market/);
     // Auth emails render the Parvis co-brand as text, not an <img>: most email
     // clients (Gmail, Outlook) do not render SVG, so the wordmark asset broke.
     assert.match(html, /Powered by/);
@@ -53,7 +56,7 @@ test("Parvis co-brand assets are local and auth emails use the minority lockup",
     assert.doesNotMatch(html, /<img/);
     assert.match(html, /NRD #74000/);
     assert.match(html, /Parvis disclosures/);
-    assert.doesNotMatch(html, /Hunter Advisory|Hunter North Capital/);
+    assert.doesNotMatch(html, /Hunter Advisory|Hunter North Capital|Hunter &amp; Hunter|Investment Advisors/);
     // Confirmation links must carry a real /auth/confirm path, never a bare
     // Site URL with a dangling &token_hash (the malformed-link regression).
     assert.doesNotMatch(html, /\{\{ \.RedirectTo \}\}&amp;token_hash/);

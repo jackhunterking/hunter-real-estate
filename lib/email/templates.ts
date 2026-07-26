@@ -25,7 +25,7 @@ const appSender =
   process.env.RESEND_FROM_EMAIL ?? "Hunter Group <hello@updates.jackhunter.com>";
 const capitalSender =
   process.env.RESEND_CAPITAL_FROM_EMAIL ??
-  "Hunter & Hunter Investment Advisors <advisors@noreply.hunterhunteradvisors.com>";
+  "Equity Market <advisors@noreply.equitymarket.io>";
 const replyTo = process.env.RESEND_REPLY_TO ?? "hello@jackhunter.com";
 
 function escapeHtml(value: unknown) {
@@ -46,10 +46,9 @@ function shell(params: {
   actionUrl: string;
   investmentBrand?: boolean;
 }) {
-  const investmentName = "Hunter & Hunter Investment Advisors";
+  const investmentName = "Equity Market";
   const brandHeader = params.investmentBrand
-    ? `<div style="color:#fff;font-size:15px;font-weight:700">Hunter &amp; Hunter</div>
-       <div style="margin-top:5px;color:#d7b86b;font-size:9px;letter-spacing:.12em;text-transform:uppercase">Investment Advisors</div>
+    ? `<div style="color:#fff;font-size:16px;font-weight:700;letter-spacing:-.01em">Equity Market</div>
        <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16);color:#9eabb3;font-size:8px;letter-spacing:.1em;text-transform:uppercase">Powered by <span style="margin-left:7px;color:#e7ecef;font-size:12px;font-weight:700;letter-spacing:.16em">PARVIS</span></div>`
     : "Hunter Group";
   const footer = params.investmentBrand
@@ -117,7 +116,7 @@ export function renderEmailJob(job: EmailJobTemplate): RenderedEmail {
     };
   }
 
-  const reference = `HNC-${job.relatedEntityId.replaceAll("-", "").slice(0, 6).toUpperCase()}`;
+  const reference = `EM-${job.relatedEntityId.replaceAll("-", "").slice(0, 6).toUpperCase()}`;
   const isReadiness = job.templateKey === "readiness-alert";
   const content = shell({
     language: "en",
@@ -132,7 +131,7 @@ export function renderEmailJob(job: EmailJobTemplate): RenderedEmail {
     from: capitalSender,
     replyTo,
     to: job.recipient,
-    subject: `New Hunter & Hunter Investment Advisors intake · ${reference}`,
+    subject: `New Equity Market intake · ${reference}`,
     ...content,
   };
 }

@@ -28,7 +28,7 @@ export type OfferingAdminRow = {
 
 /**
  * Admin-only editable offering rows, read from `api.offering_admin` (the view is
- * gated to Hunter admins). Returns each offering's working `draft_content` as the
+ * gated to platform admins). Returns each offering's working `draft_content` as the
  * editable bundle. Returns [] for non-admins or when the backend is unconfigured.
  */
 export async function getOfferingAdminRows(): Promise<OfferingAdminRow[]> {

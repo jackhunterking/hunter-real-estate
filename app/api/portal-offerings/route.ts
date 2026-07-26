@@ -5,7 +5,7 @@ import { portalRpc } from "@/lib/equity-market/portal-route";
 
 /**
  * Save an offering's working content (no publish). Body: `{ bundle }`, the full
- * OfferingBundle. Gated by `api.save_offering_draft` (Hunter admin only).
+ * OfferingBundle. Gated by `api.save_offering_draft` (platform admin only).
  */
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as { bundle?: unknown } | null;

@@ -10,7 +10,7 @@ import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 const COPY = {
   tr: {
     title: "Yasal bilgiler ve platform açıklamaları",
-    intro: "Hunter & Hunter Investment Advisors, Kanada’daki özel gayrimenkul ve alternatif yatırım fırsatları için araştırma, hesap, ilgi kaydı ve insan destekli inceleme akışları sağlar. Menkul kıymet kaydı gerektiren faaliyetler Parvis Investment Services Inc. aracılığıyla ve Parvis gözetiminde yürütülür.",
+    intro: "Equity Market, Kanada’daki özel gayrimenkul ve alternatif yatırım fırsatları için araştırma, hesap, ilgi kaydı ve insan destekli inceleme akışları sağlar. Menkul kıymet kaydı gerektiren faaliyetler Parvis Investment Services Inc. aracılığıyla ve Parvis gözetiminde yürütülür.",
     sections: [
       ["Teklif materyalleri", "Yayımlanmış yatırım sayfaları kontrollü teklif materyali olarak ele alınır. Her sürüm; kaynak, geçerlilik tarihi, yazar, inceleyen ve uyum sahibiyle onaylanır. Hedefler garanti değildir ve geri çekilen içerik kamu görünümünden çıkarılır."],
       ["Uygunluk ve suitability", "Hesap yolu, profil yanıtları veya ilgi talebi; akredite yatırımcı statüsü, muafiyet, suitability, yatırım izni veya tamamlanmış işlem oluşturmaz. Menkul kıymet kaydı gerektiren kararlar Parvis’in onaylı sürecinde doğrulanır."],
@@ -22,7 +22,7 @@ const COPY = {
   },
   en: {
     title: "Legal information and platform disclosures",
-    intro: "Hunter & Hunter Investment Advisors supports research, accounts, interest records, and human-assisted review for Canadian private real estate and alternative investment opportunities. Activities requiring securities registration are conducted through and supervised by Parvis Investment Services Inc.",
+    intro: "Equity Market supports research, accounts, interest records, and human-assisted review for Canadian private real estate and alternative investment opportunities. Activities requiring securities registration are conducted through and supervised by Parvis Investment Services Inc.",
     sections: [
       ["Offering material", "Published investment pages are treated as controlled offering material. Each version is approved with its sources, effective date, author, reviewer, and compliance owner. Targets are not guarantees, and withdrawn content is removed from public view."],
       ["Eligibility and suitability", "An account path, profile response, or interest request does not establish accredited-investor status, an exemption, suitability, investment permission, or a completed transaction. Decisions requiring securities registration are verified through Parvis’s approved process."],

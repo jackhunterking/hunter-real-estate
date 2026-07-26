@@ -41,6 +41,24 @@ export function ParvisCoBrand({
   );
 }
 
+/**
+ * The wordmark is the name alone — no descriptor line, no pictorial mark. The
+ * `EM` monogram exists only for `markOnlyOnDesktop`, where the collapsed
+ * sidebar hides the wordmark and would otherwise leave nothing to click.
+ */
+function Monogram({ dark }: { dark: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className={`hidden size-9 shrink-0 items-center justify-center rounded-[6px] text-[13px] font-bold tracking-[0.02em] ${
+        dark ? "bg-[#071c2c] text-[#c5a34d]" : "bg-white/10 text-[#d8bf7a]"
+      } ${"lg:inline-flex"}`}
+    >
+      EM
+    </span>
+  );
+}
+
 export function EquityMarketBrand({
   compact = false,
   markOnlyOnDesktop = false,
@@ -64,23 +82,13 @@ export function EquityMarketBrand({
         className="inline-flex min-w-0 items-center gap-3"
         aria-label={copy.name}
       >
-        <Image
-          src="/logos/HUNTER_Brandmark_Gold.png"
-          alt=""
-          width={44}
-          height={44}
-          className="size-9 shrink-0 object-contain"
-          priority
-        />
+        {markOnlyOnDesktop && <Monogram dark={dark} />}
         <span className={`min-w-0 leading-none ${secondaryVisibility}`}>
-          <span className={`block truncate text-[15px] font-semibold ${dark ? "text-[#0a2d46]" : "text-white"}`}>
+          <span
+            className={`block truncate font-semibold ${compact ? "text-[15px]" : "text-[17px]"} tracking-[-0.01em] ${dark ? "text-[#0a2d46]" : "text-white"}`}
+          >
             {copy.primary}
           </span>
-          {!compact && (
-            <span className="mt-1 block whitespace-nowrap text-[9px] font-semibold uppercase tracking-[0.12em] text-[#b99747]">
-              {copy.descriptor}
-            </span>
-          )}
         </span>
       </Link>
       {showCoBrand && <ParvisCoBrand dark={dark} className={secondaryVisibility} />}

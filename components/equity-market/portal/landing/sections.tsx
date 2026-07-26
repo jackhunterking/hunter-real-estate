@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Marketing sections for the Hunter & Hunter landing page. Each takes the
+ * Marketing sections for the Equity Market landing page. Each takes the
  * resolved `c: LandingCopy` (+ offering/derived data where needed) and composes
  * primitives + product frames. `PublicLanding` orchestrates them.
  *

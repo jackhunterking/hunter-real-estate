@@ -62,7 +62,7 @@ const SECTION_ICONS: Record<AdminSectionId, typeof ShieldCheck> = {
 
 const COPY = {
   en: {
-    eyebrow: "Hunter & Hunter Investment Advisors staff",
+    eyebrow: "Equity Market staff",
     title: "Admin",
     description: "One console for investors, investments, content and system records.",
     search: "Search this queue", noItems: "No items match these filters.",
@@ -77,7 +77,7 @@ const COPY = {
     },
   },
   tr: {
-    eyebrow: "Hunter & Hunter Investment Advisors ekibi",
+    eyebrow: "Equity Market ekibi",
     title: "Yönetim",
     description: "Yatırımcılar, yatırımlar, içerik ve sistem kayıtları için tek konsol.",
     search: "Bu kuyrukta ara", noItems: "Bu filtrelerle eşleşen kayıt yok.",

@@ -5,7 +5,7 @@ import { portalRpc } from "@/lib/equity-market/portal-route";
 
 /**
  * Compose + publish an offering (new immutable content version). Body:
- * `{ offeringId }`. Gated by `api.publish_offering` (Hunter admin only); it also
+ * `{ offeringId }`. Gated by `api.publish_offering` (platform admin only); it also
  * enforces bilingual name + >=1 share class + >=1 property before publishing.
  */
 export async function POST(request: NextRequest) {

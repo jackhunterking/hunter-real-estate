@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * The language picker for every Hunter Advisory surface — landing header and
+ * The language picker for every Equity Market surface — landing header and
  * portal alike. One dropdown, all four site locales, driven by `LOCALE_OPTIONS`.
  *
  * Reads `lang` / `setLang` from `LanguageProvider`; `setLang` navigates to the

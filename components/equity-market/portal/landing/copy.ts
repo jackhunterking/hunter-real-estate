@@ -1,5 +1,5 @@
 /**
- * Marketing copy for the Hunter & Hunter public landing page.
+ * Marketing copy for the Equity Market public landing page.
  *
  * Plain-language, Instagram-first. English and Turkish are both authored in full
  * (`{ en, tr }`) so the language dropdown can switch between them without any

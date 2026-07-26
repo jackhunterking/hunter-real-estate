@@ -116,8 +116,8 @@ test("wording cannot change without bumping the version", () => {
     .update(JSON.stringify([ENTRY_DISCLAIMER.en.paragraphs, ENTRY_DISCLAIMER.tr.paragraphs]))
     .digest("hex")
     .slice(0, 16);
-  assert.equal(digest, "c0a0a38318e36da1", "copy changed — bump ENTRY_DISCLAIMER_VERSION");
-  assert.equal(ENTRY_DISCLAIMER_VERSION, 2);
+  assert.equal(digest, "f81215d7e4cdc2d0", "copy changed — bump ENTRY_DISCLAIMER_VERSION");
+  assert.equal(ENTRY_DISCLAIMER_VERSION, 3);
 });
 
 test("it is mounted on the advisory surface only", () => {

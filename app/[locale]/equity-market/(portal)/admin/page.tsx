@@ -12,7 +12,7 @@ import { loadAdminDirectories } from "@/lib/equity-market/admin-server";
  * non-admin who reaches the route sees empty collections rather than an error —
  * and `canAccessPath` turns them away before that anyway.
  */
-export default async function HunterAdminPage({ searchParams }: { searchParams: Promise<{ section?: string; module?: string }> }) {
+export default async function EquityMarketAdminPage({ searchParams }: { searchParams: Promise<{ section?: string; module?: string }> }) {
   const params = await searchParams;
   // `module` is the retired query name from /operations; honour it so old
   // bookmarks and the eight legacy /admin/* redirects keep landing correctly.

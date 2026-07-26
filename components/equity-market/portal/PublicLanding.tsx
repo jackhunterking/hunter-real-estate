@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Hunter & Hunter public entry / marketing page.
+ * Equity Market public entry / marketing page.
  *
  * This is a thin orchestrator: the marketing narrative lives in
  * `./landing/*` (copy, primitives, mockups, sections). The export name and

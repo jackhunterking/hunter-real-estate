@@ -11,7 +11,7 @@ const OUTCOMES = new Set<ReviewOutcome>(["updated", "no-change", "awaiting-sourc
  * source documents. Body: `{ offeringId, outcome, dataAsOf?, periodLabel?,
  * fieldsChanged?, note? }`.
  *
- * `api.record_offering_review` (Hunter admin only) does three things in one
+ * `api.record_offering_review` (platform admin only) does three things in one
  * transaction — stamp the offering's freshness fields, recompute the next due
  * date, and append to the review log — so those can never drift apart.
  */

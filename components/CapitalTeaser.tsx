@@ -6,7 +6,7 @@ import { useT } from "@/lib/i18n/LanguageProvider";
 import styles from "./CapitalTeaser.module.css";
 import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 
-/* Small JV diagram (matches the Hunter & Hunter Investment Advisors experience) */
+/* Small JV diagram (matches the Equity Market experience) */
 function JVMark() {
   return (
     <svg width="48" height="32" viewBox="0 0 84 56" fill="none" aria-hidden="true">

@@ -2,7 +2,7 @@
 # https://supabase.com/docs/guides/local-development/cli/config
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
-project_id = "hunter-real-estate"
+project_id = "equity-market"
 
 [api]
 enabled = true
@@ -161,14 +161,19 @@ site_url = "http://127.0.0.1:3000"
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
 additional_redirect_urls = [
-  "http://127.0.0.1:3000/hunter-advisory/auth/confirm",
-  "http://localhost:3000/hunter-advisory/auth/confirm",
-  "https://jackhunter.com/hunter-advisory/auth/confirm",
-  "https://www.jackhunter.com/hunter-advisory/auth/confirm",
+  "http://127.0.0.1:3000/equity-market/auth/confirm",
+  "http://localhost:3000/equity-market/auth/confirm",
+  "https://jackhunter.com/equity-market/auth/confirm",
+  "https://www.jackhunter.com/equity-market/auth/confirm",
+  "https://equitymarket.io/auth/confirm",
+  "https://www.equitymarket.io/auth/confirm",
+  # Retired hosts. Middleware 301s them to equitymarket.io, but a confirmation
+  # link already sitting in someone's inbox still lands here first, so these
+  # stay allow-listed until those links have expired.
   "https://hunterhunteradvisors.com/auth/confirm",
   "https://www.hunterhunteradvisors.com/auth/confirm",
-  "https://hunternorthcapital.com/auth/confirm",
-  "https://www.hunternorthcapital.com/auth/confirm"
+  "https://jackhunter.com/hunter-advisory/auth/confirm",
+  "https://www.jackhunter.com/hunter-advisory/auth/confirm"
 ]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
@@ -252,33 +257,33 @@ host = "smtp.resend.com"
 port = 465
 user = "resend"
 pass = "env(RESEND_SUPABASE_AUTH_API_KEY)"
-admin_email = "auth@noreply.hunterhunteradvisors.com"
-sender_name = "Hunter & Hunter Account Security"
+admin_email = "auth@noreply.equitymarket.io"
+sender_name = "Equity Market Account Security"
 
 [auth.email.template.invite]
-subject = "Your Hunter & Hunter Investment Advisors invitation"
+subject = "Your Equity Market invitation"
 content_path = "./supabase/templates/invite.html"
 
 [auth.email.template.confirmation]
-subject = "Confirm your Hunter & Hunter Investment Advisors account"
+subject = "Confirm your Equity Market account"
 content_path = "./supabase/templates/confirmation.html"
 
 [auth.email.template.recovery]
-subject = "Reset your Hunter & Hunter Investment Advisors password"
+subject = "Reset your Equity Market password"
 content_path = "./supabase/templates/recovery.html"
 
 [auth.email.template.email_change]
-subject = "Confirm your new Hunter & Hunter Investment Advisors email"
+subject = "Confirm your new Equity Market email"
 content_path = "./supabase/templates/email-change.html"
 
 [auth.email.notification.password_changed]
 enabled = true
-subject = "Your Hunter & Hunter password was changed"
+subject = "Your Equity Market password was changed"
 content_path = "./supabase/templates/password-changed.html"
 
 [auth.email.notification.email_changed]
 enabled = true
-subject = "Your Hunter & Hunter email address was changed"
+subject = "Your Equity Market email address was changed"
 content_path = "./supabase/templates/email-changed.html"
 
 [auth.sms]

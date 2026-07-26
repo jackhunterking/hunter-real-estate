@@ -2,8 +2,8 @@ export const PORTAL_WHATSAPP_NUMBER = "16473913311";
 
 export function buildHncWhatsAppUrl(context?: string) {
   const message = context
-    ? `Hunter & Hunter Investment Advisors: ${context}`
-    : "Hunter & Hunter Investment Advisors hakkında görüşmek istiyorum.";
+    ? `Equity Market: ${context}`
+    : "Equity Market hakkında görüşmek istiyorum.";
   return `https://wa.me/${PORTAL_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
