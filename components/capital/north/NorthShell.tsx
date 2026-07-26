@@ -19,6 +19,7 @@ import {
   UsersRound,
   WalletCards,
   Waypoints,
+  Orbit,
   Wrench,
   X,
 } from "lucide-react";
@@ -60,6 +61,7 @@ const COPY = {
     learning: ["/resources/learning", "Bilgi merkezi", BookOpen],
     tools: ["/resources/tools", "Araçlar", Wrench],
     assetNetwork: "Varlık ağı",
+    assetViews: "Varlık görünümleri",
     account: "Hesap",
     accountView: "Hesap görünümü",
     accountViewInvestor: "Yatırımcı",
@@ -88,6 +90,7 @@ const COPY = {
     learning: ["/resources/learning", "Learning centre", BookOpen],
     tools: ["/resources/tools", "Tools", Wrench],
     assetNetwork: "Asset network",
+    assetViews: "Asset views",
     account: "Account",
     accountView: "Account view",
     accountViewInvestor: "Investor",
@@ -150,7 +153,10 @@ export function NorthShell({ children }: { children: React.ReactNode }) {
       ? [{
           id: "operations" as const,
           label: c.groups.operations,
-          items: [{ href: "/admin?section=network", label: c.assetNetwork, icon: Waypoints }],
+          items: [
+            { href: "/admin?section=clusters", label: c.assetViews, icon: Orbit },
+            { href: "/admin?section=network", label: c.assetNetwork, icon: Waypoints },
+          ],
         }]
       : []),
     {
