@@ -67,7 +67,10 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   // every /admin path on the operations workspace. Removing this one entry
   // removes the section from the rail and the `?section=` allowlist together.
   { id: "network", group: "investments", kind: "panel", label: { en: "Asset network", tr: "Varlık ağı" },
-    hint: { en: "Holdings drawn as a connected map — trial", tr: "Pozisyonların bağlantılı haritası — deneme" } },
+    hint: {
+      en: "Relationship terminal — in progress, cluster designs under review",
+      tr: "İlişki terminali — çalışma sürüyor, küme tasarımları değerlendiriliyor",
+    } },
 
   // People — the investors and their relationship with the platform.
   { id: "investors", group: "people", kind: "panel", label: { en: "Investors", tr: "Yatırımcılar" },

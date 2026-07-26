@@ -50,6 +50,8 @@ const COPY = {
     title: "Asset network",
     description:
       "Committed capital, the vehicles it sits in, and the assets behind them. Figures below the vehicle are counts — the platform holds no per-asset value, so no dollar amount is split across buildings.",
+    wip:
+      "Work in progress. This terminal layout is under review — three lighter, investor-facing cluster designs are being evaluated to replace it. Nothing here is final and nothing has been removed.",
     viewing: "Viewing",
     myAccount: "My account",
     noPositions:
@@ -125,6 +127,8 @@ const COPY = {
     title: "Varlık ağı",
     description:
       "Taahhüt edilen sermaye, bulunduğu araçlar ve arkasındaki varlıklar. Araç altındaki rakamlar adettir — platformda varlık bazlı değer bulunmadığından hiçbir tutar binalara bölünmez.",
+    wip:
+      "Çalışma sürüyor. Bu terminal düzeni değerlendiriliyor — yerine geçmek üzere yatırımcıya dönük üç daha sade küme tasarımı inceleniyor. Buradaki hiçbir şey nihai değil ve hiçbir şey kaldırılmadı.",
     viewing: "Görüntülenen",
     myAccount: "Hesabım",
     noPositions:
@@ -464,6 +468,12 @@ export function AssetNetwork({
         </p>
       )}
 
+      {/* The layout below is being replaced, not removed — see
+          docs/prototypes/cluster-directions.html for the three candidates. */}
+      <p className="mb-4 rounded-md border border-[#eadcae] bg-[#fdf8ec] px-4 py-3 text-sm text-[#755718]">
+        {c.wip}
+      </p>
+
       <div
         style={themeVars(theme)}
         className="overflow-hidden border-[color:var(--t-rule)] bg-[color:var(--t-ground)] font-mono text-[13px] tabular-nums text-[color:var(--t-ink)] max-sm:-mx-4 max-sm:border-y sm:rounded-md sm:border sm:text-[12px]"
@@ -471,6 +481,9 @@ export function AssetNetwork({
         <div className="flex items-center justify-between gap-3 border-b border-[color:var(--t-rule)] bg-[color:var(--t-head)] px-4 py-2.5">
           <span className="text-[11px] uppercase tracking-[0.12em] text-[color:var(--t-ink-3)] sm:text-[9.5px]">
             {c.title}
+            <span className="ml-2 border border-[color:var(--t-warn)] px-1.5 py-0.5 text-[9.5px] text-[color:var(--t-warn)] sm:text-[8.5px]">
+              WIP
+            </span>
           </span>
           <button
             type="button"
