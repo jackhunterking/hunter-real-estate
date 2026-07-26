@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Invalid onboarding details." }, { status: 400 });
   }
   const input = parsed.data;
-  return portalRpc("complete_hnc_onboarding", {
+  return portalRpc("complete_portal_onboarding", {
     p_account_intent: input.accountIntent,
     p_investor_account_type: input.investorAccountType ?? null,
     p_residence_jurisdiction: input.residenceJurisdiction,

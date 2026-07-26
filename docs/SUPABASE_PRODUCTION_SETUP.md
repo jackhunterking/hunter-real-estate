@@ -48,7 +48,7 @@ Remaining account-level actions:
 
 Resend-verified state (confirmed via Resend MCP 2026-07-21):
 
-- Domain: `noreply.hunterhunteradvisors.com` — status `verified`, sending
+- Domain: `noreply.equitymarket.io` — status `verified`, sending
   `enabled`, region `us-east-1`.
 - DKIM (`resend._domainkey.noreply`) and SPF (`send.noreply`) both verified.
 - This is the sending domain used by `lib/email/templates.ts`
@@ -62,8 +62,8 @@ Resend-verified state (confirmed via Resend MCP 2026-07-21):
   `resend-supabase-auth` for Auth SMTP. Do not reuse either key.
 - Configure senders:
   - `Hunter Group <hello@updates.jackhunter.com>`
-  - `Hunter & Hunter Investment Advisors <advisors@noreply.hunterhunteradvisors.com>`
-  - `Hunter & Hunter Account Security <auth@noreply.hunterhunteradvisors.com>`
+  - `Equity Market <advisors@noreply.equitymarket.io>`
+  - `Equity Market Account Security <auth@noreply.equitymarket.io>`
 - Keep `hello@jackhunter.com` as reply-to.
 - Disable open/click tracking for Auth and sensitive operational categories.
 - Configure Supabase Auth SMTP with `smtp.resend.com`, port `465`, username
@@ -79,12 +79,12 @@ Resend-verified state (confirmed via Resend MCP 2026-07-21):
 - Never expose `SUPABASE_WEB_SECRET_KEY`, Resend keys, webhook secret,
   Turnstile secret, cron secret, access token, or database password to browser
   code.
-- Set the Auth Site URL to `https://www.hunterhunteradvisors.com` (the real
+- Set the Auth Site URL to `https://www.equitymarket.io` (the real
   dedicated domain — matches `HUNTER_ADVISORY_HOSTS` in
-  `lib/capital/advisory-domain.ts`). A misconfigured Site URL is what produced
+  `lib/equity-market/advisory-domain.ts`). A misconfigured Site URL is what produced
   the malformed confirmation link (`…com&token_hash=…` with no `/auth/confirm`
   path). Allow the exact `/auth/confirm` callback on the dedicated apex and
-  `www` domains, and the exact `/hunter-advisory/auth/confirm` callback on
+  `www` domains, and the exact `/equity-market/auth/confirm` callback on
   localhost and `jackhunter.com`.
 - Keep `hunternorthcapital.com` only as a legacy Vercel alias during migration;
   do not use it as the Auth Site URL.

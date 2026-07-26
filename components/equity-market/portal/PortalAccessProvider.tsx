@@ -382,7 +382,7 @@ export function PortalAccessProvider({
       const affiliationStatus: FirmAffiliationStatus =
         decision === "approve"
           ? fallbackReason
-            ? "approved_by_hnc_fallback"
+            ? "approved_by_platform_fallback"
             : "approved_by_firm"
           : decision === "reject"
             ? "rejected"
@@ -494,7 +494,7 @@ export function PortalAccessProvider({
       const canActivate =
         input.result === "verified" &&
         (affiliation?.status === "approved_by_firm" ||
-          affiliation?.status === "approved_by_hnc_fallback") &&
+          affiliation?.status === "approved_by_platform_fallback") &&
         organization?.status === "active";
       const existingAccount = next.partnerAccounts.find(
         (item) => item.userId === application.userId,

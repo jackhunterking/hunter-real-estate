@@ -59,7 +59,7 @@ export type Database = {
       firm_affiliation_status:
         | "pending_firm"
         | "approved_by_firm"
-        | "approved_by_hnc_fallback"
+        | "approved_by_platform_fallback"
         | "rejected"
         | "suspended"
         | "ended";
@@ -670,7 +670,7 @@ export type Database = {
         };
         Returns: string;
       };
-      complete_hnc_onboarding: {
+      complete_portal_onboarding: {
         Args: {
           p_account_intent: Database["app"]["Enums"]["account_intent"];
           p_investor_account_type: Database["app"]["Enums"]["investor_account_type"] | null;
@@ -1023,7 +1023,7 @@ export const Constants = {
       firm_affiliation_status: [
         "pending_firm",
         "approved_by_firm",
-        "approved_by_hnc_fallback",
+        "approved_by_platform_fallback",
         "rejected",
         "suspended",
         "ended",

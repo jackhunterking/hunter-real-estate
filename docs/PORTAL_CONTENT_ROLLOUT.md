@@ -1,4 +1,4 @@
-# Hunter & Hunter Investment Advisors — content is Supabase-sourced
+# Equity Market — content is Supabase-sourced
 
 Supabase is the single source of truth for portal content. The application reads
 offerings, taxonomies, and learning content **only** from Supabase — there is no
@@ -23,7 +23,7 @@ mirroring the learning module:
   (upsert rows → `publish_offering`). It is the reusable import path the seed
   script uses and the admin panel can reuse.
 - The live read path is unchanged: `api.published_offerings.content_snapshot`,
-  validated by `parseOfferingBundle` in `lib/capital/repository-server.ts`.
+  validated by `parseOfferingBundle` in `lib/equity-market/repository-server.ts`.
 
 Writes to all content tables are gated to Hunter admins (`is_hunter_admin`), and
 the new `app.taxonomies` table follows the same rule.
@@ -49,8 +49,8 @@ Lankin Apartment REIT and Legacy Investment are published this way.
 
 ## Learning content
 
-The learning guide previously hardcoded in `lib/capital/learning.ts` has been
-removed; `lib/capital/learning-repository-server.ts` reads the Supabase learning
+The learning guide previously hardcoded in `lib/equity-market/learning.ts` has been
+removed; `lib/equity-market/learning-repository-server.ts` reads the Supabase learning
 tables only (no fixture fallback). The learning schema and content are live on
 the remote database (published guides in `api.published_learning_resources`), so
 the Learning centre renders real DB content. The old flagship guide is archived

@@ -1,6 +1,6 @@
 export const PORTAL_WHATSAPP_NUMBER = "16473913311";
 
-export function buildHncWhatsAppUrl(context?: string) {
+export function buildPortalWhatsAppUrl(context?: string) {
   const message = context
     ? `Equity Market: ${context}`
     : "Equity Market hakkında görüşmek istiyorum.";
@@ -8,5 +8,5 @@ export function buildHncWhatsAppUrl(context?: string) {
 }
 
 // Live chat is Intercom, mounted app-wide by components/intercom/IntercomMessenger.tsx
-// and configured in lib/intercom/config.ts. The unused HNC_CHAT_* scaffold that
-// used to sit here was removed so there is a single answer to "is chat on?".
+// and configured in lib/intercom/config.ts. Nothing chat-related lives here, so
+// there is a single answer to "is chat on?".

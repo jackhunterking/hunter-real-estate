@@ -1,7 +1,7 @@
 # Offering document distribution review
 
 **Prepared:** 2026-07-25
-**Scope:** the nine offering documents attached to Lankin Apartment REIT and Epiphany Legacy in the Hunter & Hunter advisory portal
+**Scope:** the nine offering documents attached to Lankin Apartment REIT and Epiphany Legacy in the Equity Market advisory portal
 **Purpose:** establish, per document, who it may be distributed to — and get that confirmed in writing by the dealer and by each issuer
 **Status:** open. Nothing in this sheet is a determination; every row marked *Confirm* is a question, not a conclusion.
 
@@ -116,7 +116,7 @@ Four properties of the current implementation:
 
 **1. `visibility` is not doing the work it appears to do.** `ProductDetailView.tsx:294` filters only on `visibility !== "private"`, so `public` and `approved-investor` render identically. What determines whether a link appears is *whether a file is attached* — not the tier. Seven of nine documents are protected by accident, not by design.
 
-**2. `approved-investor` is not enforced.** The signed-URL route states this in its own comment (`app/api/hnc-offering-documents/route.ts:19`): entitlement is currently "authenticated portal user," and investor-approval gating "should be layered on before real private offering documents are published." Attaching a file to any of the seven unattached rows would expose it to every signed-in user regardless of accreditation.
+**2. `approved-investor` is not enforced.** The signed-URL route states this in its own comment (`app/api/portal-offering-documents/route.ts:19`): entitlement is currently "authenticated portal user," and investor-approval gating "should be layered on before real private offering documents are published." Attaching a file to any of the seven unattached rows would expose it to every signed-in user regardless of accreditation.
 
 **3. The two attached documents are world-readable.** The `offering-public` Supabase Storage bucket is public, and the Legacy summary is additionally served from `/public/capital/docs/`. No login, no accreditation check, no record of who downloaded what. The portal *page* is auth-gated and excluded in `app/robots.ts`, but `robots.ts` disallows page routes only, and the middleware matcher skips any path with a file extension — neither covers the PDF URLs.
 

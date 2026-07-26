@@ -71,7 +71,7 @@ test("account intent routes onboarding but cannot grant partner permissions", ()
   assert.match(migration, /account_intent app\.account_intent/);
   assert.match(migration, /onboarding_status app\.onboarding_status/);
   const onboardingFunction = migration.match(
-    /create or replace function app\.complete_hnc_onboarding[\s\S]*?create or replace function app\.create_investment_interest/,
+    /create or replace function app\.complete_(?:hnc|portal)_onboarding[\s\S]*?create or replace function app\.create_investment_interest/,
   )?.[0] ?? "";
   assert.doesNotMatch(onboardingFunction, /insert into app\.(partner_accounts|organization_memberships|platform_role_assignments)/);
   assert.match(onboardingFunction, /update app\.profiles/);
@@ -84,7 +84,7 @@ test("investment interests are owner-readable and administrator-controlled", () 
   assert.match(migration, /investment_interest_requests_hunter_update/);
   assert.match(migration, /private\.is_hunter_admin\(\)/);
   assert.match(migration, /one_open_interest_per_user_offering/);
-  const ownerView = migration.match(/create view api\.investment_interest_requests[\s\S]*?create or replace function app\.complete_hnc_onboarding/)?.[0] ?? "";
+  const ownerView = migration.match(/create view api\.investment_interest_requests[\s\S]*?create or replace function app\.complete_(?:hnc|portal)_onboarding/)?.[0] ?? "";
   assert.doesNotMatch(ownerView, /reviewer_notes|reviewed_by/);
   assert.match(migration, /list_investment_interest_admin/);
 });
@@ -140,7 +140,7 @@ test("controlled offering content cannot skip publication stages", () => {
 });
 
 test("legacy cleanup remains an approval-only manifest", () => {
-  const manifestPath = resolve(root, "docs/HNC_LEGACY_DELETION_MANIFEST.md");
+  const manifestPath = resolve(root, "docs/LEGACY_DELETION_MANIFEST.md");
   assert.equal(existsSync(manifestPath), true);
   const manifest = readFileSync(manifestPath, "utf8");
   assert.match(manifest, /Awaiting explicit owner approval/);

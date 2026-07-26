@@ -25,7 +25,7 @@ export type PartnerApplicationStatus =
 export type FirmAffiliationStatus =
   | "pending_firm"
   | "approved_by_firm"
-  | "approved_by_hnc_fallback"
+  | "approved_by_platform_fallback"
   | "rejected"
   | "suspended"
   | "ended";
@@ -376,7 +376,7 @@ export function partnerActivationIssues({ user, dataset }: PortalAccessContext) 
     (item) =>
       item.userId === user.id &&
       item.primary &&
-      (item.status === "approved_by_firm" || item.status === "approved_by_hnc_fallback"),
+      (item.status === "approved_by_firm" || item.status === "approved_by_platform_fallback"),
   );
   const organization = affiliation
     ? dataset.organizations.find((item) => item.id === affiliation.organizationId)
