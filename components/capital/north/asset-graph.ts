@@ -70,6 +70,9 @@ export type Vehicle = {
   returns: { period: string; value: string }[];
   returnsBasis?: string;
   completeness: number;
+  /** The manager's own wordmark, when the offering publishes one. */
+  logo?: string;
+  managerName?: string;
   buildings: Building[];
 };
 
@@ -144,6 +147,8 @@ export function buildVehicles({
       })),
       returnsBasis: offering.trailingReturnsNote ? tx(offering.trailingReturnsNote, lang) : undefined,
       completeness: scoreOfferingCompleteness(offering).percent,
+      logo: offering.media?.logo?.src,
+      managerName: offering.manager?.name ? tx(offering.manager.name, lang) : undefined,
       buildings: offering.properties.map((p) => ({
         id: `${offering.id}:${p.id}`,
         name: tx(p.name, lang),

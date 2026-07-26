@@ -12,7 +12,7 @@
 import { useMemo, useState } from "react";
 import {
   BookOpen, CalendarClock, ClipboardCheck, FileSearch, LayoutDashboard, Landmark,
-  Mail, Orbit, Scale, Search, ShieldCheck, Tags, UserCheck, Users, Waypoints, X,
+  Mail, Scale, Search, ShieldCheck, Tags, UserCheck, Users, Waypoints, X,
 } from "lucide-react";
 import type { OfferingBundle } from "@/lib/capital/types";
 import type { LearningAdminResource } from "@/lib/capital/learning";
@@ -30,7 +30,6 @@ import { LearningContentManager } from "./LearningContentManager";
 import { OfferingContentManager } from "./OfferingContentManager";
 import { OfferingDataFreshness } from "./OfferingDataFreshness";
 import { AssetNetwork } from "./AssetNetwork";
-import { AssetClusters } from "./AssetClusters";
 import { AdminOverview } from "./admin/AdminOverview";
 import { AdminInvestors } from "./admin/AdminInvestors";
 import { RecordTable } from "./admin/RecordTable";
@@ -54,7 +53,7 @@ export type OperationsQueueItem = {
 
 const SECTION_ICONS: Record<AdminSectionId, typeof ShieldCheck> = {
   overview: LayoutDashboard,
-  offerings: Landmark, freshness: CalendarClock, taxonomies: Tags, network: Waypoints, clusters: Orbit,
+  offerings: Landmark, freshness: CalendarClock, taxonomies: Tags, network: Waypoints,
   investors: Users, requests: ClipboardCheck, interests: FileSearch, users: UserCheck,
   content: BookOpen,
   leads: FileSearch,
@@ -237,15 +236,6 @@ export function AdminConsole({
         {active.id === "offerings" && <OfferingContentManager offerings={offeringAdmin} backendConfigured={backendConfigured} />}
         {active.id === "freshness" && <OfferingDataFreshness offerings={offeringAdmin} backendConfigured={backendConfigured} onEdit={() => setSection("offerings")} />}
         {active.id === "taxonomies" && <TaxonomyManager taxonomies={directories.taxonomies} />}
-        {active.id === "clusters" && (
-          <AssetClusters
-            offerings={offerings}
-            investments={dataset.investments}
-            users={directories.users}
-            currentUserId={currentUser.id}
-            currentUserName={currentUser.displayName}
-          />
-        )}
         {active.id === "network" && (
           <AssetNetwork
             offerings={offerings}

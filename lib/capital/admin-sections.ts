@@ -27,7 +27,7 @@ export type AdminSectionKind = "overview" | "queue" | "panel";
 
 export type AdminSectionId =
   | "overview"
-  | "offerings" | "freshness" | "taxonomies" | "network" | "clusters"
+  | "offerings" | "freshness" | "taxonomies" | "network"
   | "investors" | "requests" | "interests" | "users"
   | "content"
   | "leads"
@@ -66,15 +66,10 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   // Trial surface. Admin-only by virtue of living here — `canAccessPath` gates
   // every /admin path on the operations workspace. Removing this one entry
   // removes the section from the rail and the `?section=` allowlist together.
-  { id: "clusters", group: "investments", kind: "panel", label: { en: "Asset views", tr: "Varlık görünümleri" },
-    hint: {
-      en: "Holdings as clusters, orbit and lens — three candidate designs",
-      tr: "Pozisyonlar küme, yörünge ve mercek olarak — üç aday tasarım",
-    } },
   { id: "network", group: "investments", kind: "panel", label: { en: "Asset network", tr: "Varlık ağı" },
     hint: {
-      en: "Relationship terminal — in progress, cluster designs under review",
-      tr: "İlişki terminali — çalışma sürüyor, küme tasarımları değerlendiriliyor",
+      en: "Holdings as a relationship graph — swipes tier by tier on a phone",
+      tr: "Pozisyonların ilişki grafiği — telefonda katman katman kaydırılır",
     } },
 
   // People — the investors and their relationship with the platform.
