@@ -27,6 +27,7 @@ import {
   MinusCircle,
   PiggyBank,
   ShieldCheck,
+  Wallet,
   XCircle,
   type LucideIcon,
 } from "lucide-react";
@@ -764,7 +765,7 @@ export function BuildingsGallery({
 
 /** Three simple steps, jargon-free. */
 export function HowItWorks({ c }: { c: LandingCopy }) {
-  const icons: LucideIcon[] = [Layers, BadgeCheck, Banknote];
+  const icons: LucideIcon[] = [Layers, Wallet, Banknote];
   return (
     <SectionShell id="how" variant="white">
       <SectionHeader eyebrow={c.ways.eyebrow} title={c.ways.title} body={c.ways.caption} center />

@@ -281,12 +281,12 @@ const en: LandingCopy = {
         body: "Browse a short, curated list of vetted private real estate offerings.",
       },
       {
-        title: "Talk to a licensed advisor",
-        body: "Review the details together and ask anything before you commit.",
+        title: "Invest",
+        body: "Complete a simple, supervised sign-up with a licensed advisor beside you.",
       },
       {
-        title: "Invest and get paid",
-        body: "Complete a simple, supervised sign-up — then receive income on schedule.",
+        title: "Receive income",
+        body: "The buildings collect rent — and your share is paid to you on the offering's schedule.",
       },
     ],
   },
@@ -508,12 +508,12 @@ const tr: LandingCopy = {
         body: "İncelenmiş özel gayrimenkul yatırımlarından oluşan kısa, seçilmiş bir listeye göz atın.",
       },
       {
-        title: "Lisanslı bir danışmanla konuşun",
-        body: "Detayları birlikte inceleyin ve karar vermeden önce her şeyi sorun.",
+        title: "Yatırım yapın",
+        body: "Lisanslı bir danışman yanınızdayken basit, gözetimli bir kayıt tamamlayın.",
       },
       {
-        title: "Yatırım yapın ve gelir alın",
-        body: "Basit, gözetimli bir kayıt tamamlayın — ardından düzenli olarak gelir alın.",
+        title: "Gelir alın",
+        body: "Binalar kira toplar — payınız da yatırımın takvimine göre size ödenir.",
       },
     ],
   },
