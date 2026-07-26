@@ -81,9 +81,12 @@ type Node = {
 };
 type Edge = { a: Node; b: Node; w: number; colour: string };
 
-const VIEW = 190;
-const TALL = 330;
+const VIEW = 230;
+const TALL = 400;
 const ROW = 20;
+/** Above this many members a tier cannot label everyone inside the shared band,
+ *  so it gets a row each and its own scroll on its own screen. */
+const CROWDED = 7;
 
 function rgba(hex: string, a: number) {
   const h = hex.replace("#", "");
@@ -153,12 +156,28 @@ export function AssetNetworkMobile({
     return list;
   }, [c, markets.length, buildings.length]);
 
-  const assetStep = steps.findIndex((s) => s.id === "buildings");
-  const H = Math.max(VIEW, buildings.length * ROW + 26);
+  // Every tier that cannot fit its labels in the band opens out on its own
+  // screen — markets as well as buildings. Seven of thirteen markets were
+  // rendering as unlabelled dots because only the assets tier could expand.
+  const tallSteps = useMemo(() => {
+    const set = new Set<number>();
+    steps.forEach((s, i) => {
+      if (s.id === "markets" && markets.length > CROWDED) set.add(i);
+      if (s.id === "buildings" && buildings.length > CROWDED) set.add(i);
+    });
+    return set;
+  }, [steps, markets.length, buildings.length]);
+
+  const H = Math.max(VIEW, Math.max(markets.length, buildings.length) * ROW + 26);
   const BAND = (H - VIEW) / 2;
 
   const [step, setStep] = useState(0);
-  const [filter, setFilter] = useState<{ kind: "all" | "vehicle" | "province"; key: string }>({ kind: "all", key: "" });
+  // One filter, by vehicle — the tier above every screen that carries a list.
+  // Province chips came out: province is an attribute of a market, not a level
+  // of the graph, so filtering by it answered a different question than the
+  // screen was asking.
+  const [vehicleFilter, setVehicleFilter] = useState<string>("");
+  const [openVehicles, setOpenVehicles] = useState<Set<string>>(new Set());
 
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -212,7 +231,11 @@ export function AssetNetworkMobile({
       if (markets.length) {
         ms = markets.map((m, i) => {
           const y = band(markets.length, i, 0.08);
-          return { tier: at("markets"), x: cx(at("markets")), y, yBand: y, yTall: y, r: 3.4, kind: "markets" as const, market: m };
+          return {
+            tier: at("markets"), x: cx(at("markets")), y,
+            yBand: y, yTall: tall(markets.length, i),
+            r: 3.4, kind: "markets" as const, market: m,
+          };
         });
         nodes.push(...ms);
         // Below the vehicle line, thickness is a count of buildings.
@@ -266,8 +289,10 @@ export function AssetNetworkMobile({
     ctx.fillRect(0, 0, w, H);
 
     const { nodes, edges } = graphRef.current;
+    // Only the tier in frame opens out; its neighbours stay in the band so the
+    // edges between them keep running parallel instead of crossing.
     nodes.forEach((n) => {
-      if (n.kind === "buildings") n.y = n.yBand + (n.yTall - n.yBand) * st.expand;
+      n.y = n.tier === st.step ? n.yBand + (n.yTall - n.yBand) * st.expand : n.yBand;
     });
 
     ctx.save();
@@ -283,8 +308,17 @@ export function AssetNetworkMobile({
       ctx.stroke();
     });
 
+    // A vehicle filter dims the rest of the graph too, so the picture and the
+    // list underneath never disagree about what is being looked at.
+    const muted = (n: Node) =>
+      !!vehicleFilter &&
+      (n.kind === "vehicles" ? n.vehicle!.id !== vehicleFilter
+        : n.kind === "markets" ? n.market!.vehicleId !== vehicleFilter
+        : n.kind === "buildings" ? n.building!.vehicleId !== vehicleFilter
+        : false);
+
     edges.forEach((e) => {
-      const dim = e.a.tier !== st.step && e.b.tier !== st.step;
+      const dim = (e.a.tier !== st.step && e.b.tier !== st.step) || muted(e.a) || muted(e.b);
       ctx.strokeStyle = rgba(e.colour, dim ? 0.16 : 0.5);
       ctx.lineWidth = e.w;
       ctx.beginPath();
@@ -295,7 +329,7 @@ export function AssetNetworkMobile({
     });
 
     nodes.forEach((n) => {
-      const on = n.tier === st.step;
+      const on = n.tier === st.step && !muted(n);
       const colour =
         n.kind === "you" ? theme.accent
         : n.kind === "vehicles" ? n.vehicle!.color
@@ -338,9 +372,15 @@ export function AssetNetworkMobile({
           } else {
             plate(n.vehicle!.short, n.x + 13, n.y);
           }
-        } else if (n.kind === "markets" && n.market!.items.length >= 3) {
-          plate(`${n.market!.city} ${n.market!.items.length}`, n.x + 8, n.y);
-        } else if (n.kind === "buildings" && st.expand > 0.55) {
+        } else if (n.kind === "markets" && !muted(n)) {
+          // Once opened out every market is named; inside the band only the
+          // largest fit, which is what left the rest as anonymous dots.
+          if (st.expand > 0.55 || n.market!.items.length >= 3) {
+            let t = `${n.market!.city} ${n.market!.items.length}`;
+            while (t.length > 4 && ctx.measureText(t).width > room) t = t.slice(0, -1);
+            plate(t, n.x + 8, n.y);
+          }
+        } else if (n.kind === "buildings" && st.expand > 0.55 && !muted(n)) {
           // Every building gets its address here — the reason this tier is
           // allowed to be taller than the others.
           let t = n.building!.name;
@@ -351,7 +391,7 @@ export function AssetNetworkMobile({
       });
     ctx.textAlign = "left";
     ctx.restore();
-  }, [H, c.you, colourOf, steps, theme]);
+  }, [H, c.you, colourOf, steps, theme, vehicleFilter]);
 
   const tick = useCallback(() => {
     const st = stateRef.current;
@@ -376,11 +416,11 @@ export function AssetNetworkMobile({
       const st = stateRef.current;
       st.step = next;
       st.target = next * st.w;
-      st.expandTo = next === assetStep ? 1 : 0;
+      st.expandTo = tallSteps.has(next) ? 1 : 0;
       setStep(next);
       kick();
     },
-    [assetStep, kick, steps.length],
+    [kick, steps.length, tallSteps],
   );
 
   /* Preload the marks so the first paint of the vehicle tier has them. */
@@ -397,37 +437,42 @@ export function AssetNetworkMobile({
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => {
+    const measure = () => {
       const w = Math.round(el.getBoundingClientRect().width);
       const st = stateRef.current;
-      if (w === st.w) return;
-      st.w = w;
       if (w < 2) return;
+      // Re-laying out only on a width change meant a re-observed element never
+      // painted, and the canvas fell back to its intrinsic 2:1 ratio — 1612px
+      // wide inside a 374px phone.
+      if (w === st.w) { paint(); return; }
+      st.w = w;
       layout(w);
       st.target = st.step * w;
       st.offset = st.target;
-      st.expand = st.expandTo = st.step === assetStep ? 1 : 0;
+      st.expand = st.expandTo = tallSteps.has(st.step) ? 1 : 0;
       if (stripRef.current) {
         stripRef.current.style.width = `${steps.length * w}px`;
         stripRef.current.style.transform = `translateX(${-st.offset}px)`;
       }
-      if (scrollRef.current) scrollRef.current.scrollTop = st.step === assetStep ? 0 : BAND;
+      if (scrollRef.current) scrollRef.current.scrollTop = tallSteps.has(st.step) ? 0 : BAND;
       paint();
-    });
+    };
+    const ro = new ResizeObserver(measure);
     ro.observe(el);
+    measure();
     return () => ro.disconnect();
-  }, [BAND, assetStep, layout, paint, steps.length]);
+  }, [BAND, layout, paint, steps.length, tallSteps]);
 
   // The scroller's height and position follow the step: only the asset tier
   // needs the extra room, and the others sit centred on the shared band.
   useEffect(() => {
     const sc = scrollRef.current;
     if (!sc) return;
-    const tall = step === assetStep;
+    const tall = tallSteps.has(step);
     sc.style.height = `${tall ? TALL : VIEW}px`;
     sc.style.overflowY = tall ? "auto" : "hidden";
     sc.scrollTop = tall ? 0 : BAND;
-  }, [step, assetStep, BAND]);
+  }, [step, tallSteps, BAND]);
 
   useEffect(() => () => { if (stateRef.current.raf) cancelAnimationFrame(stateRef.current.raf); }, []);
 
@@ -463,22 +508,56 @@ export function AssetNetworkMobile({
   }
 
   /* -------------------------------------------------------------- filters */
-  const filterOptions = useMemo(
-    () => [
-      { kind: "all" as const, key: "", label: c.all, logo: undefined as string | undefined },
-      ...vehicles.map((v) => ({ kind: "vehicle" as const, key: v.id, label: v.short, logo: v.logo })),
-      ...provinces.map((p) => ({ kind: "province" as const, key: p.k, label: p.k, logo: undefined })),
-    ],
-    [c.all, provinces, vehicles],
-  );
-  const shown = useMemo(() => {
-    if (filter.kind === "vehicle") return buildings.filter((b) => b.vehicleId === filter.key);
-    if (filter.kind === "province") return buildings.filter((b) => b.province === filter.key);
-    return buildings;
-  }, [buildings, filter]);
-
   const rule = "border-b border-[color:var(--t-rule-soft)]";
   const headBg = "bg-[color:var(--t-head)]";
+
+  const shownVehicles = useMemo(
+    () => (vehicleFilter ? vehicles.filter((v) => v.id === vehicleFilter) : vehicles),
+    [vehicles, vehicleFilter],
+  );
+  const shownMarkets = useMemo(
+    () => (vehicleFilter ? markets.filter((m) => m.vehicleId === vehicleFilter) : markets),
+    [markets, vehicleFilter],
+  );
+  const shown = useMemo(
+    () => (vehicleFilter ? buildings.filter((b) => b.vehicleId === vehicleFilter) : buildings),
+    [buildings, vehicleFilter],
+  );
+
+  /** The filter row, repeated on every screen that lists something. */
+  const FilterRow = ({ total, count }: { total: number; count: number }) => (
+    <>
+      <div className={`flex gap-1.5 overflow-x-auto bg-[color:var(--t-panel)] px-[13px] py-2.5 [scrollbar-width:none] ${rule} [&::-webkit-scrollbar]:hidden`}>
+        {[{ id: "", label: c.all, logo: undefined as string | undefined }, ...vehicles.map((v) => ({ id: v.id, label: v.short, logo: v.logo }))].map((f) => {
+          const on = f.id === vehicleFilter;
+          return (
+            <button
+              key={f.id || "all"}
+              type="button"
+              onClick={() => setVehicleFilter(f.id)}
+              aria-pressed={on}
+              className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap border px-2.5 py-1 text-[10px] ${
+                on
+                  ? "border-[color:var(--t-ink)] bg-[color:var(--t-ink)] text-[color:var(--t-ground)]"
+                  : "border-[color:var(--t-rule)] text-[color:var(--t-ink-2)]"
+              }`}
+            >
+              {f.logo && !on && <Mark src={f.logo} alt="" h={10} />}
+              {f.label}
+            </button>
+          );
+        })}
+      </div>
+      <div className={`flex items-center gap-2 px-[13px] py-[7px] text-[9.5px] uppercase tracking-[0.09em] text-[color:var(--t-ink-3)] ${rule}`}>
+        {c.showing(count, total)}
+        {vehicleFilter && (
+          <button type="button" onClick={() => setVehicleFilter("")} className="ml-auto text-[color:var(--t-accent)]">
+            {c.clear}
+          </button>
+        )}
+      </div>
+    </>
+  );
 
   const Stat = ({ k, v, hero }: { k: string; v: string; hero?: boolean }) => (
     <div className={`flex items-baseline justify-between gap-3 px-[13px] py-2.5 ${rule}`}>
@@ -503,10 +582,13 @@ export function AssetNetworkMobile({
       </div>
     </div>
   );
+  // The value wraps rather than running off the edge: a published target is a
+  // sentence ("Up to 8.2% preferential return a year, paid quarterly"), not a
+  // figure, and it was overflowing the panel on a phone.
   const Row = ({ a, b }: { a: string; b: string }) => (
     <div className={`flex justify-between gap-3 px-[13px] py-[7px] ${rule}`}>
-      <span>{a}</span>
-      <span className="shrink-0 text-[color:var(--t-ink-3)]">{b}</span>
+      <span className="shrink-0 text-[color:var(--t-ink-2)]">{a}</span>
+      <span className="min-w-0 text-right">{b}</span>
     </div>
   );
 
@@ -560,12 +642,38 @@ export function AssetNetworkMobile({
     if (s.id === "vehicles") {
       return (
         <>
-          {vehicles.map((v) => (
+          <FilterRow total={vehicles.length} count={shownVehicles.length} />
+          {shownVehicles.map((v) => {
+            const open = openVehicles.has(v.id);
+            return (
             <div key={v.id}>
-              <Group
-                left={<><Mark src={v.logo} alt={v.short} h={17} /><span className="truncate">{v.short}</span></>}
-                right={v.managerName}
-              />
+              {/* Collapsible: two funds at nine rows each is a long scroll, and
+                  the header alone answers "how much and what share". */}
+              <button
+                type="button"
+                onClick={() =>
+                  setOpenVehicles((prev) => {
+                    const next = new Set(prev);
+                    if (next.has(v.id)) next.delete(v.id);
+                    else next.add(v.id);
+                    return next;
+                  })
+                }
+                aria-expanded={open}
+                className={`flex w-full items-center gap-2 border-t border-[color:var(--t-rule)] px-[13px] py-2.5 text-left ${headBg} ${rule}`}
+              >
+                <Mark src={v.logo} alt={v.short} h={17} />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[11px] text-[color:var(--t-ink)]">{v.short}</span>
+                  <span className="block truncate text-[9.5px] uppercase tracking-[0.1em] text-[color:var(--t-ink-3)]">
+                    {money(v.committed, lang)}
+                    {totalCommitted > 0 ? ` · ${((v.committed / totalCommitted) * 100).toFixed(1)}%` : ""}
+                  </span>
+                </span>
+                <span aria-hidden className="shrink-0 text-[color:var(--t-ink-3)]">{open ? "−" : "+"}</span>
+              </button>
+              {open && (
+              <>
               <Row a={c.committed} b={money(v.committed, lang)} />
               {v.units != null && (
                 <Row a={c.units} b={v.unitPrice ? `${num(v.units, lang)} @ $${v.unitPrice.toFixed(2)}` : num(v.units, lang)} />
@@ -586,20 +694,31 @@ export function AssetNetworkMobile({
               {v.cadenceMonths != null && (
                 <Row a={c.dataUpdates} b={c.everyMonths(v.cadenceMonths)} />
               )}
+              </>
+              )}
             </div>
-          ))}
+            );
+          })}
           <p className="px-[13px] py-2.5 text-[9.5px] leading-[1.6] text-[color:var(--t-ink-faint)]">{c.targetsNote}</p>
         </>
       );
     }
     if (s.id === "markets") {
-      const top = markets[0]?.items.length ?? 1;
-      const topProv = provinces[0]?.n ?? 1;
+      const top = shownMarkets[0]?.items.length ?? 1;
+      const shownProvinces = vehicleFilter
+        ? (() => {
+            const map = new Map<string, number>();
+            shown.forEach((b) => map.set(b.province, (map.get(b.province) ?? 0) + 1));
+            return [...map.entries()].map(([k, n]) => ({ k, n })).sort((a, b) => b.n - a.n);
+          })()
+        : provinces;
+      const topProv = shownProvinces[0]?.n ?? 1;
       return (
         <>
-          <Group left={c.byMarket} right={`${markets.length} · ${c.scrolls}`} />
+          <FilterRow total={markets.length} count={shownMarkets.length} />
+          <Group left={c.byMarket} right={`${shownMarkets.length} · ${c.scrolls}`} />
           <div className="max-h-[430px] overflow-y-auto">
-            {markets.map((m) => (
+            {shownMarkets.map((m) => (
               <Bar
                 key={m.city}
                 label={<><Mark src={vehicles.find((v) => v.id === m.vehicleId)?.logo} alt="" /><span className="truncate">{m.city}</span></>}
@@ -609,8 +728,8 @@ export function AssetNetworkMobile({
               />
             ))}
           </div>
-          <Group left={c.byProvince} right={String(provinces.length)} />
-          {provinces.map((p) => (
+          <Group left={c.byProvince} right={String(shownProvinces.length)} />
+          {shownProvinces.map((p) => (
             <Bar key={p.k} label={<span className="truncate">{p.k}</span>} right={String(p.n)} frac={p.n / topProv} colour={theme.accent} />
           ))}
           <p className="px-[13px] py-2.5 text-[9.5px] leading-[1.6] text-[color:var(--t-ink-faint)]">{c.countsNote}</p>
@@ -623,38 +742,7 @@ export function AssetNetworkMobile({
       .filter((g) => g.items.length > 0);
     return (
       <>
-        {/* Filters scroll sideways so they never wrap and steal the list's height. */}
-        <div className="relative">
-          <div className={`flex gap-1.5 overflow-x-auto bg-[color:var(--t-panel)] px-[13px] py-2.5 [scrollbar-width:none] ${rule} [&::-webkit-scrollbar]:hidden`}>
-            {filterOptions.map((f) => {
-              const on = f.kind === filter.kind && f.key === filter.key;
-              return (
-                <button
-                  key={`${f.kind}:${f.key}`}
-                  type="button"
-                  onClick={() => setFilter({ kind: f.kind, key: f.key })}
-                  aria-pressed={on}
-                  className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap border px-2.5 py-1 text-[10px] ${
-                    on
-                      ? "border-[color:var(--t-ink)] bg-[color:var(--t-ink)] text-[color:var(--t-ground)]"
-                      : "border-[color:var(--t-rule)] text-[color:var(--t-ink-2)]"
-                  }`}
-                >
-                  {f.logo && !on && <Mark src={f.logo} alt="" h={10} />}
-                  {f.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <div className={`flex items-center gap-2 px-[13px] py-[7px] text-[9.5px] uppercase tracking-[0.09em] text-[color:var(--t-ink-3)] ${rule}`}>
-          {c.showing(shown.length, buildings.length)}
-          {filter.kind !== "all" && (
-            <button type="button" onClick={() => setFilter({ kind: "all", key: "" })} className="ml-auto text-[color:var(--t-accent)]">
-              {c.clear}
-            </button>
-          )}
-        </div>
+        <FilterRow total={buildings.length} count={shown.length} />
         {shown.length === 0 ? (
           <p className="px-[13px] py-6 text-center text-[11px] text-[color:var(--t-ink-3)]">{c.none}</p>
         ) : (
@@ -706,11 +794,14 @@ export function AssetNetworkMobile({
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
-          onScroll={() => { if (step === assetStep) paint(); }}
+          onScroll={() => { if (tallSteps.has(step)) paint(); }}
           className="touch-pan-y overflow-x-hidden"
           style={{ height: VIEW }}
         >
-          <canvas ref={canvasRef} className="block w-full" style={{ height: H }} />
+          {/* width and display are set inline, not by class: a canvas with no
+              CSS width falls back to the aspect ratio of its backing store, so
+              a missed paint would blow the element out to 1612px. */}
+          <canvas ref={canvasRef} style={{ display: "block", width: "100%", height: H }} />
         </div>
         {/* Edge hints sit outside the scroller: absolute children of a scroller
             travel with it, and these must stay put. */}
@@ -726,9 +817,9 @@ export function AssetNetworkMobile({
             {steps[step + 1].label} ▸
           </div>
         )}
-        {step === assetStep && (
+        {tallSteps.has(step) && (
           <div className="pointer-events-none absolute bottom-1.5 left-2 bg-[color:var(--t-ground)] px-1.5 py-0.5 text-[8px] uppercase tracking-[0.1em] text-[color:var(--t-ink-3)] opacity-90">
-            {c.scrollAll(buildings.length)}
+            {c.scrollAll(steps[step].id === "markets" ? markets.length : buildings.length)}
           </div>
         )}
       </div>
