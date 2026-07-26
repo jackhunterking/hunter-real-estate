@@ -48,6 +48,7 @@ import { pick } from "@/lib/i18n/localize";
 import type { Lang } from "@/lib/capital/types";
 import { PageHeader } from "./PortalUI";
 import { NetworkGraph, type GraphNode } from "./AssetNetworkGraph";
+import { AssetNetworkMobile, type MobileCopy } from "./AssetNetworkMobile";
 import { TERMINAL_THEMES, themeVars, type TerminalMode } from "./asset-network-theme";
 
 const COPY = {
@@ -55,8 +56,6 @@ const COPY = {
     title: "Asset network",
     description:
       "Committed capital, the vehicles it sits in, and the assets behind them. Figures below the vehicle are counts — the platform holds no per-asset value, so no dollar amount is split across buildings.",
-    wip:
-      "Work in progress. This terminal layout is under review — three lighter, investor-facing cluster designs are being evaluated to replace it. Nothing here is final and nothing has been removed.",
     viewing: "Viewing",
     myAccount: "My account",
     noPositions:
@@ -132,8 +131,6 @@ const COPY = {
     title: "Varlık ağı",
     description:
       "Taahhüt edilen sermaye, bulunduğu araçlar ve arkasındaki varlıklar. Araç altındaki rakamlar adettir — platformda varlık bazlı değer bulunmadığından hiçbir tutar binalara bölünmez.",
-    wip:
-      "Çalışma sürüyor. Bu terminal düzeni değerlendiriliyor — yerine geçmek üzere yatırımcıya dönük üç daha sade küme tasarımı inceleniyor. Buradaki hiçbir şey nihai değil ve hiçbir şey kaldırılmadı.",
     viewing: "Görüntülenen",
     myAccount: "Hesabım",
     noPositions:
@@ -215,10 +212,6 @@ function freshnessOf(v: Vehicle, c: (typeof COPY)["en"]): Freshness | null {
   return { state: "current", label: c.reviewCurrent };
 }
 
-function isCommercial(assetClassId: string) {
-  return assetClassId.toLowerCase().includes("commercial");
-}
-
 function money(value: number, lang: Lang) {
   return new Intl.NumberFormat(lang === "tr" ? "tr-TR" : "en-CA", {
     style: "currency",
@@ -277,6 +270,51 @@ export function AssetNetwork({
   }
 
   const theme = TERMINAL_THEMES[mode];
+
+  // The swipe needs shorter labels than the desktop rail: a phone header has no
+  // room for "Buildings behind them" spelled out twice.
+  const mobileCopy: MobileCopy = {
+    you: lang === "tr" ? "Siz" : "You",
+    vehicles: c.vehicles,
+    markets: c.markets,
+    buildings: c.assets,
+    committed: c.committed,
+    unitsHeld: c.yourUnits,
+    positions: c.positions,
+    assetsBehind: c.assets,
+    marketCount: c.markets,
+    splitOfCapital: c.byVehicle,
+    costBasisNote: c.statusNoIncome,
+    units: c.colUnits,
+    shareOfCapital: c.colShare,
+    buildingsLabel: c.assets,
+    targetReturn: c.targetReturn,
+    targetDistribution: c.targetDistribution,
+    dataUpdates: lang === "tr" ? "Veri güncellemesi" : "Data updates",
+    aum: c.aum,
+    completeness: c.complete,
+    targetsNote: c.statusTargets,
+    byMarket: c.byMarket,
+    byProvince: c.byProvince,
+    countsNote: c.statusCounts,
+    all: lang === "tr" ? "Tümü" : "All",
+    showing: (n, total) =>
+      lang === "tr" ? `${total} kayıttan ${n} gösteriliyor` : `Showing ${n} of ${total}`,
+    clear: lang === "tr" ? "Temizle" : "Clear",
+    none: lang === "tr" ? "Eşleşen bina yok." : "No buildings match.",
+    scrollAll: (n) => (lang === "tr" ? `↕ ${n} kaydın tümü için kaydırın` : `↕ scroll for all ${n}`),
+    scrolls: lang === "tr" ? "kaydırılır" : "scrolls",
+    everyMonths: (n) =>
+      lang === "tr" ? `${n} ayda bir` : n === 3 ? "Quarterly" : n === 6 ? "Semi-annual" : n === 12 ? "Annual" : `Every ${n} mo`,
+    notPublished: c.notPublished,
+    unitsSuffix: lang === "tr" ? "daire" : "units",
+    verifyNote:
+      lang === "tr"
+        ? "İçi boş nokta doğrulamanın kısmi olduğunu gösterir. Tire, adedin yayımlanmadığı anlamına gelir — sıfır değil."
+        : "A hollow dot means verification is still partial. A dash means the count is not published, never zero.",
+    residential: c.residential,
+    commercial: c.commercial,
+  };
 
   const investorOptions = useMemo(
     () => fundedInvestorOptions(users, investments, currentUserId),
@@ -363,12 +401,6 @@ export function AssetNetwork({
         </p>
       )}
 
-      {/* The layout below is being replaced, not removed — see
-          docs/prototypes/cluster-directions.html for the three candidates. */}
-      <p className="mb-4 rounded-md border border-[#eadcae] bg-[#fdf8ec] px-4 py-3 text-sm text-[#755718]">
-        {c.wip}
-      </p>
-
       <div
         style={themeVars(theme)}
         className="overflow-hidden border-[color:var(--t-rule)] bg-[color:var(--t-ground)] font-mono text-[13px] tabular-nums text-[color:var(--t-ink)] max-sm:-mx-4 max-sm:border-y sm:rounded-md sm:border sm:text-[12px]"
@@ -376,9 +408,6 @@ export function AssetNetwork({
         <div className="flex items-center justify-between gap-3 border-b border-[color:var(--t-rule)] bg-[color:var(--t-head)] px-4 py-2.5">
           <span className="text-[11px] uppercase tracking-[0.12em] text-[color:var(--t-ink-3)] sm:text-[9.5px]">
             {c.title}
-            <span className="ml-2 border border-[color:var(--t-warn)] px-1.5 py-0.5 text-[9.5px] text-[color:var(--t-warn)] sm:text-[8.5px]">
-              WIP
-            </span>
           </span>
           <button
             type="button"
@@ -389,7 +418,22 @@ export function AssetNetwork({
             {mode === "dark" ? c.lightMode : c.darkMode}
           </button>
         </div>
-        <div className="grid grid-cols-1 lg:min-h-[560px] lg:grid-cols-[240px_minmax(0,1fr)_322px]">
+        {/* Below `lg` the three columns collapse into one very long scroll, which
+            is what the swipe replaces. Both are mounted; the hidden one has zero
+            width so its canvas never paints. */}
+        <div className="lg:hidden">
+          <AssetNetworkMobile
+            vehicles={vehicles}
+            buildings={buildings}
+            theme={theme}
+            lang={lang}
+            c={mobileCopy}
+            totalCommitted={totalCommitted}
+            totalUnits={vehicles.reduce((sum, v) => sum + (v.units ?? 0), 0)}
+          />
+        </div>
+
+        <div className="hidden lg:grid lg:min-h-[560px] lg:grid-cols-[240px_minmax(0,1fr)_322px]">
           {/* ---------------- entity rail ---------------- */}
           <div className="border-b border-[color:var(--t-rule)] lg:border-b-0 lg:border-r">
             <RailHead left={c.entity} />
@@ -554,25 +598,13 @@ export function AssetNetwork({
             {buildings.length > 0 && (
               <>
                 <RailHead left={c.rollups} right={c.rollupNote} bordered />
+                {/* Market and province only. Asset class and condition were cut:
+                    they are the two an investor rarely acts on, and every row
+                    here competes with the ones that answer where the money is
+                    concentrated. */}
                 <div className="grid grid-cols-2 gap-x-4 px-3 py-3 sm:grid-cols-1">
                   <Rollup title={c.byMarket} rows={rollup((b) => b.city, (b) => b.city)} c={c} />
                   <Rollup title={c.byProvince} rows={rollup((b) => b.province, (b) => b.province)} c={c} />
-                  <Rollup
-                    title={c.byClass}
-                    rows={rollup(
-                      (b) => (isCommercial(b.assetClassId) ? "commercial" : "residential"),
-                      (b) => (isCommercial(b.assetClassId) ? c.commercial : c.residential),
-                    )}
-                    c={c}
-                  />
-                  <Rollup
-                    title={c.byCondition}
-                    rows={rollup(
-                      (b) => b.condition,
-                      (b) => c.conditions[b.condition as keyof typeof c.conditions] ?? b.condition,
-                    )}
-                    c={c}
-                  />
                 </div>
               </>
             )}
@@ -580,7 +612,9 @@ export function AssetNetwork({
         </div>
 
         {/* ---------------- published terms ---------------- */}
-        <div className="border-t border-[color:var(--t-rule)]">
+        {/* The swipe carries these on its Vehicles screen, so this block is the
+            wide-screen presentation only and must not repeat underneath it. */}
+        <div className="hidden border-t border-[color:var(--t-rule)] lg:block">
           <RailHead left={c.terms} />
           <div className="grid grid-cols-1 gap-px bg-[color:var(--t-rule)] md:grid-cols-2">
             {vehicles.map((v) => (

@@ -29,6 +29,9 @@ export type TerminalTheme = {
   ok: string;
   warn: string;
   bar: string;
+  /** Backing for a partner's wordmark. Both published marks are dark-inked, so
+   *  on the dark ground they need a light plate rather than being inverted. */
+  plate: string;
   vehicles: string[];
 };
 
@@ -52,6 +55,7 @@ export const TERMINAL_THEMES: Record<TerminalMode, TerminalTheme> = {
     ok: "#5cb488",
     warn: "#d9a457",
     bar: "#4a6b8f",
+    plate: "#f2f4f7",
     // Ordered so the FIRST TWO are the most separable pair, not the prettiest
     // sequence: with two funds those are the only colours on screen, and
     // blue against teal is the classic pair a deuteranope cannot split.
@@ -75,6 +79,7 @@ export const TERMINAL_THEMES: Record<TerminalMode, TerminalTheme> = {
     ok: "#2f6f4f",
     warn: "#9a6f1e",
     bar: "#7d92a8",
+    plate: "#ffffff",
     // Ordered so the FIRST TWO are the most separable pair, not the prettiest
     // sequence: with two funds those are the only colours on screen, and
     // blue against teal is the classic pair a deuteranope cannot split.
@@ -101,5 +106,6 @@ export function themeVars(theme: TerminalTheme): React.CSSProperties {
     "--t-ok": theme.ok,
     "--t-warn": theme.warn,
     "--t-bar": theme.bar,
+    "--t-plate": theme.plate,
   } as React.CSSProperties;
 }
