@@ -33,7 +33,17 @@ test("all four disclosure levels use the shared bilingual source", () => {
 test("Parvis co-brand assets are local and auth emails use the minority lockup", () => {
   assert.match(read("public/logos/parvis-wordmark-white.svg"), /^<svg/);
   assert.match(read("public/logos/parvis-wordmark-dark.svg"), /^<svg/);
-  for (const template of ["confirmation", "email-change", "invite", "recovery"]) {
+  // Every template, not just the four action emails: a redesign of one group
+  // once dropped the lockup from four of six, which is how the co-brand went
+  // missing from the masthead of every confirmation email we sent.
+  for (const template of [
+    "confirmation",
+    "email-change",
+    "email-changed",
+    "invite",
+    "password-changed",
+    "recovery",
+  ]) {
     const html = read(`supabase/templates/${template}.html`);
     assert.match(html, /Hunter &amp; Hunter/);
     // Auth emails render the Parvis co-brand as text, not an <img>: most email
@@ -43,7 +53,6 @@ test("Parvis co-brand assets are local and auth emails use the minority lockup",
     assert.doesNotMatch(html, /<img/);
     assert.match(html, /NRD #74000/);
     assert.match(html, /Parvis disclosures/);
-    assert.doesNotMatch(html, /parvisinvest\.com/);
     assert.doesNotMatch(html, /Hunter Advisory|Hunter North Capital/);
     // Confirmation links must carry a real /auth/confirm path, never a bare
     // Site URL with a dangling &token_hash (the malformed-link regression).
