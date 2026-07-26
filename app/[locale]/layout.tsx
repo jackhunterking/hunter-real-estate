@@ -8,6 +8,7 @@ import { routing } from "@/i18n/routing";
 import { dictionaries, type Lang } from "@/lib/i18n/dictionaries";
 import { PostHogProvider } from "../providers";
 import { IntercomMessenger } from "@/components/intercom/IntercomMessenger";
+import { STYLESHEET_RECOVERY } from "@/lib/stylesheet-recovery";
 import "../globals.css";
 import "../theme.css";
 
@@ -107,6 +108,10 @@ export default async function LocaleLayout({
             (with a server-signed HS256 JWT) once a portal session exists. It
             renders nothing itself, so it sits outside the providers. */}
         <IntercomMessenger locale={locale} />
+        {/* Inline on purpose: when a stylesheet 404s, the layout's JS chunk
+            fails with it, so anything React-mounted would never run. This is
+            written straight into the HTML and needs no chunk to execute. */}
+        <script dangerouslySetInnerHTML={{ __html: STYLESHEET_RECOVERY }} />
       </body>
     </html>
   );
