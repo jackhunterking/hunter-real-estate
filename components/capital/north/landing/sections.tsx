@@ -721,6 +721,35 @@ export function HowItCompares({ c }: { c: LandingCopy }) {
   );
 }
 
+/**
+ * Which fund a photo belongs to. The manager's logo when one is published,
+ * otherwise the fund's short name — never an unlabelled photo, so a visitor
+ * can always tell the portfolios apart in a mixed grid.
+ */
+function FundChip({ offering, lang }: { offering: FootprintImage["offering"]; lang: Lang }) {
+  const name = tx(offering.name, lang);
+  return (
+    <span
+      className="absolute left-3 top-3 inline-flex items-center rounded-md bg-white/95 shadow-sm ring-1 ring-[#071c2c]/10 backdrop-blur-sm"
+      title={name}
+    >
+      {offering.logoSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={offering.logoSrc}
+          alt={tx(offering.logoAlt, lang) || name}
+          loading="lazy"
+          className="h-5 max-w-20 object-contain p-1 sm:h-6 sm:max-w-24 sm:p-1.5"
+        />
+      ) : (
+        <span className="max-w-24 truncate px-2 py-1 text-[10px] font-semibold text-[#0a2d46] sm:text-[11px]">
+          {name}
+        </span>
+      )}
+    </span>
+  );
+}
+
 /** The trust anchor: real building photos, captioned with name + city. */
 export function BuildingsGallery({
   c,
@@ -748,6 +777,7 @@ export function BuildingsGallery({
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#071c2c]/80 via-[#071c2c]/10 to-transparent" />
+              <FundChip offering={img.offering} lang={lang} />
               <figcaption className="absolute inset-x-0 bottom-0 p-3.5">
                 <p className="truncate text-sm font-semibold text-white">{tx(img.title, lang)}</p>
                 <p className="mt-0.5 flex items-center gap-1 text-xs text-white/75">

@@ -12,10 +12,10 @@
 import { useEffect, useRef, useState } from "react";
 import { CheckCircle2, Lock, ShieldCheck, type LucideIcon } from "lucide-react";
 import type {
-  LocalizedText,
   PublicOfferingPreview,
   PublicOfferingPropertyPreview,
 } from "@/lib/capital/types";
+import { buildFootprintGallery } from "@/lib/capital/landing-gallery";
 
 /* ------------------------------------------------------------------ */
 /* Data helpers (pure — no React state)                                */
@@ -25,12 +25,7 @@ import type {
 export { tightRange as shortRange } from "@/components/capital/OfferingSummaryCard";
 
 /** A photo shown in the real-assets footprint, with an honest caption. */
-export type FootprintImage = {
-  src: string;
-  alt?: LocalizedText;
-  title: LocalizedText;
-  subtitle: LocalizedText;
-};
+export type { FootprintImage } from "@/lib/capital/landing-gallery";
 
 /** EN→TR fallback for free-text portfolio facts (kept for future TR pass). */
 export function localizedPortfolioFact(value: string, lang: string) {
@@ -52,32 +47,9 @@ export function deriveLandingData(offerings: PublicOfferingPreview[]) {
     Boolean(p.media?.card?.src ?? p.media?.gallery?.[0]?.src),
   );
 
-  // Footprint photography: named-property photos first (captioned with the
-  // building), then offering-level fact-sheet photography (captioned with the
-  // fund — never with a building name the source doesn't support).
-  const galleryItems: FootprintImage[] = [];
-  picturedProperties.forEach((p) => {
-    const image = p.media?.card ?? p.media?.gallery?.[0];
-    if (!image?.src) return;
-    const place = `${p.city}, ${p.province}`;
-    galleryItems.push({
-      src: image.src,
-      alt: image.alt,
-      title: p.name,
-      subtitle: { en: place, tr: place },
-    });
-  });
-  offerings.forEach((offering) => {
-    offering.media?.gallery?.forEach((image) => {
-      if (!image.src) return;
-      galleryItems.push({
-        src: image.src,
-        alt: image.alt,
-        title: offering.shortName,
-        subtitle: offering.managerName,
-      });
-    });
-  });
+  // Footprint photography, mixed round-robin across the published funds so no
+  // single portfolio owns the top of the grid. See `buildFootprintGallery`.
+  const galleryItems = buildFootprintGallery(offerings);
 
   return {
     hasOfferings: offerings.length > 0,
