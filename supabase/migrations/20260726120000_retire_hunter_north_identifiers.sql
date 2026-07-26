@@ -112,7 +112,68 @@ end
 $rewrite$;
 
 -- ---------------------------------------------------------------------------
--- 5. Policy names. Renaming leaves the expression untouched, so no policy is
+-- 5. Views that alias the helper.
+--
+--    Renaming the function fixes the *call* in every dependent view, because
+--    that is stored by OID. It does not fix an alias: seven admin views are
+--    written as
+--
+--        where (select private.is_hunter_admin() as is_hunter_admin)
+--
+--    and a target-list alias is stored as plain text, so the old name survives
+--    in the alias alone. Those views have to be recreated.
+--
+--    CREATE OR REPLACE VIEW keeps the OID (so grants survive) but does NOT
+--    carry a WITH clause forward. Five of these are security_invoker=true, and
+--    silently dropping that would turn an RLS-respecting view into one that
+--    runs with its owner's rights — a privilege escalation, not a rename. So
+--    the options are captured first, restored explicitly, and asserted after.
+-- ---------------------------------------------------------------------------
+do $views$
+declare
+  v record;
+  restored record;
+  before_options jsonb := '{}'::jsonb;
+  current_options text;
+begin
+  for v in
+    select n.nspname as sch,
+           c.relname as nm,
+           coalesce(array_to_string(c.reloptions, ', '), '') as opts,
+           pg_get_viewdef(c.oid) as def
+    from pg_class c
+    join pg_namespace n on n.oid = c.relnamespace
+    where c.relkind = 'v'
+      and n.nspname in ('app', 'api', 'public')
+      and pg_get_viewdef(c.oid) ~* 'hunter'
+  loop
+    before_options := before_options || jsonb_build_object(v.sch || '.' || v.nm, v.opts);
+
+    execute format(
+      'create or replace view %I.%I %s as %s',
+      v.sch, v.nm,
+      case when v.opts = '' then '' else 'with (' || v.opts || ')' end,
+      replace(v.def, 'is_hunter_admin', 'is_platform_admin')
+    );
+  end loop;
+
+  for restored in select key, value from jsonb_each_text(before_options) loop
+    select coalesce(array_to_string(c.reloptions, ', '), '')
+      into current_options
+    from pg_class c
+    join pg_namespace n on n.oid = c.relnamespace
+    where c.relkind = 'v' and n.nspname || '.' || c.relname = restored.key;
+
+    if current_options is distinct from restored.value then
+      raise exception 'View % lost its options during the rename: "%" became "%"',
+        restored.key, restored.value, current_options;
+    end if;
+  end loop;
+end
+$views$;
+
+-- ---------------------------------------------------------------------------
+-- 6. Policy names. Renaming leaves the expression untouched, so no policy is
 --    ever absent. Verified beforehand: none of the 50 new names collides with
 --    an existing policy on the same table.
 -- ---------------------------------------------------------------------------
@@ -136,7 +197,7 @@ end
 $policies$;
 
 -- ---------------------------------------------------------------------------
--- 6. Deprecated alias for the onboarding RPC, so a browser tab loaded before
+-- 7. Deprecated alias for the onboarding RPC, so a browser tab loaded before
 --    the deploy keeps working through the rollout window. Created after the
 --    rewrite in step 4 so that pass cannot pick it up by its own name.
 --    TODO: drop once the app has shipped on complete_portal_onboarding.
@@ -173,7 +234,7 @@ grant execute on function api.complete_hnc_onboarding(
 ) to authenticated;
 
 -- ---------------------------------------------------------------------------
--- 7. Assert the rename is complete. A silent partial rename would leave a user
+-- 8. Assert the rename is complete. A silent partial rename would leave a user
 --    reading "Hunter North" in an error message on a site that no longer uses
 --    the name, so fail the migration instead.
 -- ---------------------------------------------------------------------------
@@ -189,7 +250,7 @@ begin
     where n.nspname in ('app', 'api', 'private')
       and p.prokind = 'f'
       and p.prolang not in (select oid from pg_language where lanname in ('internal', 'c'))
-      -- The deprecated alias in step 6 is expected; jackhunter.com is the
+      -- The deprecated alias in step 7 is expected; jackhunter.com is the
       -- real-estate site's contact address, not the portal's brand.
       and p.proname <> 'complete_hnc_onboarding'
       and (
