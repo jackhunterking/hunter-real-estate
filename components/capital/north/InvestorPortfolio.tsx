@@ -1,13 +1,15 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, BanknoteArrowDown, Compass, MapPinned, Target, TrendingUp, WalletCards } from "lucide-react";
 import type { Lang, OfferingBundle } from "@/lib/capital/types";
 import type { InvestmentApplication } from "@/lib/capital/portal-access";
 import { buildMapProperties, formatCurrencyCad, formatMoneyCompact, primaryShareClass } from "@/lib/capital/present";
+import { PositionCard, type IncomePeriod } from "./PositionCard";
 import { latestPublished12mReturn, parseTargetMidpoint, portfolioMonthlyIncome, type MonthlyIncomeBreakdown } from "@/lib/capital/performance";
 import { unitPriceOf, impliedShares } from "@/lib/capital/shares";
+import { taxonomyLabel } from "@/lib/capital/taxonomies";
 import { requestStage } from "@/lib/capital/investment-requests";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
@@ -41,11 +43,25 @@ const COPY = {
     incomeCash: "Cash",
     incomeGrowth: "Growth",
     positionsTitle: "Your positions",
-    committed: "committed",
     units: "units",
     reviewBadge: "In review",
-    fundedBadge: "Funded",
-    viewFund: "View investment",
+    periodLabel: "Show figures per",
+    periodYear: "Year",
+    periodMonth: "Month",
+    approxNote: "* Approximate figures.",
+    paysYou: "Pays you*",
+    growth: "Growth*",
+    growthNote: "unrealized, not paid out",
+    targetTotal: "Target total*",
+    perYear: "a year",
+    perMonth: "a month",
+    average: "average",
+    invested: "invested",
+    ofPortfolio: "of portfolio",
+    viewPosition: "View",
+    inProgressTitle: "In progress",
+    inProgressBody: "Requests we're working through. Not yet holdings.",
+    requested: "requested",
     startTitle: "Start your portfolio",
     startBody:
       "Explore the opportunities below, then request to invest.",
@@ -79,11 +95,25 @@ const COPY = {
     incomeCash: "Nakit",
     incomeGrowth: "Büyüme",
     positionsTitle: "Pozisyonlarınız",
-    committed: "taahhüt",
     units: "birim",
     reviewBadge: "İncelemede",
-    fundedBadge: "Fonlandı",
-    viewFund: "Yatırımı gör",
+    periodLabel: "Rakamları şu döneme göre göster",
+    periodYear: "Yıl",
+    periodMonth: "Ay",
+    approxNote: "* Yaklaşık rakamlar.",
+    paysYou: "Size ödenen*",
+    growth: "Büyüme*",
+    growthNote: "gerçekleşmemiş, ödenmez",
+    targetTotal: "Hedef toplam*",
+    perYear: "yılda",
+    perMonth: "ayda",
+    average: "ortalama",
+    invested: "yatırıldı",
+    ofPortfolio: "portföyün",
+    viewPosition: "Gör",
+    inProgressTitle: "Devam eden",
+    inProgressBody: "Üzerinde çalıştığımız talepler. Henüz pozisyon değil.",
+    requested: "talep edildi",
     startTitle: "Portföyünüzü oluşturun",
     startBody:
       "Aşağıdaki fırsatları inceleyin, ardından yatırım talep edin.",
@@ -99,10 +129,11 @@ const COPY = {
   },
 } as const;
 
-type Aggregated = { position: { id: string; amount: number; shareQuantity: number; status: string }; fund: OfferingBundle };
+type RequestStatus = InvestmentApplication["status"];
+type Aggregated = { position: { id: string; amount: number; shareQuantity: number; status: RequestStatus }; fund: OfferingBundle };
 
 /** Group a user's positions by offering, summing committed amounts and whole units. */
-function aggregate(offerings: OfferingBundle[], positions: { id: string; offeringId: string; amount: number; shareQuantity?: number; status: string }[]): Aggregated[] {
+function aggregate(offerings: OfferingBundle[], positions: { id: string; offeringId: string; amount: number; shareQuantity?: number; status: RequestStatus }[]): Aggregated[] {
   return offerings.flatMap((fund) => {
     const held = positions.filter((position) => position.offeringId === fund.id);
     if (!held.length) return [];
@@ -161,12 +192,40 @@ function previewHoldings(offerings: OfferingBundle[], userId: string): Investmen
   });
 }
 
+/** useLayoutEffect on the client, useEffect on the server — avoids the SSR warning. */
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+const PERIOD_KEY = "hnc-position-period";
+
 export function InvestorPortfolio({ offerings, viewAsUserId, investments }: { offerings: OfferingBundle[]; viewAsUserId?: string; investments?: InvestmentApplication[] }) {
   const { lang } = useLang();
   const { currentUser, dataset, previewEnabled, backendConfigured } = usePortalAccess();
   const { assetClasses, strategies } = useTaxonomies();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Monthly by default so the cards agree with the "Est. monthly income" tile
+  // above them on first paint rather than contradicting it.
+  const [period, setPeriod] = useState<IncomePeriod>("month");
   const c = pick(COPY, lang);
+
+  // Layout effect, not effect: a stored "year" preference applies before paint,
+  // so the cards never flash the monthly figures first.
+  useIsomorphicLayoutEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(PERIOD_KEY);
+      if (saved === "year" || saved === "month") setPeriod(saved);
+    } catch {
+      // Storage unavailable — the monthly default stands for this visit.
+    }
+  }, []);
+
+  function choosePeriod(next: IncomePeriod) {
+    setPeriod(next);
+    try {
+      window.localStorage.setItem(PERIOD_KEY, next);
+    } catch {
+      // Setting still applies for this visit.
+    }
+  }
 
   // `viewAsUserId` renders another investor's portfolio verbatim for the admin
   // mirror; without it this is the signed-in investor's own portfolio.
@@ -255,10 +314,8 @@ export function InvestorPortfolio({ offerings, viewAsUserId, investments }: { of
     />
   );
 
-  const positions = [
-    ...heldFunds.map((f) => ({ ...f, review: false })),
-    ...reviewFunds.map((f) => ({ ...f, review: true })),
-  ];
+  const strategyOf = (fund: OfferingBundle) =>
+    fund.strategyIds[0] ? taxonomyLabel(strategies, fund.strategyIds[0], lang) : undefined;
 
   return (
     <div>
@@ -281,44 +338,70 @@ export function InvestorPortfolio({ offerings, viewAsUserId, investments }: { of
         </div>
       )}
 
-      {/* Positions the investor already holds or has in review — same card as
-          opportunities, but the footer shows status instead of an action. */}
-      {positions.length > 0 && (
+      {/* Funded holdings, each stated as cash + growth = target total. The
+          period control drives every card at once: one unit across the section
+          keeps any two positions comparable at a glance. */}
+      {heldFunds.length > 0 && (
         <section className="mt-8">
-          <h2 className="mb-3 text-lg font-semibold text-[#193143]">{c.positionsTitle}</h2>
-          <div className="grid gap-5 md:grid-cols-2">
-            {positions.map(({ position, fund, review }) => {
-              const shares = positionShares(position, fund);
-              const price = unitPriceOf(fund);
-              return renderFundCard(
-                `${fund.id}-${review ? "review" : "held"}`,
-                fund,
-                <div>
-                  <div className="flex items-center justify-between gap-3">
-                    <span className={cn(
-                      "rounded-md border px-2.5 py-1 text-[11px] font-semibold",
-                      review ? "border-[#eadcae] bg-[#f8f1dc] text-[#755718]" : "border-[#cfe5d8] bg-[#e6f2eb] text-[#2f6f4f]",
-                    )}>
-                      {review ? c.reviewBadge : c.fundedBadge}
-                    </span>
-                    <Link href={`${NORTH_BASE}/investments/${fund.slug}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#0a4b72] hover:underline">
-                      {c.viewFund}<ArrowRight className="size-3.5" />
-                    </Link>
-                  </div>
-                  {shares > 0 && (
-                    <p className="mt-2 text-sm font-semibold text-[#172d3d]">
-                      {shares.toLocaleString(lang === "tr" ? "tr-TR" : "en-CA")}{" "}
-                      <span className="font-normal text-[#7a8790]">{c.units}{price != null ? ` @ ${formatCurrencyCad(price, lang)}` : ""}</span>
-                    </p>
-                  )}
-                  {!review && (
-                    <p className={cn("text-sm text-[#5c6b76]", shares > 0 ? "mt-0.5" : "mt-2")}>
-                      {formatMoneyCompact(position.amount, lang)} <span className="text-[#7a8790]">{c.committed}</span>
-                    </p>
-                  )}
-                </div>,
-              );
-            })}
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold text-[#193143]">{c.positionsTitle}</h2>
+            <PeriodToggle period={period} onChange={choosePeriod} c={c} />
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {heldFunds.map(({ position, fund }) => (
+              <PositionCard
+                key={fund.id}
+                fund={fund}
+                lang={lang}
+                period={period}
+                amount={position.amount}
+                shares={positionShares(position, fund)}
+                portfolioShare={totalInvested > 0 ? position.amount / totalInvested : 0}
+                strategyLabel={strategyOf(fund)}
+                c={{
+                  paysYou: c.paysYou,
+                  growth: c.growth,
+                  growthNote: c.growthNote,
+                  targetTotal: c.targetTotal,
+                  perYear: c.perYear,
+                  perMonth: c.perMonth,
+                  average: c.average,
+                  invested: c.invested,
+                  units: c.units,
+                  ofPortfolio: c.ofPortfolio,
+                  view: c.viewPosition,
+                }}
+              />
+            ))}
+          </div>
+          <p className="mt-2.5 text-[11px] text-[#8a949b]">{c.approxNote}</p>
+        </section>
+      )}
+
+      {/* Requests still moving through review. Kept out of the positions grid:
+          an application has no units and no income, so presenting it as a
+          holding overstates what the investor actually owns. */}
+      {reviewFunds.length > 0 && (
+        <section className="mt-8">
+          <div className="mb-3">
+            <h2 className="text-lg font-semibold text-[#193143]">{c.inProgressTitle}</h2>
+            <p className="mt-1 text-sm text-[#697681]">{c.inProgressBody}</p>
+          </div>
+          <div className="grid gap-2.5 md:grid-cols-2">
+            {reviewFunds.map(({ position, fund }) => (
+              <div key={fund.id} className="flex items-center gap-3 rounded-xl border border-[#e2e7ea] bg-white p-3">
+                <span className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold leading-tight text-[#102638]">{tx(fund.shortName, lang)}</p>
+                  <span className="text-[11.5px] text-[#7a8790]">
+                    {formatMoneyCompact(position.amount, lang)} {c.requested}
+                  </span>
+                  <RequestStageDots status={position.status} />
+                </span>
+                <span className="whitespace-nowrap rounded-md border border-[#eadcae] bg-[#f8f1dc] px-2 py-1 text-[11px] font-semibold text-[#755718]">
+                  {c.reviewBadge}
+                </span>
+              </div>
+            ))}
           </div>
         </section>
       )}
@@ -374,7 +457,7 @@ export function InvestorPortfolio({ offerings, viewAsUserId, investments }: { of
       )}
 
       {/* Empty final fallback: no offerings at all. */}
-      {opportunities.length === 0 && positions.length === 0 && (
+      {opportunities.length === 0 && heldFunds.length === 0 && reviewFunds.length === 0 && (
         <Panel className="mt-8 grid min-h-[280px] place-items-center p-8 text-center">
           <div className="max-w-md">
             <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-[#edf3f6] text-[#0a4b72]"><Compass className="size-7" /></span>
@@ -385,6 +468,85 @@ export function InvestorPortfolio({ offerings, viewAsUserId, investments }: { of
         </Panel>
       )}
     </div>
+  );
+}
+
+/**
+ * Year / month for every figure in the positions grid.
+ *
+ * A radiogroup rather than two buttons: the two options are one setting with
+ * one answer, so arrow keys move between them and only the active option is
+ * announced as checked.
+ */
+function PeriodToggle({
+  period,
+  onChange,
+  c,
+}: {
+  period: IncomePeriod;
+  onChange: (next: IncomePeriod) => void;
+  c: { periodLabel: string; periodYear: string; periodMonth: string };
+}) {
+  const options: { key: IncomePeriod; label: string }[] = [
+    { key: "year", label: c.periodYear },
+    { key: "month", label: c.periodMonth },
+  ];
+  return (
+    <div role="radiogroup" aria-label={c.periodLabel} className="flex shrink-0 gap-0.5 rounded-lg border border-[#e2e7ea] bg-[#f4f7f9] p-0.5">
+      {options.map(({ key, label }, index) => (
+        <button
+          key={key}
+          type="button"
+          role="radio"
+          aria-checked={period === key}
+          onClick={() => onChange(key)}
+          onKeyDown={(event) => {
+            if (!["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+            event.preventDefault();
+            onChange(options[(index + 1) % options.length].key);
+          }}
+          className={cn(
+            "rounded-md px-2.5 py-1 text-[11px] font-bold tracking-[0.04em] transition-colors",
+            period === key ? "bg-white text-[#0a2d46] shadow-sm" : "text-[#5c6b76] hover:text-[#102638]",
+          )}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// The application statuses that precede funding, in the order they happen.
+const REQUEST_STEPS: InvestmentApplication["status"][] = [
+  "submitted",
+  "compliance_review",
+  "approved_for_subscription",
+  "accepted",
+];
+
+/** Where a request has reached, as filled dots. Unknown statuses render nothing. */
+function RequestStageDots({ status }: { status: InvestmentApplication["status"] }) {
+  const current = REQUEST_STEPS.indexOf(status);
+  if (current < 0) return null;
+  return (
+    <span className="mt-1.5 flex items-center" role="img" aria-label={`${current + 1}/${REQUEST_STEPS.length}`}>
+      {REQUEST_STEPS.map((step, index) => (
+        <span key={step} className="flex items-center">
+          <span
+            className={cn(
+              "block size-[7px] rounded-full border",
+              index < current && "border-[#0a2d46] bg-[#0a2d46]",
+              index === current && "border-[#996c26] bg-[#996c26]",
+              index > current && "border-[#cbd4da] bg-white",
+            )}
+          />
+          {index < REQUEST_STEPS.length - 1 && (
+            <span className={cn("mx-0.5 h-px w-2", index < current ? "bg-[#0a2d46]" : "bg-[#d8dfe4]")} />
+          )}
+        </span>
+      ))}
+    </span>
   );
 }
 

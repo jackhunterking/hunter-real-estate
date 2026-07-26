@@ -219,6 +219,35 @@ export function tightDistribution(text: string, lang: Lang) {
   return `${T(lang, cadence.en, cadence.tr)}; ${annualised}`;
 }
 
+const PAYMENTS_A_YEAR = { monthly: 12, quarterly: 4, semiannual: 2, annual: 1 } as const;
+
+/**
+ * Payments a fund makes in a year, read from the same distribution copy the
+ * cadence label comes from — so "…paid monthly" is 12 and "…paid quarterly" is
+ * 4. Powers the per-payment figure on a funded position ("$1,461 every
+ * quarter") and tells the monthly view when to mark itself an average, since a
+ * quarterly payer's monthly number is one twelfth of a year rather than a
+ * payment that ever arrives. Null when the copy names no cadence, which leaves
+ * the caller to show the annual figure alone rather than invent a schedule.
+ */
+export function paymentsPerYear(text: string): number | null {
+  const cadence = DISTRIBUTION_CADENCES.find((c) => c.match.test(text));
+  return cadence ? PAYMENTS_A_YEAR[cadence.key] : null;
+}
+
+/** "every quarter" / "üç ayda bir" — how a payment lands, for a funded position. */
+export function paymentCadenceLabel(text: string, lang: Lang): string | null {
+  const cadence = DISTRIBUTION_CADENCES.find((c) => c.match.test(text));
+  if (!cadence) return null;
+  const phrases = {
+    monthly: T(lang, "every month", "her ay"),
+    quarterly: T(lang, "every quarter", "üç ayda bir"),
+    semiannual: T(lang, "every six months", "altı ayda bir"),
+    annual: T(lang, "once a year", "yılda bir"),
+  };
+  return phrases[cadence.key];
+}
+
 /**
  * Investment-term copy → the structure alone. "Open-ended trust; Units offered
  * on a continuous basis" collapses to its lead clause "Open-ended trust" (the

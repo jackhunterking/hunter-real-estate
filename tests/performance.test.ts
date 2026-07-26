@@ -7,7 +7,10 @@ import {
   parsePerformancePercentage,
   parseTargetMidpoint,
   portfolioMonthlyIncome,
+  positionIncome,
+  roundedIncome,
 } from "../lib/capital/performance.ts";
+import { paymentsPerYear } from "../lib/capital/present.ts";
 import type { TrailingReturn } from "../lib/capital/types.ts";
 
 const yr = (en: string, value: string): TrailingReturn => ({ period: { en, tr: en }, value });
@@ -139,4 +142,77 @@ test("portfolio monthly income is null when nothing usable is committed", () => 
   assert.equal(portfolioMonthlyIncome([]), null);
   assert.equal(portfolioMonthlyIncome([{ amount: 0, targetDistribution: "8%", targetReturn: "12%" }]), null);
   assert.equal(portfolioMonthlyIncome([{ amount: 50000, targetDistribution: "Open-ended", targetReturn: "n/a" }]), null);
+});
+
+// The funded position card states cash + growth = target total as a visible
+// sum, so these figures are only correct if they actually add up on screen.
+const LEGACY_DISTRIBUTION = "Up to 8.2% preferential return a year, paid quarterly";
+const LEGACY_RETURN = "12%-15% targeted total annual return";
+const LANKIN_DISTRIBUTION = "7%-8% targeted annualized cash distribution, paid monthly";
+const LANKIN_RETURN = "10%-14% targeted annual net return";
+
+test("position income splits a holding into cash paid out and unrealized growth", () => {
+  const legacy = positionIncome(71250, LEGACY_DISTRIBUTION, LEGACY_RETURN);
+  assert.ok(legacy);
+  // 71,250 × 8.2% and × 13.5%, to the cent.
+  assert.equal(legacy!.annualCash.toFixed(2), "5842.50");
+  assert.equal(legacy!.annualGrowth.toFixed(2), "3776.25");
+  assert.equal(legacy!.annualTotal.toFixed(2), "9618.75");
+  assert.equal(legacy!.hasGrowth, true);
+
+  // No target return published → nothing to add, so the card drops the sum.
+  const cashOnly = positionIncome(50000, "6% annually", null);
+  assert.ok(cashOnly);
+  assert.equal(cashOnly!.annualGrowth, 0);
+  assert.equal(cashOnly!.hasGrowth, false);
+
+  // A distribution above the total return floors growth rather than going negative.
+  const clamped = positionIncome(50000, "9% annually", "7% annually");
+  assert.ok(clamped);
+  assert.equal(clamped!.annualGrowth, 0);
+});
+
+test("position income is null without a published distribution rate", () => {
+  assert.equal(positionIncome(0, LEGACY_DISTRIBUTION, LEGACY_RETURN), null);
+  assert.equal(positionIncome(71250, "Open-ended fund", LEGACY_RETURN), null);
+  assert.equal(positionIncome(71250, null, LEGACY_RETURN), null);
+});
+
+test("rounded income always closes: the total is the sum of its displayed parts", () => {
+  const cases = [
+    { amount: 71250, distribution: LEGACY_DISTRIBUTION, target: LEGACY_RETURN },
+    { amount: 144996.26, distribution: LANKIN_DISTRIBUTION, target: LANKIN_RETURN },
+  ];
+
+  for (const { amount, distribution, target } of cases) {
+    const income = positionIncome(amount, distribution, target);
+    assert.ok(income);
+    for (const divisor of [1, 12] as const) {
+      const { cash, growth, total } = roundedIncome(income!, divisor);
+      assert.equal(cash + growth, total, `${amount} ÷ ${divisor} must add up as displayed`);
+    }
+  }
+
+  // Legacy is the case a naive Math.round gets wrong: 71,250 × 8.2% is exactly
+  // $5,842.50 but evaluates to 5842.4999999999991, which rounds *down* to 5,842
+  // and drags the displayed total to 9,618. Settling on cents first restores it.
+  const legacy = positionIncome(71250, LEGACY_DISTRIBUTION, LEGACY_RETURN)!;
+  assert.equal(Math.round(legacy.annualCash), 5842, "raw float rounds down");
+  assert.deepEqual(roundedIncome(legacy, 1), { cash: 5843, growth: 3776, total: 9619 });
+
+  // Monthly is the annual figure over twelve, matching the portfolio helper.
+  assert.deepEqual(roundedIncome(legacy, 12), { cash: 487, growth: 315, total: 802 });
+
+  const lankin = positionIncome(144996.26, LANKIN_DISTRIBUTION, LANKIN_RETURN)!;
+  assert.deepEqual(roundedIncome(lankin, 1), { cash: 10875, growth: 6525, total: 17400 });
+  assert.deepEqual(roundedIncome(lankin, 12), { cash: 906, growth: 544, total: 1450 });
+});
+
+test("payments per year reads the cadence the distribution copy already states", () => {
+  assert.equal(paymentsPerYear(LEGACY_DISTRIBUTION), 4);
+  assert.equal(paymentsPerYear(LANKIN_DISTRIBUTION), 12);
+  assert.equal(paymentsPerYear("5% paid semi-annually"), 2);
+  // "annualized" inside a rate must not outrank the real cadence beside it.
+  assert.equal(paymentsPerYear("7% annualized, paid monthly"), 12);
+  assert.equal(paymentsPerYear("Open-ended fund"), null);
 });
