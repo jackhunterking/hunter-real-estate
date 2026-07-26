@@ -25,7 +25,9 @@ test("every required statement reaches the reader", () => {
   for (const lang of ["en", "tr"] as const) {
     const copy = ENTRY_DISCLAIMER[lang];
     const body = copy.paragraphs.join(" ");
-    assert.equal(copy.paragraphs.length, 5, `${lang}: five statements are expected`);
+    // Three statements, deliberately: registration, no-offer/no-advice, risk.
+    // Everything else lives behind the disclosure link rather than in the modal.
+    assert.equal(copy.paragraphs.length, 3, `${lang}: three statements are expected`);
 
     // Registration: who is registered, with whom, supervised by whom.
     assert.match(body, /Parvis Investment Services Inc\./, `${lang}: names the dealer`);
@@ -114,8 +116,8 @@ test("wording cannot change without bumping the version", () => {
     .update(JSON.stringify([ENTRY_DISCLAIMER.en.paragraphs, ENTRY_DISCLAIMER.tr.paragraphs]))
     .digest("hex")
     .slice(0, 16);
-  assert.equal(digest, "7834d24441b5fd60", "copy changed — bump ENTRY_DISCLAIMER_VERSION");
-  assert.equal(ENTRY_DISCLAIMER_VERSION, 1);
+  assert.equal(digest, "c0a0a38318e36da1", "copy changed — bump ENTRY_DISCLAIMER_VERSION");
+  assert.equal(ENTRY_DISCLAIMER_VERSION, 2);
 });
 
 test("it is mounted on the advisory surface only", () => {
