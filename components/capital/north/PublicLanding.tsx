@@ -5,7 +5,7 @@
  *
  * This is a thin orchestrator: the marketing narrative lives in
  * `./landing/*` (copy, primitives, mockups, sections). The export name and
- * path are unchanged so `app/hunter-advisory/page.tsx` needs no edits.
+ * path are unchanged so the portal's `page.tsx` needs no edits.
  *
  * Section order is tuned for a cold, mobile Instagram visitor: explain it in
  * plain words → set it against the alternatives (compare) → prove it's real

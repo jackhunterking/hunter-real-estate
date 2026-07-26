@@ -4,15 +4,15 @@ import { useEffect, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react";
-import { HUNTER_ADVISORY_HOSTS } from "@/lib/capital/advisory-domain";
+import { PORTAL_HOSTS } from "@/lib/capital/portal-domain";
 import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
 
-function isHunterAdvisoryRoute(pathname: string, hostname: string) {
+function isPortalRoute(pathname: string, hostname: string) {
   // Paths are locale-prefixed (/en/<portal>, /tr/<portal>, ...); strip a leading
   // locale segment before matching the portal subtree.
   const withoutLocale = pathname.replace(/^\/(tr|en|fr|es)(?=\/|$)/, "");
   return (
-    HUNTER_ADVISORY_HOSTS.has(hostname.toLowerCase()) ||
+    PORTAL_HOSTS.has(hostname.toLowerCase()) ||
     withoutLocale === INVESTMENT_BASE_PATH ||
     withoutLocale.startsWith(`${INVESTMENT_BASE_PATH}/`)
   );
@@ -26,7 +26,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       process.env.NEXT_PUBLIC_POSTHOG_KEY ??
       "phc_na55KbvucPk2mkBLzJhZLepgSNqF7bwTGTXXEhDTE972";
 
-    const sensitivePortal = isHunterAdvisoryRoute(
+    const sensitivePortal = isPortalRoute(
       window.location.pathname,
       window.location.hostname,
     );
@@ -68,7 +68,7 @@ function PostHogPageView() {
 
   useEffect(() => {
     if (!pathname || !ph) return;
-    const sensitivePortal = isHunterAdvisoryRoute(pathname, window.location.hostname);
+    const sensitivePortal = isPortalRoute(pathname, window.location.hostname);
     ph.set_config({
       autocapture: !sensitivePortal,
       disable_session_recording: sensitivePortal,

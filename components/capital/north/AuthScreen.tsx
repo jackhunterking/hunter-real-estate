@@ -7,10 +7,10 @@ import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
 import {
-  advisoryAuthRedirectUrl,
-  advisoryPublicPath,
-  safeAdvisoryNext,
-} from "@/lib/capital/advisory-domain";
+  portalAuthRedirectUrl,
+  portalPublicPath,
+  safePortalNext,
+} from "@/lib/capital/portal-domain";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { TurnstileField } from "@/components/TurnstileField";
@@ -241,7 +241,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
         const path = query.get("path");
         const next = query.get("next");
         if (next) {
-          window.location.assign(safeAdvisoryNext(window.location.hostname, next));
+          window.location.assign(safePortalNext(window.location.hostname, next));
           return;
         }
         if (offering) continuation.set("offering", offering);
@@ -249,7 +249,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
         const destination = continuation.size
           ? `/onboarding?${continuation.toString()}`
           : "/home";
-        window.location.assign(advisoryPublicPath(window.location.hostname, destination));
+        window.location.assign(portalPublicPath(window.location.hostname, destination));
         return;
       }
 
@@ -262,9 +262,9 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
       const next = query.get("next");
       if (offering) onboardingQuery.set("offering", offering);
       if (path === "professional" || path === "investor") onboardingQuery.set("path", path);
-      if (next) onboardingQuery.set("next", safeAdvisoryNext(window.location.hostname, next));
+      if (next) onboardingQuery.set("next", safePortalNext(window.location.hostname, next));
       const onboardingSuffix = `/onboarding${onboardingQuery.size ? `?${onboardingQuery.toString()}` : ""}`;
-      const emailRedirectTo = advisoryAuthRedirectUrl(window.location, onboardingSuffix);
+      const emailRedirectTo = portalAuthRedirectUrl(window.location, onboardingSuffix);
       const result = await client.auth.signUp({
         email,
         password,
@@ -284,7 +284,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
         setError(mappedError(caught));
         return;
       }
-      const redirectTo = advisoryAuthRedirectUrl(window.location, "/onboarding");
+      const redirectTo = portalAuthRedirectUrl(window.location, "/onboarding");
       // Account exists but isn't verified — offer to resend the link.
       if (isEmailConfirmationError(caught)) {
         setPendingConfirmation({ email, redirectTo });
@@ -360,7 +360,7 @@ export function AuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
       setError(c.notConfigured);
       return;
     }
-    const redirectTo = advisoryAuthRedirectUrl(window.location, "/onboarding");
+    const redirectTo = portalAuthRedirectUrl(window.location, "/onboarding");
     setResending(true);
     try {
       // Don't send people to "check your email" if there's nothing to confirm.

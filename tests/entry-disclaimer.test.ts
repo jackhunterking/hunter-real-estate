@@ -121,7 +121,7 @@ test("wording cannot change without bumping the version", () => {
 });
 
 test("it is mounted on the advisory surface only", () => {
-  const advisoryLayout = read("app/[locale]/hunter-advisory/layout.tsx");
+  const advisoryLayout = read("app/[locale]/equity-market/layout.tsx");
   assert.match(advisoryLayout, /<EntryDisclaimer \/>/);
   // The real-estate site is a different business; a securities notice there
   // would misinform rather than protect.

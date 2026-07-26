@@ -1,6 +1,6 @@
 import type { Lang } from "@/lib/i18n/dictionaries";
 
-export const INVESTMENT_BASE_PATH = "/hunter-advisory";
+export const INVESTMENT_BASE_PATH = "/equity-market";
 
 export const PARVIS_RELATIONSHIP = {
   brandName: "Parvis",

@@ -38,7 +38,7 @@ export default function CapitalTeaser() {
   const c = t.capitalTeaser;
 
   return (
-    <section className={styles.section} id="hunter-advisory-teaser">
+    <section className={styles.section} id="equity-market-teaser">
       <div className={styles.media}>
         <Image
           src="/hunter-x-bg.png"

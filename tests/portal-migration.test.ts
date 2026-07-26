@@ -23,17 +23,19 @@ const partnerRedesignMigration = readFileSync(
 );
 
 test("advisory application uses the canonical route tree only", () => {
-  assert.equal(existsSync(resolve(root, "app/[locale]/hunter-advisory/page.tsx")), true);
+  assert.equal(existsSync(resolve(root, "app/[locale]/equity-market/page.tsx")), true);
   assert.equal(existsSync(resolve(root, "app/hunter-north-capital")), false);
   const middleware = readFileSync(resolve(root, "middleware.ts"), "utf8");
   // The prefix has exactly one definition (lib/capital/investment-brand.ts);
   // middleware must derive it rather than re-declare the literal.
-  assert.match(middleware, /const ADVISORY_PREFIX = INVESTMENT_BASE_PATH/);
+  assert.match(middleware, /const PORTAL_PREFIX = INVESTMENT_BASE_PATH/);
   assert.match(
     readFileSync(resolve(root, "lib/capital/investment-brand.ts"), "utf8"),
-    /export const INVESTMENT_BASE_PATH = "\/hunter-advisory"/,
+    /export const INVESTMENT_BASE_PATH = "\/equity-market"/,
   );
-  assert.match(middleware, /const ADVISORY_HOME_URL = "https:\/\/hunterhunteradvisors\.com\/"/);
+  assert.match(middleware, /const PORTAL_ORIGIN = "https:\/\/equitymarket\.io"/);
+  // The retired prefix keeps a 301 rather than disappearing.
+  assert.match(middleware, /RETIRED_PORTAL_PREFIXES = \["\/hunter-advisory"\]/);
   // Legacy /investing is redirected off the locale-stripped path now that routes
   // are locale-prefixed (see stripLocale() in middleware.ts).
   assert.match(middleware, /rest === "\/investing"/);
@@ -159,7 +161,7 @@ test("firm access never becomes referral ownership permission", () => {
   assert.match(referralPolicy, /owner_user_id = \(select auth\.uid\(\)\)/);
   assert.doesNotMatch(referralPolicy, /has_org_role/);
   assert.equal(
-    existsSync(resolve(root, "app/[locale]/hunter-advisory/(portal)/firm/clients")),
+    existsSync(resolve(root, "app/[locale]/equity-market/(portal)/firm/clients")),
     false,
   );
 });

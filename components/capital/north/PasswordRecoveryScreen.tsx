@@ -6,9 +6,9 @@ import { ArrowRight, Eye, EyeOff, LockKeyhole, MailCheck } from "lucide-react";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick } from "@/lib/i18n/localize";
 import {
-  advisoryAuthRedirectUrl,
-  advisoryPublicPath,
-} from "@/lib/capital/advisory-domain";
+  portalAuthRedirectUrl,
+  portalPublicPath,
+} from "@/lib/capital/portal-domain";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { TurnstileField } from "@/components/TurnstileField";
 import { DisclosureBar } from "./DisclosureBar";
@@ -117,7 +117,7 @@ export function PasswordRecoveryScreen({ mode }: { mode: "forgot" | "reset" }) {
     try {
       if (mode === "forgot") {
         const email = String(form.get("email") ?? "").trim();
-        const redirectTo = advisoryAuthRedirectUrl(window.location, "/reset-password");
+        const redirectTo = portalAuthRedirectUrl(window.location, "/reset-password");
         const result = await client.auth.resetPasswordForEmail(email, {
           redirectTo,
           captchaToken,
@@ -135,7 +135,7 @@ export function PasswordRecoveryScreen({ mode }: { mode: "forgot" | "reset" }) {
       if (result.error) throw result.error;
       await client.auth.signOut({ scope: "local" });
       window.location.assign(
-        advisoryPublicPath(window.location.hostname, "/sign-in?message=password-updated"),
+        portalPublicPath(window.location.hostname, "/sign-in?message=password-updated"),
       );
     } catch (caught) {
       const code = typeof caught === "object" && caught && "code" in caught

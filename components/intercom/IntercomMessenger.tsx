@@ -17,7 +17,7 @@ import {
  *
  * Both of Intercom's install modes run together rather than one being chosen:
  * every visitor gets an anonymous messenger (so someone reading
- * /hunter-advisory before signing up can still start a conversation), and once
+ * the portal before signing up can still start a conversation), and once
  * a Supabase session exists the messenger re-boots authenticated, carrying the
  * signed JWT from /api/intercom/identity.
  *

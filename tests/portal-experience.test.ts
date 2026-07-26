@@ -8,14 +8,14 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (path: string) => readFileSync(resolve(root, path), "utf8");
 
 test("fund detail exposes Performance immediately after Overview", () => {
-  const detail = read("app/[locale]/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/[locale]/equity-market/(portal)/products/[slug]/ProductDetailView.tsx");
   const tabIds = [...detail.matchAll(/id: "(overview|performance|buildings|documents)"/g)].map((match) => match[1]);
   assert.deepEqual(tabIds, ["overview", "performance", "buildings", "documents"]);
   assert.doesNotMatch(detail, /id: "(?:money|risk|contact)"/);
 });
 
 test("historical returns live in a dedicated compact Performance view", () => {
-  const detail = read("app/[locale]/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/[locale]/equity-market/(portal)/products/[slug]/ProductDetailView.tsx");
   const overview = detail.match(/function Overview[\s\S]*?\n}\n\ntype LocalizedPerformanceRow/)?.[0] ?? "";
   const performance = detail.match(/function Performance\([\s\S]*?\n}\n\nfunction Buildings/)?.[0] ?? "";
 
@@ -31,7 +31,7 @@ test("historical returns live in a dedicated compact Performance view", () => {
 });
 
 test("published terms stay verbatim and file under the document that sets them out", () => {
-  const detail = read("app/[locale]/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/[locale]/equity-market/(portal)/products/[slug]/ProductDetailView.tsx");
   const ui = read("components/capital/offering-ui.tsx");
   const keyFacts = read("lib/capital/key-facts.ts");
 
@@ -57,7 +57,7 @@ test("dealer compensation never reaches an investor surface", () => {
 });
 
 test("the detail page makes no verification claim of its own", () => {
-  const detail = read("app/[locale]/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/[locale]/equity-market/(portal)/products/[slug]/ProductDetailView.tsx");
 
   // The masthead audit cue is gone entirely — stronger than the rule it used to
   // carry. Nothing on this page asserts that Hunter checked anything: no cue,
@@ -82,7 +82,7 @@ test("the service providers card is a bare role-and-firm list, not a trust badge
 });
 
 test("fund overview replaces oversized metric cards with a lean, trust-oriented flow", () => {
-  const detail = read("app/[locale]/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/[locale]/equity-market/(portal)/products/[slug]/ProductDetailView.tsx");
   const overview = detail.match(/function Overview[\s\S]*?\n}\n\ntype LocalizedPerformanceRow/)?.[0] ?? "";
 
   assert.doesNotMatch(overview, /summaryCards|<StatCard/);
@@ -95,7 +95,7 @@ test("fund overview replaces oversized metric cards with a lean, trust-oriented 
 });
 
 test("fund manager context appears immediately before its service providers", () => {
-  const detail = read("app/[locale]/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/[locale]/equity-market/(portal)/products/[slug]/ProductDetailView.tsx");
   const overview = detail.match(/function Overview[\s\S]*?\n}\n\ntype LocalizedPerformanceRow/)?.[0] ?? "";
   const managerIndex = overview.indexOf("<SectionTitle title={c.aboutManager}");
   const trustIndex = overview.indexOf("<ServiceProvidersCard");
@@ -110,7 +110,7 @@ test("fund manager context appears immediately before its service providers", ()
 
 test("fund cards keep financial and portfolio facts on detail pages only", () => {
   const cardSources = [
-    read("app/[locale]/hunter-advisory/(portal)/products/ProductsExplorer.tsx"),
+    read("app/[locale]/equity-market/(portal)/products/ProductsExplorer.tsx"),
   ];
 
   for (const card of cardSources) {
@@ -120,13 +120,13 @@ test("fund cards keep financial and portfolio facts on detail pages only", () =>
     );
   }
 
-  const detail = read("app/[locale]/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/[locale]/equity-market/(portal)/products/[slug]/ProductDetailView.tsx");
   assert.match(detail, /minimumInvestment/);
   assert.match(detail, /targetReturn/);
 });
 
 test("Discover renders the canonical card rather than a card of its own", () => {
-  const discover = read("app/[locale]/hunter-advisory/(portal)/products/ProductsExplorer.tsx");
+  const discover = read("app/[locale]/equity-market/(portal)/products/ProductsExplorer.tsx");
   const card = read("components/capital/OfferingSummaryCard.tsx");
 
   // Discover builds no card body itself: name, company, imagery, metrics and
@@ -149,7 +149,7 @@ test("Discover renders the canonical card rather than a card of its own", () => 
 });
 
 test("public landing receives only approved offering previews and global documents route returns to investments", () => {
-  const page = read("app/[locale]/hunter-advisory/page.tsx");
+  const page = read("app/[locale]/equity-market/page.tsx");
   const landing = read("components/capital/north/PublicLanding.tsx");
   const projection = read("lib/capital/public-preview.ts");
   // Supabase is the single source: the landing renders only published offerings,
@@ -178,7 +178,7 @@ test("public landing receives only approved offering previews and global documen
   assert.doesNotMatch(projection, /^\s*(?:documents|risks|serviceProviders|complianceProfile):/m);
   assert.match(projection, /audited: Boolean\(offering\.serviceProviders\?\.auditor\)/);
   assert.match(
-    read("app/[locale]/hunter-advisory/(portal)/documents/page.tsx"),
+    read("app/[locale]/equity-market/(portal)/documents/page.tsx"),
     /redirect\(`\$\{INVESTMENT_BASE_PATH\}\/investments`\)/,
   );
 });
@@ -220,7 +220,7 @@ test("the tools hub carries the qualification tool with per-view labels", () => 
 
 test("account view is shared by the sidebar and qualification tool", () => {
   const provider = read("components/capital/north/PortalAccessProvider.tsx");
-  const readiness = read("app/[locale]/hunter-advisory/(portal)/resources/investor-readiness/InvestorReadinessTool.tsx");
+  const readiness = read("app/[locale]/equity-market/(portal)/resources/investor-readiness/InvestorReadinessTool.tsx");
   assert.match(provider, /accountView: PortalAccountView/);
   assert.match(provider, /hnc-account-view/);
   assert.match(readiness, /accountView === "professional"/);
@@ -238,7 +238,7 @@ test("professional account view remains active across personal investing routes"
 });
 
 test("active professionals retain personal investment actions in Discover", () => {
-  const detail = read("app/[locale]/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
+  const detail = read("app/[locale]/equity-market/(portal)/products/[slug]/ProductDetailView.tsx");
   assert.match(detail, /const investor = canUseWorkspace\(context, "investor"\)/);
   // Holding the professional view is not enough on its own — the workspace gate
   // has to agree, so a paused or unapproved professional gets the investor page.

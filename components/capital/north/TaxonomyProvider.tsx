@@ -7,7 +7,7 @@ const TaxonomyContext = createContext<TaxonomySet>(EMPTY_TAXONOMIES);
 
 /**
  * Provides Supabase-sourced classification taxonomies to the client tree.
- * Mounted once in the shared /hunter-advisory layout (covers both the public
+ * Mounted once in the shared portal layout (covers both the public
  * landing and the authenticated portal).
  */
 export function TaxonomyProvider({ value, children }: { value: TaxonomySet; children: ReactNode }) {

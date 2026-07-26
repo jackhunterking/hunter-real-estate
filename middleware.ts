@@ -2,19 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { refreshSupabaseSession } from "@/lib/supabase/middleware";
-import { HUNTER_ADVISORY_HOSTS } from "@/lib/capital/advisory-domain";
+import {
+  PORTAL_HOSTS,
+  RETIRED_PORTAL_HOSTS,
+} from "@/lib/capital/portal-domain";
 import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
 
-// Keep the existing dedicated-domain aliases working while the public brand and
-// canonical application path move to Hunter & Hunter Investment Advisors.
+// The real-estate site's own domains. A legacy capital link on one of these
+// leaves for the portal's dedicated domain rather than resolving in-app.
 const JACK_HOSTS = new Set([
   "jackhunter.com",
   "www.jackhunter.com",
   "jackvetara.com",
   "www.jackvetara.com",
 ]);
-const ADVISORY_PREFIX = INVESTMENT_BASE_PATH;
-const ADVISORY_HOME_URL = "https://hunterhunteradvisors.com/";
+const PORTAL_PREFIX = INVESTMENT_BASE_PATH;
+const PORTAL_ORIGIN = "https://equitymarket.io";
+const PORTAL_HOME_URL = `${PORTAL_ORIGIN}/`;
+
+// Paths the portal used to live under, on the main site. Each 301s to the
+// current prefix with its locale and query string intact.
+const RETIRED_PORTAL_PREFIXES = ["/hunter-advisory"];
 
 // Owns locale negotiation (Accept-Language on first visit), prefix insertion,
 // and the NEXT_LOCALE cookie for the whole site.
@@ -38,17 +46,42 @@ function inheritIntlArtifacts(from: NextResponse, to: NextResponse) {
 
 export async function middleware(request: NextRequest) {
   const host = (request.headers.get("host") ?? "").split(":")[0].toLowerCase();
-  const dedicatedHost = HUNTER_ADVISORY_HOSTS.has(host);
+  const dedicatedHost = PORTAL_HOSTS.has(host);
   const { locale, rest } = stripLocale(request.nextUrl.pathname);
 
+  // --- Retired portal domains ---
+  // Runs before locale negotiation: a request that reaches a former portal
+  // domain leaves for the canonical one immediately, path and query intact, so
+  // the portal is never reachable on two hostnames at once.
+  if (RETIRED_PORTAL_HOSTS.has(host)) {
+    return NextResponse.redirect(
+      new URL(
+        `${request.nextUrl.pathname}${request.nextUrl.search}`,
+        PORTAL_ORIGIN,
+      ),
+      301,
+    );
+  }
+
   // --- Legacy redirects (evaluated on the locale-stripped path) ---
-  // The advisory portal landing page is the canonical marketing entry point;
+  // The portal's former in-app prefix.
+  const retiredPrefix = RETIRED_PORTAL_PREFIXES.find(
+    (prefix) => rest === prefix || rest.startsWith(`${prefix}/`),
+  );
+  if (retiredPrefix) {
+    const suffix = rest.slice(retiredPrefix.length);
+    const destination = request.nextUrl.clone();
+    destination.pathname = `/${locale ?? routing.defaultLocale}${PORTAL_PREFIX}${suffix}`;
+    return NextResponse.redirect(destination, 301);
+  }
+
+  // The portal landing page is the canonical marketing entry point;
   // any legacy /investing link redirects there.
   if (rest === "/investing" || rest.startsWith("/investing/")) {
     const destination = request.nextUrl.clone();
     destination.pathname = locale
-      ? `/${locale}${ADVISORY_PREFIX}`
-      : ADVISORY_PREFIX;
+      ? `/${locale}${PORTAL_PREFIX}`
+      : PORTAL_PREFIX;
     destination.search = "";
     return NextResponse.redirect(destination, 301);
   }
@@ -68,13 +101,13 @@ export async function middleware(request: NextRequest) {
     rest === "/hunter-x-capital" ||
     rest.startsWith("/hunter-x-capital/");
   if (legacyCapitalRequest && !dedicatedHost) {
-    // Dedicated jackhunter.com aliases route to the standalone advisory brand;
-    // every other host resolves to the in-app advisory experience.
+    // Links on the real-estate domains leave for the portal's own domain;
+    // every other host resolves to the in-app portal experience.
     if (JACK_HOSTS.has(host)) {
-      return NextResponse.redirect(new URL(ADVISORY_HOME_URL), 301);
+      return NextResponse.redirect(new URL(PORTAL_HOME_URL), 301);
     }
     const destination = request.nextUrl.clone();
-    destination.pathname = `/${locale ?? routing.defaultLocale}${ADVISORY_PREFIX}`;
+    destination.pathname = `/${locale ?? routing.defaultLocale}${PORTAL_PREFIX}`;
     destination.search = "";
     return NextResponse.redirect(destination, 301);
   }
@@ -87,11 +120,11 @@ export async function middleware(request: NextRequest) {
     return intlResponse;
   }
 
-  const advisoryRequest =
-    rest === ADVISORY_PREFIX || rest.startsWith(`${ADVISORY_PREFIX}/`);
+  const portalRequest =
+    rest === PORTAL_PREFIX || rest.startsWith(`${PORTAL_PREFIX}/`);
 
   // Main-site pages on the main host: next-intl's response is all that's needed.
-  if (!dedicatedHost && !advisoryRequest) {
+  if (!dedicatedHost && !portalRequest) {
     return intlResponse;
   }
 
@@ -99,10 +132,10 @@ export async function middleware(request: NextRequest) {
   // would have redirected above).
   const activeLocale = locale ?? routing.defaultLocale;
 
-  // Keep the dedicated domain clean: an accidental /{locale}/hunter-advisory
+  // Keep the dedicated domain clean: an accidental /{locale}{PORTAL_PREFIX}
   // normalizes back to the clean, locale-prefixed path.
-  if (dedicatedHost && advisoryRequest) {
-    const cleanRest = rest.slice(ADVISORY_PREFIX.length) || "/";
+  if (dedicatedHost && portalRequest) {
+    const cleanRest = rest.slice(PORTAL_PREFIX.length) || "/";
     const destination = request.nextUrl.clone();
     destination.pathname = `/${activeLocale}${cleanRest === "/" ? "" : cleanRest}`;
     return NextResponse.redirect(destination, 307);
@@ -110,10 +143,10 @@ export async function middleware(request: NextRequest) {
 
   // The public path the app logic keys off — locale-stripped, so the existing
   // `startsWith(INVESTMENT_BASE_PATH)` checks in the portal layout keep working.
-  const publicSuffix = advisoryRequest
-    ? rest.slice(ADVISORY_PREFIX.length)
+  const publicSuffix = portalRequest
+    ? rest.slice(PORTAL_PREFIX.length)
     : rest;
-  const portalPath = `${ADVISORY_PREFIX}${publicSuffix === "/" ? "" : publicSuffix}${request.nextUrl.search}`;
+  const portalPath = `${PORTAL_PREFIX}${publicSuffix === "/" ? "" : publicSuffix}${request.nextUrl.search}`;
 
   const forwardedHeaders = new Headers(request.headers);
   forwardedHeaders.set("x-hnc-path", portalPath);
@@ -123,7 +156,7 @@ export async function middleware(request: NextRequest) {
     // Clean path on the dedicated host maps to the locale-prefixed portal route
     // on disk: /{locale}{INVESTMENT_BASE_PATH}/...
     const destination = request.nextUrl.clone();
-    destination.pathname = `/${activeLocale}${ADVISORY_PREFIX}${rest === "/" ? "" : rest}`;
+    destination.pathname = `/${activeLocale}${PORTAL_PREFIX}${rest === "/" ? "" : rest}`;
     response = NextResponse.rewrite(destination, {
       request: { headers: forwardedHeaders },
     });
