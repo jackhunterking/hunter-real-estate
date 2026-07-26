@@ -31,7 +31,7 @@
  *   period figures with the manager's own basis note beside them, never a line.
  */
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import type { OfferingBundle } from "@/lib/capital/types";
 import type { InvestmentApplication } from "@/lib/capital/portal-access";
 import type { AdminUserRow } from "@/lib/capital/admin-server";
@@ -268,6 +268,9 @@ function num(value: number, lang: Lang) {
 
 export type Focus = { type: "vehicle" | "market"; key: string } | null;
 
+/** useLayoutEffect on the client, useEffect on the server — avoids the SSR warning. */
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 export function AssetNetwork({
   offerings,
   investments,
@@ -288,7 +291,10 @@ export function AssetNetwork({
   const [mode, setMode] = useState<TerminalMode>("dark");
 
   // Remember the choice per browser; the console itself has no theme to inherit.
-  useEffect(() => {
+  // Layout effect, not effect: this runs before paint, so a stored "light"
+  // preference does not flash the dark default first. Falls back to useEffect
+  // on the server, where neither runs and the dark default is what renders.
+  useIsomorphicLayoutEffect(() => {
     try {
       const saved = window.localStorage.getItem("hnc-network-mode");
       if (saved === "light" || saved === "dark") setMode(saved);
