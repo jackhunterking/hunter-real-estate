@@ -89,7 +89,36 @@ export interface CarouselSpec {
   slides: SlideSpec[];
 }
 
-export type Spec = BuildingSpec | FactSpec | CompareSpec | PovSpec | CarouselSpec;
+/** One question someone actually asks, answered in a breath. */
+export interface QuestionSpec {
+  kind: "question";
+  art: Art;
+  question: string;
+  answer: string;
+  kicker?: string;
+}
+
+/**
+ * The weekly invitation. Six days of showing earns one day of asking, which is
+ * why this is the only card that carries a call to action.
+ */
+export interface PortalSpec {
+  kind: "portal";
+  art: Art;
+  eyebrow: string;
+  title: string;
+  /** Up to three — what they'll find. More than three reads as a brochure. */
+  items?: string[];
+}
+
+export type Spec =
+  | BuildingSpec
+  | FactSpec
+  | CompareSpec
+  | PovSpec
+  | CarouselSpec
+  | QuestionSpec
+  | PortalSpec;
 
 /* ------------------------------------------------------------------ */
 /* Frame                                                               */
@@ -374,6 +403,85 @@ function povCard(spec: PovSpec, platform: Platform): string {
 }
 
 /* ------------------------------------------------------------------ */
+/* F — Question                                                        */
+/* ------------------------------------------------------------------ */
+
+function questionCard(spec: QuestionSpec, platform: Platform): string {
+  const s = scaler(platform);
+  const cv = CANVAS[platform];
+  const isPhoto = spec.art.kind === "photo";
+
+  const copy = `
+    <div class="eyebrow" style="color:${C.navy}">The question</div>
+    <div class="serif" style="font-size:${s(58)}px;line-height:1.15;margin-top:${s(20)}px">${esc(spec.question)}</div>
+    <div style="width:${s(96)}px;height:${s(3)}px;background:${C.goldDeep};margin:${s(32)}px 0"></div>
+    <div style="font-size:${s(33)}px;line-height:1.5;max-width:${s(860)}px">${esc(spec.answer)}</div>
+    ${spec.kicker ? `<div style="font-size:${s(22)}px;line-height:1.45;margin-top:${s(26)}px;color:${C.inkMuted}">${esc(spec.kicker)}</div>` : ""}`;
+
+  /* A photograph earns a full-bleed band; a figure belongs in the same centred
+     column as the copy, because banding it leaves a dead third at the bottom. */
+  if (isPhoto) {
+    return frame(
+      platform,
+      "cream",
+      `
+      ${artBand(spec.art, platform, "cream", Math.round(cv.h * 0.36))}
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:${s(44)}px ${cv.pad}px ${cv.pad}px">${copy}</div>`,
+      { bleed: true },
+    );
+  }
+
+  return frame(
+    platform,
+    "cream",
+    `<div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      ${renderFigure(spec.art, { tone: "cream", width: cv.w, height: Math.round(cv.h * 0.24) })}
+      <div style="margin-top:${s(56)}px">${copy}</div>
+    </div>`,
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* G — Portal                                                          */
+/* ------------------------------------------------------------------ */
+
+function portalCard(spec: PortalSpec, platform: Platform): string {
+  const s = scaler(platform);
+  const cv = CANVAS[platform];
+  const tick = `<svg width="${s(22)}" height="${s(22)}" viewBox="0 0 24 24" fill="none" stroke="${C.goldLight}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>`;
+
+  return frame(
+    platform,
+    "navy",
+    `<div style="position:relative;width:${cv.w}px;height:${cv.h}px">
+      ${artBand(spec.art, platform, "navy", cv.h, true)}
+      <div style="position:absolute;inset:auto 0 0 0;padding:0 ${cv.pad}px ${cv.pad}px">
+        <div class="eyebrow" style="color:${C.gold}">${esc(spec.eyebrow)}</div>
+        <div class="serif" style="font-size:${s(66)}px;line-height:1.12;margin-top:${s(24)}px">${esc(spec.title)}</div>
+        ${
+          spec.items?.length
+            ? `<div style="margin-top:${s(34)}px;display:flex;flex-direction:column;gap:${s(18)}px">
+                ${spec.items
+                  .slice(0, 3)
+                  .map(
+                    (item) => `<div style="display:flex;gap:${s(16)}px;align-items:flex-start">
+                      <div style="flex:none;margin-top:${s(6)}px">${tick}</div>
+                      <div style="font-size:${s(30)}px;line-height:1.4;color:rgba(244,241,234,0.88)">${esc(item)}</div>
+                    </div>`,
+                  )
+                  .join("")}
+              </div>`
+            : ""
+        }
+        <div style="margin-top:${s(38)}px;display:inline-block;border:${s(2)}px solid ${C.gold};color:${C.gold};
+                    border-radius:999px;padding:${s(18)}px ${s(38)}px;font-size:${s(27)}px;font-weight:700">${esc(SITE_URL)}</div>
+      </div>
+    </div>`,
+    { bleed: true },
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Dispatch                                                            */
 /* ------------------------------------------------------------------ */
 
@@ -400,5 +508,11 @@ export function renderSpec(spec: Spec, platform: Platform): string[] {
     case "carousel":
       spec.slides.forEach((sl, i) => requireArt(`carousel slide ${i + 1}`, sl.art));
       return spec.slides.map((sl, i) => slide(sl, platform, i, spec.slides.length));
+    case "question":
+      requireArt("question card", spec.art);
+      return [questionCard(spec, platform)];
+    case "portal":
+      requireArt("portal card", spec.art);
+      return [portalCard(spec, platform)];
   }
 }

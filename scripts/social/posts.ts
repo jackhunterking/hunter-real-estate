@@ -28,7 +28,8 @@ export interface Post {
   platform: Platform[];
   tier: 1 | 2;
   /** Content pillar — used by `--pillar` and by the caption export. */
-  pillar: "building" | "howitworks" | "compare" | "diligence" | "market" | "pov";
+  /** One slot in the weekly grid — see references/strategy.md in the skill. */
+  pillar: "building" | "howitworks" | "question" | "compare" | "pov" | "portal";
   spec: Spec;
   caption: string;
 }
@@ -39,55 +40,113 @@ export interface Post {
 
 export const POSTS: Post[] = [
   {
-    id: "diligence-address-audit",
+    // Thursday. One question, one answer — the cheapest post to make and the
+    // one that most often earns a profile visit, because it answers what the
+    // reader was already privately wondering.
+    id: "question-own-the-building",
     platform: ["ig", "li"],
     tier: 1,
-    pillar: "diligence",
+    pillar: "question",
     spec: {
-      kind: "fact",
-      // 30 dots, 15 of them filled — the claim, drawn.
-      art: { kind: "dots", total: 30, filled: 15 },
-      eyebrow: "Behind the diligence",
-      value: "15 of 30",
-      label: "addresses were plotted in the wrong place",
-      body: "Before we showed a single building, we geocoded every address in the portfolio against its own paperwork. Half were off by more than 150 metres. One sat 4.7 km from the building it named. All corrected.",
-      source: "Hunter & Hunter address audit · July 2026",
+      kind: "question",
+      art: { kind: "flow", steps: [
+        { label: "The fund owns the building", sub: "Title, mortgage, management" },
+        { label: "You own units of the fund", sub: "A share of everything it owns" },
+      ] },
+      question: "So do I actually own the building, or not?",
+      answer:
+        "You own a share of the company that owns the buildings. That distinction is where every practical difference lives: the rent reaches you, the mortgage never has your name on it, and the 2 a.m. call goes to someone else.",
+      kicker: "Private investments are less liquid than public ones. Capital can be lost.",
     },
-    caption: `We checked 30 addresses. 15 of them were plotted in the wrong place.
+    caption: `"So do I actually own the building, or not?"
 
-Not by a little. One was 2.5 km out. Another 4.7 km. Two buildings that sit next door to each other in real life were 2.3 km apart in the file.
+It's the question I get most, and the honest answer is: you own a share of the company that owns the buildings.
 
-Nobody had done anything wrong on purpose. Coordinates get copied between documents for years and quietly drift. But it means that if you pull a photo of "the building" using those coordinates, you get a photo of some other building entirely — and we found that too: one address that was supposed to be an apartment showed a detached house.
+That sounds like a technicality. It isn't. It's the reason the mortgage never carries your name, the reason a vacancy in one building doesn't wipe out your month, and the reason you aren't the one taking the call when a boiler fails in February.
 
-So we geocoded all 30 against the address on the paperwork, corrected every one that was off by more than 150 metres, and re-pulled the imagery from the corrected point.
+What you give up for that is liquidity. You can't sell it on a Tuesday afternoon the way you sell a stock.
 
-This is the unglamorous half of the job. Nobody asks to see it. But it's the difference between a portfolio you can check and a portfolio you have to take on faith.`,
+That's the trade. Anyone who describes it without the second half is selling you something.`,
   },
 
   {
-    id: "pov-rendering-label",
-    platform: ["li"],
+    // Sunday 26 July 2026 — the launch-week portal post. Angle: the count is
+    // checkable, which is the whole argument. Next week rotates to the
+    // documents angle (portal-everything-one-place, below).
+    id: "portal-39-buildings",
+    platform: ["ig", "li"],
+    tier: 1,
+    pillar: "portal",
+    spec: {
+      kind: "portal",
+      art: { kind: "photo", buildingId: "lankin-riverwood-ottawa" },
+      eyebrow: "Everything in one place",
+      title: "39 buildings. Every one at its own street address.",
+      items: [
+        "A photograph of that exact address — or a labelled rendering",
+        "The offering documents themselves, not a summary",
+        "No call required to look around",
+      ],
+    },
+    caption: `39 buildings. You can look up every single one.
+
+That's what's in the portal right now — 39 buildings across two portfolios, each listed under its own street address, in its own city, with a photograph of that exact address. Where the only image available was an architect's drawing, the card says so.
+
+You can also read the offering documents themselves rather than a summary of them, and you can do all of it without speaking to anyone.
+
+I'd rather you checked the addresses than took my word for them.`,
+  },
+
+  {
+    // Next Sunday's rotation — the documents angle.
+    id: "portal-everything-one-place",
+    platform: ["ig", "li"],
+    tier: 1,
+    pillar: "portal",
+    spec: {
+      kind: "portal",
+      art: { kind: "photo", buildingId: "lankin-huron-heights" },
+      eyebrow: "Everything in one place",
+      title: "Every building. Every document. One login.",
+      items: [
+        "Each building at its real address, with a real photo",
+        "The offering documents themselves — not a summary of them",
+        "No call required to look around",
+      ],
+    },
+    caption: `Most of what gets posted about private real estate is a picture and a promise.
+
+Here's the alternative: a portal where every building in the portfolio is listed at its actual street address, with an actual photograph of that address, and where the offering documents are the documents — not a marketing summary of them.
+
+You can create an account and look around without speaking to anyone. Nothing is unlocked by a phone call.
+
+If it holds up to your reading, that's when a conversation is worth having.`,
+  },
+
+  {
+    // Friday, alternating with the comparison. An opinion post only works if a
+    // reasonable person could disagree with it.
+    id: "pov-concentrated-bet",
+    platform: ["ig", "li"],
     tier: 1,
     pillar: "pov",
     spec: {
       kind: "pov",
-      // The quote is about renderings, so it sits over the one card that IS a
-      // rendering — and is tagged as one.
-      art: { kind: "photo", buildingId: "lankin-park-centre-place" },
-      eyebrow: "A rule we hold",
+      art: { kind: "photo", buildingId: "legacy-3620-23-ave-s" },
+      eyebrow: "An opinion",
       quote:
-        "If the picture is an architect’s drawing, the picture says it’s an architect’s drawing.",
+        "Buying a rental in your own city is the most concentrated bet most people will ever make.",
       attribution: "Jack Hunter",
     },
-    caption: `Three of the building photos we were handed weren't photos.
+    caption: `Buying a rental in your own city is the most concentrated bet most people will ever make. And it's the one nobody calls risky.
 
-Two were architect's renderings. One was a drone shot taken straight down, which tells you the roof exists and nothing else.
+Think about what it actually stacks in one place: one building, one street, one local job market, one set of tenants — bought with borrowed money you personally guaranteed, in the same city where you already own a home and earn your income.
 
-There's no rule that says you have to flag that. Renderings are normal in this industry and everyone uses them. But an investor scrolling a portfolio reads an image as evidence, and a rendering is not evidence — it's an intention.
+If that city's economy softens, it takes your property value, your rent, your tenant's ability to pay, and possibly your job, at the same time.
 
-So we re-shot what we could from street level, and the one building still under construction when the last street-level imagery was taken kept its rendering with "Artist's rendering" printed on the card.
+Nobody would accept that concentration in a stock portfolio. We accept it in real estate because the asset is visible and we can drive past it.
 
-It cost us nothing except a slightly less beautiful page. That seems like a fair trade for a page you can trust.`,
+Visible is not the same as diversified.`,
   },
 
   {
