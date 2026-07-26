@@ -179,3 +179,34 @@ export function fundedInvestorOptions(
     .filter((u) => funded.has(u.userId) && u.userId !== currentUserId)
     .map((u) => ({ id: u.userId, label: u.displayName || u.email }));
 }
+
+/**
+ * A short form for a province, for places where "North Battleford, Saskatchewan"
+ * will not fit — a canvas label beside a node, for instance.
+ *
+ * Falls back to the value as published: an offering outside Canada, or one that
+ * already stores a code, must not be mangled into something that looks official
+ * but is not.
+ */
+const PROVINCE_CODES: Record<string, string> = {
+  alberta: "AB",
+  "british columbia": "BC",
+  manitoba: "MB",
+  "new brunswick": "NB",
+  "newfoundland and labrador": "NL",
+  "northwest territories": "NT",
+  "nova scotia": "NS",
+  nunavut: "NU",
+  ontario: "ON",
+  "prince edward island": "PE",
+  quebec: "QC",
+  "québec": "QC",
+  saskatchewan: "SK",
+  yukon: "YT",
+};
+
+export function provinceCode(province: string): string {
+  if (!province) return "";
+  if (province.length <= 3) return province.toUpperCase();
+  return PROVINCE_CODES[province.trim().toLowerCase()] ?? province;
+}
