@@ -216,6 +216,74 @@ export type MonthlyIncomeBreakdown = {
  * estimate, never a forecast or a promise of income received. Returns null when
  * no holding yields a usable figure, so the caller can render an empty state.
  */
+export type PositionIncome = {
+  annualCash: number;
+  annualGrowth: number;
+  annualTotal: number;
+  /** False when the fund publishes no target return, so there is no growth term. */
+  hasGrowth: boolean;
+};
+
+/**
+ * One holding's forward-looking income, on exactly the basis
+ * `portfolioMonthlyIncome` uses for the whole portfolio: committed amount ×
+ * published target distribution is the cash paid out, × published target return
+ * is the total, and growth is the unrealized remainder.
+ *
+ * Split out per position because the funded card states the relationship as a
+ * visible sum — cash + growth = target total — and a sum on screen has to be
+ * arithmetic the reader can check. Callers must round the two parts and add
+ * them for the total (see `roundedIncome`), never round the total separately.
+ *
+ * Returns null when the fund publishes no distribution rate at all: there is no
+ * cash figure to lead with, so the card falls back to the committed amount
+ * rather than showing a sum with a missing term.
+ */
+export function positionIncome(
+  amount: number,
+  targetDistribution?: string | null,
+  targetReturn?: string | null,
+): PositionIncome | null {
+  if (!(amount > 0)) return null;
+  const distRate = parseTargetMidpoint(targetDistribution ?? "");
+  if (distRate == null) return null;
+
+  const totalRate = parseTargetMidpoint(targetReturn ?? "");
+  const annualCash = amount * (distRate / 100);
+  // Floored at cash so growth is never negative, matching the portfolio helper.
+  const annualTotal = Math.max(totalRate != null ? amount * (totalRate / 100) : annualCash, annualCash);
+  const annualGrowth = annualTotal - annualCash;
+
+  return { annualCash, annualGrowth, annualTotal, hasGrowth: annualGrowth > 0 };
+}
+
+/**
+ * Whole dollars, normalised to cents first.
+ *
+ * A percentage of an amount lands on binary fractions: 71,250 × 8.2% is exactly
+ * $5,842.50, but evaluates to 5842.4999999999991, which `Math.round` takes down
+ * to 5,842. Settling on cents before rounding to dollars restores the half-up
+ * result a reader would get on paper, and costs nothing at these magnitudes.
+ */
+function wholeDollars(value: number): number {
+  return Math.round(Number(value.toFixed(2)));
+}
+
+/**
+ * The three figures as whole dollars for one period — `divisor` is 1 for a year
+ * or 12 for a month.
+ *
+ * The total is the sum of the *rounded* parts, deliberately. Rounding all three
+ * independently can leave the displayed sum a dollar short of its displayed
+ * total, and the card draws a "+" and an "=" beside them, so an off-by-one is a
+ * visible contradiction rather than a rounding detail.
+ */
+export function roundedIncome(income: PositionIncome, divisor: 1 | 12): { cash: number; growth: number; total: number } {
+  const cash = wholeDollars(income.annualCash / divisor);
+  const growth = wholeDollars(income.annualGrowth / divisor);
+  return { cash, growth, total: cash + growth };
+}
+
 export function portfolioMonthlyIncome(
   rows: { amount: number; targetDistribution?: string | null; targetReturn?: string | null }[],
 ): MonthlyIncomeBreakdown | null {
