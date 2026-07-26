@@ -23,8 +23,10 @@ test("historical returns live in a dedicated compact Performance view", () => {
   assert.match(performance, /offering\.trailingReturns/);
   assert.match(performance, /<table className="w-full text-left">/);
   assert.match(performance, /rows\.map\(\(row, index\) =>/);
+  // A published return never appears stripped of the note that qualifies it:
+  // the note is carried onto the row and rendered under the figure.
   assert.match(performance, /tx\(item\.note, lang\)/);
-  assert.match(performance, /trailingReturnsNote/);
+  assert.match(performance, /\{row\.note && /);
   assert.match(performance, /c\.noHistory/);
 });
 
@@ -54,16 +56,16 @@ test("dealer compensation never reaches an investor surface", () => {
   assert.doesNotMatch(deck, /fact\.approval !== "private" && \(!fact\.shareClassId/);
 });
 
-test("the audit cue carries the auditor's own scope, never the Hunter check date", () => {
+test("the detail page makes no verification claim of its own", () => {
   const detail = read("app/[locale]/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
-  const masthead = detail.match(/\{c\.audited\}[\s\S]*?<\/p>/)?.[0] ?? "";
 
-  assert.match(masthead, /serviceProviders\.auditor\.scope/);
-  assert.doesNotMatch(masthead, /verifiedAt/);
-  // Hunter claims nothing of its own here: the section just names the firms
-  // the manager itself names, with no verification wording anywhere.
+  // The masthead audit cue is gone entirely — stronger than the rule it used to
+  // carry. Nothing on this page asserts that Hunter checked anything: no cue,
+  // no check date, no verification wording. The page names the firms the
+  // manager itself names and stops there.
+  assert.doesNotMatch(detail, /c\.audited|verifiedAt|Independently verified|Hunter data check/);
   assert.match(detail, /trust: "Service providers"/);
-  assert.doesNotMatch(detail, /Independently verified|Hunter data check/);
+  assert.match(detail, /providers=\{offering\.serviceProviders\}/);
 });
 
 test("the service providers card is a bare role-and-firm list, not a trust badge", () => {
@@ -123,13 +125,26 @@ test("fund cards keep financial and portfolio facts on detail pages only", () =>
   assert.match(detail, /targetReturn/);
 });
 
-test("Discover cards show the exact offering name, company, and an audited trust cue (no categories)", () => {
+test("Discover renders the canonical card rather than a card of its own", () => {
   const discover = read("app/[locale]/hunter-advisory/(portal)/products/ProductsExplorer.tsx");
-  assert.match(discover, /tx\(offering\.name, lang\)/);
-  assert.match(discover, /tx\(offering\.manager\.name, lang\)/);
-  // Discover is deliberately uncategorized — no strategy/type badge or filter.
-  assert.doesNotMatch(discover, /taxonomyLabel\(strategies/);
-  assert.match(discover, /offering\.serviceProviders\?\.auditor/);
+  const card = read("components/capital/OfferingSummaryCard.tsx");
+
+  // Discover builds no card body itself: name, company, imagery, metrics and
+  // the trust cue all come from the shared card, so the three signed-in
+  // surfaces cannot drift apart. Discover supplies only its own CTA.
+  assert.match(discover, /<OfferingSummaryCard/);
+  assert.match(discover, /\{\.\.\.offeringBundleCardProps\(offering, lang, strategies\)\}/);
+  assert.match(discover, /cta=\{CARD_CTA\.loggedIn\(offering\.slug, lang\)\}/);
+
+  // The full legal name, never a short name — and the trust cue is the presence
+  // of a named auditor, not a badge Hunter awards.
+  assert.match(card, /name: tx\(bundle\.name, lang\)/);
+  assert.match(card, /manager: tx\(bundle\.manager\.name, lang\)/);
+  assert.match(card, /const verified = Boolean\(bundle\.serviceProviders\?\.auditor\)/);
+
+  // Discover stays unfiltered by category: status and sort only. The strategy
+  // badge on the card body is deliberate and shared by every surface.
+  assert.doesNotMatch(discover, /strategyIds|strategyId ===|filter.*strategy/i);
   assert.doesNotMatch(discover, /offering\.fundType|issuerLegalType|Vehicle|Yatırım aracı/);
 });
 
@@ -143,18 +158,25 @@ test("public landing receives only approved offering previews and global documen
   assert.doesNotMatch(page, /getProductDemoOfferings|productDemoOfferings|repository"/);
   assert.doesNotMatch(landing, /getPublishedOfferings|OfferingBundle|repository-server|productDemoOfferings/);
   assert.match(landing, /const displayOfferings = offerings/);
-  assert.match(landing, /offerings=\{displayOfferings\.slice\(0, 2\)\}/);
-  assert.match(landing, /isPreview=\{isPreview\}/);
+  // Every section reads the same gated list — there is no second, ungated path
+  // through the page and no preview mode that widens what a visitor is shown.
+  assert.match(landing, /<Hero[\s\S]{0,120}offerings=\{displayOfferings\}/);
   assert.match(landing, /data\.hasOfferings && <FeaturedOpportunities c=\{c\} offerings=\{displayOfferings\}/);
   assert.match(landing, /hasOfferings=\{data\.hasOfferings\}/);
   assert.match(read("components/capital/north/landing/sections.tsx"), /snap-x snap-mandatory/);
   assert.match(read("components/capital/north/landing/sections.tsx"), /scrollIntoView/);
-  assert.match(read("components/capital/north/landing/sections.tsx"), /onScroll=\{syncViewFromRail\}/);
+  // Swiping the rail and tapping a dot drive the same index in both directions,
+  // so the two controls can never disagree about which card is showing.
+  assert.match(read("components/capital/north/landing/sections.tsx"), /onScroll=\{syncFromScroll\}/);
   assert.doesNotMatch(read("components/capital/north/landing/copy.ts"), /Swipe or tap/);
   assert.match(projection, /approval === "approved-public"/);
   assert.match(projection, /targetReturn: approved\(shareClass\?\.targetReturn\)/);
   assert.match(projection, /performance: offering\.trailingReturns\?\.map/);
-  assert.doesNotMatch(projection, /documents|risks|serviceProviders|complianceProfile/);
+  // None of these fields may leave the portal. Matched as keys of the projected
+  // object, not as bare words: `audited` is the one permitted derivation from
+  // serviceProviders, and it projects a boolean — never the auditor's identity.
+  assert.doesNotMatch(projection, /^\s*(?:documents|risks|serviceProviders|complianceProfile):/m);
+  assert.match(projection, /audited: Boolean\(offering\.serviceProviders\?\.auditor\)/);
   assert.match(read("app/[locale]/hunter-advisory/(portal)/documents/page.tsx"), /hunter-advisory\/investments/);
 });
 
@@ -215,8 +237,13 @@ test("professional account view remains active across personal investing routes"
 test("active professionals retain personal investment actions in Discover", () => {
   const detail = read("app/[locale]/hunter-advisory/(portal)/products/[slug]/ProductDetailView.tsx");
   assert.match(detail, /const investor = canUseWorkspace\(context, "investor"\)/);
-  assert.match(detail, /const professional = accountView === "professional"/);
-  assert.match(detail, /\{investor && <InvestmentRequestButton/);
+  // Holding the professional view is not enough on its own — the workspace gate
+  // has to agree, so a paused or unapproved professional gets the investor page.
+  assert.match(
+    detail,
+    /const professional = accountView === "professional" && canUseWorkspace\(context, "professional"\)/,
+  );
+  assert.match(detail, /\{investor && \([\s\S]{0,160}<InvestmentRequestButton/);
   // Presentation is now surfaced inline in the overview for signed-up users
   // (no separate professional-only /present hero link).
   assert.match(detail, /doc\.type === "presentation"/);

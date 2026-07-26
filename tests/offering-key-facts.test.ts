@@ -119,7 +119,8 @@ test("a fund's own return/distribution wording never rewrites the catalogue labe
   const withFundLabels = {
     ...offering,
     fundDefinedFacts: [
-      ...offering.fundDefinedFacts,
+      // Optional on OfferingBundle, always present on this fixture.
+      ...(offering.fundDefinedFacts ?? []),
       fact({
         id: "fund-total-return",
         category: "target",
