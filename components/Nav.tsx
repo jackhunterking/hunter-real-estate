@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import styles from "./Nav.module.css";
-import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
+import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 
 /* Inline flag glyphs (kept small + simple so they read cleanly at 18×12px) */
 function FlagTR() {

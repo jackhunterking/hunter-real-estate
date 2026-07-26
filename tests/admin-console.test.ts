@@ -8,7 +8,7 @@ import {
   adminSection,
   adminSectionsByGroup,
   isAdminSectionId,
-} from "../lib/capital/admin-sections.ts";
+} from "../lib/equity-market/admin-sections.ts";
 
 const root = join(import.meta.dirname, "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
@@ -77,7 +77,7 @@ test("the retired operations inbox and legacy /admin/* stubs are gone", () => {
 });
 
 test("the console mounts a component for every section in the registry", () => {
-  const console_ = read("components/capital/north/AdminConsole.tsx");
+  const console_ = read("components/equity-market/portal/AdminConsole.tsx");
   for (const section of ADMIN_SECTIONS) {
     if (section.kind === "queue") continue; // rendered by the shared queue branch
     if (section.id === "overview") {
@@ -93,29 +93,29 @@ test("the console mounts a component for every section in the registry", () => {
 });
 
 test("the console is reached from Profile, never from the sidebar", () => {
-  const shell = read("components/capital/north/NorthShell.tsx");
+  const shell = read("components/equity-market/portal/PortalShell.tsx");
   // No rail entry at all: the nav reads the same for staff and investors.
   assert.doesNotMatch(shell, /"\/admin"/);
   assert.doesNotMatch(shell, /"\/operations"/);
 
-  const profile = read("components/capital/north/ProfileView.tsx");
+  const profile = read("components/equity-market/portal/ProfileView.tsx");
   assert.match(profile, /canUseWorkspace\(context, "operations"\)/);
-  assert.match(profile, /\$\{NORTH_BASE\}\/admin/);
+  assert.match(profile, /\$\{INVESTMENT_BASE_PATH\}\/admin/);
   // Gated on the operations workspace, so a non-staff profile never renders it.
   assert.match(profile, /\{staff && \(/);
 
   assert.throws(
-    () => read("components/capital/north/OperationsInbox.tsx"),
+    () => read("components/equity-market/portal/OperationsInbox.tsx"),
     "the retired inbox should have been deleted, not left alongside the console",
   );
 });
 
 test("signing in never lands anyone in the console", () => {
-  assert.doesNotMatch(read("lib/capital/portal-access.ts"), /return "\/admin"/);
+  assert.doesNotMatch(read("lib/equity-market/portal-access.ts"), /return "\/admin"/);
 });
 
 test("admin directory views are read through the admin-gated api views", () => {
-  const server = read("lib/capital/admin-server.ts");
+  const server = read("lib/equity-market/admin-server.ts");
   for (const view of [
     "admin_users",
     "admin_taxonomies",

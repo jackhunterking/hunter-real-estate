@@ -8,7 +8,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (path: string) => readFileSync(resolve(root, path), "utf8");
 
 test("investment brand configuration carries the approved bilingual dealer relationship", () => {
-  const brand = read("lib/capital/investment-brand.ts");
+  const brand = read("lib/equity-market/investment-brand.ts");
   assert.match(brand, /Hunter & Hunter Investment Advisors/);
   assert.doesNotMatch(brand, /Hunter & Hunter Yatırım Danışmanlığı/);
   assert.match(brand, /Jack Hunter/);
@@ -20,7 +20,7 @@ test("investment brand configuration carries the approved bilingual dealer relat
 });
 
 test("all four disclosure levels use the shared bilingual source", () => {
-  const component = read("components/capital/north/DealerDisclosure.tsx");
+  const component = read("components/equity-market/portal/DealerDisclosure.tsx");
   assert.match(component, /"micro" \| "short" \| "transactional" \| "full"/);
   assert.match(component, /copy\.microDisclosure/);
   assert.match(component, /copy\.shortDisclosure/);

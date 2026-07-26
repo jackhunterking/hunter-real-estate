@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { Lang } from "@/lib/capital/types";
+import type { Lang } from "@/lib/equity-market/types";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
@@ -29,7 +29,7 @@ import type {
   InvestorReadinessAnswer,
   InvestorReadinessCriterion,
   InvestorReadinessReviewReason,
-} from "@/lib/capital/types";
+} from "@/lib/equity-market/types";
 import {
   assessCanadianFinancialProfile,
   preliminaryMaximumInvestment,
@@ -37,18 +37,18 @@ import {
   resolveInvestorJurisdiction,
   type InvestorQualificationBands,
   type RegisteredSuitabilityAdvice,
-} from "@/lib/capital/investor-readiness";
-import { canUseWorkspace } from "@/lib/capital/portal-access";
-import { omContextForResult } from "@/lib/capital/ontario-investor-assessment";
-import { READINESS_RULESET } from "@/lib/capital/readiness";
+} from "@/lib/equity-market/investor-readiness";
+import { canUseWorkspace } from "@/lib/equity-market/portal-access";
+import { omContextForResult } from "@/lib/equity-market/ontario-investor-assessment";
+import { READINESS_RULESET } from "@/lib/equity-market/readiness";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
 import { investorTerminology } from "@/lib/i18n/investor-terminology";
-import { useClients } from "@/components/capital/north/ClientProvider";
-import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
-import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider";
-import { PageHeader, Panel } from "@/components/capital/north/PortalUI";
-import { SELF_CHECK_BANDS } from "@/components/capital/north/InvestorSelfCheck";
+import { useClients } from "@/components/equity-market/portal/ClientProvider";
+import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
+import { usePortalAccess } from "@/components/equity-market/portal/PortalAccessProvider";
+import { PageHeader, Panel } from "@/components/equity-market/portal/PortalUI";
+import { SELF_CHECK_BANDS } from "@/components/equity-market/portal/InvestorSelfCheck";
 import {
   Dialog,
   DialogContent,
@@ -461,7 +461,7 @@ export function InvestorReadinessTool() {
   });
 
   function start() {
-    posthog?.capture("hnc_qualification_started", { mode: professionalMode ? "professional" : "investor", language: lang });
+    posthog?.capture("em_qualification_started", { mode: professionalMode ? "professional" : "investor", language: lang });
     setStage("questions");
     setQuestionIndex(0);
   }
@@ -498,7 +498,7 @@ export function InvestorReadinessTool() {
       ? questionIndex === 1
       : questionIndex === 6 ? !adviceQuestionRequired : questionIndex === 7;
     if (lastQuestion) {
-      posthog?.capture("hnc_qualification_completed", { mode: professionalMode ? "professional" : "investor", language: lang });
+      posthog?.capture("em_qualification_completed", { mode: professionalMode ? "professional" : "investor", language: lang });
       setStage("result");
       return;
     }
@@ -578,7 +578,7 @@ export function InvestorReadinessTool() {
         assessor: "Partner professional",
         acknowledgementAt: timestamp,
       });
-      router.push(`${NORTH_BASE}/clients/${clientId}`);
+      router.push(`${INVESTMENT_BASE_PATH}/clients/${clientId}`);
     } catch {
       setSaveStatus("error");
     } finally {
@@ -593,7 +593,7 @@ export function InvestorReadinessTool() {
     />
     {referenceMode && <div className="mx-auto mb-5 flex max-w-3xl flex-col gap-3 rounded-md border border-[#cddce5] bg-[#eef4f7] p-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 size-5 shrink-0 text-[#0a4b72]" /><div><p className="text-sm font-semibold text-[#203f52]">{c.referenceMode}</p><p className="mt-1 text-xs leading-5 text-[#607581]">{c.referenceBody}</p></div></div>
-      {referenceClient && <Link href={`${NORTH_BASE}/clients/${referenceClient.id}`} className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md border border-[#b8cbd6] bg-white px-3 text-xs font-semibold text-[#31566c]"><ArrowLeft className="size-3.5" />{c.backToClient}</Link>}
+      {referenceClient && <Link href={`${INVESTMENT_BASE_PATH}/clients/${referenceClient.id}`} className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md border border-[#b8cbd6] bg-white px-3 text-xs font-semibold text-[#31566c]"><ArrowLeft className="size-3.5" />{c.backToClient}</Link>}
     </div>}
 
     <div className="mx-auto max-w-3xl">
@@ -682,7 +682,7 @@ export function InvestorReadinessTool() {
           <Consent checked={accuracy} onChange={setAccuracy} label={c.accuracy} />
         </div>
         {saveStatus === "error" && <p role="alert" className="rounded-md border border-[#edcec8] bg-[#fbefed] px-3 py-2 text-xs text-[#91483f]">{draft.firstName && draft.lastName && draft.email && permission && accuracy ? c.saveError : c.required}</p>}
-        {duplicateClientId && <div role="alert" className="rounded-md border border-[#eadcb8] bg-[#fbf7eb] p-3 text-sm text-[#685526]"><p className="font-semibold">{c.duplicateTitle}</p><Link href={`${NORTH_BASE}/clients/${duplicateClientId}`} className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#0a4b72]">{c.viewExisting}<ArrowRight className="size-3.5" /></Link></div>}
+        {duplicateClientId && <div role="alert" className="rounded-md border border-[#eadcb8] bg-[#fbf7eb] p-3 text-sm text-[#685526]"><p className="font-semibold">{c.duplicateTitle}</p><Link href={`${INVESTMENT_BASE_PATH}/clients/${duplicateClientId}`} className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#0a4b72]">{c.viewExisting}<ArrowRight className="size-3.5" /></Link></div>}
         <DialogFooter>
           <button type="button" onClick={() => setAddOpen(false)} className="h-10 rounded-md border border-[#d1d9de] px-4 text-sm font-semibold text-[#536570]">{c.cancel}</button>
           <button type="button" onClick={addClient} disabled={saveStatus === "saving"} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-4 text-sm font-semibold text-white disabled:opacity-50"><UserPlus className="size-4" />{c.create}</button>
@@ -846,9 +846,9 @@ function ResultView({ copy, decision, jurisdictionReview, countryLabel, regionLa
         <button type="button" onClick={onGuide} className="inline-flex h-10 items-center gap-2 rounded-md border border-[#d1d9de] bg-white px-4 text-sm font-semibold text-[#536570]"><BookOpen className="size-4" />{copy.guide}</button>
       </div>
       {referenceClientId
-        ? <Link href={`${NORTH_BASE}/clients/${referenceClientId}`} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white"><ArrowLeft className="size-4" />{copy.backToClient}</Link>
+        ? <Link href={`${INVESTMENT_BASE_PATH}/clients/${referenceClientId}`} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white"><ArrowLeft className="size-4" />{copy.backToClient}</Link>
         : selfMode
-          ? <Link href={`${NORTH_BASE}/investments`} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white">{copy.exploreFunds}<ArrowRight className="size-4" /></Link>
+          ? <Link href={`${INVESTMENT_BASE_PATH}/investments`} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white">{copy.exploreFunds}<ArrowRight className="size-4" /></Link>
           : <button type="button" onClick={onAdd} className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#0a2d46] px-5 text-sm font-semibold text-white"><UserPlus className="size-4" />{copy.addClient}</button>}
     </div>
   </div>;

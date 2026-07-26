@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { getPublishedOfferingBySlug } from "@/lib/capital/repository-server";
-import { FundPresentation } from "@/components/capital/north/FundPresentation";
+import { getPublishedOfferingBySlug } from "@/lib/equity-market/repository-server";
+import { FundPresentation } from "@/components/equity-market/portal/FundPresentation";
 
 export const dynamic = "force-dynamic";
 

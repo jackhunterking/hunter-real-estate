@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useT } from "@/lib/i18n/LanguageProvider";
 import { RMA } from "@/lib/mortgage/identity";
 import styles from "./ServicesSection.module.css";
-import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
+import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 
 export default function ServicesSection() {
   const t = useT();

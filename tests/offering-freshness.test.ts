@@ -7,8 +7,8 @@ import {
   PER_PERIOD_FIELDS,
   offeringGapReport,
   scoreOfferingCompleteness,
-} from "../lib/capital/field-catalogue.ts";
-import type { OfferingBundle } from "../lib/capital/types.ts";
+} from "../lib/equity-market/field-catalogue.ts";
+import type { OfferingBundle } from "../lib/equity-market/types.ts";
 
 /**
  * The freshness cycle rests on two pieces of arithmetic and one catalogue.

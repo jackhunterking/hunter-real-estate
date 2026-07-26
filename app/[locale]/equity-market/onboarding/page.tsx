@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { OnboardingFlow } from "@/components/capital/north/OnboardingFlow";
-import { INVESTMENT_BASE_PATH as NORTH_BASE } from "@/lib/capital/investment-brand";
+import { OnboardingFlow } from "@/components/equity-market/portal/OnboardingFlow";
+import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type Search = Promise<{ path?: string; offering?: string; next?: string }>;
@@ -8,15 +8,15 @@ type Search = Promise<{ path?: string; offering?: string; next?: string }>;
 export default async function OnboardingPage({ searchParams }: { searchParams: Search }) {
   const search = await searchParams;
   const supabase = await createSupabaseServerClient();
-  if (!supabase) redirect(`${NORTH_BASE}/sign-in`);
+  if (!supabase) redirect(`${INVESTMENT_BASE_PATH}/sign-in`);
   const claims = await supabase.auth.getClaims();
   const userId = claims.data?.claims?.sub;
-  if (!userId) redirect(`${NORTH_BASE}/sign-in`);
+  if (!userId) redirect(`${INVESTMENT_BASE_PATH}/sign-in`);
 
   // Licensed-partner access is requested separately inside the portal, not
   // through this investor onboarding flow.
   if (search.path === "professional") {
-    redirect(`${NORTH_BASE}/partner/apply`);
+    redirect(`${INVESTMENT_BASE_PATH}/partner/apply`);
   }
 
   const profile = await supabase
@@ -26,11 +26,11 @@ export default async function OnboardingPage({ searchParams }: { searchParams: S
     .maybeSingle();
   if (profile.data?.onboarding_status === "completed") {
     redirect(
-      search.next?.startsWith(`${NORTH_BASE}/`)
+      search.next?.startsWith(`${INVESTMENT_BASE_PATH}/`)
         ? search.next
         : search.offering
-        ? `${NORTH_BASE}/investments/${encodeURIComponent(search.offering)}`
-        : `${NORTH_BASE}/portfolio`,
+        ? `${INVESTMENT_BASE_PATH}/investments/${encodeURIComponent(search.offering)}`
+        : `${INVESTMENT_BASE_PATH}/portfolio`,
     );
   }
 

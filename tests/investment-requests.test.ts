@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { legacyInterestStatus, requestOutcome, requestStage } from "../lib/capital/investment-requests.ts";
+import { legacyInterestStatus, requestOutcome, requestStage } from "../lib/equity-market/investment-requests.ts";
 
 test("investment requests use exactly two user-facing stages", () => {
   assert.equal(requestStage("draft"), "in-review");

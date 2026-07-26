@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { parseOfferingBundle } from "../lib/capital/schema.ts";
+import { parseOfferingBundle } from "../lib/equity-market/schema.ts";
 
 const ROOT = new URL("..", import.meta.url).pathname;
 
@@ -21,11 +21,11 @@ function walk(dir: string): string[] {
 test("no hardcoded fixture or demo modules remain in the app", () => {
   // The deleted modules must be gone.
   for (const gone of [
-    "lib/capital/data.ts",
-    "lib/capital/repository.ts",
-    "lib/capital/portal-demo.ts",
-    "lib/capital/partner-data.ts",
-    "components/capital/OfferingCard.tsx",
+    "lib/equity-market/data.ts",
+    "lib/equity-market/repository.ts",
+    "lib/equity-market/portal-demo.ts",
+    "lib/equity-market/partner-data.ts",
+    "components/equity-market/OfferingCard.tsx",
   ]) {
     assert.equal(existsSync(join(ROOT, gone)), false, `${gone} should be deleted`);
   }
@@ -38,8 +38,8 @@ test("no hardcoded fixture or demo modules remain in the app", () => {
 });
 
 test("offerings are read only from Supabase (no fixture fallback)", () => {
-  const repo = readFileSync(join(ROOT, "lib/capital/repository-server.ts"), "utf8");
-  assert.doesNotMatch(repo, /fixturesAllowed|HNC_USE_FIXTURE_DATA|getFixtureOfferings/);
+  const repo = readFileSync(join(ROOT, "lib/equity-market/repository-server.ts"), "utf8");
+  assert.doesNotMatch(repo, /fixturesAllowed|USE_FIXTURE_DATA|getFixtureOfferings/);
   assert.match(repo, /published_offerings/);
   assert.match(repo, /parseOfferingBundle/);
 });

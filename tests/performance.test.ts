@@ -9,9 +9,9 @@ import {
   portfolioMonthlyIncome,
   positionIncome,
   roundedIncome,
-} from "../lib/capital/performance.ts";
-import { paymentsPerYear } from "../lib/capital/present.ts";
-import type { TrailingReturn } from "../lib/capital/types.ts";
+} from "../lib/equity-market/performance.ts";
+import { paymentsPerYear } from "../lib/equity-market/present.ts";
+import type { TrailingReturn } from "../lib/equity-market/types.ts";
 
 const yr = (en: string, value: string): TrailingReturn => ({ period: { en, tr: en }, value });
 

@@ -1,4 +1,4 @@
-import { AuthorizedHomeRedirect } from "@/components/capital/north/AuthorizedHomeRedirect";
+import { AuthorizedHomeRedirect } from "@/components/equity-market/portal/AuthorizedHomeRedirect";
 
 export default function EquityMarketAuthorizedHomePage() {
   return <AuthorizedHomeRedirect />;

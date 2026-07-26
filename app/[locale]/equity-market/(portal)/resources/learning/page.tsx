@@ -1,5 +1,5 @@
-import { LearningLibrary } from "@/components/capital/north/LearningLibrary";
-import { getPublishedLearningResources } from "@/lib/capital/learning-repository-server";
+import { LearningLibrary } from "@/components/equity-market/portal/LearningLibrary";
+import { getPublishedLearningResources } from "@/lib/equity-market/learning-repository-server";
 
 export default async function LearningCentrePage() {
   const resources = await getPublishedLearningResources();

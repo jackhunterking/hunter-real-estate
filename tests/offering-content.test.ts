@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { parseOfferingBundle } from "../lib/capital/schema.ts";
+import { parseOfferingBundle } from "../lib/equity-market/schema.ts";
 
 /**
  * Golden guard for the offering render contract. Every committed seed bundle

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { CAPITAL_SCHEMA_VERSION } from "@/lib/capital/types";
-import { getPublishedOfferingBySlug } from "@/lib/capital/repository-server";
+import { CAPITAL_SCHEMA_VERSION } from "@/lib/equity-market/types";
+import { getPublishedOfferingBySlug } from "@/lib/equity-market/repository-server";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params; const offering = await getPublishedOfferingBySlug(slug);

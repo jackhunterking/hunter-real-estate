@@ -1,11 +1,11 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { AdminConsole, type OperationsQueueItem } from "@/components/capital/north/AdminConsole";
-import { isAdminSectionId, type AdminSectionId } from "@/lib/capital/admin-sections";
+import { AdminConsole, type OperationsQueueItem } from "@/components/equity-market/portal/AdminConsole";
+import { isAdminSectionId, type AdminSectionId } from "@/lib/equity-market/admin-sections";
 import type { Json } from "@/lib/supabase/database.types";
-import { getPublishedOfferings } from "@/lib/capital/repository-server";
-import { getLearningResourceAdminRows } from "@/lib/capital/learning-admin-server";
-import { getOfferingAdminRows } from "@/lib/capital/offering-admin-server";
-import { loadAdminDirectories } from "@/lib/capital/admin-server";
+import { getPublishedOfferings } from "@/lib/equity-market/repository-server";
+import { getLearningResourceAdminRows } from "@/lib/equity-market/learning-admin-server";
+import { getOfferingAdminRows } from "@/lib/equity-market/offering-admin-server";
+import { loadAdminDirectories } from "@/lib/equity-market/admin-server";
 
 /**
  * The master Admin console. Every read here is admin-gated in SQL, so a

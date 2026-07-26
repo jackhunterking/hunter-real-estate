@@ -19,8 +19,8 @@ const config = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
     files: [
-      "components/capital/map/**/*.ts",
-      "components/capital/map/**/*.tsx",
+      "components/equity-market/map/**/*.ts",
+      "components/equity-market/map/**/*.tsx",
     ],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",

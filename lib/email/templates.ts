@@ -1,4 +1,4 @@
-import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
+import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 
 export type EmailJobTemplate = {
   id: string;

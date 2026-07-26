@@ -26,11 +26,11 @@ test("advisory application uses the canonical route tree only", () => {
   assert.equal(existsSync(resolve(root, "app/[locale]/equity-market/page.tsx")), true);
   assert.equal(existsSync(resolve(root, "app/hunter-north-capital")), false);
   const middleware = readFileSync(resolve(root, "middleware.ts"), "utf8");
-  // The prefix has exactly one definition (lib/capital/investment-brand.ts);
+  // The prefix has exactly one definition (lib/equity-market/investment-brand.ts);
   // middleware must derive it rather than re-declare the literal.
   assert.match(middleware, /const PORTAL_PREFIX = INVESTMENT_BASE_PATH/);
   assert.match(
-    readFileSync(resolve(root, "lib/capital/investment-brand.ts"), "utf8"),
+    readFileSync(resolve(root, "lib/equity-market/investment-brand.ts"), "utf8"),
     /export const INVESTMENT_BASE_PATH = "\/equity-market"/,
   );
   assert.match(middleware, /const PORTAL_ORIGIN = "https:\/\/equitymarket\.io"/);

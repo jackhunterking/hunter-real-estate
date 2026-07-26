@@ -5,8 +5,8 @@ import { refreshSupabaseSession } from "@/lib/supabase/middleware";
 import {
   PORTAL_HOSTS,
   RETIRED_PORTAL_HOSTS,
-} from "@/lib/capital/portal-domain";
-import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
+} from "@/lib/equity-market/portal-domain";
+import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 
 // The real-estate site's own domains. A legacy capital link on one of these
 // leaves for the portal's dedicated domain rather than resolving in-app.
@@ -149,7 +149,7 @@ export async function middleware(request: NextRequest) {
   const portalPath = `${PORTAL_PREFIX}${publicSuffix === "/" ? "" : publicSuffix}${request.nextUrl.search}`;
 
   const forwardedHeaders = new Headers(request.headers);
-  forwardedHeaders.set("x-hnc-path", portalPath);
+  forwardedHeaders.set("x-portal-path", portalPath);
 
   let response: NextResponse;
   if (dedicatedHost) {

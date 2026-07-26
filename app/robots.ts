@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
+import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 
 const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://jackhunter.com"

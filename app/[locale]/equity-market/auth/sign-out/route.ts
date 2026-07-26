@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { portalPublicPath } from "@/lib/capital/portal-domain";
+import { portalPublicPath } from "@/lib/equity-market/portal-domain";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {

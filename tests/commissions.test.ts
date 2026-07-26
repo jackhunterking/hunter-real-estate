@@ -6,7 +6,7 @@ import {
   calculateFundDistributionCommission,
   effectivePartnerBps,
   partnerTierForAnnualClearedCapital,
-} from "../lib/capital/commissions.ts";
+} from "../lib/equity-market/commissions.ts";
 
 test("partner tiers receive 30%, 40%, and 50% of gross fund distribution commission", () => {
   assert.deepEqual(PARTNER_COMMISSION_ALLOCATIONS, {

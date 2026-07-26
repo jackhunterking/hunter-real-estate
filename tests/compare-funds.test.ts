@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { FundComparable, FundPeriod } from "../lib/capital/compare-investments.ts";
-import { toFundComparable } from "../lib/capital/compare-investments.ts";
-import { alignFundPeriods, belowMinimum, inceptionYear } from "../lib/capital/compare-funds.ts";
-import type { OfferingBundle } from "../lib/capital/types.ts";
+import type { FundComparable, FundPeriod } from "../lib/equity-market/compare-investments.ts";
+import { toFundComparable } from "../lib/equity-market/compare-investments.ts";
+import { alignFundPeriods, belowMinimum, inceptionYear } from "../lib/equity-market/compare-funds.ts";
+import type { OfferingBundle } from "../lib/equity-market/types.ts";
 
 function fund(id: string, periods: FundPeriod[], extra: Partial<FundComparable> = {}): FundComparable {
   return {

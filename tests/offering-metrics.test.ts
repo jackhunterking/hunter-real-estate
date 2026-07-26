@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
-import { buildFundDetailViewModel, offeringMetrics, tightRange } from "../lib/capital/present.ts";
-import type { OfferingBundle } from "../lib/capital/types.ts";
+import { buildFundDetailViewModel, offeringMetrics, tightRange } from "../lib/equity-market/present.ts";
+import type { OfferingBundle } from "../lib/equity-market/types.ts";
 
 const t = (en: string) => ({ en, tr: en });
 

@@ -6,8 +6,8 @@ import {
   investedAmount,
   leftover,
   impliedShares,
-} from "../lib/capital/shares.ts";
-import type { OfferingBundle } from "../lib/capital/types.ts";
+} from "../lib/equity-market/shares.ts";
+import type { OfferingBundle } from "../lib/equity-market/types.ts";
 
 /** Minimal bundle carrying just a primary share class unit price. */
 const bundleWithPrice = (value: unknown): OfferingBundle =>

@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildFootprintGallery } from "../lib/capital/landing-gallery.ts";
+import { buildFootprintGallery } from "../lib/equity-market/landing-gallery.ts";
 import type {
   PublicOfferingPreview,
   PublicOfferingPropertyPreview,
-} from "../lib/capital/types.ts";
+} from "../lib/equity-market/types.ts";
 
 const t = (en: string) => ({ en, tr: en });
 

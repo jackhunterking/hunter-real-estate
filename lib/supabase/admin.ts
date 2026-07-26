@@ -16,7 +16,7 @@ export function createSupabaseAdminClient() {
     },
     db: { schema: "api" },
     global: {
-      headers: { "X-Client-Info": "hunter-web-server" },
+      headers: { "X-Client-Info": "equity-market-server" },
     },
   });
 }

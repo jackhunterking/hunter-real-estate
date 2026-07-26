@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { portalRpc } from "@/lib/capital/portal-route";
+import { portalRpc } from "@/lib/equity-market/portal-route";
 
 const Body = z.object({
   investorAccountType: z.enum(["individual", "entity"]),

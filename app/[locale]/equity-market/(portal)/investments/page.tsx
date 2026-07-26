@@ -1,4 +1,4 @@
-import { getPublishedOfferings } from "@/lib/capital/repository-server";
+import { getPublishedOfferings } from "@/lib/equity-market/repository-server";
 import { ProductsExplorer } from "../products/ProductsExplorer";
 
 export default async function EquityMarketInvestmentsPage() {

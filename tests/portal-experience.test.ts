@@ -32,8 +32,8 @@ test("historical returns live in a dedicated compact Performance view", () => {
 
 test("published terms stay verbatim and file under the document that sets them out", () => {
   const detail = read("app/[locale]/equity-market/(portal)/products/[slug]/ProductDetailView.tsx");
-  const ui = read("components/capital/offering-ui.tsx");
-  const keyFacts = read("lib/capital/key-facts.ts");
+  const ui = read("components/equity-market/offering-ui.tsx");
+  const keyFacts = read("lib/equity-market/key-facts.ts");
 
   // The detail page no longer dumps every fund-defined fact into Key facts; the
   // Documents tab renders them under the document they cite.
@@ -47,8 +47,8 @@ test("published terms stay verbatim and file under the document that sets them o
 });
 
 test("dealer compensation never reaches an investor surface", () => {
-  const keyFacts = read("lib/capital/key-facts.ts");
-  const deck = read("components/capital/north/FundPresentation.tsx");
+  const keyFacts = read("lib/equity-market/key-facts.ts");
+  const deck = read("components/equity-market/portal/FundPresentation.tsx");
 
   // The audience gate lives in one place and both investor surfaces use it.
   assert.match(keyFacts, /\(fact\.audience \?\? "investor"\) === "investor"/);
@@ -69,7 +69,7 @@ test("the detail page makes no verification claim of its own", () => {
 });
 
 test("the service providers card is a bare role-and-firm list, not a trust badge", () => {
-  const ui = read("components/capital/offering-ui.tsx");
+  const ui = read("components/equity-market/offering-ui.tsx");
   const card = ui.match(/export function ServiceProvidersCard[\s\S]*?\n}\n/)?.[0] ?? "";
 
   // White like every other section card — not the beige "verified" panel.
@@ -127,7 +127,7 @@ test("fund cards keep financial and portfolio facts on detail pages only", () =>
 
 test("Discover renders the canonical card rather than a card of its own", () => {
   const discover = read("app/[locale]/equity-market/(portal)/products/ProductsExplorer.tsx");
-  const card = read("components/capital/OfferingSummaryCard.tsx");
+  const card = read("components/equity-market/OfferingSummaryCard.tsx");
 
   // Discover builds no card body itself: name, company, imagery, metrics and
   // the trust cue all come from the shared card, so the three signed-in
@@ -150,8 +150,8 @@ test("Discover renders the canonical card rather than a card of its own", () => 
 
 test("public landing receives only approved offering previews and global documents route returns to investments", () => {
   const page = read("app/[locale]/equity-market/page.tsx");
-  const landing = read("components/capital/north/PublicLanding.tsx");
-  const projection = read("lib/capital/public-preview.ts");
+  const landing = read("components/equity-market/portal/PublicLanding.tsx");
+  const projection = read("lib/equity-market/public-preview.ts");
   // Supabase is the single source: the landing renders only published offerings,
   // with no hardcoded demo/fixture fallback.
   assert.match(page, /buildPublicOfferingPreviews\(await getPublishedOfferings\(\)\)/);
@@ -163,12 +163,12 @@ test("public landing receives only approved offering previews and global documen
   assert.match(landing, /<Hero[\s\S]{0,120}offerings=\{displayOfferings\}/);
   assert.match(landing, /data\.hasOfferings && <FeaturedOpportunities c=\{c\} offerings=\{displayOfferings\}/);
   assert.match(landing, /hasOfferings=\{data\.hasOfferings\}/);
-  assert.match(read("components/capital/north/landing/sections.tsx"), /snap-x snap-mandatory/);
-  assert.match(read("components/capital/north/landing/sections.tsx"), /scrollIntoView/);
+  assert.match(read("components/equity-market/portal/landing/sections.tsx"), /snap-x snap-mandatory/);
+  assert.match(read("components/equity-market/portal/landing/sections.tsx"), /scrollIntoView/);
   // Swiping the rail and tapping a dot drive the same index in both directions,
   // so the two controls can never disagree about which card is showing.
-  assert.match(read("components/capital/north/landing/sections.tsx"), /onScroll=\{syncFromScroll\}/);
-  assert.doesNotMatch(read("components/capital/north/landing/copy.ts"), /Swipe or tap/);
+  assert.match(read("components/equity-market/portal/landing/sections.tsx"), /onScroll=\{syncFromScroll\}/);
+  assert.doesNotMatch(read("components/equity-market/portal/landing/copy.ts"), /Swipe or tap/);
   assert.match(projection, /approval === "approved-public"/);
   assert.match(projection, /targetReturn: approved\(shareClass\?\.targetReturn\)/);
   assert.match(projection, /performance: offering\.trailingReturns\?\.map/);
@@ -184,15 +184,15 @@ test("public landing receives only approved offering previews and global documen
 });
 
 test("profile is a permanent sidebar destination instead of an account-popover action", () => {
-  const shell = read("components/capital/north/NorthShell.tsx");
+  const shell = read("components/equity-market/portal/PortalShell.tsx");
   assert.match(shell, /id: "account"[\s\S]*href: "\/profile"/);
-  assert.doesNotMatch(shell, /href=`?\$\{NORTH_BASE\}\/partner\/apply/);
+  assert.doesNotMatch(shell, /href=`?\$\{INVESTMENT_BASE_PATH\}\/partner\/apply/);
   const popover = shell.match(/\{accountOpen && \([\s\S]*?<\/form>[\s\S]*?\)\}/)?.[0] ?? "";
   assert.doesNotMatch(popover, /\/profile|partner\/apply/);
 });
 
 test("Resources is a shared group of two entries: learning and tools", () => {
-  const shell = read("components/capital/north/NorthShell.tsx");
+  const shell = read("components/equity-market/portal/PortalShell.tsx");
   assert.match(shell, /id: "resources"/);
   assert.match(shell, /"\/resources\/learning", "Learning centre"/);
   // The sidebar names the tools group; each tool names itself on its own page.
@@ -203,13 +203,13 @@ test("Resources is a shared group of two entries: learning and tools", () => {
   // own — it only appears as the path that keeps Tools lit.
   assert.doesNotMatch(shell, /Readiness: \["\/resources\/investor-readiness"/);
   assert.match(shell, /items: \[c\.learning, c\.tools\]/);
-  assert.match(shell, /href === "\/resources\/tools" && pathname\.startsWith\(`\$\{NORTH_BASE\}\/resources\/investor-readiness`\)/);
+  assert.match(shell, /href === "\/resources\/tools" && pathname\.startsWith\(`\$\{INVESTMENT_BASE_PATH\}\/resources\/investor-readiness`\)/);
   assert.match(shell, /"\/commissions", "Ödemeler"/);
   assert.match(shell, /professional: \[[\s\S]*?"\/commissions", "Payments"[\s\S]*?\],\n    learning:/);
 });
 
 test("the tools hub carries the qualification tool with per-view labels", () => {
-  const hub = read("components/capital/north/ToolsHub.tsx");
+  const hub = read("components/equity-market/portal/ToolsHub.tsx");
   assert.match(hub, /href: "\/resources\/investor-readiness"/);
   assert.match(hub, /name: "Investor qualification"/);
   assert.match(hub, /name: "Check your investor category"/);
@@ -219,16 +219,16 @@ test("the tools hub carries the qualification tool with per-view labels", () => 
 });
 
 test("account view is shared by the sidebar and qualification tool", () => {
-  const provider = read("components/capital/north/PortalAccessProvider.tsx");
+  const provider = read("components/equity-market/portal/PortalAccessProvider.tsx");
   const readiness = read("app/[locale]/equity-market/(portal)/resources/investor-readiness/InvestorReadinessTool.tsx");
   assert.match(provider, /accountView: PortalAccountView/);
-  assert.match(provider, /hnc-account-view/);
+  assert.match(provider, /em-account-view/);
   assert.match(readiness, /accountView === "professional"/);
   assert.match(readiness, /await saveInvestorAssessment/);
 });
 
 test("professional account view remains active across personal investing routes", () => {
-  const shell = read("components/capital/north/NorthShell.tsx");
+  const shell = read("components/equity-market/portal/PortalShell.tsx");
   assert.match(shell, /investor \? \[\{[\s\S]*id: "investing"/);
   assert.match(shell, /accountView === "professional" && professional/);
   assert.doesNotMatch(
@@ -254,12 +254,12 @@ test("active professionals retain personal investment actions in Discover", () =
 });
 
 test("learning content is Supabase-only with no hardcoded guide in app code", () => {
-  const learning = read("lib/capital/learning.ts");
-  const repo = read("lib/capital/learning-repository-server.ts");
-  const guide = read("components/capital/north/LearningGuide.tsx");
+  const learning = read("lib/equity-market/learning.ts");
+  const repo = read("lib/equity-market/learning-repository-server.ts");
+  const guide = read("components/equity-market/portal/LearningGuide.tsx");
   // No hardcoded guide fixture or fixture fallback remains in the app.
   assert.doesNotMatch(learning, /FLAGSHIP_LEARNING_RESOURCE|Understanding Core, Core-Plus/);
-  assert.doesNotMatch(repo, /fixturesAllowed|FLAGSHIP_LEARNING_RESOURCE|HNC_USE_FIXTURE_DATA/);
+  assert.doesNotMatch(repo, /fixturesAllowed|FLAGSHIP_LEARNING_RESOURCE|USE_FIXTURE_DATA/);
   assert.match(repo, /published_learning_resources/);
   // The guide content is preserved as seed data for provisioning into Supabase.
   const seed = JSON.parse(read("supabase/seed/learning/core-strategies-guide.json"));
@@ -270,8 +270,8 @@ test("learning content is Supabase-only with no hardcoded guide in app code", ()
 });
 
 test("the Admin console exposes controlled learning content to platform admins only", () => {
-  const console_ = read("components/capital/north/AdminConsole.tsx");
-  const manager = read("components/capital/north/LearningContentManager.tsx");
+  const console_ = read("components/equity-market/portal/AdminConsole.tsx");
+  const manager = read("components/equity-market/portal/LearningContentManager.tsx");
   assert.match(console_, /hasPlatformRole\(currentUser, "master_admin"\)/);
   assert.match(console_, /LearningContentManager/);
   assert.match(manager, /Import flagship draft/);
@@ -280,8 +280,8 @@ test("the Admin console exposes controlled learning content to platform admins o
 });
 
 test("the landing comparison table is fully authored in both languages", async () => {
-  const { LANDING_COPY } = await import("../components/capital/north/landing/copy.ts");
-  const sections = read("components/capital/north/landing/sections.tsx");
+  const { LANDING_COPY } = await import("../components/equity-market/portal/landing/copy.ts");
+  const sections = read("components/equity-market/portal/landing/sections.tsx");
 
   // Every row must exist in both languages — the copy file's contract is "no
   // half-translated state", and a missing Turkish row would silently drop a
@@ -290,7 +290,7 @@ test("the landing comparison table is fully authored in both languages", async (
   assert.ok(LANDING_COPY.en.compare.rows.length > 0);
   for (const lang of ["en", "tr"] as const) {
     for (const row of LANDING_COPY[lang].compare.rows) {
-      for (const field of [row.label, row.self, row.hnc, row.markets]) {
+      for (const field of [row.label, row.self, row.portal, row.markets]) {
         assert.ok(field.trim().length > 0, `empty ${lang} comparison cell in "${row.label}"`);
       }
     }

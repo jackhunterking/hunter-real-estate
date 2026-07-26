@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { LearningGuide } from "@/components/capital/north/LearningGuide";
-import { getPublishedLearningResourceBySlug } from "@/lib/capital/learning-repository-server";
+import { LearningGuide } from "@/components/equity-market/portal/LearningGuide";
+import { getPublishedLearningResourceBySlug } from "@/lib/equity-market/learning-repository-server";
 
 export default async function LearningGuidePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

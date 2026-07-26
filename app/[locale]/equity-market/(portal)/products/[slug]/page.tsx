@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
+import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 
 export const dynamic = "force-dynamic";
 

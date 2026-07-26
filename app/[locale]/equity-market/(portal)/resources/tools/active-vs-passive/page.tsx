@@ -1,6 +1,6 @@
-import { getPublishedOfferings } from "@/lib/capital/repository-server";
-import { toFundComparable } from "@/lib/capital/compare-investments";
-import { CompareInvestments } from "@/components/capital/north/CompareInvestments";
+import { getPublishedOfferings } from "@/lib/equity-market/repository-server";
+import { toFundComparable } from "@/lib/equity-market/compare-investments";
+import { CompareInvestments } from "@/components/equity-market/portal/CompareInvestments";
 
 export default async function ActiveVsPassivePage() {
   const offerings = await getPublishedOfferings();

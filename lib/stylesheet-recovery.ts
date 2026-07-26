@@ -23,7 +23,7 @@
  */
 export const STYLESHEET_RECOVERY = `(function(){
   try {
-    var KEY = 'hnc-css-recovered';
+    var KEY = 'em-css-recovered';
     function check() {
       var links = document.querySelectorAll('link[rel="stylesheet"][href]');
       if (!links.length) return;

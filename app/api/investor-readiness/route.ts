@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getPublishedOfferings } from "@/lib/capital/repository-server";
-import { assessOntarioInvestor } from "@/lib/capital/ontario-investor-assessment";
-import { READINESS_RULESET } from "@/lib/capital/readiness";
-import type { InvestorReadinessAnswer, InvestorReadinessCriterion } from "@/lib/capital/types";
+import { getPublishedOfferings } from "@/lib/equity-market/repository-server";
+import { assessOntarioInvestor } from "@/lib/equity-market/ontario-investor-assessment";
+import { READINESS_RULESET } from "@/lib/equity-market/readiness";
+import type { InvestorReadinessAnswer, InvestorReadinessCriterion } from "@/lib/equity-market/types";
 import { deliverEmailJob } from "@/lib/email";
 import { persistPublicSubmission } from "@/lib/public-submissions";
 import { verifyTurnstile } from "@/lib/security/turnstile";

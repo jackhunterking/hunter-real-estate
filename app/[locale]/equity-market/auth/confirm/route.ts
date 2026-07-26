@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   portalPublicPath,
   safePortalNext,
-} from "@/lib/capital/portal-domain";
+} from "@/lib/equity-market/portal-domain";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function requestHostname(request: NextRequest) {

@@ -49,7 +49,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createClient } from "@supabase/supabase-js";
-import type { LocalizedText, OfferingBundle, Property, ShareClass } from "../lib/capital/types.ts";
+import type { LocalizedText, OfferingBundle, Property, ShareClass } from "../lib/equity-market/types.ts";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_WEB_SECRET_KEY;
@@ -515,7 +515,7 @@ function buildBundle(base: OfferingBundle, photoPaths: Map<string, string>): Off
       // fund under securities law, however it qualifies as a "mutual fund trust"
       // under the Tax Act. This flag is the securities-law meaning, and it is
       // what gates the offering-memorandum exemption route in
-      // lib/capital/ontario-investor-assessment.ts — that route is unavailable
+      // lib/equity-market/ontario-investor-assessment.ts — that route is unavailable
       // to investment funds, so the previous `true` was suppressing it wrongly.
       isInvestmentFund: false,
       // `approvedOntarioExemptions` and `reviewedAt` are DELIBERATELY untouched.

@@ -1,18 +1,18 @@
 // Synthetic personas + dataset used ONLY by access-control unit tests. This is
 // test scaffolding, not app runtime content — the app reads all data from
-// Supabase. Recovered from the former lib/capital/portal-demo.ts.
+// Supabase. Recovered from the former lib/equity-market/portal-demo.ts.
 import type {
   PortalDataset,
   PortalUser,
   PreviewPersona,
-} from "../../lib/capital/portal-access.ts";
+} from "../../lib/equity-market/portal-access.ts";
 
 export const DEMO_PERSONA_USER_IDS: Record<PreviewPersona, string> = {
   investor: "demo-investor",
   applicant: "demo-applicant",
   partner: "demo-partner",
   "firm-admin": "demo-firm-admin",
-  "hnc-admin": "demo-hnc-admin",
+  "platform-admin": "demo-platform-admin",
 };
 
 const users: PortalUser[] = [
@@ -78,7 +78,7 @@ const users: PortalUser[] = [
     platformRoles: [],
   },
   {
-    id: DEMO_PERSONA_USER_IDS["hnc-admin"],
+    id: DEMO_PERSONA_USER_IDS["platform-admin"],
     firstName: "Jack",
     lastName: "Hunter",
     displayName: "Jack Hunter",
@@ -226,7 +226,7 @@ export const initialPortalDataset: PortalDataset = {
       returnedLicenceTypes: ["Sermaye Piyasası Faaliyetleri Düzey 1"],
       returnedStatus: "Aktif",
       renewalInformation: "Yenileme eğitimi güncel",
-      reviewerId: DEMO_PERSONA_USER_IDS["hnc-admin"],
+      reviewerId: DEMO_PERSONA_USER_IDS["platform-admin"],
       reviewerName: "Jack Hunter",
       reviewerNotes: "Licence and registry surname matched the public SPL result.",
       verifiedAt: "2026-01-09T14:00:00.000Z",
@@ -355,7 +355,7 @@ export const initialPortalDataset: PortalDataset = {
     },
     {
       id: "audit-2",
-      actorUserId: DEMO_PERSONA_USER_IDS["hnc-admin"],
+      actorUserId: DEMO_PERSONA_USER_IDS["platform-admin"],
       action: "license_verification.queued",
       entityType: "partner_application",
       entityId: "application-mert",

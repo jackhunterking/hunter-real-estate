@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getPublishedOfferingBySlug } from "@/lib/capital/repository-server";
+import { getPublishedOfferingBySlug } from "@/lib/equity-market/repository-server";
 import { ProductDetailView } from "../../products/[slug]/ProductDetailView";
 
 export const dynamic = "force-dynamic";

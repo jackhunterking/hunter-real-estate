@@ -1,6 +1,6 @@
-import { PublicLanding } from "@/components/capital/north/PublicLanding";
-import { buildPublicOfferingPreviews } from "@/lib/capital/public-preview";
-import { getPublishedOfferings } from "@/lib/capital/repository-server";
+import { PublicLanding } from "@/components/equity-market/portal/PublicLanding";
+import { buildPublicOfferingPreviews } from "@/lib/equity-market/public-preview";
+import { getPublishedOfferings } from "@/lib/equity-market/repository-server";
 
 export const dynamic = "force-dynamic";
 

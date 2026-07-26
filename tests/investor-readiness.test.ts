@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { InvestorReadinessAnswer, InvestorReadinessCriterion } from "../lib/capital/types.ts";
+import type { InvestorReadinessAnswer, InvestorReadinessCriterion } from "../lib/equity-market/types.ts";
 import {
   assessCanadianFinancialProfile,
   assessInvestorReadiness,
@@ -10,11 +10,11 @@ import {
   preliminaryMaximumInvestment,
   qualificationBandsToReadinessAnswers,
   resolveInvestorJurisdiction,
-} from "../lib/capital/investor-readiness.ts";
-import { assessOntarioInvestor } from "../lib/capital/ontario-investor-assessment.ts";
-import { READINESS_RULESET } from "../lib/capital/readiness-rules.ts";
+} from "../lib/equity-market/investor-readiness.ts";
+import { assessOntarioInvestor } from "../lib/equity-market/ontario-investor-assessment.ts";
+import { READINESS_RULESET } from "../lib/equity-market/readiness-rules.ts";
 import { en, tr } from "../lib/i18n/dictionaries.ts";
-import type { OfferingComplianceProfile } from "../lib/capital/types.ts";
+import type { OfferingComplianceProfile } from "../lib/equity-market/types.ts";
 
 function answers(
   criteria: readonly InvestorReadinessCriterion[],

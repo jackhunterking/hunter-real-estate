@@ -4,8 +4,8 @@ import { useEffect, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react";
-import { PORTAL_HOSTS } from "@/lib/capital/portal-domain";
-import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
+import { PORTAL_HOSTS } from "@/lib/equity-market/portal-domain";
+import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 
 function isPortalRoute(pathname: string, hostname: string) {
   // Paths are locale-prefixed (/en/<portal>, /tr/<portal>, ...); strip a leading

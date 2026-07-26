@@ -7,7 +7,7 @@ import {
   portalPublicPath,
   isPortalHost,
   safePortalNext,
-} from "../lib/capital/portal-domain.ts";
+} from "../lib/equity-market/portal-domain.ts";
 
 test("the portal has exactly one canonical host", () => {
   assert.equal(isPortalHost("www.equitymarket.io"), true);

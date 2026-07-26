@@ -1,10 +1,10 @@
-import { NorthShell } from "@/components/capital/north/NorthShell";
-import { ClientProvider } from "@/components/capital/north/ClientProvider";
-import { PortalAccessProvider } from "@/components/capital/north/PortalAccessProvider";
+import { PortalShell } from "@/components/equity-market/portal/PortalShell";
+import { ClientProvider } from "@/components/equity-market/portal/ClientProvider";
+import { PortalAccessProvider } from "@/components/equity-market/portal/PortalAccessProvider";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { loadPortalSnapshot } from "@/lib/capital/portal-server";
-import { PROFESSIONAL_WORKSPACE_ENABLED } from "@/lib/capital/feature-flags";
-import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
+import { loadPortalSnapshot } from "@/lib/equity-market/portal-server";
+import { PROFESSIONAL_WORKSPACE_ENABLED } from "@/lib/equity-market/feature-flags";
+import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
@@ -40,7 +40,7 @@ export default async function EquityMarketPortalLayout({ children }: { children:
   // investor home. Runs independent of the auth branch so it also applies in
   // dev preview mode. Removing the flag restores every route.
   if (!PROFESSIONAL_WORKSPACE_ENABLED) {
-    const requestedPath = (await headers()).get("x-hnc-path") ?? "";
+    const requestedPath = (await headers()).get("x-portal-path") ?? "";
     if (isPausedMiddleLayerPath(requestedPath)) {
       redirect(`${INVESTMENT_BASE_PATH}/portfolio`);
     }
@@ -50,9 +50,11 @@ export default async function EquityMarketPortalLayout({ children }: { children:
   const snapshot = configured ? await loadPortalSnapshot() : null;
   const requireAuth =
     process.env.NODE_ENV === "production" ||
-    process.env.HNC_REQUIRE_AUTH === "true";
+    // HNC_REQUIRE_AUTH is the previous name; read both until the Vercel
+    // environment is cut over, then drop the fallback.
+    (process.env.PORTAL_REQUIRE_AUTH ?? process.env.HNC_REQUIRE_AUTH) === "true";
   if (requireAuth && (!configured || !snapshot)) {
-    const requestedPath = (await headers()).get("x-hnc-path");
+    const requestedPath = (await headers()).get("x-portal-path");
     const next = requestedPath?.startsWith(`${INVESTMENT_BASE_PATH}/`) ? `?next=${encodeURIComponent(requestedPath)}` : "";
     redirect(`${INVESTMENT_BASE_PATH}/sign-in${next}`);
   }
@@ -68,7 +70,7 @@ export default async function EquityMarketPortalLayout({ children }: { children:
       backendConfigured={Boolean(snapshot)}
     >
       <ClientProvider>
-        <NorthShell>{children}</NorthShell>
+        <PortalShell>{children}</PortalShell>
       </ClientProvider>
     </PortalAccessProvider>
   );

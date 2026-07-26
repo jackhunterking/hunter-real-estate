@@ -1,24 +1,24 @@
-.hnc-root {
-  --hnc-navy: #071c2c;
-  --hnc-blue: #0a2d46;
-  --hnc-gold: #c5a34d;
+.em-root {
+  --em-navy: #071c2c;
+  --em-blue: #0a2d46;
+  --em-gold: #c5a34d;
   color-scheme: light;
 }
 
-.hnc-root :where(a, button, input, select, textarea):focus-visible {
-  outline: 2px solid var(--hnc-gold);
+.em-root :where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--em-gold);
   outline-offset: 2px;
 }
 
-.hnc-root ::selection {
+.em-root ::selection {
   background: #e5d19b;
-  color: var(--hnc-navy);
+  color: var(--em-navy);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hnc-root *,
-  .hnc-root *::before,
-  .hnc-root *::after {
+  .em-root *,
+  .em-root *::before,
+  .em-root *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }

@@ -5,7 +5,7 @@
  * The seeds under supabase/seed/offerings/*.json are the same input
  * `scripts/seed-content.ts` pushes through `api.seed_offering`, and each
  * property carries a `media.card` Storage reference. We resolve that reference
- * to the public `offering-public` URL exactly the way `lib/capital/asset-url.ts`
+ * to the public `offering-public` URL exactly the way `lib/equity-market/asset-url.ts`
  * does at read time — so the photo on a post is the photo on the site.
  *
  * Honesty rule (see the building-card memory): a card shows the photo of that

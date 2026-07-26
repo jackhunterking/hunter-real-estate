@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { TaxonomyProvider } from "@/components/capital/north/TaxonomyProvider";
-import { LangBoundary } from "@/components/capital/north/LangBoundary";
-import { EntryDisclaimer } from "@/components/capital/north/EntryDisclaimer";
-import { getTaxonomies } from "@/lib/capital/taxonomies-server";
+import { TaxonomyProvider } from "@/components/equity-market/portal/TaxonomyProvider";
+import { LangBoundary } from "@/components/equity-market/portal/LangBoundary";
+import { EntryDisclaimer } from "@/components/equity-market/portal/EntryDisclaimer";
+import { getTaxonomies } from "@/lib/equity-market/taxonomies-server";
 import "./portal.css";
 
 export const metadata: Metadata = {

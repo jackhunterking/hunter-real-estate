@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { HncLegal } from "@/components/capital/north/HncLegal";
+import { LegalDisclosures } from "@/components/equity-market/portal/LegalDisclosures";
 
 export const metadata: Metadata = {
   title: "Legal Information | Hunter & Hunter Investment Advisors",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function EquityMarketLegalPage() {
-  return <HncLegal />;
+  return <LegalDisclosures />;
 }

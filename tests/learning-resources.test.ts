@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { learningSummary, type LearningResourceDetail } from "../lib/capital/learning.ts";
-import { estimateReadingMinutes, LearningDraftSchema } from "../lib/capital/learning-schema.ts";
+import { learningSummary, type LearningResourceDetail } from "../lib/equity-market/learning.ts";
+import { estimateReadingMinutes, LearningDraftSchema } from "../lib/equity-market/learning-schema.ts";
 
 const SAMPLE_RESOURCE: LearningResourceDetail = {
   id: "sample",

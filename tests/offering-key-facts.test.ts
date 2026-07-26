@@ -6,13 +6,13 @@ import {
   documentTermGroups,
   factsForDocument,
   investorFacts,
-} from "../lib/capital/key-facts.ts";
+} from "../lib/equity-market/key-facts.ts";
 import type {
   FundDefinedFact,
   OfferingBundle,
   OfferingDocument,
   ShareClass,
-} from "../lib/capital/types.ts";
+} from "../lib/equity-market/types.ts";
 
 const t = (en: string) => ({ en, tr: en });
 

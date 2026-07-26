@@ -7,7 +7,7 @@
  * PNG, so it must not silently change hue when the site theme is retuned.
  * When you retune the site, retune here deliberately.
  *
- * The disclosure strings mirror `lib/capital/investment-brand.ts` — every card
+ * The disclosure strings mirror `lib/equity-market/investment-brand.ts` — every card
  * carries the same one-line registration that `DisclosureBar` shows on screen.
  */
 import { readFileSync } from "node:fs";

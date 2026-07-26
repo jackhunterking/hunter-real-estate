@@ -12,8 +12,8 @@ import {
   type PortalAccessContext,
   type PortalDataset,
   type PortalWorkspace,
-} from "../lib/capital/portal-access.ts";
-import { PROFESSIONAL_WORKSPACE_ENABLED } from "../lib/capital/feature-flags.ts";
+} from "../lib/equity-market/portal-access.ts";
+import { PROFESSIONAL_WORKSPACE_ENABLED } from "../lib/equity-market/feature-flags.ts";
 import {
   DEMO_PERSONA_USER_IDS,
   demoUserForPersona,
@@ -154,7 +154,7 @@ test("commission visibility follows the beneficiary instead of the firm associat
 });
 
 test("master admins can open every workspace, but that is visibility only — not partner status", () => {
-  const admin = context("hnc-admin");
+  const admin = context("platform-admin");
   // Changed deliberately: admins previously saw Operations alone and needed a
   // separate approval to open the investor or professional workspaces. Staff
   // now see all three, because operating the platform means being able to see
@@ -176,11 +176,11 @@ test("master admins can open every workspace, but that is visibility only — no
 });
 
 test("a suspended or unverified account opens nothing, even with the master admin role", () => {
-  const suspended = context("hnc-admin");
+  const suspended = context("platform-admin");
   suspended.user = { ...suspended.user, accountStatus: "suspended" };
   assert.deepEqual(availableWorkspaces(suspended), []);
 
-  const unverified = context("hnc-admin");
+  const unverified = context("platform-admin");
   unverified.user = { ...unverified.user, emailVerified: false };
   assert.deepEqual(availableWorkspaces(unverified), []);
 });
@@ -190,13 +190,13 @@ test("investor qualification is available to verified investors and active profe
   assert.equal(canAccessPath(context("investor"), "/equity-market/resources/investor-readiness"), true);
   assert.equal(canAccessPath(context("applicant"), "/equity-market/resources/investor-readiness"), true);
   // Staff can open it too, now that master admins hold every workspace.
-  assert.equal(canAccessPath(context("hnc-admin"), "/equity-market/resources/investor-readiness"), true);
+  assert.equal(canAccessPath(context("platform-admin"), "/equity-market/resources/investor-readiness"), true);
 });
 
 test("all resource routes are shared by investors and active professionals", () => {
   assert.equal(canAccessPath(context("investor"), "/equity-market/resources/learning"), true);
   assert.equal(canAccessPath(context("partner"), "/equity-market/resources/learning/core-strategies"), true);
-  assert.equal(canAccessPath(context("hnc-admin"), "/equity-market/resources/learning"), true);
+  assert.equal(canAccessPath(context("platform-admin"), "/equity-market/resources/learning"), true);
 });
 
 test("the Admin console is closed to everyone without the operations workspace", () => {
@@ -212,10 +212,10 @@ test("nobody lands in the console — staff open it from Profile", () => {
   // While the middle layer is paused everyone lands in /portfolio; the point
   // that holds either way is that no one is dropped into /admin by signing in.
   const professionalLanding = PROFESSIONAL_WORKSPACE_ENABLED ? "/professional" : "/portfolio";
-  assert.equal(defaultPortalPath(context("hnc-admin")), professionalLanding);
+  assert.equal(defaultPortalPath(context("platform-admin")), professionalLanding);
   assert.equal(defaultPortalPath(context("partner")), professionalLanding);
   assert.equal(defaultPortalPath(context("investor")), "/portfolio");
-  for (const persona of ["hnc-admin", "partner", "investor"] as const) {
+  for (const persona of ["platform-admin", "partner", "investor"] as const) {
     assert.doesNotMatch(defaultPortalPath(context(persona)), /admin|operations/);
   }
 });

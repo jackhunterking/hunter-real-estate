@@ -1,17 +1,17 @@
 "use client";
 
 import { Search } from "lucide-react";
-import type { Lang, Offering, OfferingBundle } from "@/lib/capital/types";
+import type { Lang, Offering, OfferingBundle } from "@/lib/equity-market/types";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
-import { useTaxonomies } from "@/components/capital/north/TaxonomyProvider";
-import { PageHeader, Panel } from "@/components/capital/north/PortalUI";
+import { useTaxonomies } from "@/components/equity-market/portal/TaxonomyProvider";
+import { PageHeader, Panel } from "@/components/equity-market/portal/PortalUI";
 import {
   OfferingSummaryCard,
   offeringBundleCardProps,
   CARD_CTA,
-} from "@/components/capital/OfferingSummaryCard";
-import { useFundFilters } from "@/components/capital/north/useFundFilters";
+} from "@/components/equity-market/OfferingSummaryCard";
+import { useFundFilters } from "@/components/equity-market/portal/useFundFilters";
 
 const COPY = {
   tr: {

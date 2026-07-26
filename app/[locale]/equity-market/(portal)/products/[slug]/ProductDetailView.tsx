@@ -3,21 +3,21 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Building2, ChevronRight, ExternalLink, FileText, MapPinned, TrendingUp } from "lucide-react";
-import type { FundCommissionSchedule, Lang, OfferingBundle, ShareClass, TrailingReturn } from "@/lib/capital/types";
-import { formatCurrencyCad, primaryShareClass } from "@/lib/capital/present";
-import { calendarYearReturns } from "@/lib/capital/performance";
-import { buildEssentialKeyFacts, documentTermGroups } from "@/lib/capital/key-facts";
-import { riskLevel, tightDistribution, tightRange, tightTerm } from "@/components/capital/OfferingSummaryCard";
-import { taxonomyLabel } from "@/lib/capital/taxonomies";
-import { useTaxonomies } from "@/components/capital/north/TaxonomyProvider";
+import type { FundCommissionSchedule, Lang, OfferingBundle, ShareClass, TrailingReturn } from "@/lib/equity-market/types";
+import { formatCurrencyCad, primaryShareClass } from "@/lib/equity-market/present";
+import { calendarYearReturns } from "@/lib/equity-market/performance";
+import { buildEssentialKeyFacts, documentTermGroups } from "@/lib/equity-market/key-facts";
+import { riskLevel, tightDistribution, tightRange, tightTerm } from "@/components/equity-market/OfferingSummaryCard";
+import { taxonomyLabel } from "@/lib/equity-market/taxonomies";
+import { useTaxonomies } from "@/components/equity-market/portal/TaxonomyProvider";
 import { useLang } from "@/lib/i18n/LanguageProvider";
 import { pick, tx } from "@/lib/i18n/localize";
-import { FundMapEmbed } from "@/components/capital/map/FundMapEmbed";
-import { InvestmentRequestButton } from "@/components/capital/north/InvestmentRequestButton";
-import { NORTH_BASE } from "@/components/capital/north/NorthBrand";
-import { Panel } from "@/components/capital/north/PortalUI";
-import { usePortalAccess } from "@/components/capital/north/PortalAccessProvider";
-import { canUseWorkspace } from "@/lib/capital/portal-access";
+import { FundMapEmbed } from "@/components/equity-market/map/FundMapEmbed";
+import { InvestmentRequestButton } from "@/components/equity-market/portal/InvestmentRequestButton";
+import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
+import { Panel } from "@/components/equity-market/portal/PortalUI";
+import { usePortalAccess } from "@/components/equity-market/portal/PortalAccessProvider";
+import { canUseWorkspace } from "@/lib/equity-market/portal-access";
 import {
   DocumentTermsDisclosure,
   type KeyFact,
@@ -25,7 +25,7 @@ import {
   PerformanceIncomeCalculator,
   PresentationCard,
   ServiceProvidersCard,
-} from "@/components/capital/offering-ui";
+} from "@/components/equity-market/offering-ui";
 
 type Tab = "overview" | "performance" | "buildings" | "documents";
 
@@ -86,7 +86,7 @@ function usePublishedFundCommissionValue(offeringId: string, enabled: boolean, l
 
     let active = true;
     setCommission("");
-    fetch(`/api/hnc-fund-commission-schedules?offeringId=${encodeURIComponent(offeringId)}`, { cache: "no-store" })
+    fetch(`/api/portal-fund-commission-schedules?offeringId=${encodeURIComponent(offeringId)}`, { cache: "no-store" })
       .then(async (response) => {
         const result = await response.json() as { data?: FundCommissionSchedule[] };
         if (!response.ok) throw new Error("Schedule unavailable");
@@ -123,7 +123,7 @@ function Overview({ offering, share, professional }: { offering: OfferingBundle;
   const commission = usePublishedFundCommissionValue(offering.id, professional, lang);
   const companyLogo = offering.media?.logo;
 
-  // Key facts is a fixed list of eight — see lib/capital/key-facts.ts for why
+  // Key facts is a fixed list of eight — see lib/equity-market/key-facts.ts for why
   // the fund's other published terms live under their document instead. The
   // ninth row is Hunter's OWN published schedule, shown only to an active
   // professional: it is what the advisor is paid, not a fund disclosure.
@@ -378,7 +378,7 @@ export function ProductDetailView({ offering }: { offering: OfferingBundle }) {
 
   return (
     <div>
-      <Link href={`${NORTH_BASE}/investments`} className="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"><ArrowLeft className="size-3.5" />{c.back}</Link>
+      <Link href={`${INVESTMENT_BASE_PATH}/investments`} className="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"><ArrowLeft className="size-3.5" />{c.back}</Link>
       {/* Masthead: identity over the banner, then a frosted strip carrying the
           three figures that decide interest (target return, AUM, risk) so the
           photograph and the numbers read as one object. Remaining terms and the

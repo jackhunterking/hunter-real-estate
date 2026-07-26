@@ -8,8 +8,8 @@ import {
   ENTRY_DISCLAIMER_EXIT_URL,
   ENTRY_DISCLAIMER_VERSION,
   entryDisclaimerFor,
-} from "../lib/capital/entry-disclaimer.ts";
-import { PARVIS_RELATIONSHIP } from "../lib/capital/investment-brand.ts";
+} from "../lib/equity-market/entry-disclaimer.ts";
+import { PARVIS_RELATIONSHIP } from "../lib/equity-market/investment-brand.ts";
 
 const root = join(import.meta.dirname, "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
@@ -40,7 +40,7 @@ test("every required statement reaches the reader", () => {
 });
 
 test("registration details are single-sourced, never retyped", () => {
-  const source = read("lib/capital/entry-disclaimer.ts");
+  const source = read("lib/equity-market/entry-disclaimer.ts");
   assert.match(source, /from "\.\/investment-brand\.ts"/);
   // A hardcoded NRD number here would silently diverge the day it changes.
   assert.ok(
@@ -66,7 +66,7 @@ test("the notice never asks the reader to self-certify eligibility", () => {
     ENTRY_DISCLAIMER.tr.paragraphs.join(" "),
     ENTRY_DISCLAIMER.en.acknowledge,
     ENTRY_DISCLAIMER.tr.acknowledge,
-    read("components/capital/north/EntryDisclaimer.tsx"),
+    read("components/equity-market/portal/EntryDisclaimer.tsx"),
   ].join("\n");
   for (const pattern of forbidden) {
     assert.ok(!pattern.test(surfaces), `entry gate must not self-certify: ${pattern}`);
@@ -74,7 +74,7 @@ test("the notice never asks the reader to self-certify eligibility", () => {
 });
 
 test("a reader who does not agree can still leave", () => {
-  const client = read("components/capital/north/EntryDisclaimer.tsx");
+  const client = read("components/equity-market/portal/EntryDisclaimer.tsx");
   assert.match(client, /ENTRY_DISCLAIMER_EXIT_URL/, "an exit route must exist");
   assert.match(ENTRY_DISCLAIMER_EXIT_URL, /^https:\/\//);
   for (const lang of ["en", "tr"] as const) {
@@ -84,7 +84,7 @@ test("a reader who does not agree can still leave", () => {
 
 test("acknowledgement is versioned so revised wording re-prompts", () => {
   assert.ok(Number.isInteger(ENTRY_DISCLAIMER_VERSION) && ENTRY_DISCLAIMER_VERSION > 0);
-  const client = read("components/capital/north/EntryDisclaimer.tsx");
+  const client = read("components/equity-market/portal/EntryDisclaimer.tsx");
   assert.match(
     client,
     /stored\?\.version !== ENTRY_DISCLAIMER_VERSION/,
@@ -102,7 +102,7 @@ test("unreviewed locales fall back to English rather than guessing", () => {
 });
 
 test("the notice is live", () => {
-  const flags = read("lib/capital/feature-flags.ts");
+  const flags = read("lib/equity-market/feature-flags.ts");
   assert.match(flags, /export const ENTRY_DISCLAIMER_ENABLED: boolean = true;/);
 });
 

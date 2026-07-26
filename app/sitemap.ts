@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
 import { INTENTS } from "@/lib/mortgage/intents";
-import { INVESTMENT_BASE_PATH } from "@/lib/capital/investment-brand";
+import { INVESTMENT_BASE_PATH } from "@/lib/equity-market/investment-brand";
 
 const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://jackhunter.com"
