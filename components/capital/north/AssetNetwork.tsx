@@ -31,7 +31,7 @@
  *   period figures with the manager's own basis note beside them, never a line.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { OfferingBundle } from "@/lib/capital/types";
 import type { InvestmentApplication } from "@/lib/capital/portal-access";
 import type { AdminUserRow } from "@/lib/capital/admin-server";
@@ -43,6 +43,7 @@ import { pick, tx } from "@/lib/i18n/localize";
 import type { Lang } from "@/lib/capital/types";
 import { PageHeader } from "./PortalUI";
 import { NetworkGraph, type GraphNode } from "./AssetNetworkGraph";
+import { TERMINAL_THEMES, themeVars, type TerminalMode } from "./asset-network-theme";
 
 const COPY = {
   en: {
@@ -108,6 +109,9 @@ const COPY = {
     statusTargets: "Target figures are published targets, not guarantees",
     statusNoIncome: "Not income received · not current value",
     statusCounts: "Counts are exact · no capital is allocated below the vehicle",
+    lightMode: "Light",
+    darkMode: "Dark",
+    themeToggle: "Switch display mode",
     residential: "Residential",
     commercial: "Commercial",
     conditions: {
@@ -175,6 +179,9 @@ const COPY = {
     statusTargets: "Hedef rakamlar yayımlanan hedeflerdir, garanti değildir",
     statusNoIncome: "Elde edilen gelir değil · güncel değer değil",
     statusCounts: "Adetler kesindir · araç altına sermaye dağıtılmaz",
+    lightMode: "Açık",
+    darkMode: "Koyu",
+    themeToggle: "Görünüm modunu değiştir",
     residential: "Konut",
     commercial: "Ticari",
     conditions: {
@@ -185,14 +192,6 @@ const COPY = {
     },
   },
 } as const;
-
-/**
- * Vehicle identity hues, validated against the #07090c canvas ground for the
- * lightness band, chroma floor, adjacent-pair CVD separation and contrast.
- * Gold is excluded and reserved for the investor node, so a vehicle can never
- * be mistaken for the subject.
- */
-const VEHICLE_COLORS = ["#6d86d6", "#22a892", "#9a7bd1", "#b8724f"];
 
 const CADENCE_MONTHS: Record<string, number> = {
   quarterly: 3,
@@ -286,6 +285,29 @@ export function AssetNetwork({
   const c = pick(COPY, lang);
   const [targetUserId, setTargetUserId] = useState(currentUserId);
   const [focus, setFocus] = useState<Focus>(null);
+  const [mode, setMode] = useState<TerminalMode>("dark");
+
+  // Remember the choice per browser; the console itself has no theme to inherit.
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("hnc-network-mode");
+      if (saved === "light" || saved === "dark") setMode(saved);
+    } catch {
+      // Storage unavailable — the dark default stands for this visit.
+    }
+  }, []);
+
+  function toggleMode() {
+    const next: TerminalMode = mode === "dark" ? "light" : "dark";
+    setMode(next);
+    try {
+      window.localStorage.setItem("hnc-network-mode", next);
+    } catch {
+      // Setting still applies for this visit.
+    }
+  }
+
+  const theme = TERMINAL_THEMES[mode];
 
   const investorOptions = useMemo(() => {
     const funded = new Set(investments.filter((i) => i.status === "funded").map((i) => i.userId));
@@ -294,6 +316,7 @@ export function AssetNetwork({
       .map((u) => ({ id: u.userId, label: u.displayName || u.email }));
   }, [users, investments, currentUserId]);
 
+  const palette = theme.vehicles;
   const { vehicles, usingHeld } = useMemo(() => {
     const mine = investments.filter((i) => i.userId === targetUserId && i.status === "funded");
 
@@ -325,7 +348,7 @@ export function AssetNetwork({
         id: offering.id,
         short: tx(offering.shortName, lang),
         name: tx(offering.name, lang),
-        color: VEHICLE_COLORS[index % VEHICLE_COLORS.length],
+        color: palette[index % palette.length],
         held: held.length > 0,
         committed,
         units,
@@ -359,7 +382,7 @@ export function AssetNetwork({
     });
 
     return { vehicles: list, usingHeld: held.length > 0 };
-  }, [offerings, investments, targetUserId, lang]);
+  }, [offerings, investments, targetUserId, lang, palette]);
 
   const buildings = useMemo(() => vehicles.flatMap((v) => v.buildings), [vehicles]);
   const totalCommitted = vehicles.reduce((sum, v) => sum + v.committed, 0);
@@ -435,10 +458,26 @@ export function AssetNetwork({
         </p>
       )}
 
-      <div className="overflow-hidden rounded-md border border-[#dfe4e9] bg-[#07090c] font-mono text-[12px] tabular-nums text-[#d7dee6]">
-        <div className="grid min-h-[560px] grid-cols-1 lg:grid-cols-[236px_minmax(0,1fr)_320px]">
+      <div
+        style={themeVars(theme)}
+        className="overflow-hidden border-[color:var(--t-rule)] bg-[color:var(--t-ground)] font-mono text-[13px] tabular-nums text-[color:var(--t-ink)] max-sm:-mx-4 max-sm:border-y sm:rounded-md sm:border sm:text-[12px]"
+      >
+        <div className="flex items-center justify-between gap-3 border-b border-[color:var(--t-rule)] bg-[color:var(--t-head)] px-4 py-2.5">
+          <span className="text-[11px] uppercase tracking-[0.12em] text-[color:var(--t-ink-3)] sm:text-[9.5px]">
+            {c.title}
+          </span>
+          <button
+            type="button"
+            onClick={toggleMode}
+            title={c.themeToggle}
+            className="border border-[color:var(--t-rule)] px-3 py-1.5 text-[11px] uppercase tracking-[0.09em] text-[color:var(--t-ink-2)] hover:text-[color:var(--t-ink)] sm:py-1 sm:text-[10px]"
+          >
+            {mode === "dark" ? c.lightMode : c.darkMode}
+          </button>
+        </div>
+        <div className="grid grid-cols-1 lg:min-h-[560px] lg:grid-cols-[240px_minmax(0,1fr)_322px]">
           {/* ---------------- entity rail ---------------- */}
-          <div className="border-b border-[#1b242e] lg:border-b-0 lg:border-r">
+          <div className="border-b border-[color:var(--t-rule)] lg:border-b-0 lg:border-r">
             <RailHead left={c.entity} />
             <Stat label={c.committed} value={money(totalCommitted, lang)} hero />
             <Stat label={c.positions} value={String(vehicles.filter((v) => v.held).length)} />
@@ -458,15 +497,15 @@ export function AssetNetwork({
                     onClick={() =>
                       setFocus(focus?.type === "vehicle" && focus.key === v.id ? null : { type: "vehicle", key: v.id })
                     }
-                    className="mb-2.5 block w-full text-left last:mb-0"
+                    className="mb-3 block w-full py-1 text-left last:mb-0"
                   >
-                    <span className="mb-1 flex justify-between gap-2 text-[10.5px] text-[#8794a3]">
-                      <b className="font-normal text-[#d7dee6]">{v.short}</b>
+                    <span className="mb-1.5 flex justify-between gap-2 text-[12px] text-[color:var(--t-ink-2)] sm:text-[10.5px]">
+                      <b className="font-normal text-[color:var(--t-ink)]">{v.short}</b>
                       <span>
                         {v.held ? `${money(v.committed, lang)} · ${share.toFixed(1)}%` : "—"}
                       </span>
                     </span>
-                    <span className="block h-1.5 w-full bg-[#131b23]">
+                    <span className="block h-2 w-full bg-[color:var(--t-track)] sm:h-1.5">
                       <span
                         className="block h-full"
                         style={{ width: `${Math.max(share, v.held ? 1 : 0)}%`, background: v.color }}
@@ -483,16 +522,16 @@ export function AssetNetwork({
                 const fresh = freshnessOf(v, c);
                 return (
                   <div key={v.id} className="mb-3 last:mb-0">
-                    <div className="mb-1 flex justify-between gap-2 text-[10.5px]">
-                      <span className="text-[#d7dee6]">{v.short}</span>
-                      <span className="text-[#8794a3]">
+                    <div className="mb-1 flex justify-between gap-2 text-[12px] sm:text-[10.5px]">
+                      <span className="text-[color:var(--t-ink)]">{v.short}</span>
+                      <span className="text-[color:var(--t-ink-2)]">
                         {v.completeness}% {c.complete.toLowerCase()}
                       </span>
                     </div>
-                    <div className="text-[10px] text-[#5d6874]">
+                    <div className="text-[11.5px] text-[color:var(--t-ink-3)] sm:text-[10px]">
                       {v.periodLabel ? `${c.figuresAsOf} ${v.periodLabel}` : c.notPublished}
                       {fresh && (
-                        <span className={fresh.state === "current" ? " text-[#4f9d78]" : " text-[#c9973f]"}>
+                        <span className={fresh.state === "current" ? "text-[color:var(--t-ok)]" : "text-[color:var(--t-warn)]"}>
                           {" · "}
                           {fresh.label}
                         </span>
@@ -506,7 +545,7 @@ export function AssetNetwork({
           </div>
 
           {/* ---------------- graph ---------------- */}
-          <div className="flex min-w-0 flex-col border-b border-[#1b242e] lg:border-b-0 lg:border-r">
+          <div className="flex min-w-0 flex-col border-b border-[color:var(--t-rule)] lg:border-b-0 lg:border-r">
             <RailHead
               left={c.title.toUpperCase()}
               right={buildings.length > 0 ? c.statusCounts : undefined}
@@ -518,6 +557,7 @@ export function AssetNetwork({
               onFocus={setFocus}
               subject={currentUserName || c.myAccount}
               lang={lang}
+              theme={theme}
             />
           </div>
 
@@ -529,19 +569,19 @@ export function AssetNetwork({
             />
 
             {!focus ? (
-              <table className="w-full text-[11px]">
+              <table className="w-full text-[13px] sm:text-[11px]">
                 <thead>
-                  <tr className="text-[9.5px] uppercase tracking-[0.1em] text-[#5d6874]">
-                    <th className="border-b border-[#1b242e] px-3 py-2 text-left font-normal">{c.colVehicle}</th>
-                    <th className="border-b border-[#1b242e] px-3 py-2 text-right font-normal">{c.colCommitted}</th>
-                    <th className="border-b border-[#1b242e] px-3 py-2 text-right font-normal">{c.colShare}</th>
-                    <th className="border-b border-[#1b242e] px-3 py-2 text-right font-normal">{c.colUnits}</th>
+                  <tr className="text-[10.5px] uppercase tracking-[0.1em] text-[color:var(--t-ink-3)] sm:text-[9.5px]">
+                    <th className="border-b border-[color:var(--t-rule)] px-3 py-2.5 text-left font-normal sm:py-2">{c.colVehicle}</th>
+                    <th className="border-b border-[color:var(--t-rule)] px-3 py-2.5 text-right font-normal sm:py-2">{c.colCommitted}</th>
+                    <th className="border-b border-[color:var(--t-rule)] px-3 py-2.5 text-right font-normal sm:py-2">{c.colShare}</th>
+                    <th className="border-b border-[color:var(--t-rule)] px-3 py-2.5 text-right font-normal sm:py-2">{c.colUnits}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {vehicles.map((v) => (
-                    <tr key={v.id} className="hover:bg-[#10171e]">
-                      <td className="border-b border-[#141c24] px-3 py-2">
+                    <tr key={v.id} className="hover:bg-[color:var(--t-hover)]">
+                      <td className="border-b border-[color:var(--t-rule-soft)] px-3 py-2.5 sm:py-2">
                         <span
                           aria-hidden
                           className="mr-2 inline-block size-1.5"
@@ -549,16 +589,16 @@ export function AssetNetwork({
                         />
                         {v.short}
                       </td>
-                      <td className="border-b border-[#141c24] px-3 py-2 text-right text-[#d7dee6]">
+                      <td className="border-b border-[color:var(--t-rule-soft)] px-3 py-2.5 text-right text-[color:var(--t-ink)] sm:py-2">
                         {v.held ? money(v.committed, lang) : "—"}
                       </td>
-                      <td className="border-b border-[#141c24] px-3 py-2 text-right text-[#d7dee6]">
+                      <td className="border-b border-[color:var(--t-rule-soft)] px-3 py-2.5 text-right text-[color:var(--t-ink)] sm:py-2">
                         {v.held && totalCommitted > 0
                           ? `${((v.committed / totalCommitted) * 100).toFixed(1)}%`
                           : "—"}
                       </td>
                       {/* No unit price published means no unit count. Never a zero. */}
-                      <td className="border-b border-[#141c24] px-3 py-2 text-right text-[#d7dee6]">
+                      <td className="border-b border-[color:var(--t-rule-soft)] px-3 py-2.5 text-right text-[color:var(--t-ink)] sm:py-2">
                         {v.units != null ? num(v.units, lang) : "—"}
                       </td>
                     </tr>
@@ -566,27 +606,27 @@ export function AssetNetwork({
                 </tbody>
               </table>
             ) : (
-              <div className="max-h-[300px] overflow-y-auto">
-                <table className="w-full text-[11px]">
+              <div className="max-h-[340px] overflow-y-auto sm:max-h-[300px]">
+                <table className="w-full text-[13px] sm:text-[11px]">
                   <thead>
-                    <tr className="text-[9.5px] uppercase tracking-[0.1em] text-[#5d6874]">
-                      <th className="sticky top-0 border-b border-[#1b242e] bg-[#0c1014] px-3 py-2 text-left font-normal">
+                    <tr className="text-[10.5px] uppercase tracking-[0.1em] text-[color:var(--t-ink-3)] sm:text-[9.5px]">
+                      <th className="sticky top-0 border-b border-[color:var(--t-rule)] bg-[color:var(--t-panel)] px-3 py-2.5 text-left font-normal sm:py-2">
                         {c.colAsset}
                       </th>
-                      <th className="sticky top-0 border-b border-[#1b242e] bg-[#0c1014] px-3 py-2 text-left font-normal">
+                      <th className="sticky top-0 border-b border-[color:var(--t-rule)] bg-[color:var(--t-panel)] px-3 py-2.5 text-left font-normal sm:py-2">
                         {c.colMarket}
                       </th>
-                      <th className="sticky top-0 border-b border-[#1b242e] bg-[#0c1014] px-3 py-2 text-right font-normal">
+                      <th className="sticky top-0 border-b border-[color:var(--t-rule)] bg-[color:var(--t-panel)] px-3 py-2.5 text-right font-normal sm:py-2">
                         {c.colUnits}
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     {filtered.map((b) => (
-                      <tr key={b.id} className="hover:bg-[#10171e]">
-                        <td className="max-w-0 truncate border-b border-[#141c24] px-3 py-2">{b.name}</td>
-                        <td className="border-b border-[#141c24] px-3 py-2 text-[#8794a3]">{b.city}</td>
-                        <td className="whitespace-nowrap border-b border-[#141c24] px-3 py-2 text-right text-[#d7dee6]">
+                      <tr key={b.id} className="hover:bg-[color:var(--t-hover)]">
+                        <td className="max-w-0 truncate border-b border-[color:var(--t-rule-soft)] px-3 py-2.5 sm:py-2">{b.name}</td>
+                        <td className="border-b border-[color:var(--t-rule-soft)] px-3 py-2.5 text-[color:var(--t-ink-2)] sm:py-2">{b.city}</td>
+                        <td className="whitespace-nowrap border-b border-[color:var(--t-rule-soft)] px-3 py-2.5 text-right text-[color:var(--t-ink)] sm:py-2">
                           {b.units != null ? num(b.units, lang) : "—"}
                         </td>
                       </tr>
@@ -600,7 +640,7 @@ export function AssetNetwork({
             {buildings.length > 0 && (
               <>
                 <RailHead left={c.rollups} right={c.rollupNote} bordered />
-                <div className="px-3 py-3">
+                <div className="grid grid-cols-2 gap-x-4 px-3 py-3 sm:grid-cols-1">
                   <Rollup title={c.byMarket} rows={rollup((b) => b.city, (b) => b.city)} c={c} />
                   <Rollup title={c.byProvince} rows={rollup((b) => b.province, (b) => b.province)} c={c} />
                   <Rollup
@@ -626,16 +666,16 @@ export function AssetNetwork({
         </div>
 
         {/* ---------------- published terms ---------------- */}
-        <div className="border-t border-[#1b242e]">
+        <div className="border-t border-[color:var(--t-rule)]">
           <RailHead left={c.terms} />
-          <div className="grid grid-cols-1 gap-px bg-[#1b242e] md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-px bg-[color:var(--t-rule)] md:grid-cols-2">
             {vehicles.map((v) => (
-              <div key={v.id} className="bg-[#07090c] px-4 py-3">
+              <div key={v.id} className="bg-[color:var(--t-ground)] px-4 py-3.5 sm:py-3">
                 <div className="mb-2 flex items-center gap-2">
                   <span aria-hidden className="inline-block size-2" style={{ background: v.color }} />
-                  <span className="text-[12px] text-[#d7dee6]">{v.name}</span>
+                  <span className="text-[13.5px] text-[color:var(--t-ink)] sm:text-[12px]">{v.name}</span>
                 </div>
-                <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[10.5px]">
+                <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-[12px] sm:gap-y-1.5 sm:text-[10.5px]">
                   <Term label={c.unitPrice} value={v.unitPrice ? `$${v.unitPrice.toFixed(2)}` : null} c={c} />
                   <Term label={c.aum} value={v.aum ?? null} c={c} />
                   <Term label={c.totalUnits} value={v.unitsTotal != null ? num(v.unitsTotal, lang) : null} c={c} />
@@ -648,16 +688,16 @@ export function AssetNetwork({
                   />
                 </dl>
                 {(v.targetReturn || v.targetDistribution) && (
-                  <div className="mt-2 border-t border-[#141c24] pt-2 text-[10.5px] text-[#8794a3]">
+                  <div className="mt-2.5 border-t border-[color:var(--t-rule-soft)] pt-2.5 text-[12px] text-[color:var(--t-ink-2)] sm:text-[10.5px]">
                     {v.targetReturn && (
                       <div>
-                        <span className="text-[#5d6874]">{c.targetReturn}: </span>
+                        <span className="text-[color:var(--t-ink-3)]">{c.targetReturn}: </span>
                         {v.targetReturn}
                       </div>
                     )}
                     {v.targetDistribution && (
                       <div>
-                        <span className="text-[#5d6874]">{c.targetDistribution}: </span>
+                        <span className="text-[color:var(--t-ink-3)]">{c.targetDistribution}: </span>
                         {v.targetDistribution}
                       </div>
                     )}
@@ -666,26 +706,26 @@ export function AssetNetwork({
                 {/* Discrete period figures, never a plotted series — the basis
                     differs by manager and is prose a chart cannot read. */}
                 {v.returns.length > 0 && (
-                  <div className="mt-2 border-t border-[#141c24] pt-2">
-                    <div className="mb-1 text-[9.5px] uppercase tracking-[0.1em] text-[#5d6874]">
+                  <div className="mt-2.5 border-t border-[color:var(--t-rule-soft)] pt-2.5">
+                    <div className="mb-1.5 text-[10.5px] uppercase tracking-[0.1em] text-[color:var(--t-ink-3)] sm:text-[9.5px]">
                       {c.publishedReturns}
                     </div>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10.5px]">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[12px] sm:text-[10.5px]">
                       {v.returns.map((r) => (
-                        <span key={r.period} className="text-[#8794a3]">
-                          {r.period} <b className="font-normal text-[#d7dee6]">{r.value}</b>
+                        <span key={r.period} className="text-[color:var(--t-ink-2)]">
+                          {r.period} <b className="font-normal text-[color:var(--t-ink)]">{r.value}</b>
                         </span>
                       ))}
                     </div>
                     {v.returnsBasis && (
-                      <p className="mt-1.5 text-[10px] leading-relaxed text-[#5d6874]">
+                      <p className="mt-2 text-[11.5px] leading-relaxed text-[color:var(--t-ink-3)] sm:text-[10px]">
                         {c.returnsBasis}: {v.returnsBasis}
                       </p>
                     )}
                   </div>
                 )}
                 {v.buildings.length === 0 && (
-                  <p className="mt-2 border-t border-[#141c24] pt-2 text-[10px] text-[#5d6874]">
+                  <p className="mt-2.5 border-t border-[color:var(--t-rule-soft)] pt-2.5 text-[11.5px] text-[color:var(--t-ink-3)] sm:text-[10px]">
                     {c.noProperties}
                   </p>
                 )}
@@ -695,7 +735,7 @@ export function AssetNetwork({
         </div>
 
         {/* ---------------- status strip ---------------- */}
-        <div className="flex flex-wrap gap-x-5 gap-y-1 border-t border-[#1b242e] bg-[#10161c] px-4 py-2 text-[10px] uppercase tracking-[0.04em] text-[#5d6874]">
+        <div className="flex flex-wrap gap-x-5 gap-y-1.5 border-t border-[color:var(--t-rule)] bg-[color:var(--t-head)] px-4 py-2.5 text-[11px] uppercase tracking-[0.04em] text-[color:var(--t-ink-3)] sm:py-2 sm:text-[10px]">
           <span>{c.statusTargets}</span>
           <span>{c.statusCounts}</span>
           <span>{c.statusNoIncome}</span>
@@ -708,21 +748,29 @@ export function AssetNetwork({
 function RailHead({ left, right, bordered }: { left: string; right?: string; bordered?: boolean }) {
   return (
     <div
-      className={`flex justify-between gap-2 bg-[#0c1014] px-3 py-2 text-[9.5px] uppercase tracking-[0.12em] text-[#5d6874] ${
-        bordered ? "border-t border-[#1b242e]" : ""
-      } border-b border-[#1b242e]`}
+      className={`flex justify-between gap-2 bg-[color:var(--t-panel)] px-3 py-2.5 text-[10.5px] uppercase tracking-[0.12em] text-[color:var(--t-ink-3)] sm:py-2 sm:text-[9.5px] ${
+        bordered ? "border-t border-[color:var(--t-rule)]" : ""
+      } border-b border-[color:var(--t-rule)]`}
     >
       <span>{left}</span>
-      {right && <span className="text-[#8a7434]">{right}</span>}
+      {right && <span className="text-right text-[color:var(--t-accent)]">{right}</span>}
     </div>
   );
 }
 
 function Stat({ label, value, hero }: { label: string; value: string; hero?: boolean }) {
   return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-[#141c24] px-3 py-1.5">
-      <span className="text-[10.5px] text-[#5d6874]">{label}</span>
-      <span className={hero ? "text-[15px] text-[#ebc76b]" : "text-[12.5px] text-[#d7dee6]"}>{value}</span>
+    <div className="flex items-baseline justify-between gap-3 border-b border-[color:var(--t-rule-soft)] px-3 py-2 sm:py-1.5">
+      <span className="text-[12px] text-[color:var(--t-ink-3)] sm:text-[10.5px]">{label}</span>
+      <span
+        className={
+          hero
+            ? "text-[17px] text-[color:var(--t-accent)] sm:text-[15px]"
+            : "text-[14px] text-[color:var(--t-ink)] sm:text-[12.5px]"
+        }
+      >
+        {value}
+      </span>
     </div>
   );
 }
@@ -730,8 +778,10 @@ function Stat({ label, value, hero }: { label: string; value: string; hero?: boo
 function Term({ label, value, c }: { label: string; value: string | null; c: (typeof COPY)["en"] }) {
   return (
     <>
-      <dt className="text-[#5d6874]">{label}</dt>
-      <dd className={value ? "text-[#d7dee6]" : "text-[#3f4854]"}>{value ?? c.notPublished}</dd>
+      <dt className="text-[color:var(--t-ink-3)]">{label}</dt>
+      <dd className={value ? "text-[color:var(--t-ink)]" : "text-[color:var(--t-ink-faint)]"}>
+        {value ?? c.notPublished}
+      </dd>
     </>
   );
 }
@@ -749,17 +799,22 @@ function Rollup({
   const max = rows[0].count;
   return (
     <div className="mb-3 last:mb-0">
-      <div className="mb-1.5 text-[9.5px] uppercase tracking-[0.1em] text-[#5d6874]">{title}</div>
+      <div className="mb-1.5 text-[10.5px] uppercase tracking-[0.1em] text-[color:var(--t-ink-3)] sm:text-[9.5px]">
+        {title}
+      </div>
       {rows.slice(0, 6).map((r) => (
         <div key={r.label} className="mb-1 last:mb-0">
-          <div className="flex justify-between gap-2 text-[10.5px]">
-            <span className="truncate text-[#d7dee6]">{r.label}</span>
-            <span className="shrink-0 text-[#8794a3]">
+          <div className="flex justify-between gap-2 text-[12px] sm:text-[10.5px]">
+            <span className="truncate text-[color:var(--t-ink)]">{r.label}</span>
+            <span className="shrink-0 text-[color:var(--t-ink-2)]">
               {r.count} {r.count === 1 ? c.building : c.buildings}
             </span>
           </div>
-          <div className="h-[3px] w-full bg-[#131b23]">
-            <div className="h-full bg-[#3d5a7a]" style={{ width: `${(r.count / max) * 100}%` }} />
+          <div className="h-[4px] w-full bg-[color:var(--t-track)] sm:h-[3px]">
+            <div
+              className="h-full bg-[color:var(--t-bar)]"
+              style={{ width: `${(r.count / max) * 100}%` }}
+            />
           </div>
         </div>
       ))}

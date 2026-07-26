@@ -21,6 +21,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Lang } from "@/lib/capital/types";
 import type { Building, Focus, Vehicle } from "./AssetNetwork";
+import type { TerminalTheme } from "./asset-network-theme";
 
 export type GraphNode =
   | { kind: "subject"; x: number; y: number; r: number; label: string }
@@ -30,14 +31,19 @@ export type GraphNode =
 
 type Edge = { a: GraphNode; b: GraphNode; width: number; color: string };
 
-const GOLD = "#ebc76b";
-const GROUND = "#07090c";
-const INK = "#d7dee6";
-const INK3 = "#5d6874";
-
 function rgba(hex: string, alpha: number) {
   const n = parseInt(hex.slice(1), 16);
   return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
+}
+
+/** Truncate to a pixel budget so a long fund name cannot invade the next tier. */
+function fit(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
+  if (ctx.measureText(text).width <= maxWidth) return text;
+  let cut = text;
+  while (cut.length > 1 && ctx.measureText(`${cut}…`).width > maxWidth) {
+    cut = cut.slice(0, -1);
+  }
+  return `${cut}…`;
 }
 
 function money(value: number, lang: Lang) {
@@ -55,6 +61,7 @@ export function NetworkGraph({
   onFocus,
   subject,
   lang,
+  theme,
 }: {
   vehicles: Vehicle[];
   buildings: Building[];
@@ -62,14 +69,16 @@ export function NetworkGraph({
   onFocus: (focus: Focus) => void;
   subject: string;
   lang: Lang;
+  theme: TerminalTheme;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const stateRef = useRef<{ nodes: GraphNode[]; edges: Edge[]; w: number; h: number }>({
-    nodes: [],
-    edges: [],
-    w: 0,
-    h: 0,
-  });
+  const stateRef = useRef<{
+    nodes: GraphNode[];
+    edges: Edge[];
+    w: number;
+    h: number;
+    compact: boolean;
+  }>({ nodes: [], edges: [], w: 0, h: 0, compact: false });
   const [tip, setTip] = useState<{ x: number; y: number; title: string; lines: string[] } | null>(null);
 
   // Ordering markets by vehicle keeps the tiers from crossing.
@@ -112,16 +121,20 @@ export function NetworkGraph({
       const mid = (top + bottom) / 2;
 
       // Tier count decides the column positions, so a vehicle with no property
-      // list produces a two-column graph rather than two empty columns.
+      // list produces a two-column graph rather than two empty columns. Below
+      // ~620px the asset tier is a column of unlabelled dots nobody can hit, so
+      // it is dropped and the remaining tiers take the space instead.
+      const compact = w < 620;
       const hasMarkets = marketOrder.length > 0;
-      const hasAssets = assetOrder.length > 0;
+      const hasAssets = assetOrder.length > 0 && !compact;
       const xs = hasAssets
         ? [w * 0.09, w * 0.34, w * 0.62, w * 0.9]
         : hasMarkets
-          ? [w * 0.12, w * 0.45, w * 0.8]
+          ? [w * 0.12, w * 0.45, w * 0.84]
           : [w * 0.2, w * 0.72];
+      const scale = compact ? 1.5 : 1;
 
-      const subjectNode: GraphNode = { kind: "subject", x: xs[0], y: mid, r: 9, label: subject };
+      const subjectNode: GraphNode = { kind: "subject", x: xs[0], y: mid, r: 9 * scale, label: subject };
       nodes.push(subjectNode);
 
       const totalCommitted = vehicles.reduce((sum, v) => sum + v.committed, 0);
@@ -134,7 +147,7 @@ export function NetworkGraph({
             vehicles.length === 1
               ? mid
               : top + (bottom - top) * (i / (vehicles.length - 1)) * 0.72 + (bottom - top) * 0.14,
-          r: 7,
+          r: 7 * scale,
         };
         nodes.push(node);
         // Above the vehicle line: thickness is money.
@@ -142,7 +155,7 @@ export function NetworkGraph({
         edges.push({
           a: subjectNode,
           b: node,
-          width: v.held ? 1.2 + share * 5 : 0.8,
+          width: (v.held ? 1.2 + share * 5 : 0.8) * scale,
           color: v.color,
         });
         return node;
@@ -161,7 +174,7 @@ export function NetworkGraph({
               marketOrder.length === 1
                 ? mid
                 : top + (bottom - top) * (i / (marketOrder.length - 1)),
-            r: 5,
+            r: 5 * scale,
           };
           nodes.push(node);
           const owner = vehicleNodes.find(
@@ -169,14 +182,14 @@ export function NetworkGraph({
           );
           // Below the vehicle line: thickness is count.
           if (owner) {
-            edges.push({ a: owner, b: node, width: 0.7 + (m.count / maxCount) * 2.4, color: m.color });
+            edges.push({ a: owner, b: node, width: (0.7 + (m.count / maxCount) * 2.4) * scale, color: m.color });
           }
           return node;
         });
 
         if (hasAssets) {
           assetOrder.forEach((b, i) => {
-            const color = vehicles.find((v) => v.id === b.vehicleId)?.color ?? "#6d86d6";
+            const color = vehicles.find((v) => v.id === b.vehicleId)?.color ?? theme.vehicles[0];
             const node: GraphNode = {
               kind: "asset",
               building: b,
@@ -195,7 +208,7 @@ export function NetworkGraph({
         }
       }
 
-      stateRef.current = { nodes, edges, w, h };
+      stateRef.current = { nodes, edges, w, h, compact };
     }
 
     function dimmed(node: GraphNode) {
@@ -214,14 +227,14 @@ export function NetworkGraph({
     }
 
     function draw() {
-      const { nodes, edges, w, h } = stateRef.current;
-      ctx.fillStyle = GROUND;
+      const { nodes, edges, w, h, compact } = stateRef.current;
+      ctx.fillStyle = theme.ground;
       ctx.fillRect(0, 0, w, h);
       if (!nodes.length) return;
 
       // column rules
       const seen = new Set<number>();
-      ctx.strokeStyle = "rgba(110,132,180,.06)";
+      ctx.strokeStyle = rgba(theme.rule, 0.55);
       ctx.lineWidth = 1;
       nodes.forEach((n) => {
         if (seen.has(n.x)) return;
@@ -248,7 +261,7 @@ export function NetworkGraph({
         ctx.globalAlpha = dim ? 0.18 : 1;
         const color =
           n.kind === "subject"
-            ? GOLD
+            ? theme.accent
             : n.kind === "vehicle"
               ? n.vehicle.color
               : n.kind === "market"
@@ -259,7 +272,7 @@ export function NetworkGraph({
         ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
         ctx.fill();
         if (n.kind === "subject") {
-          ctx.strokeStyle = rgba(GOLD, 0.35);
+          ctx.strokeStyle = rgba(theme.accent, 0.4);
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.arc(n.x, n.y, n.r + 6, 0, Math.PI * 2);
@@ -269,37 +282,47 @@ export function NetworkGraph({
       });
 
       // labels: subject, vehicles, and markets. Assets are hover-only.
-      ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
+      const cols = Array.from(seen).sort((a, b) => a - b);
+      ctx.font = `${compact ? 13 : 10}px ui-monospace, SFMono-Regular, Menlo, monospace`;
       nodes.forEach((n) => {
         if (n.kind === "asset") return;
         ctx.globalAlpha = dimmed(n) ? 0.2 : 1;
         if (n.kind === "market") {
-          ctx.textAlign = "left";
-          ctx.fillStyle = INK;
-          ctx.fillText(`${n.city}  ${n.count}`, n.x + 10, n.y + 3);
+          // Rightmost column in compact, so the label reads back into the frame.
+          ctx.textAlign = compact ? "right" : "left";
+          ctx.fillStyle = theme.ink;
+          ctx.fillText(
+            fit(ctx, `${n.city}  ${n.count}`, compact ? n.x - n.r - cols[1] - 12 : 150),
+            compact ? n.x - n.r - 7 : n.x + n.r + 7,
+            n.y + 3,
+          );
         } else if (n.kind === "vehicle") {
-          ctx.textAlign = "center";
-          ctx.fillStyle = INK;
-          ctx.fillText(n.vehicle.short, n.x, n.y - n.r - 8);
-          ctx.fillStyle = INK3;
+          // Compact drops the asset tier, which puts markets immediately to the
+          // right — so the vehicle label reads leftward into the empty subject
+          // gap, and is truncated to that gap rather than overrunning it.
+          const budget = compact ? n.x - n.r - cols[0] - 16 : 180;
+          ctx.textAlign = compact ? "right" : "center";
+          const lx = compact ? n.x - n.r - 8 : n.x;
+          ctx.fillStyle = theme.ink;
+          ctx.fillText(fit(ctx, n.vehicle.short, budget), lx, compact ? n.y - 2 : n.y - n.r - 8);
+          ctx.fillStyle = theme.ink3;
           ctx.fillText(
             n.vehicle.held ? money(n.vehicle.committed, lang) : "—",
-            n.x,
-            n.y + n.r + 14,
+            lx,
+            compact ? n.y + 14 : n.y + n.r + 14,
           );
         } else {
           ctx.textAlign = "center";
-          ctx.fillStyle = GOLD;
+          ctx.fillStyle = theme.accent;
           ctx.fillText(n.label, n.x, n.y - n.r - 10);
         }
         ctx.globalAlpha = 1;
       });
 
       // tier headers
-      ctx.font = '9px ui-monospace, SFMono-Regular, Menlo, monospace';
-      ctx.fillStyle = INK3;
+      ctx.font = `${compact ? 11 : 9}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+      ctx.fillStyle = theme.ink3;
       ctx.textAlign = "center";
-      const cols = Array.from(seen).sort((a, b) => a - b);
       const heads =
         cols.length === 4
           ? ["SUBJECT", "VEHICLE", "MARKET", "ASSET"]
@@ -328,11 +351,11 @@ export function NetworkGraph({
     observer.observe(el);
     resize();
     return () => observer.disconnect();
-  }, [vehicles, buildings, marketOrder, assetOrder, focus, subject, lang]);
+  }, [vehicles, buildings, marketOrder, assetOrder, focus, subject, lang, theme]);
 
   function nodeAt(x: number, y: number) {
     let best: GraphNode | null = null;
-    let bestD = 14;
+    let bestD = stateRef.current.compact ? 26 : 14;
     stateRef.current.nodes.forEach((n) => {
       const d = Math.hypot(n.x - x, n.y - y);
       if (d < bestD) {
@@ -344,7 +367,7 @@ export function NetworkGraph({
   }
 
   return (
-    <div className="relative min-h-[420px] flex-1">
+    <div className="relative h-[420px] shrink-0 sm:h-[480px] lg:h-[600px]">
       <canvas
         ref={canvasRef}
         className="block size-full"
@@ -404,16 +427,16 @@ export function NetworkGraph({
       />
       {tip && (
         <div
-          className="pointer-events-none absolute z-10 max-w-[240px] border border-[#2a3a49] bg-[#0e141b] px-2.5 py-2 text-[11px] leading-snug"
+          className="pointer-events-none absolute z-10 max-w-[240px] border border-[color:var(--t-rule)] bg-[color:var(--t-panel)] px-2.5 py-2 text-[12.5px] leading-snug sm:text-[11px]"
           style={{
             left: Math.max(90, Math.min(stateRef.current.w - 90, tip.x)),
             top: Math.max(38, tip.y),
             transform: "translate(-50%, calc(-100% - 12px))",
           }}
         >
-          <b className="mb-0.5 block font-normal tracking-[0.03em] text-[#ebc76b]">{tip.title}</b>
+          <b className="mb-0.5 block font-normal tracking-[0.03em] text-[color:var(--t-accent)]">{tip.title}</b>
           {tip.lines.map((line) => (
-            <span key={line} className="block text-[#8794a3]">
+            <span key={line} className="block text-[color:var(--t-ink-2)]">
               {line}
             </span>
           ))}
