@@ -21,6 +21,14 @@
   pointer-events: none;
 }
 
+/* On a phone the 700px mark is cropped to a few bars that read as grey
+   blocks behind the text, so the watermark is desktop-only. */
+@media (max-width: 767px) {
+  .contact::before {
+    display: none;
+  }
+}
+
 @media (min-width: 768px) {
   .contact {
     padding: 140px 0;

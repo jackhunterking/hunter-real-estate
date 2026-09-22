@@ -70,37 +70,60 @@
   margin: 0 auto;
 }
 
+/* Phones: one compact row per person, thumbnail beside the text, so the
+   section scrolls past quickly. From 768px: three portrait cards across. */
 .grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 48px;
+  gap: 12px;
+  max-width: 520px;
+  margin: 0 auto;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 768px) {
   .grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 64px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 880px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    gap: 32px;
   }
 }
 
 .person {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
+  grid-template-columns: 104px 1fr;
   background: var(--white);
   overflow: hidden;
 }
 
+@media (min-width: 768px) {
+  .person {
+    grid-template-columns: 1fr;
+    /* Cards stretch to the tallest one; keep the photo and text at the top. */
+    align-content: start;
+  }
+}
+
 .photo {
   position: relative;
-  aspect-ratio: 4 / 5;
+  min-height: 130px;
   overflow: hidden;
   background: linear-gradient(135deg, var(--navy-deep), var(--ink));
 }
 
+@media (min-width: 768px) {
+  .photo {
+    min-height: 0;
+    aspect-ratio: 4 / 5;
+  }
+}
+
 .photo img {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -131,8 +154,9 @@
 .placeholderMark {
   position: relative;
   z-index: 2;
-  width: 80px;
-  height: 80px;
+  width: 40%;
+  max-width: 80px;
+  aspect-ratio: 1;
   opacity: 0.2;
 }
 
@@ -142,9 +166,13 @@
   object-fit: contain;
 }
 
+/* Too wide for the phone thumbnail; shown on the portrait cards only. */
 .placeholderLabel {
+  display: none;
   position: relative;
   z-index: 2;
+  max-width: 85%;
+  text-align: center;
   font-size: 9px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -154,50 +182,46 @@
   border: 1px solid rgba(235, 199, 107, 0.25);
 }
 
-.personBody {
-  padding: 28px 20px 24px;
+@media (min-width: 768px) {
+  .placeholderLabel {
+    display: block;
+  }
 }
 
-@media (min-width: 480px) {
+.personBody {
+  align-self: center;
+  padding: 16px 20px;
+}
+
+@media (min-width: 768px) {
   .personBody {
-    padding: 36px 32px 32px;
+    padding: 24px;
   }
 }
 
 .personName {
   font-family: var(--serif);
   font-weight: 500;
-  font-size: 32px;
+  font-size: 22px;
   line-height: 1;
   letter-spacing: -0.01em;
   color: var(--ink);
-  margin-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+  .personName {
+    font-size: 26px;
+    margin-bottom: 12px;
+  }
 }
 
 .personTitle {
   font-family: var(--sans);
   font-size: 11px;
   font-weight: 600;
+  line-height: 1;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--gold-deep);
-  margin-bottom: 20px;
-}
-
-.credentials {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.credential {
-  font-family: var(--sans);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-  padding: 6px 12px;
-  border: 1px solid var(--hairline-dark);
-  border-radius: 100px;
 }

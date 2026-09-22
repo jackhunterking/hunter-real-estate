@@ -14,10 +14,11 @@ export default function HomePage() {
       <Nav overlayHero />
       <HomeHero />
       <AboutSection />
+      {/* Awards sit directly under the team they belong to. */}
+      <LogoStrip />
       <ServicesSection />
       <GuidesSection />
       <PromiseSection />
-      <LogoStrip />
       <ContactSection />
       <Footer />
     </main>

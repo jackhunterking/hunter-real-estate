@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useT } from "@/lib/i18n/LanguageProvider";
+import { RMA } from "@/lib/mortgage/identity";
+import { LEGAL_SLUGS } from "@/lib/mortgage/legal-slugs";
 import styles from "./Footer.module.css";
 
 const WA_URL = "https://wa.me/16473913311";
@@ -21,6 +23,12 @@ export default function Footer() {
     { href: "/hunter-advisory", label: n.capital },
     { href: "/#kaynaklar", label: n.resources },
     { href: "/#iletisim", label: n.contact },
+  ];
+
+  const LEGAL = [
+    { href: `/${LEGAL_SLUGS.privacy}`, label: f.privacyLabel },
+    { href: `/${LEGAL_SLUGS.terms}`, label: f.termsLabel },
+    { href: `/${LEGAL_SLUGS.advertising}`, label: f.advertisingLabel },
   ];
 
   return (
@@ -114,6 +122,24 @@ export default function Footer() {
               </a>
             </div>
           </div>
+        </div>
+
+        {/* Mortgage licence disclosure, shown here rather than on the
+            services cards. */}
+        <div className={styles.legal}>
+          <p className={styles.licence}>
+            <span className={styles.licenceLabel}>{f.mortgageLabel}</span>{" "}
+            {RMA.licenceLine}
+          </p>
+          <ul className={styles.legalLinks}>
+            {LEGAL.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className={styles.legalLink}>
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className={styles.bottom}>

@@ -167,8 +167,51 @@
   background: rgba(235, 199, 107, 0.04);
 }
 
-.bottom {
+.legal {
   margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px 32px;
+}
+
+.licence {
+  font-family: var(--sans);
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.licenceLabel {
+  color: var(--gold);
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.legalLinks {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.legalLink {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.legalLink:hover {
+  color: var(--gold);
+}
+
+.bottom {
+  margin-top: 24px;
   padding-top: 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;

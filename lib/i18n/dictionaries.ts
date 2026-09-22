@@ -8,7 +8,7 @@ export const tr = {
   siteMeta: {
     title: "Hunter Group Real Estate, Toronto Merkezli Türk Emlak Grubu",
     description:
-      "Toronto merkezli Türk emlak grubu. Jack & Tara Hunter, RE/MAX Hallmark ile Toronto ve GTA'da alım, satım ve yatırım.",
+      "Toronto merkezli Türk emlak grubu. RE/MAX Hallmark bünyesinde Toronto ve GTA'da alım, satım ve yatırım danışmanlığı.",
     siteName: "Hunter Group Real Estate",
   },
   nav: {
@@ -29,26 +29,22 @@ export const tr = {
     menuOpen: "Menüyü aç",
     menuClose: "Menüyü kapat",
     logoAria: "Hunter Group Real Estate",
-    langTR: "TR",
-    langEN: "EN",
-    langFR: "FR",
-    langES: "ES",
+    language: "Dil",
   },
 
   home: {
     hero: {
       eyebrow: "Toronto Merkezli Türk Emlak Grubu · RE/MAX",
-      heading: "Aile gibi yaklaşıyor,",
-      headingEm: "varlık inşa ediyoruz.",
-      sub: "Gayrimenkul, varlık oluşturmanın en güçlü yollarından biridir. 18 yılı aşkın birleşik deneyimimizle Kanada genelinde her alım ve satım işleminde yanınızdayız, profesyonel bir ekip olarak değil, aile gibi.",
-      ctaPrimary: "Hizmetlerimiz",
-      ctaSecondary: "WhatsApp'tan Yazın",
-      stat1Value: "18+",
-      stat1Label: "Yıl Birleşik Deneyim",
-      stat2Value: "Toronto",
-      stat2Label: "& GTA Uzmanı",
+      heading: "Toronto ve GTA'da her adımda",
+      headingEm: "uzman rehberlik.",
+      sub: "İlk görüşmeden kapanışa kadar; alım, satım ve yatırım süreçlerinizi piyasa verisi, doğru fiyatlama ve güçlü müzakereyle, RE/MAX Hallmark güvencesiyle yönetiyoruz.",
+      ctaPrimary: "WhatsApp'tan Yazın",
+      ctaSecondary: "Hizmetlerimiz",
+      stat1Value: "$200M+",
+      stat1Label: "İşlem Hacmi",
+      stat2Value: "10+",
+      stat2Label: "Yıl Deneyim",
       scrollAria: "Aşağı kaydır",
-      photoAlt: "Jack ve Tara Hunter",
     },
     services: {
       eyebrow: "Hizmetlerimiz",
@@ -56,10 +52,9 @@ export const tr = {
       titleEm: "üç uzmanlık.",
       sub: "Gayrimenkul, mortgage finansmanı ve özel piyasalar için birbirinden ayrılmış, profesyonel süreçler.",
       buy: {
-        tag: "RE/MAX Hallmark",
+        tag: "RE/MAX Hallmark Realty",
         title: "Gayrimenkul",
         desc: "RE/MAX Hallmark altyapısıyla alım, satım ve stratejik mülk danışmanlığı.",
-        homeLabel: "Gayrimenkul rehberi",
       },
       sell: {
         tag: "RE/MAX Hallmark",
@@ -68,16 +63,14 @@ export const tr = {
         cta: "Satım Rehberi",
       },
       mortgage: {
-        tag: "Real Mortgage Associates · FSRA",
+        tag: "Real Mortgage Associates",
         title: "Mortgage Finansmanı",
-        desc: "Mortgage Agent lisansı kapsamında mortgage, yenileme, yeniden finansman ve ev değerinden yararlanma eğitimi.",
-        cta: "Mortgage seçenekleri",
+        desc: "Mortgage, yenileme, yeniden finansman ve ev değerinden yararlanma seçenekleri hakkında eğitim.",
       },
       invest: {
-        tag: "Hunter & Hunter Investment Advisors",
+        tag: "Parvis Invest",
         title: "Özel Piyasalar",
         desc: "Kanada’daki özel gayrimenkul ve alternatif yatırım fırsatlarını kaynakları, riskleri ve dayanak varlıklarıyla inceleyin.",
-        cta: "Hunter & Hunter Investment Advisors’a geçiş",
       },
     },
     guides: {
@@ -292,11 +285,13 @@ export const tr = {
     eyebrow: "Biz Kimiz",
     title: "Birlikte,",
     titleEm: "daha güçlü.",
-    sub: "Toronto'da gayrimenkulün yeni nesli. Veriyle hareket eden bir broker ve insanı önceleyen bir danışman.",
+    sub: "Toronto'da gayrimenkulün yeni nesli. Piyasa verisiyle hareket eden, her müşteriye kişisel ilgi gösteren bir ekip.",
     jackName: "Jack Hunter",
     jackTitle: "Broker",
     taraName: "Tara Hunter",
     taraTitle: "Emlak Danışmanı",
+    selinName: "Selin Yılmaz",
+    selinTitle: "Emlak Danışmanı",
     photoPlaceholder: "fotoğrafı",
   },
 
@@ -305,7 +300,7 @@ export const tr = {
     quotePre: "Deneyiminiz olağanüstü olmalı. Anlık piyasa içgörüsü, isabetli kararlar ve",
     quoteEm: "size özel bir özen",
     quoteEnd: "ile birlikte, hedeflerinize en iyi koşullarda ulaşmanız için yanınızdayız.",
-    attribution: "Jack & Tara Hunter",
+    attribution: "Jack, Tara & Selin",
   },
 
   logoStrip: {
@@ -569,6 +564,10 @@ export const tr = {
     contactHeading: "İletişim",
     socialHeading: "Sosyal",
     waLabel: "WhatsApp ile yazın",
+    mortgageLabel: "Mortgage hizmetleri",
+    privacyLabel: "Gizlilik Politikası",
+    termsLabel: "Kullanım Koşulları",
+    advertisingLabel: "Reklam Açıklaması",
   },
 
   capitalApp: {
@@ -974,7 +973,7 @@ export const en: Dictionary = {
   siteMeta: {
     title: "Hunter Group Real Estate — Toronto & GTA Real Estate",
     description:
-      "A Toronto-based real estate group. Jack & Tara Hunter, with RE/MAX Hallmark, help you buy, sell, and invest across Toronto and the GTA.",
+      "A Toronto-based Turkish real estate group at RE/MAX Hallmark, helping you buy, sell, and invest across Toronto and the GTA.",
     siteName: "Hunter Group Real Estate",
   },
   nav: {
@@ -995,26 +994,22 @@ export const en: Dictionary = {
     menuOpen: "Open menu",
     menuClose: "Close menu",
     logoAria: "Hunter Group Real Estate",
-    langTR: "TR",
-    langEN: "EN",
-    langFR: "FR",
-    langES: "ES",
+    language: "Language",
   },
 
   home: {
     hero: {
       eyebrow: "Toronto-Based Turkish Real Estate Group · RE/MAX",
-      heading: "We treat you like family,",
-      headingEm: "we build wealth together.",
-      sub: "Real estate is one of the most powerful ways to build wealth. With over 18 years of combined experience, we are by your side across Canada, not just as professionals, but as family.",
-      ctaPrimary: "Our Services",
-      ctaSecondary: "Message on WhatsApp",
-      stat1Value: "18+",
-      stat1Label: "Years Combined Experience",
-      stat2Value: "Toronto",
-      stat2Label: "& GTA Specialists",
+      heading: "Expert guidance at every step,",
+      headingEm: "in Toronto and the GTA.",
+      sub: "From the first meeting to closing, we handle your purchase, sale or investment with market data, the right pricing strategy and strong negotiation, backed by RE/MAX Hallmark.",
+      ctaPrimary: "Message on WhatsApp",
+      ctaSecondary: "Our Services",
+      stat1Value: "$200M+",
+      stat1Label: "In transactions",
+      stat2Value: "10+",
+      stat2Label: "Years of experience",
       scrollAria: "Scroll down",
-      photoAlt: "Jack and Tara Hunter",
     },
     services: {
       eyebrow: "Our Services",
@@ -1022,10 +1017,9 @@ export const en: Dictionary = {
       titleEm: "three practices.",
       sub: "Distinct, professional processes for real estate, mortgage financing, and private markets.",
       buy: {
-        tag: "RE/MAX Hallmark",
+        tag: "RE/MAX Hallmark Realty",
         title: "Real Estate",
         desc: "Buying, selling, and strategic property advice backed by RE/MAX Hallmark.",
-        homeLabel: "Real estate guide",
       },
       sell: {
         tag: "RE/MAX Hallmark",
@@ -1034,16 +1028,14 @@ export const en: Dictionary = {
         cta: "Seller's Guide",
       },
       mortgage: {
-        tag: "Real Mortgage Associates · FSRA",
+        tag: "Real Mortgage Associates",
         title: "Mortgage Financing",
-        desc: "Education on mortgages, renewals, refinancing, and home-equity options within the Mortgage Agent licence scope.",
-        cta: "Mortgage options",
+        desc: "Education on mortgages, renewals, refinancing, and home-equity options.",
       },
       invest: {
-        tag: "Hunter & Hunter Investment Advisors",
+        tag: "Parvis Invest",
         title: "Private Markets",
         desc: "Explore Canadian private real estate and alternative investment opportunities with their sources, risks, and underlying assets.",
-        cta: "Continue to Hunter & Hunter Investment Advisors",
       },
     },
     guides: {
@@ -1258,11 +1250,13 @@ export const en: Dictionary = {
     eyebrow: "Who We Are",
     title: "Together,",
     titleEm: "stronger.",
-    sub: "The new generation of real estate in Toronto. A broker who acts on data and an advisor who puts people first.",
+    sub: "The new generation of real estate in Toronto. A team that acts on market data and gives every client personal attention.",
     jackName: "Jack Hunter",
     jackTitle: "Broker",
     taraName: "Tara Hunter",
     taraTitle: "Real Estate Advisor",
+    selinName: "Selin Yılmaz",
+    selinTitle: "Real Estate Advisor",
     photoPlaceholder: "photo",
   },
 
@@ -1271,7 +1265,7 @@ export const en: Dictionary = {
     quotePre: "Your experience must be exceptional. With real-time market insight, sound decisions, and",
     quoteEm: "care that's tailored to you,",
     quoteEnd: "we're by your side to reach your goals on the best terms.",
-    attribution: "Jack & Tara Hunter",
+    attribution: "Jack, Tara & Selin",
   },
 
   logoStrip: {
@@ -1535,6 +1529,10 @@ export const en: Dictionary = {
     contactHeading: "Contact",
     socialHeading: "Social",
     waLabel: "Message on WhatsApp",
+    mortgageLabel: "Mortgage services",
+    privacyLabel: "Privacy Policy",
+    termsLabel: "Terms of Use",
+    advertisingLabel: "Advertising Disclosure",
   },
 
   capitalApp: {
@@ -1912,7 +1910,7 @@ export const fr: Dictionary = {
   siteMeta: {
     title: "Hunter Group Real Estate — Immobilier à Toronto et dans le GTA",
     description:
-      "Un groupe immobilier basé à Toronto. Jack et Tara Hunter, avec RE/MAX Hallmark, vous accompagnent pour acheter, vendre et investir à Toronto et dans le GTA.",
+      "Un groupe immobilier turc basé à Toronto, chez RE/MAX Hallmark, qui vous accompagne pour acheter, vendre et investir à Toronto et dans le GTA.",
     siteName: "Hunter Group Real Estate",
   },
   nav: {
@@ -1933,26 +1931,22 @@ export const fr: Dictionary = {
     menuOpen: "Ouvrir le menu",
     menuClose: "Fermer le menu",
     logoAria: "Hunter Group Real Estate",
-    langTR: "TR",
-    langEN: "EN",
-    langFR: "FR",
-    langES: "ES",
+    language: "Langue",
   },
 
   home: {
     hero: {
       eyebrow: "Groupe immobilier turc basé à Toronto · RE/MAX",
-      heading: "Nous vous traitons comme la famille,",
-      headingEm: "nous bâtissons du patrimoine ensemble.",
-      sub: "L'immobilier est l'un des moyens les plus puissants de bâtir du patrimoine. Avec plus de 18 ans d'expérience combinée, nous sommes à vos côtés partout au Canada, non seulement comme des professionnels, mais comme une famille.",
-      ctaPrimary: "Nos services",
-      ctaSecondary: "Écrire sur WhatsApp",
-      stat1Value: "18+",
-      stat1Label: "ans d'expérience combinée",
-      stat2Value: "Toronto",
-      stat2Label: "et spécialistes du GTA",
+      heading: "Un accompagnement expert à chaque étape,",
+      headingEm: "à Toronto et dans le GTA.",
+      sub: "De la première rencontre à la clôture, nous gérons votre achat, votre vente ou votre investissement grâce aux données du marché, à une juste stratégie de prix et à une négociation solide, avec l'appui de RE/MAX Hallmark.",
+      ctaPrimary: "Écrire sur WhatsApp",
+      ctaSecondary: "Nos services",
+      stat1Value: "200 M$+",
+      stat1Label: "de transactions",
+      stat2Value: "10+",
+      stat2Label: "ans d'expérience",
       scrollAria: "Défiler vers le bas",
-      photoAlt: "Jack et Tara Hunter",
     },
     services: {
       eyebrow: "Nos services",
@@ -1960,10 +1954,9 @@ export const fr: Dictionary = {
       titleEm: "trois expertises.",
       sub: "Des processus professionnels et distincts pour l'immobilier, le financement hypothécaire et les marchés privés.",
       buy: {
-        tag: "RE/MAX Hallmark",
+        tag: "RE/MAX Hallmark Realty",
         title: "Immobilier",
         desc: "Achat, vente et conseil stratégique en immobilier, soutenus par RE/MAX Hallmark.",
-        homeLabel: "Guide de l'immobilier",
       },
       sell: {
         tag: "RE/MAX Hallmark",
@@ -1972,16 +1965,14 @@ export const fr: Dictionary = {
         cta: "Guide du vendeur",
       },
       mortgage: {
-        tag: "Real Mortgage Associates · FSRA",
+        tag: "Real Mortgage Associates",
         title: "Financement hypothécaire",
-        desc: "Renseignements sur les prêts hypothécaires, les renouvellements, le refinancement et les options de valeur nette, dans le cadre de la licence d'agent hypothécaire.",
-        cta: "Options hypothécaires",
+        desc: "Renseignements sur les prêts hypothécaires, les renouvellements, le refinancement et les options de valeur nette.",
       },
       invest: {
-        tag: "Hunter & Hunter Investment Advisors",
+        tag: "Parvis Invest",
         title: "Marchés privés",
         desc: "Explorez les occasions d'immobilier privé et d'investissement alternatif au Canada, avec leurs sources, leurs risques et leurs actifs sous-jacents.",
-        cta: "Continuer vers Hunter & Hunter Investment Advisors",
       },
     },
     guides: {
@@ -2196,11 +2187,13 @@ export const fr: Dictionary = {
     eyebrow: "Qui nous sommes",
     title: "Ensemble,",
     titleEm: "plus forts.",
-    sub: "La nouvelle génération de l'immobilier à Toronto. Un courtier guidé par les données et une conseillère qui place l'humain d'abord.",
+    sub: "La nouvelle génération de l'immobilier à Toronto. Une équipe guidée par les données du marché, qui accorde à chaque client une attention personnelle.",
     jackName: "Jack Hunter",
     jackTitle: "Courtier",
     taraName: "Tara Hunter",
     taraTitle: "Conseillère immobilière",
+    selinName: "Selin Yılmaz",
+    selinTitle: "Conseillère immobilière",
     photoPlaceholder: "photo",
   },
 
@@ -2209,7 +2202,7 @@ export const fr: Dictionary = {
     quotePre: "Votre expérience doit être exceptionnelle. Avec une connaissance du marché en temps réel, des décisions judicieuses et",
     quoteEm: "une attention adaptée à vous,",
     quoteEnd: "nous sommes à vos côtés pour atteindre vos objectifs aux meilleures conditions.",
-    attribution: "Jack et Tara Hunter",
+    attribution: "Jack, Tara et Selin",
   },
 
   logoStrip: {
@@ -2473,6 +2466,10 @@ export const fr: Dictionary = {
     contactHeading: "Contact",
     socialHeading: "Réseaux sociaux",
     waLabel: "Écrire sur WhatsApp",
+    mortgageLabel: "Services hypothécaires",
+    privacyLabel: "Politique de confidentialité",
+    termsLabel: "Conditions d'utilisation",
+    advertisingLabel: "Divulgation publicitaire",
   },
 
   capitalApp: {
@@ -2880,7 +2877,7 @@ export const es: Dictionary = {
   siteMeta: {
     title: "Hunter Group Real Estate — Bienes raíces en Toronto y el GTA",
     description:
-      "Un grupo inmobiliario con sede en Toronto. Jack y Tara Hunter, con RE/MAX Hallmark, te ayudan a comprar, vender e invertir en Toronto y el GTA.",
+      "Un grupo inmobiliario turco con sede en Toronto, en RE/MAX Hallmark, que le ayuda a comprar, vender e invertir en Toronto y el GTA.",
     siteName: "Hunter Group Real Estate",
   },
   nav: {
@@ -2901,26 +2898,22 @@ export const es: Dictionary = {
     menuOpen: "Abrir menú",
     menuClose: "Cerrar menú",
     logoAria: "Hunter Group Real Estate",
-    langTR: "TR",
-    langEN: "EN",
-    langFR: "FR",
-    langES: "ES",
+    language: "Idioma",
   },
 
   home: {
     hero: {
       eyebrow: "Grupo inmobiliario turco con sede en Toronto · RE/MAX",
-      heading: "Te tratamos como a la familia,",
-      headingEm: "construimos patrimonio juntos.",
-      sub: "Los bienes raíces son una de las formas más poderosas de crear patrimonio. Con más de 18 años de experiencia combinada, estamos a tu lado en todo Canadá, no solo como profesionales, sino como familia.",
-      ctaPrimary: "Nuestros servicios",
-      ctaSecondary: "Escríbenos por WhatsApp",
-      stat1Value: "18+",
-      stat1Label: "años de experiencia combinada",
-      stat2Value: "Toronto",
-      stat2Label: "y especialistas del GTA",
+      heading: "Asesoría experta en cada paso,",
+      headingEm: "en Toronto y el GTA.",
+      sub: "Desde la primera reunión hasta el cierre, gestionamos su compra, venta o inversión con datos del mercado, la estrategia de precio adecuada y una negociación sólida, con el respaldo de RE/MAX Hallmark.",
+      ctaPrimary: "Escríbenos por WhatsApp",
+      ctaSecondary: "Nuestros servicios",
+      stat1Value: "$200M+",
+      stat1Label: "en transacciones",
+      stat2Value: "10+",
+      stat2Label: "años de experiencia",
       scrollAria: "Desplázate hacia abajo",
-      photoAlt: "Jack y Tara Hunter",
     },
     services: {
       eyebrow: "Nuestros servicios",
@@ -2928,10 +2921,9 @@ export const es: Dictionary = {
       titleEm: "tres especialidades.",
       sub: "Procesos profesionales y distintos para bienes raíces, financiamiento hipotecario y mercados privados.",
       buy: {
-        tag: "RE/MAX Hallmark",
+        tag: "RE/MAX Hallmark Realty",
         title: "Bienes raíces",
         desc: "Compra, venta y asesoría estratégica de propiedades, con el respaldo de RE/MAX Hallmark.",
-        homeLabel: "Guía de bienes raíces",
       },
       sell: {
         tag: "RE/MAX Hallmark",
@@ -2940,16 +2932,14 @@ export const es: Dictionary = {
         cta: "Guía del vendedor",
       },
       mortgage: {
-        tag: "Real Mortgage Associates · FSRA",
+        tag: "Real Mortgage Associates",
         title: "Financiamiento hipotecario",
-        desc: "Información sobre hipotecas, renovaciones, refinanciamiento y opciones de valor neto de la vivienda, dentro del alcance de la licencia de agente hipotecario.",
-        cta: "Opciones hipotecarias",
+        desc: "Información sobre hipotecas, renovaciones, refinanciamiento y opciones de valor neto de la vivienda.",
       },
       invest: {
-        tag: "Hunter & Hunter Investment Advisors",
+        tag: "Parvis Invest",
         title: "Mercados privados",
         desc: "Explora las oportunidades de bienes raíces privados e inversión alternativa en Canadá, con sus fuentes, riesgos y activos subyacentes.",
-        cta: "Continuar a Hunter & Hunter Investment Advisors",
       },
     },
     guides: {
@@ -3164,11 +3154,13 @@ export const es: Dictionary = {
     eyebrow: "Quiénes somos",
     title: "Juntos,",
     titleEm: "más fuertes.",
-    sub: "La nueva generación de bienes raíces en Toronto. Un corredor que actúa con datos y una asesora que pone a las personas primero.",
+    sub: "La nueva generación de bienes raíces en Toronto. Un equipo que actúa con datos del mercado y brinda atención personal a cada cliente.",
     jackName: "Jack Hunter",
     jackTitle: "Corredor",
     taraName: "Tara Hunter",
     taraTitle: "Asesora inmobiliaria",
+    selinName: "Selin Yılmaz",
+    selinTitle: "Asesora inmobiliaria",
     photoPlaceholder: "foto",
   },
 
@@ -3177,7 +3169,7 @@ export const es: Dictionary = {
     quotePre: "Tu experiencia debe ser excepcional. Con conocimiento del mercado en tiempo real, decisiones acertadas y",
     quoteEm: "una atención adaptada a ti,",
     quoteEnd: "estamos a tu lado para alcanzar tus objetivos en las mejores condiciones.",
-    attribution: "Jack y Tara Hunter",
+    attribution: "Jack, Tara y Selin",
   },
 
   logoStrip: {
@@ -3441,6 +3433,10 @@ export const es: Dictionary = {
     contactHeading: "Contacto",
     socialHeading: "Redes sociales",
     waLabel: "Escríbenos por WhatsApp",
+    mortgageLabel: "Servicios hipotecarios",
+    privacyLabel: "Política de privacidad",
+    termsLabel: "Términos de uso",
+    advertisingLabel: "Aviso publicitario",
   },
 
   capitalApp: {
