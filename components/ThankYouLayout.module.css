@@ -288,6 +288,9 @@
   text-decoration: none;
   align-self: flex-start;
   position: relative;
+  /* padding-top lifts the link to a 24px+ tap target; the underline below
+     stays put because ::after is pinned to the bottom edge. */
+  padding-top: 6px;
   padding-bottom: 4px;
 }
 
@@ -386,3 +389,16 @@
   border-color: var(--gold-soft);
 }
 
+/* Must live in this module: CSS Modules scopes the `fadeUp` name used above,
+   so the identically named keyframes in globals.css never matched and the
+   `opacity: 0` starting state was never animated away. */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

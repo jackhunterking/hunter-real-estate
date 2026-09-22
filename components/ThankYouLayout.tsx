@@ -1,32 +1,42 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import { useLang } from "@/lib/i18n/LanguageProvider";
 import styles from "./ThankYouLayout.module.css";
 
-interface NextStep {
-  number: string;
-  title: string;
-  description: string;
-  href: string;
-  cta: string;
-}
+const WA_URL = "https://wa.me/16473913311";
 
 interface ThankYouLayoutProps {
   guideType: "alici" | "satici";
-  guideName: string;
   guidePdfPath: string;
-  intro: string;
-  nextSteps: NextStep[];
 }
 
 export default function ThankYouLayout({
   guideType,
-  guideName,
   guidePdfPath,
-  intro,
-  nextSteps,
 }: ThankYouLayoutProps) {
+  const { lang, t } = useLang();
+  const c = t.thankYou;
+  const guide = guideType === "alici" ? t.aliciThanks : t.saticiThanks;
+
+  // The first steps open WhatsApp with a pre-filled message; the last one
+  // cross-links to the other guide, which stays inside the current locale.
+  const steps = [
+    ...guide.steps.map((step) => ({
+      ...step,
+      href: `${WA_URL}?text=${encodeURIComponent(step.wa)}`,
+      external: true,
+    })),
+    {
+      ...guide.crossStep,
+      href: `/${lang}/rehber/${guideType === "alici" ? "satici" : "alici"}`,
+      external: false,
+    },
+  ];
+
   return (
     <main>
       <Nav />
@@ -57,14 +67,14 @@ export default function ThankYouLayout({
 
           <span className={styles.eyebrow}>
             <span className={styles.hairline} />
-            Teşekkür Ederiz
+            {c.eyebrow}
           </span>
 
           <h1 className={styles.heading}>
-            Rehberiniz <em>yolda.</em>
+            {c.title} <em>{c.titleEm}</em>
           </h1>
 
-          <p className={styles.intro}>{intro}</p>
+          <p className={styles.intro}>{guide.intro}</p>
 
           {/* Direct download button, works even if email hasn't arrived yet */}
           <a
@@ -82,7 +92,7 @@ export default function ThankYouLayout({
                 strokeLinejoin="round"
               />
             </svg>
-            {guideName} İndir
+            {c.download.replace("{guide}", guide.guideName)}
           </a>
         </div>
       </section>
@@ -93,33 +103,53 @@ export default function ThankYouLayout({
           <div className={styles.nextHead}>
             <span className={styles.eyebrowDark}>
               <span className={styles.hairlineDark} />
-              Sırada Ne Var
+              {c.nextEyebrow}
             </span>
             <h2 className={styles.nextTitle}>
-              Sıradaki <em>adımlar.</em>
+              {c.nextTitle} <em>{c.nextTitleEm}</em>
             </h2>
           </div>
 
           <div className={styles.nextGrid}>
-            {nextSteps.map((step) => (
-              <article key={step.number} className={styles.stepCard}>
-                <span className={styles.stepNumber}>{step.number}</span>
-                <h3 className={styles.stepTitle}>{step.title}</h3>
-                <p className={styles.stepDescription}>{step.description}</p>
-                <Link href={step.href} className={styles.stepCta}>
-                  {step.cta}
-                  <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
-                    <path
-                      d="M10 1l5 5-5 5M15 6H1"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </Link>
-              </article>
-            ))}
+            {steps.map((step, i) => {
+              const arrow = (
+                <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+                  <path
+                    d="M10 1l5 5-5 5M15 6H1"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              );
+
+              return (
+                <article key={step.title} className={styles.stepCard}>
+                  <span className={styles.stepNumber}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className={styles.stepTitle}>{step.title}</h3>
+                  <p className={styles.stepDescription}>{step.description}</p>
+                  {step.external ? (
+                    <a
+                      href={step.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.stepCta}
+                    >
+                      {step.cta}
+                      {arrow}
+                    </a>
+                  ) : (
+                    <Link href={step.href} className={styles.stepCta}>
+                      {step.cta}
+                      {arrow}
+                    </Link>
+                  )}
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -127,19 +157,16 @@ export default function ThankYouLayout({
       {/* Sign-off */}
       <section className={styles.signoff}>
         <div className="container">
-          <p className={styles.signoffQuote}>
-            &ldquo;Yolun her adımında yanınızdayız. Sorularınız için
-            doğrudan bize yazabilirsiniz.&rdquo;
-          </p>
-          <p className={styles.signoffName}>Jack &amp; Tara Hunter</p>
+          <p className={styles.signoffQuote}>&ldquo;{c.quote}&rdquo;</p>
+          <p className={styles.signoffName}>{c.signoffName}</p>
           <div className={styles.signoffContact}>
             <a
-              href="https://wa.me/16473913311"
+              href={WA_URL}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.signoffBtn}
             >
-              WhatsApp&apos;tan Yazın
+              {c.whatsappCta}
             </a>
           </div>
         </div>
