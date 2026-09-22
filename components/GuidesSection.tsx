@@ -9,16 +9,14 @@ export default function GuidesSection() {
 
   const GUIDES = [
     {
-      href: "https://drive.google.com/file/d/19rJFJmGST33V_kc5H-H7Z0yA_CHXaWl8/view?usp=sharing",
-      number: "01",
+      href: "/guides/alis-rehberi.pdf",
       label: g.card1Label,
       title: g.card1Title,
       description: g.card1Desc,
       icon: "M8 28L32 10l24 18v26H8V28z M26 54V38h12v16",
     },
     {
-      href: "https://drive.google.com/file/d/1Xyd0OtYB9gnF7mrFQ0cYzRAxLM8hApXu/view?usp=sharing",
-      number: "02",
+      href: "/guides/satis-rehberi.pdf",
       label: g.card2Label,
       title: g.card2Title,
       description: g.card2Desc,
@@ -67,7 +65,6 @@ export default function GuidesSection() {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span className={styles.number}>{guide.number}</span>
               </div>
               <span className={styles.label}>{guide.label}</span>
               <h3 className={styles.cardTitle}>{guide.title}</h3>

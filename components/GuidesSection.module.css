@@ -113,14 +113,6 @@
   color: var(--gold);
 }
 
-.number {
-  font-family: var(--serif);
-  font-size: 40px;
-  color: rgba(255, 255, 255, 0.08);
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-
 .label {
   font-family: var(--sans);
   font-size: 10px;

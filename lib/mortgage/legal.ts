@@ -13,13 +13,9 @@ export const LEGAL_CONTACT = {
   legalEmail: "jack@jackhunter.com",
 };
 
-export const LEGAL_SLUGS = {
-  privacy: "gizlilik",
-  terms: "kullanim-kosullari",
-  advertising: "reklam-aciklamasi",
-} as const;
+import { LEGAL_SLUGS, type LegalKey } from "./legal-slugs";
 
-export type LegalKey = keyof typeof LEGAL_SLUGS;
+export { LEGAL_SLUGS, type LegalKey };
 
 export type Block =
   | { kind: "p"; text: string }

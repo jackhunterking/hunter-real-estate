@@ -21,6 +21,14 @@
   pointer-events: none;
 }
 
+/* On a phone the mark is cropped to a few bars that read as blocks behind the
+   heading, so the watermark is desktop-only. */
+@media (max-width: 767px) {
+  .services::before {
+    display: none;
+  }
+}
+
 .head {
   text-align: center;
   margin-bottom: 48px;
@@ -114,20 +122,13 @@
   flex-direction: column;
   background: var(--ink);
   padding: 36px 30px;
-  transition: background 0.4s ease;
   position: relative;
-  color: inherit;
-  text-decoration: none;
 }
 
 @media (min-width: 480px) {
   .card {
     padding: 44px 34px;
   }
-}
-
-.card:hover {
-  background: rgba(30, 51, 120, 0.18);
 }
 
 .cardTitle {
@@ -151,26 +152,9 @@
   color: var(--gold);
 }
 
-.cardCta {
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.88);
-}
-
-.cardDisclosure {
-  margin: -10px 0 20px;
-  font-family: var(--sans);
-  font-size: 11px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.68);
-}
-
 .cardDesc {
   font-family: var(--sans);
   font-size: 14.5px;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.68);
-  margin-bottom: 24px;
-  flex: 1;
 }

@@ -6,8 +6,7 @@ import Footer from "@/components/Footer";
 import { useT } from "@/lib/i18n/LanguageProvider";
 import styles from "./page.module.css";
 
-const GUIDE_URL =
-  "https://drive.google.com/file/d/1Xyd0OtYB9gnF7mrFQ0cYzRAxLM8hApXu/view?usp=sharing";
+const GUIDE_URL = "/guides/satis-rehberi.pdf";
 
 export default function SaticiClient() {
   const t = useT();

@@ -3,82 +3,9 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useLang } from "@/lib/i18n/LanguageProvider";
+import { useT } from "@/lib/i18n/LanguageProvider";
+import LanguageMenu from "./LanguageMenu";
 import styles from "./Nav.module.css";
-
-/* Inline flag glyphs (kept small + simple so they read cleanly at 18×12px) */
-function FlagTR() {
-  return (
-    <svg
-      className={styles.flag}
-      viewBox="0 0 30 20"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <rect width="30" height="20" fill="#E30A17" />
-      {/* Crescent, outer white circle with inner red circle cutout */}
-      <circle cx="11" cy="10" r="4.5" fill="#fff" />
-      <circle cx="12.3" cy="10" r="3.5" fill="#E30A17" />
-      {/* 5-point star */}
-      <polygon
-        points="17.4,7.6 18.2,9.6 20.3,9.6 18.6,10.8 19.3,12.8 17.4,11.6 15.5,12.8 16.2,10.8 14.5,9.6 16.6,9.6"
-        fill="#fff"
-      />
-    </svg>
-  );
-}
-
-function FlagEN() {
-  return (
-    <svg
-      className={styles.flag}
-      viewBox="0 0 30 20"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <rect width="30" height="20" fill="#012169" />
-      {/* Diagonals (white base then red overlay) */}
-      <path d="M0,0 L30,20" stroke="#fff" strokeWidth="3" />
-      <path d="M30,0 L0,20" stroke="#fff" strokeWidth="3" />
-      <path d="M0,0 L30,20" stroke="#C8102E" strokeWidth="1.5" />
-      <path d="M30,0 L0,20" stroke="#C8102E" strokeWidth="1.5" />
-      {/* Cross (white base then red overlay) */}
-      <path d="M15,0 V20" stroke="#fff" strokeWidth="5" />
-      <path d="M0,10 H30" stroke="#fff" strokeWidth="5" />
-      <path d="M15,0 V20" stroke="#C8102E" strokeWidth="3" />
-      <path d="M0,10 H30" stroke="#C8102E" strokeWidth="3" />
-    </svg>
-  );
-}
-
-function FlagFR() {
-  return (
-    <svg
-      className={styles.flag}
-      viewBox="0 0 30 20"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <rect width="10" height="20" x="0" fill="#0055A4" />
-      <rect width="10" height="20" x="10" fill="#fff" />
-      <rect width="10" height="20" x="20" fill="#EF4135" />
-    </svg>
-  );
-}
-
-function FlagES() {
-  return (
-    <svg
-      className={styles.flag}
-      viewBox="0 0 30 20"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <rect width="30" height="20" fill="#AA151B" />
-      <rect width="30" height="10" y="5" fill="#F1BF00" />
-    </svg>
-  );
-}
 
 interface NavProps {
   /** Starts transparent over a dark hero and goes solid on scroll */
@@ -86,7 +13,7 @@ interface NavProps {
 }
 
 export default function Nav({ overlayHero = false }: NavProps) {
-  const { lang, setLang, t } = useLang();
+  const t = useT();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
@@ -198,46 +125,8 @@ export default function Nav({ overlayHero = false }: NavProps) {
             {t.nav.contact}
           </Link>
 
-          <div className={styles.langToggle} role="group" aria-label="Language">
-            <button
-              type="button"
-              className={`${styles.langBtn} ${lang === "tr" ? styles.langActive : ""}`}
-              onClick={() => setLang("tr")}
-              aria-pressed={lang === "tr"}
-            >
-              <FlagTR />
-              <span>{t.nav.langTR}</span>
-            </button>
-            <span className={styles.langSep} aria-hidden="true">|</span>
-            <button
-              type="button"
-              className={`${styles.langBtn} ${lang === "en" ? styles.langActive : ""}`}
-              onClick={() => setLang("en")}
-              aria-pressed={lang === "en"}
-            >
-              <FlagEN />
-              <span>{t.nav.langEN}</span>
-            </button>
-            <span className={styles.langSep} aria-hidden="true">|</span>
-            <button
-              type="button"
-              className={`${styles.langBtn} ${lang === "fr" ? styles.langActive : ""}`}
-              onClick={() => setLang("fr")}
-              aria-pressed={lang === "fr"}
-            >
-              <FlagFR />
-              <span>{t.nav.langFR}</span>
-            </button>
-            <span className={styles.langSep} aria-hidden="true">|</span>
-            <button
-              type="button"
-              className={`${styles.langBtn} ${lang === "es" ? styles.langActive : ""}`}
-              onClick={() => setLang("es")}
-              aria-pressed={lang === "es"}
-            >
-              <FlagES />
-              <span>{t.nav.langES}</span>
-            </button>
+          <div className={styles.langToggle}>
+            <LanguageMenu />
           </div>
         </nav>
 

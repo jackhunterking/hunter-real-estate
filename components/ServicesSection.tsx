@@ -1,13 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { useT } from "@/lib/i18n/LanguageProvider";
-import { RMA } from "@/lib/mortgage/identity";
 import styles from "./ServicesSection.module.css";
 
 export default function ServicesSection() {
   const t = useT();
   const s = t.home.services;
+
+  // Informational cards: each practice is named by the firm that provides it.
+  // Licence details live in the footer.
+  const CARDS = [s.buy, s.mortgage, s.invest];
 
   return (
     <section className={styles.services} id="hizmetler">
@@ -25,27 +27,15 @@ export default function ServicesSection() {
         </div>
 
         <div className={styles.grid}>
-          <Link href="/rehber/alici" className={styles.card}>
-            <span className={styles.cardTag}>{s.buy.tag}</span>
-            <h3 className={styles.cardTitle}>{s.buy.title}</h3>
-            <p className={styles.cardDesc}>{s.buy.desc}</p>
-            <span className={styles.cardCta}>{s.buy.homeLabel} →</span>
-          </Link>
-
-          <Link href="/mortgage" className={styles.card}>
-            <span className={styles.cardTag}>{s.mortgage.tag}</span>
-            <h3 className={styles.cardTitle}>{s.mortgage.title}</h3>
-            <p className={styles.cardDesc}>{s.mortgage.desc}</p>
-            <p className={styles.cardDisclosure}>{RMA.licenceLine}</p>
-            <span className={styles.cardCta}>{s.mortgage.cta} →</span>
-          </Link>
-
-          <Link href="/hunter-advisory" className={styles.card}>
-            <span className={styles.cardTag}>{s.invest.tag}</span>
-            <h3 className={styles.cardTitle}>{s.invest.title}</h3>
-            <p className={styles.cardDesc}>{s.invest.desc}</p>
-            <span className={styles.cardCta}>{s.invest.cta} →</span>
-          </Link>
+          {CARDS.map((card) => (
+            <article key={card.tag} className={styles.card}>
+              {/* Firm names are English: keep Turkish casing from turning
+                  "Associates" into "ASSOCİATES" under text-transform. */}
+              <span className={styles.cardTag} lang="en">{card.tag}</span>
+              <h3 className={styles.cardTitle}>{card.title}</h3>
+              <p className={styles.cardDesc}>{card.desc}</p>
+            </article>
+          ))}
         </div>
       </div>
     </section>

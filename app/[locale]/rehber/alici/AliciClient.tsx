@@ -6,8 +6,7 @@ import Footer from "@/components/Footer";
 import { useT } from "@/lib/i18n/LanguageProvider";
 import styles from "./page.module.css";
 
-const GUIDE_URL =
-  "https://drive.google.com/file/d/19rJFJmGST33V_kc5H-H7Z0yA_CHXaWl8/view?usp=sharing";
+const GUIDE_URL = "/guides/alis-rehberi.pdf";
 
 export default function AliciClient() {
   const t = useT();

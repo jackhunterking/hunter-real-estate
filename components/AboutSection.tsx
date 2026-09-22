@@ -7,7 +7,6 @@ import styles from "./AboutSection.module.css";
 interface PersonProps {
   name: string;
   title: string;
-  credentials: string[];
   photoSrc?: string;
   placeholderLabel: string;
 }
@@ -15,7 +14,6 @@ interface PersonProps {
 function PersonCard({
   name,
   title,
-  credentials,
   photoSrc,
   placeholderLabel,
 }: PersonProps) {
@@ -23,7 +21,12 @@ function PersonCard({
     <article className={styles.person}>
       <div className={styles.photo}>
         {photoSrc ? (
-          <Image src={photoSrc} alt={name} width={600} height={750} />
+          <Image
+            src={photoSrc}
+            alt={name}
+            fill
+            sizes="(min-width: 768px) 280px, 104px"
+          />
         ) : (
           <div className={styles.photoPlaceholder}>
             <div className={styles.placeholderMark}>
@@ -43,13 +46,6 @@ function PersonCard({
       <div className={styles.personBody}>
         <h3 className={styles.personName}>{name}</h3>
         <p className={styles.personTitle}>{title}</p>
-        <div className={styles.credentials}>
-          {credentials.map((cred) => (
-            <span key={cred} className={styles.credential}>
-              {cred}
-            </span>
-          ))}
-        </div>
       </div>
     </article>
   );
@@ -77,15 +73,19 @@ export default function AboutSection() {
           <PersonCard
             name={a.jackName}
             title={a.jackTitle}
-            credentials={["ABR", "SRS", "Broker"]}
-            photoSrc="/jack-photo.jpg"
+            photoSrc="/team/jack.jpg"
             placeholderLabel={a.photoPlaceholder}
           />
           <PersonCard
             name={a.taraName}
             title={a.taraTitle}
-            credentials={["Platinum Award", "2x Top Producer"]}
-            photoSrc="/tara-photo.jpg"
+            photoSrc="/team/tara.jpg"
+            placeholderLabel={a.photoPlaceholder}
+          />
+          <PersonCard
+            name={a.selinName}
+            title={a.selinTitle}
+            photoSrc="/team/selin.jpg"
             placeholderLabel={a.photoPlaceholder}
           />
         </div>

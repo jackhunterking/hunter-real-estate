@@ -21,6 +21,14 @@
   pointer-events: none;
 }
 
+/* On a phone the 800px mark is cropped to a few bars that read as grey
+   blocks behind the text, so the watermark is desktop-only. */
+@media (max-width: 767px) {
+  .promise::before {
+    display: none;
+  }
+}
+
 .inner {
   max-width: 760px;
   margin: 0 auto;
