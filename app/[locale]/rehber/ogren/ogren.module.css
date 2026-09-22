@@ -26,7 +26,8 @@
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.65);
   text-decoration: none;
-  margin-bottom: 26px;
+  padding: 6px 0;
+  margin-bottom: 20px;
   transition: color 0.2s ease;
 }
 
@@ -140,7 +141,7 @@
   font-family: var(--sans);
   font-size: 13.5px;
   line-height: 1.5;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 
 /* ── Guides ── */
@@ -176,7 +177,7 @@
   font-family: var(--sans);
   font-size: 14px;
   line-height: 1.55;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 
 /* ── FAQ ── */
@@ -254,5 +255,5 @@
   font-family: var(--sans);
   font-size: 12.5px;
   line-height: 1.5;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }

@@ -89,7 +89,7 @@ export function EntryDisclaimer() {
     >
       <div className="max-h-[92dvh] w-full max-w-[640px] overflow-y-auto rounded-t-xl bg-white shadow-[0_10px_40px_rgba(10,28,43,0.25)] sm:rounded-xl">
         <div className="px-6 pb-6 pt-7 sm:px-8 sm:pb-8">
-          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#8a949c]">
+          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#5f6b74]">
             {copy.eyebrow}
           </p>
           <h2 className="mt-2 font-serif text-2xl font-semibold text-[#0a2d46]">{copy.title}</h2>

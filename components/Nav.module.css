@@ -11,9 +11,10 @@
     backdrop-filter 0.35s ease;
 }
 
-/* Transparent state — over hero at page top */
+/* Transparent state — over hero at page top. The faint scrim keeps nav text
+   legible where the hero photo behind it is bright. */
 .transparent {
-  background: transparent;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
   border-bottom: 1px solid transparent;
 }
 
@@ -169,7 +170,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 4px 2px;
+  padding: 8px 2px;
   transition: color 0.2s ease;
   line-height: 1;
 }
@@ -270,6 +271,13 @@
   .menuOpen .link {
     font-size: 13px;
     color: rgba(255, 255, 255, 0.82);
+  }
+
+  /* The desktop divider has nothing to separate in the stacked menu. */
+  .menuOpen .langToggle {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
   }
 }
 

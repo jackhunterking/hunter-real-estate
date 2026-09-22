@@ -1,6 +1,6 @@
 # Hunter Group Web
 
-Production Next.js platform for Jack & Tara Hunter at `jackhunter.com`.
+Production Next.js platform for Jack & Tara Hunter at `huntergroupremax.com` (formerly `jackhunter.com`, now 301-redirected).
 
 This repository is now one deployable app at the repo root. It contains the real estate, mortgage, guide, and Hunter & Hunter Investment Advisors experiences together.
 

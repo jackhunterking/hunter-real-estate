@@ -336,7 +336,7 @@ export function CompareInvestments({ funds }: { funds: FundComparable[] }) {
                     <Home className="size-4" />
                   </span>
                   <p className="text-sm font-semibold text-[#233947]">{c.rental}</p>
-                  <span className="ml-auto rounded-full bg-[#f1f5f7] px-2 py-0.5 text-[10px] font-medium text-[#8291a0]">{c.bestCase}</span>
+                  <span className="ml-auto rounded-full bg-[#f1f5f7] px-2 py-0.5 text-[10px] font-medium text-[#56687a]">{c.bestCase}</span>
                 </div>
                 <HeroCashFlow
                   value={money(cf.netMonthly, lang)}
@@ -471,9 +471,9 @@ function PerformanceTable({
       <table className="w-full text-left">
         <thead className="border-b border-[#e2e8eb] bg-[#f6f9fa]">
           <tr>
-            <th scope="col" className="px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">{c.colYear}</th>
-            <th scope="col" className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">{c.colReturn}</th>
-            <th scope="col" className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">{c.colPerMonth}</th>
+            <th scope="col" className="px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a]">{c.colYear}</th>
+            <th scope="col" className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a]">{c.colReturn}</th>
+            <th scope="col" className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a]">{c.colPerMonth}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-[#eef2f4]">

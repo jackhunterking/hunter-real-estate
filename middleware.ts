@@ -6,7 +6,11 @@ import { HUNTER_ADVISORY_HOSTS } from "@/lib/capital/advisory-domain";
 
 // Keep the existing dedicated-domain aliases working while the public brand and
 // canonical application path move to Hunter & Hunter Investment Advisors.
-const JACK_HOSTS = new Set([
+const MAIN_SITE_HOSTS = new Set([
+  "huntergroupremax.com",
+  "www.huntergroupremax.com",
+  // Former primary domain: still resolves until the 301 to the new domain is
+  // fully propagated, and kept here so its legacy links keep behaving.
   "jackhunter.com",
   "www.jackhunter.com",
   "jackvetara.com",
@@ -67,9 +71,9 @@ export async function middleware(request: NextRequest) {
     rest === "/hunter-x-capital" ||
     rest.startsWith("/hunter-x-capital/");
   if (legacyCapitalRequest && !dedicatedHost) {
-    // Dedicated jackhunter.com aliases route to the standalone advisory brand;
-    // every other host resolves to the in-app advisory experience.
-    if (JACK_HOSTS.has(host)) {
+    // Main-site hosts route to the standalone advisory brand; every other
+    // host resolves to the in-app advisory experience.
+    if (MAIN_SITE_HOSTS.has(host)) {
       return NextResponse.redirect(new URL(ADVISORY_HOME_URL), 301);
     }
     const destination = request.nextUrl.clone();

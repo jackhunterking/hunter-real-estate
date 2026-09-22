@@ -1,3 +1,6 @@
+"use client";
+
+import { useT } from "@/lib/i18n/LanguageProvider";
 import styles from "./LogoStrip.module.css";
 
 interface LogoConfig {
@@ -14,10 +17,12 @@ const LOGOS: LogoConfig[] = [
 ];
 
 export default function LogoStrip() {
+  const t = useT();
+
   return (
     <section className={styles.strip}>
       <div className="container">
-        <div className={styles.eyebrow}>Akredite Kurumlar &amp; Ödüller</div>
+        <div className={styles.eyebrow}>{t.logoStrip.eyebrow}</div>
         <div className={styles.row}>
           {LOGOS.map((logo) => (
             <div key={logo.name} className={styles.slot}>

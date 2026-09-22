@@ -25,3 +25,8 @@ export const routing = defineRouting({
 });
 
 export type AppLocale = (typeof routing.locales)[number];
+
+/** Narrows a `[locale]` route param to a supported locale (default if unknown). */
+export function toLang(locale: string): Lang {
+  return (locales as string[]).includes(locale) ? (locale as Lang) : defaultLocale;
+}

@@ -3,7 +3,7 @@ import { routing } from "@/i18n/routing";
 import { INTENTS } from "@/lib/mortgage/intents";
 
 const BASE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://jackhunter.com"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://huntergroupremax.com"
 ).replace(/\/$/, "");
 
 /**

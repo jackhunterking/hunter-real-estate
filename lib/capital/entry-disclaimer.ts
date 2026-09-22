@@ -25,7 +25,7 @@ export const ENTRY_DISCLAIMER_VERSION = 2;
 export const ENTRY_DISCLAIMER_STORAGE_KEY = "hnc.entry-disclaimer";
 
 /** Where "Leave this site" sends someone who does not want to continue. */
-export const ENTRY_DISCLAIMER_EXIT_URL = "https://jackhunter.com";
+export const ENTRY_DISCLAIMER_EXIT_URL = "https://huntergroupremax.com";
 
 const { legalName, nrdNumber, registrationCategory, representativeName } =
   PARVIS_RELATIONSHIP;

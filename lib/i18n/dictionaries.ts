@@ -214,6 +214,71 @@ export const tr = {
     alt: "Satım Rehberi önizleme",
   },
 
+  thankYou: {
+    eyebrow: "Teşekkür Ederiz",
+    title: "Rehberiniz",
+    titleEm: "yolda.",
+    download: "{guide} İndir",
+    nextEyebrow: "Sırada Ne Var",
+    nextTitle: "Sıradaki",
+    nextTitleEm: "adımlar.",
+    quote: "Yolun her adımında yanınızdayız. Sorularınız için doğrudan bize yazabilirsiniz.",
+    signoffName: "Jack & Tara Hunter",
+    whatsappCta: "WhatsApp'tan Yazın",
+  },
+
+  aliciThanks: {
+    metaTitle: "Alıcı Rehberi, Teşekkür Ederiz",
+    metaDesc: "Ev Alma Rehberiniz hazır. Kanada'da hayalinizdeki mülke giden yolda yanınızdayız.",
+    guideName: "Alıcı Rehberi",
+    intro: "Kanada'da mülk sahibi olmanın profesyonel yol haritası e-postanıza gönderildi. Bu arada, aşağıdaki adımlarla devam edebilirsiniz.",
+    steps: [
+      {
+        title: "Mortgage Ön Onayı",
+        description: "Bütçenizi netleştirmenin ilk adımı. Doğru profesyonelle bağlantı kuralım.",
+        cta: "Görüşme Talep Et",
+        wa: "Mortgage Ön Onayı hakkında görüşmek istiyorum.",
+      },
+      {
+        title: "Tercihlerinizi Konuşalım",
+        description: "Mahalle, bütçe, zaman çizelgesi. Sizin için doğru fırsatları bulalım.",
+        cta: "Konsültasyon Al",
+        wa: "Alıcı konsültasyonu hakkında görüşmek istiyorum.",
+      },
+    ],
+    crossStep: {
+      title: "Satıcı Rehberine Göz At",
+      description: "Satmayı da düşünüyorsanız, profesyonel satış stratejimizi inceleyin.",
+      cta: "Satıcı Rehberini Gör",
+    },
+  },
+
+  saticiThanks: {
+    metaTitle: "Satıcı Rehberi, Teşekkür Ederiz",
+    metaDesc: "Ev Satma Rehberiniz hazır. Mülkünüzü en iyi koşullarda satmak için yanınızdayız.",
+    guideName: "Satıcı Rehberi",
+    intro: "Mülkünüzü en iyi koşullarda satmak için profesyonel strateji e-postanıza gönderildi. Bu arada, aşağıdaki adımlarla devam edebilirsiniz.",
+    steps: [
+      {
+        title: "Mülkünüzün Değerini Öğrenin",
+        description: "Profesyonel piyasa analizi ile mülkünüzün gerçek değerini birlikte belirleyelim.",
+        cta: "Değer Analizi İste",
+        wa: "Mülkümün değerini öğrenmek istiyorum.",
+      },
+      {
+        title: "Satış Stratejisi",
+        description: "Fiyatlandırma, staging, pazarlama. Maksimum getiri için planı birlikte kuralım.",
+        cta: "Konsültasyon Al",
+        wa: "Satıcı konsültasyonu hakkında görüşmek istiyorum.",
+      },
+    ],
+    crossStep: {
+      title: "Alıcı Rehberine Göz At",
+      description: "Almayı da düşünüyorsanız, profesyonel alım stratejimizi inceleyin.",
+      cta: "Alıcı Rehberini Gör",
+    },
+  },
+
   contact: {
     eyebrow: "İletişim",
     heading: "Bir adım uzağınızdayız.",
@@ -241,6 +306,20 @@ export const tr = {
     quoteEm: "size özel bir özen",
     quoteEnd: "ile birlikte, hedeflerinize en iyi koşullarda ulaşmanız için yanınızdayız.",
     attribution: "Jack & Tara Hunter",
+  },
+
+  logoStrip: {
+    eyebrow: "Akredite Kurumlar & Ödüller",
+  },
+
+  notFound: {
+    eyebrow: "404",
+    metaTitle: "Sayfa bulunamadı",
+    title: "Aradığınız sayfa",
+    titleEm: "bulunamadı.",
+    sub: "Bağlantı eskimiş ya da sayfa taşınmış olabilir. Ana sayfadan devam edebilir veya bize WhatsApp'tan yazabilirsiniz.",
+    home: "Ana Sayfaya Dön",
+    whatsapp: "WhatsApp'tan Yazın",
   },
 
   capitalTeaser: {
@@ -1101,6 +1180,71 @@ export const en: Dictionary = {
     alt: "Seller's Guide preview",
   },
 
+  thankYou: {
+    eyebrow: "Thank You",
+    title: "Your guide is",
+    titleEm: "on its way.",
+    download: "Download the {guide}",
+    nextEyebrow: "What's Next",
+    nextTitle: "Your next",
+    nextTitleEm: "steps.",
+    quote: "We're beside you at every step of the way. Write to us directly with any questions.",
+    signoffName: "Jack & Tara Hunter",
+    whatsappCta: "Message on WhatsApp",
+  },
+
+  aliciThanks: {
+    metaTitle: "Buyer's Guide, Thank You",
+    metaDesc: "Your Home Buying Guide is ready. We're beside you on the way to your dream property in Canada.",
+    guideName: "Buyer's Guide",
+    intro: "The professional roadmap to owning property in Canada has been sent to your email. In the meantime, you can carry on with the steps below.",
+    steps: [
+      {
+        title: "Mortgage Pre-Approval",
+        description: "The first step to clarifying your budget. Let's connect you with the right professional.",
+        cta: "Request a Call",
+        wa: "I'd like to talk about mortgage pre-approval.",
+      },
+      {
+        title: "Let's Talk Preferences",
+        description: "Neighbourhood, budget, timeline. Let's find the right opportunities for you.",
+        cta: "Book a Consultation",
+        wa: "I'd like to talk about a buyer consultation.",
+      },
+    ],
+    crossStep: {
+      title: "Take a Look at the Seller's Guide",
+      description: "If you're thinking about selling too, explore our professional selling strategy.",
+      cta: "View the Seller's Guide",
+    },
+  },
+
+  saticiThanks: {
+    metaTitle: "Seller's Guide, Thank You",
+    metaDesc: "Your Home Selling Guide is ready. We're beside you to sell your property on the best terms.",
+    guideName: "Seller's Guide",
+    intro: "The professional strategy for selling your property on the best terms has been sent to your email. In the meantime, you can carry on with the steps below.",
+    steps: [
+      {
+        title: "Find Out What Your Property Is Worth",
+        description: "Let's establish the real value of your property together with a professional market analysis.",
+        cta: "Request a Valuation",
+        wa: "I'd like to find out what my property is worth.",
+      },
+      {
+        title: "Selling Strategy",
+        description: "Pricing, staging, marketing. Let's build the plan for maximum return together.",
+        cta: "Book a Consultation",
+        wa: "I'd like to talk about a seller consultation.",
+      },
+    ],
+    crossStep: {
+      title: "Take a Look at the Buyer's Guide",
+      description: "If you're thinking about buying too, explore our professional buying strategy.",
+      cta: "View the Buyer's Guide",
+    },
+  },
+
   contact: {
     eyebrow: "Contact",
     heading: "We're a step away.",
@@ -1128,6 +1272,20 @@ export const en: Dictionary = {
     quoteEm: "care that's tailored to you,",
     quoteEnd: "we're by your side to reach your goals on the best terms.",
     attribution: "Jack & Tara Hunter",
+  },
+
+  logoStrip: {
+    eyebrow: "Affiliations & Awards",
+  },
+
+  notFound: {
+    eyebrow: "404",
+    metaTitle: "Page not found",
+    title: "We couldn't find",
+    titleEm: "that page.",
+    sub: "The link may be out of date, or the page may have moved. Head back to the home page, or message us on WhatsApp.",
+    home: "Back to Home",
+    whatsapp: "Message on WhatsApp",
   },
 
   capitalTeaser: {
@@ -1960,6 +2118,71 @@ export const fr: Dictionary = {
     alt: "Aperçu du Guide du vendeur",
   },
 
+  thankYou: {
+    eyebrow: "Merci",
+    title: "Votre guide est",
+    titleEm: "en route.",
+    download: "Télécharger le {guide}",
+    nextEyebrow: "La Suite",
+    nextTitle: "Vos prochaines",
+    nextTitleEm: "étapes.",
+    quote: "Nous sommes à vos côtés à chaque étape. Écrivez-nous directement pour toute question.",
+    signoffName: "Jack et Tara Hunter",
+    whatsappCta: "Écrire sur WhatsApp",
+  },
+
+  aliciThanks: {
+    metaTitle: "Guide de l'acheteur, merci",
+    metaDesc: "Votre guide d'achat est prêt. Nous vous accompagnons vers le bien de vos rêves au Canada.",
+    guideName: "guide de l'acheteur",
+    intro: "La feuille de route professionnelle pour devenir propriétaire au Canada a été envoyée à votre adresse e-mail. En attendant, vous pouvez poursuivre avec les étapes ci-dessous.",
+    steps: [
+      {
+        title: "Préapprobation hypothécaire",
+        description: "La première étape pour clarifier votre budget. Mettons-vous en relation avec le bon professionnel.",
+        cta: "Demander un appel",
+        wa: "Je souhaite parler de la préapprobation hypothécaire.",
+      },
+      {
+        title: "Parlons de vos préférences",
+        description: "Quartier, budget, calendrier. Trouvons les bonnes opportunités pour vous.",
+        cta: "Réserver une consultation",
+        wa: "Je souhaite parler d'une consultation acheteur.",
+      },
+    ],
+    crossStep: {
+      title: "Découvrez le guide du vendeur",
+      description: "Si vous envisagez aussi de vendre, découvrez notre stratégie de vente professionnelle.",
+      cta: "Voir le guide du vendeur",
+    },
+  },
+
+  saticiThanks: {
+    metaTitle: "Guide du vendeur, merci",
+    metaDesc: "Votre guide de vente est prêt. Nous vous accompagnons pour vendre votre bien aux meilleures conditions.",
+    guideName: "guide du vendeur",
+    intro: "La stratégie professionnelle pour vendre votre bien aux meilleures conditions a été envoyée à votre adresse e-mail. En attendant, vous pouvez poursuivre avec les étapes ci-dessous.",
+    steps: [
+      {
+        title: "Découvrez la valeur de votre bien",
+        description: "Établissons ensemble la valeur réelle de votre bien grâce à une analyse de marché professionnelle.",
+        cta: "Demander une évaluation",
+        wa: "Je souhaite connaître la valeur de mon bien.",
+      },
+      {
+        title: "Stratégie de vente",
+        description: "Prix, mise en valeur, marketing. Construisons ensemble le plan pour un rendement maximal.",
+        cta: "Réserver une consultation",
+        wa: "Je souhaite parler d'une consultation vendeur.",
+      },
+    ],
+    crossStep: {
+      title: "Découvrez le guide de l'acheteur",
+      description: "Si vous envisagez aussi d'acheter, découvrez notre stratégie d'achat professionnelle.",
+      cta: "Voir le guide de l'acheteur",
+    },
+  },
+
   contact: {
     eyebrow: "Contact",
     heading: "Nous sommes à un pas de vous.",
@@ -1987,6 +2210,20 @@ export const fr: Dictionary = {
     quoteEm: "une attention adaptée à vous,",
     quoteEnd: "nous sommes à vos côtés pour atteindre vos objectifs aux meilleures conditions.",
     attribution: "Jack et Tara Hunter",
+  },
+
+  logoStrip: {
+    eyebrow: "Affiliations et distinctions",
+  },
+
+  notFound: {
+    eyebrow: "404",
+    metaTitle: "Page introuvable",
+    title: "Cette page est",
+    titleEm: "introuvable.",
+    sub: "Le lien est peut-être obsolète ou la page a été déplacée. Revenez à l'accueil ou écrivez-nous sur WhatsApp.",
+    home: "Retour à l'accueil",
+    whatsapp: "Écrire sur WhatsApp",
   },
 
   capitalTeaser: {
@@ -2849,6 +3086,71 @@ export const es: Dictionary = {
     alt: "Vista previa de la Guía del vendedor",
   },
 
+  thankYou: {
+    eyebrow: "Gracias",
+    title: "Su guía está",
+    titleEm: "en camino.",
+    download: "Descargar la {guide}",
+    nextEyebrow: "Qué Sigue",
+    nextTitle: "Sus próximos",
+    nextTitleEm: "pasos.",
+    quote: "Estamos a su lado en cada paso del camino. Escríbanos directamente si tiene preguntas.",
+    signoffName: "Jack y Tara Hunter",
+    whatsappCta: "Escribir por WhatsApp",
+  },
+
+  aliciThanks: {
+    metaTitle: "Guía del comprador, gracias",
+    metaDesc: "Su guía de compra está lista. Le acompañamos hacia la propiedad de sus sueños en Canadá.",
+    guideName: "guía del comprador",
+    intro: "La hoja de ruta profesional para comprar una propiedad en Canadá se ha enviado a su correo electrónico. Mientras tanto, puede continuar con los pasos siguientes.",
+    steps: [
+      {
+        title: "Preaprobación hipotecaria",
+        description: "El primer paso para definir su presupuesto. Le conectamos con el profesional adecuado.",
+        cta: "Solicitar una llamada",
+        wa: "Me gustaría hablar sobre la preaprobación hipotecaria.",
+      },
+      {
+        title: "Hablemos de sus preferencias",
+        description: "Barrio, presupuesto, plazos. Encontremos las oportunidades adecuadas para usted.",
+        cta: "Reservar una consulta",
+        wa: "Me gustaría hablar sobre una consulta para compradores.",
+      },
+    ],
+    crossStep: {
+      title: "Consulte la guía del vendedor",
+      description: "Si también piensa vender, explore nuestra estrategia de venta profesional.",
+      cta: "Ver la guía del vendedor",
+    },
+  },
+
+  saticiThanks: {
+    metaTitle: "Guía del vendedor, gracias",
+    metaDesc: "Su guía de venta está lista. Le acompañamos para vender su propiedad en las mejores condiciones.",
+    guideName: "guía del vendedor",
+    intro: "La estrategia profesional para vender su propiedad en las mejores condiciones se ha enviado a su correo electrónico. Mientras tanto, puede continuar con los pasos siguientes.",
+    steps: [
+      {
+        title: "Descubra el valor de su propiedad",
+        description: "Determinemos juntos el valor real de su propiedad con un análisis de mercado profesional.",
+        cta: "Solicitar una valoración",
+        wa: "Me gustaría conocer el valor de mi propiedad.",
+      },
+      {
+        title: "Estrategia de venta",
+        description: "Precio, preparación, marketing. Construyamos juntos el plan para el máximo rendimiento.",
+        cta: "Reservar una consulta",
+        wa: "Me gustaría hablar sobre una consulta para vendedores.",
+      },
+    ],
+    crossStep: {
+      title: "Consulte la guía del comprador",
+      description: "Si también piensa comprar, explore nuestra estrategia de compra profesional.",
+      cta: "Ver la guía del comprador",
+    },
+  },
+
   contact: {
     eyebrow: "Contacto",
     heading: "Estamos a un paso.",
@@ -2876,6 +3178,20 @@ export const es: Dictionary = {
     quoteEm: "una atención adaptada a ti,",
     quoteEnd: "estamos a tu lado para alcanzar tus objetivos en las mejores condiciones.",
     attribution: "Jack y Tara Hunter",
+  },
+
+  logoStrip: {
+    eyebrow: "Afiliaciones y reconocimientos",
+  },
+
+  notFound: {
+    eyebrow: "404",
+    metaTitle: "Página no encontrada",
+    title: "No encontramos",
+    titleEm: "esa página.",
+    sub: "Es posible que el enlace esté desactualizado o que la página se haya movido. Vuelva al inicio o escríbanos por WhatsApp.",
+    home: "Volver al inicio",
+    whatsapp: "Escribir por WhatsApp",
   },
 
   capitalTeaser: {

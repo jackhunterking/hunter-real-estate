@@ -132,6 +132,7 @@
   font-weight: 500;
   color: rgba(255, 255, 255, 0.75);
   text-decoration: none;
+  padding: 4px 0;
   transition: color 0.2s ease;
 }
 

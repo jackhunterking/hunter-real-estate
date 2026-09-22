@@ -35,7 +35,7 @@ export default async function HunterAdvisoryLayout({ children }: { children: Rea
   return (
     <TaxonomyProvider value={taxonomies}>
       {/* Scoped to the advisory subtree on purpose: this is a securities
-          notice, and the real-estate site at jackhunter.com is a different
+          notice, and the real-estate site at huntergroupremax.com is a different
           business that it would only confuse. */}
       <EntryDisclaimer />
       <LangBoundary>{children}</LangBoundary>

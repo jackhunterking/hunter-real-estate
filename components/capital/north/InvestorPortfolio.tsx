@@ -374,7 +374,7 @@ export function InvestorPortfolio({ offerings, viewAsUserId, investments }: { of
               />
             ))}
           </div>
-          <p className="mt-2.5 text-[11px] text-[#8a949b]">{c.approxNote}</p>
+          <p className="mt-2.5 text-[11px] text-[#5f6b74]">{c.approxNote}</p>
         </section>
       )}
 
@@ -440,7 +440,7 @@ export function InvestorPortfolio({ offerings, viewAsUserId, investments }: { of
               <h2 className="text-sm font-semibold text-[#193143]">{c.geographyTitle}</h2>
             </div>
             <AllocationBars items={geography} total={buildings.length} unit={c.buildings} />
-            {!usingHeld && <p className="mt-3 text-xs text-[#8a949b]">{c.couldHoldNote}</p>}
+            {!usingHeld && <p className="mt-3 text-xs text-[#5f6b74]">{c.couldHoldNote}</p>}
           </Panel>
         </section>
       )}
@@ -603,7 +603,7 @@ function IncomeSplit({
 }
 
 function AllocationBars({ items, total, unit }: { items: { label: string; count: number }[]; total: number; unit: string }) {
-  if (!items.length) return <p className="text-sm text-[#8a949b]">—</p>;
+  if (!items.length) return <p className="text-sm text-[#5f6b74]">—</p>;
   return (
     <div className="space-y-3">
       {items.map(({ label, count }) => (

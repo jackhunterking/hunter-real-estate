@@ -11,7 +11,7 @@ test("dedicated advisory hosts use clean public routes", () => {
   assert.equal(isHunterAdvisoryHost("www.hunterhunteradvisors.com"), true);
   assert.equal(isHunterAdvisoryHost("hunterhunteradvisors.com:443"), true);
   assert.equal(advisoryPublicPath("www.hunterhunteradvisors.com", "/sign-in"), "/sign-in");
-  assert.equal(advisoryPublicPath("jackhunter.com", "/sign-in"), "/hunter-advisory/sign-in");
+  assert.equal(advisoryPublicPath("huntergroupremax.com", "/sign-in"), "/hunter-advisory/sign-in");
 });
 
 test("auth callbacks use the visible host route contract", () => {
@@ -40,7 +40,7 @@ test("confirmation continuations stay inside the advisory portal", () => {
     "/investments/example",
   );
   assert.equal(
-    safeAdvisoryNext("jackhunter.com", "/hunter-advisory/investments/example"),
+    safeAdvisoryNext("huntergroupremax.com", "/hunter-advisory/investments/example"),
     "/hunter-advisory/investments/example",
   );
   assert.equal(
@@ -52,7 +52,7 @@ test("confirmation continuations stay inside the advisory portal", () => {
     "/onboarding",
   );
   assert.equal(
-    safeAdvisoryNext("jackhunter.com", "/outside-portal"),
+    safeAdvisoryNext("huntergroupremax.com", "/outside-portal"),
     "/hunter-advisory/onboarding",
   );
 });

@@ -242,7 +242,7 @@ export function CompareFunds({ funds }: { funds: FundComparable[] }) {
 
           {/* ── Aligned periods. A fund that didn't publish a period shows a dash. ── */}
           <div className="border-t border-[#e2e8eb] px-5 py-5">
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8291a0]">{c.tableCaption}</p>
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#56687a]">{c.tableCaption}</p>
             <AlignedTable
               rows={rows}
               selectedKey={row.key}
@@ -258,7 +258,7 @@ export function CompareFunds({ funds }: { funds: FundComparable[] }) {
           {/* Neutral statement of the gap — this portal distributes both products. */}
           <div className="border-t border-[#e2e8eb] bg-[#f8fafb] px-5 py-3 text-center">
             <p className="text-sm font-semibold text-[#0a2d46]">{verdict}</p>
-            <p className="mt-1 text-[11px] leading-4 text-[#8291a0]">{c.noPrediction}</p>
+            <p className="mt-1 text-[11px] leading-4 text-[#56687a]">{c.noPrediction}</p>
           </div>
         </Panel>
 
@@ -380,7 +380,7 @@ function AlignedTable({
       <table className="w-full min-w-[520px] text-left">
         <thead className="border-b border-[#e2e8eb] bg-[#f6f9fa]">
           <tr>
-            <th scope="col" rowSpan={2} className="px-3 py-2 align-bottom text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">
+            <th scope="col" rowSpan={2} className="px-3 py-2 align-bottom text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a]">
               {c.colPeriod}
             </th>
             <th scope="colgroup" colSpan={2} className="border-l border-[#e2e8eb] px-3 pt-2 text-[11px] font-semibold" style={{ color: BLUE }}>
@@ -391,10 +391,10 @@ function AlignedTable({
             </th>
           </tr>
           <tr>
-            <th scope="col" className="border-l border-[#e2e8eb] px-3 pb-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">{c.colReturn}</th>
-            <th scope="col" className="px-3 pb-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">{c.colPerMonth}</th>
-            <th scope="col" className="border-l border-[#e2e8eb] px-3 pb-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">{c.colReturn}</th>
-            <th scope="col" className="px-3 pb-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">{c.colPerMonth}</th>
+            <th scope="col" className="border-l border-[#e2e8eb] px-3 pb-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a]">{c.colReturn}</th>
+            <th scope="col" className="px-3 pb-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a]">{c.colPerMonth}</th>
+            <th scope="col" className="border-l border-[#e2e8eb] px-3 pb-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a]">{c.colReturn}</th>
+            <th scope="col" className="px-3 pb-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a]">{c.colPerMonth}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-[#eef2f4]">
@@ -426,7 +426,7 @@ function AlignedTable({
         </tbody>
       </table>
       {rows.some((row) => row.a?.derived || row.b?.derived) && (
-        <p className="border-t border-[#eef2f4] px-3 py-2 text-[11px] leading-4 text-[#8291a0]">{c.derivedNote}</p>
+        <p className="border-t border-[#eef2f4] px-3 py-2 text-[11px] leading-4 text-[#56687a]">{c.derivedNote}</p>
       )}
     </div>
   );
@@ -503,7 +503,7 @@ function TermsTable({ fundA, fundB, lang, c }: { fundA: FundComparable; fundB: F
       <table className="w-full min-w-[520px] text-left">
         <thead className="border-b border-[#e2e8eb]">
           <tr>
-            <th scope="col" className="w-[28%] px-5 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]" />
+            <th scope="col" className="w-[28%] px-5 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a]" />
             <th scope="col" className="px-3 py-2 text-[11px] font-semibold" style={{ color: BLUE }}>{tx(fundA.shortName, lang)}</th>
             <th scope="col" className="px-3 py-2 text-[11px] font-semibold" style={{ color: GREEN }}>{tx(fundB.shortName, lang)}</th>
           </tr>
