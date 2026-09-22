@@ -85,7 +85,7 @@ Resend-verified state (confirmed via Resend MCP 2026-07-21):
   the malformed confirmation link (`…com&token_hash=…` with no `/auth/confirm`
   path). Allow the exact `/auth/confirm` callback on the dedicated apex and
   `www` domains, and the exact `/hunter-advisory/auth/confirm` callback on
-  localhost and `jackhunter.com`.
+  localhost and `huntergroupremax.com` (plus `jackhunter.com` while its 301 settles).
 - Keep `hunternorthcapital.com` only as a legacy Vercel alias during migration;
   do not use it as the Auth Site URL.
 - Configure Cloudflare Turnstile and set both site and secret keys.

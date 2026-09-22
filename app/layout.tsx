@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 // carries only site-wide, locale-independent metadata defaults.
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://jackhunter.com",
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://huntergroupremax.com",
   ),
   icons: {
     icon: [{ url: "/logos/HUNTER_Brandmark_Gold.png", type: "image/png" }],

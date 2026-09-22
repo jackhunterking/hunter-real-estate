@@ -163,6 +163,8 @@ site_url = "http://127.0.0.1:3000"
 additional_redirect_urls = [
   "http://127.0.0.1:3000/hunter-advisory/auth/confirm",
   "http://localhost:3000/hunter-advisory/auth/confirm",
+  "https://huntergroupremax.com/hunter-advisory/auth/confirm",
+  "https://www.huntergroupremax.com/hunter-advisory/auth/confirm",
   "https://jackhunter.com/hunter-advisory/auth/confirm",
   "https://www.jackhunter.com/hunter-advisory/auth/confirm",
   "https://hunterhunteradvisors.com/auth/confirm",

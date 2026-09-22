@@ -118,7 +118,7 @@ export default function Footer() {
 
         <div className={styles.bottom}>
           <div>&copy; {new Date().getFullYear()} {f.copy}</div>
-          <div>jackhunter.com</div>
+          <div>huntergroupremax.com</div>
         </div>
       </div>
     </footer>
