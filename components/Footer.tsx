@@ -45,7 +45,7 @@ export default function Footer() {
 
           {/* Site nav column */}
           <div className={styles.col}>
-            <h4 className={styles.colHeading}>{f.navHeading}</h4>
+            <h2 className={styles.colHeading}>{f.navHeading}</h2>
             <ul className={styles.navList}>
               {NAV.map((link) => (
                 <li key={link.href}>
@@ -59,7 +59,7 @@ export default function Footer() {
 
           {/* Contact column */}
           <div className={styles.col}>
-            <h4 className={styles.colHeading}>{f.contactHeading}</h4>
+            <h2 className={styles.colHeading}>{f.contactHeading}</h2>
             <ul className={styles.contactList}>
               <li className={styles.contactItem}>{f.address}</li>
               <li>
@@ -80,7 +80,7 @@ export default function Footer() {
 
           {/* Social column */}
           <div className={styles.col}>
-            <h4 className={styles.colHeading}>{f.socialHeading}</h4>
+            <h2 className={styles.colHeading}>{f.socialHeading}</h2>
             <div className={styles.socials}>
               <a
                 href="https://www.instagram.com/jack.ve.tara.remax/"

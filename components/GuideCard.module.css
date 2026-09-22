@@ -96,7 +96,7 @@
   font-weight: 600;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 
 .title {
@@ -116,7 +116,7 @@
 .description {
   font-size: 15px;
   line-height: 1.55;
-  color: var(--muted);
+  color: var(--muted-foreground);
   margin-bottom: 32px;
   max-width: 320px;
 }
@@ -175,7 +175,7 @@
   font-weight: 600;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--muted-foreground);
   margin-bottom: 10px;
 }
 
@@ -238,7 +238,7 @@
 .cancel {
   background: none;
   border: none;
-  color: var(--muted);
+  color: var(--muted-foreground);
   font-size: 10px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -277,6 +277,6 @@
 .success p {
   font-size: 14px;
   line-height: 1.55;
-  color: var(--muted);
+  color: var(--muted-foreground);
   max-width: 280px;
 }

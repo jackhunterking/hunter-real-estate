@@ -302,7 +302,7 @@ export function PrimaryAmountField({
 }) {
   return (
     <label className="block">
-      <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8291a0]">{label}</span>
+      <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#56687a]">{label}</span>
       <span className="mt-1.5 flex items-center rounded-lg border border-[#cfd9df] bg-white px-3 focus-within:border-[#0a4b72] focus-within:ring-2 focus-within:ring-[#0a4b72]/15">
         <span className="text-base text-[#93a0a9]">$</span>
         <CommaInput

@@ -366,7 +366,7 @@ export function Simulator({
 
         {/* Published returns, period by period — tap to compare. */}
         <div className="border-t border-[#e2e8eb] px-5 py-5">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8291a0]">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#56687a]">
             {c.simulator.tableCaption}
           </p>
           <SimPerformanceTable
@@ -408,16 +408,16 @@ function SimPerformanceTable({
       <table className="w-full min-w-[420px] text-left">
         <thead className="border-b border-[#e2e8eb] bg-[#f6f9fa]">
           <tr>
-            <th scope="col" className="px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">
+            <th scope="col" className="px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a]">
               {c.simulator.colPeriod}
             </th>
-            <th scope="col" className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">
+            <th scope="col" className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a]">
               {c.simulator.colReturn}
             </th>
-            <th scope="col" className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">
+            <th scope="col" className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a]">
               {c.simulator.colPerYear}
             </th>
-            <th scope="col" className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0]">
+            <th scope="col" className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a]">
               {c.simulator.colPerMonth}
             </th>
           </tr>
@@ -657,7 +657,7 @@ export function HowItCompares({ c }: { c: LandingCopy }) {
                 rival === t.key ? "bg-[#0a2d46] text-white" : "text-[#52636f] hover:text-[#0a2d46]"
               }`}
             >
-              <span className={rival === t.key ? "text-white/55" : "text-[#8291a0]"}>vs.</span> {t.label}
+              <span className={rival === t.key ? "text-white/55" : "text-[#56687a]"}>vs.</span> {t.label}
             </button>
           ))}
         </div>
@@ -667,12 +667,12 @@ export function HowItCompares({ c }: { c: LandingCopy }) {
         <div className="overflow-hidden rounded-2xl border border-[#dbe1e5] bg-white">
           {/* Column header (labels repeat inline per-row on phones). */}
           <div className="grid grid-cols-[1fr_1fr] border-b border-[#e2e8eb] sm:grid-cols-[0.8fr_1fr_1fr]">
-            <div className="hidden px-5 py-3.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8291a0] sm:block">
+            <div className="hidden px-5 py-3.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#56687a] sm:block">
               {c.compare.rowHeader}
             </div>
             <div className="px-4 py-3.5 text-sm font-semibold text-[#52636f]">{rivalLabel}</div>
             <div className="border-l border-t-2 border-l-[#e2e8eb] border-t-[#c5a34d] bg-[#f6f9fa] px-4 pb-3.5 pt-3">
-              <span className="block text-[10px] font-bold uppercase tracking-[0.12em] text-[#a8873a]">{c.compare.hncBadge}</span>
+              <span className="block text-[10px] font-bold uppercase tracking-[0.12em] text-[#8a6a24]">{c.compare.hncBadge}</span>
               <span className="mt-0.5 block text-sm font-semibold text-[#0a2d46]">{cols.hnc}</span>
             </div>
           </div>
@@ -689,13 +689,13 @@ export function HowItCompares({ c }: { c: LandingCopy }) {
                     {row.label}
                   </p>
                   <div className="text-sm leading-6 text-[#5a6a74] sm:px-4 sm:py-4">
-                    <span className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8291a0] sm:hidden">
+                    <span className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.08em] text-[#56687a] sm:hidden">
                       {rivalLabel}
                     </span>
                     <CompareCellBody text={row[rival]} tone={t[rival]} />
                   </div>
                   <div className="text-sm leading-6 text-[#40515e] sm:border-l sm:border-[#e2e8eb] sm:bg-[#f6f9fa] sm:px-4 sm:py-4">
-                    <span className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.08em] text-[#a8873a] sm:hidden">
+                    <span className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8a6a24] sm:hidden">
                       {cols.hnc}
                     </span>
                     <CompareCellBody text={row.hnc} tone={t.hnc} highlight />
@@ -708,7 +708,7 @@ export function HowItCompares({ c }: { c: LandingCopy }) {
       </Reveal>
 
       <div className="mx-auto mt-6 flex max-w-4xl flex-col gap-5 md:flex-row md:items-start md:justify-between">
-        <p className="max-w-3xl text-[11px] leading-5 text-[#8a949b]">{c.compare.note}</p>
+        <p className="max-w-3xl text-[11px] leading-5 text-[#5f6b74]">{c.compare.note}</p>
         <a
           href="#how"
           className="inline-flex h-11 shrink-0 items-center gap-2 self-start rounded-md border border-[#cdd7dd] px-5 text-sm font-semibold text-[#0a2d46] transition-colors hover:bg-[#eef4f7]"

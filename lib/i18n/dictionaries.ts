@@ -243,6 +243,20 @@ export const tr = {
     attribution: "Jack & Tara Hunter",
   },
 
+  logoStrip: {
+    eyebrow: "Akredite Kurumlar & Ödüller",
+  },
+
+  notFound: {
+    eyebrow: "404",
+    metaTitle: "Sayfa bulunamadı",
+    title: "Aradığınız sayfa",
+    titleEm: "bulunamadı.",
+    sub: "Bağlantı eskimiş ya da sayfa taşınmış olabilir. Ana sayfadan devam edebilir veya bize WhatsApp'tan yazabilirsiniz.",
+    home: "Ana Sayfaya Dön",
+    whatsapp: "WhatsApp'tan Yazın",
+  },
+
   capitalTeaser: {
     eyebrow: "Hunter & Hunter Investment Advisors",
     title: "Kanada’daki özel gayrimenkul ve alternatif yatırımlara",
@@ -1130,6 +1144,20 @@ export const en: Dictionary = {
     attribution: "Jack & Tara Hunter",
   },
 
+  logoStrip: {
+    eyebrow: "Affiliations & Awards",
+  },
+
+  notFound: {
+    eyebrow: "404",
+    metaTitle: "Page not found",
+    title: "We couldn't find",
+    titleEm: "that page.",
+    sub: "The link may be out of date, or the page may have moved. Head back to the home page, or message us on WhatsApp.",
+    home: "Back to Home",
+    whatsapp: "Message on WhatsApp",
+  },
+
   capitalTeaser: {
     eyebrow: "Hunter & Hunter Investment Advisors",
     title: "A clearer view of Canadian private real estate and",
@@ -1987,6 +2015,20 @@ export const fr: Dictionary = {
     quoteEm: "une attention adaptée à vous,",
     quoteEnd: "nous sommes à vos côtés pour atteindre vos objectifs aux meilleures conditions.",
     attribution: "Jack et Tara Hunter",
+  },
+
+  logoStrip: {
+    eyebrow: "Affiliations et distinctions",
+  },
+
+  notFound: {
+    eyebrow: "404",
+    metaTitle: "Page introuvable",
+    title: "Cette page est",
+    titleEm: "introuvable.",
+    sub: "Le lien est peut-être obsolète ou la page a été déplacée. Revenez à l'accueil ou écrivez-nous sur WhatsApp.",
+    home: "Retour à l'accueil",
+    whatsapp: "Écrire sur WhatsApp",
   },
 
   capitalTeaser: {
@@ -2876,6 +2918,20 @@ export const es: Dictionary = {
     quoteEm: "una atención adaptada a ti,",
     quoteEnd: "estamos a tu lado para alcanzar tus objetivos en las mejores condiciones.",
     attribution: "Jack y Tara Hunter",
+  },
+
+  logoStrip: {
+    eyebrow: "Afiliaciones y reconocimientos",
+  },
+
+  notFound: {
+    eyebrow: "404",
+    metaTitle: "Página no encontrada",
+    title: "No encontramos",
+    titleEm: "esa página.",
+    sub: "Es posible que el enlace esté desactualizado o que la página se haya movido. Vuelva al inicio o escríbanos por WhatsApp.",
+    home: "Volver al inicio",
+    whatsapp: "Escribir por WhatsApp",
   },
 
   capitalTeaser: {

@@ -113,7 +113,7 @@
 .contactLine {
   font-family: var(--sans);
   font-size: 14px;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 
 /* ── See also ── */
@@ -124,7 +124,7 @@
   border: 1px solid var(--hairline-dark);
   font-family: var(--sans);
   font-size: 13.5px;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 
 .seeAlsoLabel {

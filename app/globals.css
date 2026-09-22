@@ -11,7 +11,9 @@
   --paper: #faf8f3;
   --white: #ffffff;
   --text: #0a0a0a;
-  --muted: #6b6b6b;
+  /* No --muted here: theme.css owns that name as a surface colour and loads
+     later, so a grey defined here is silently overridden. For secondary text
+     use var(--muted-foreground). */
   --hairline: rgba(255, 255, 255, 0.14);
   --hairline-dark: rgba(0, 0, 0, 0.1);
 

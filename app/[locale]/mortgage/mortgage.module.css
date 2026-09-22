@@ -219,6 +219,17 @@
   color: var(--gold);
 }
 
+/* The hub title/text styles are written for light cards; re-tone them here. */
+.rateCard .hubTitle {
+  color: var(--white);
+  margin-bottom: 14px;
+}
+
+.rateCard .hubText {
+  color: rgba(255, 255, 255, 0.78);
+  margin-bottom: 18px;
+}
+
 .rateFoot {
   display: flex;
   align-items: center;
@@ -284,7 +295,7 @@
   font-family: var(--sans);
   font-size: clamp(15px, 1.5vw, 17px);
   line-height: 1.55;
-  color: var(--muted);
+  color: var(--muted-foreground);
   max-width: 540px;
   margin: 0 auto;
 }
@@ -343,7 +354,7 @@
   font-family: var(--sans);
   font-size: 14.5px;
   line-height: 1.55;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 
 .journeyArrow {
@@ -410,7 +421,7 @@
   font-family: var(--sans);
   font-size: 15px;
   line-height: 1.6;
-  color: var(--muted);
+  color: var(--muted-foreground);
   margin: 0;
 }
 
@@ -420,6 +431,7 @@
   align-items: center;
   gap: 10px;
   width: fit-content;
+  min-height: 32px;
   font-family: var(--sans);
   font-size: 12px;
   font-weight: 700;
@@ -489,7 +501,7 @@
   font-family: var(--sans);
   font-size: 12.5px;
   letter-spacing: 0.01em;
-  color: var(--muted);
+  color: var(--muted-foreground);
 }
 
 /* ── CTA (photo-backed) ── */

@@ -270,7 +270,7 @@
 .stepDescription {
   font-size: 14px;
   line-height: 1.55;
-  color: var(--muted);
+  color: var(--muted-foreground);
   margin-bottom: 24px;
   flex: 1;
 }
@@ -385,3 +385,4 @@
   background: var(--gold-soft);
   border-color: var(--gold-soft);
 }
+

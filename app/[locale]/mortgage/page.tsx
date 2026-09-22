@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { tr } from "@/lib/i18n/dictionaries";
+import { toLang } from "@/i18n/routing";
+import { dictionaries } from "@/lib/i18n/dictionaries";
 import MortgageClient from "./MortgageClient";
 
-export const metadata: Metadata = {
-  title: tr.mortgage.metaTitle,
-  description: tr.mortgage.metaDesc,
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = dictionaries[toLang(locale)].mortgage;
+  return { title: t.metaTitle, description: t.metaDesc };
+}
 
 export default function MortgagePage() {
   return <MortgageClient />;

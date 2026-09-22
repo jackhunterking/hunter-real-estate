@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { tr } from "@/lib/i18n/dictionaries";
+import { toLang } from "@/i18n/routing";
+import { dictionaries } from "@/lib/i18n/dictionaries";
 import OgrenClient from "./OgrenClient";
 
-export const metadata: Metadata = {
-  title: tr.ogren.metaTitle,
-  description: tr.ogren.metaDesc,
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = dictionaries[toLang(locale)].ogren;
+  return { title: t.metaTitle, description: t.metaDesc };
+}
 
 export default function OgrenPage() {
   return <OgrenClient />;

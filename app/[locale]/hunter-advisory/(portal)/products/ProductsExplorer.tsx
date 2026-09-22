@@ -99,7 +99,7 @@ export function ProductsExplorer({ offerings }: { offerings: OfferingBundle[] })
           {/* Filter / sort toolbar — scales the list to 20-25+ funds. */}
           <div className="mb-5 flex flex-wrap items-center gap-2">
             <label className="relative flex-1 basis-56">
-              <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-[#8a949b]" />
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-[#5f6b74]" />
               <input
                 type="search"
                 value={state.query}
@@ -124,7 +124,7 @@ export function ProductsExplorer({ offerings }: { offerings: OfferingBundle[] })
               ))}
             </select>
 
-            <span className="ml-auto text-xs font-semibold text-[#8a949b]">{c.count(filtered.length)}</span>
+            <span className="ml-auto text-xs font-semibold text-[#5f6b74]">{c.count(filtered.length)}</span>
             {active && (
               <button type="button" onClick={reset} className="text-xs font-semibold text-[#0a4b72] hover:underline">{c.clear}</button>
             )}
