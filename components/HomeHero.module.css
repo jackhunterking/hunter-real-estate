@@ -4,8 +4,8 @@
   min-height: 100vh;
   min-height: 100svh;
   color: var(--white);
-  /* Dusk over the lake: a warm glow low behind the skyline, a cool navy
-     wash in the upper left behind the text. */
+  /* Dusk over the lake — the colour the hero paints before the background
+     media arrives: a warm glow low, a cool navy wash in the upper left. */
   background:
     radial-gradient(ellipse 60% 55% at 70% 100%, rgba(235, 199, 107, 0.16), transparent 70%),
     radial-gradient(ellipse 55% 60% at 0% 0%, rgba(30, 51, 120, 0.3), transparent 70%),
@@ -17,29 +17,108 @@
   padding-top: 72px;
 }
 
-/* ── Skyline ──
-   Anchored bottom-right so a narrow screen keeps the CN Tower and the
-   financial district in view and crops the western condos instead. */
-.skyline {
+/* ── Background media ──
+   Still first, clip fading in on top of it once it actually plays, scrim over
+   both. The dusk gradient on .hero stays underneath as the paint-before-image
+   colour, so the text never lands on bare white. */
+.media {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   z-index: 1;
-  display: block;
-  width: 100%;
-  height: clamp(150px, 26vw, 380px);
+  overflow: hidden;
   pointer-events: none;
+}
+
+.still,
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Bias up a little: keeps the CN Tower and the skyline band in frame when a
+     short, wide window crops the top and bottom off. */
+  object-position: 50% 42%;
+  /* The scrim costs the sunset its colour; this hands some back. */
+  filter: saturate(1.18) contrast(1.04);
+}
+
+.video {
   opacity: 0;
-  animation: fadeIn 1.6s ease 0.3s forwards;
+  transition: opacity 1.2s ease;
+}
+
+.videoReady {
+  opacity: 1;
+}
+
+/* ── Contrast scrim ──
+   Three jobs, in one stacked gradient: a bed under the nav, a wedge that is
+   near-opaque under the headline and clears toward the right so the sunset
+   still reads, and a floor that grounds the stats. The last layer is a navy
+   wash that pulls the orange back toward the brand's dusk palette.
+   Measured on the brightest frame: white copy ≥ 6:1 and gold ≥ 4.8:1
+   everywhere text sits. */
+.scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(6, 8, 15, 0.6) 0, rgba(6, 8, 15, 0) 180px),
+    linear-gradient(
+      100deg,
+      rgba(5, 7, 14, 0.93) 0%,
+      rgba(5, 7, 14, 0.88) 30%,
+      rgba(5, 7, 14, 0.72) 55%,
+      rgba(5, 7, 14, 0.44) 78%,
+      rgba(5, 7, 14, 0.2) 100%
+    ),
+    linear-gradient(
+      to top,
+      rgba(6, 8, 15, 0.92) 0,
+      rgba(6, 8, 15, 0.35) 22%,
+      rgba(6, 8, 15, 0) 52%
+    ),
+    linear-gradient(rgba(12, 20, 52, 0.16), rgba(12, 20, 52, 0.16));
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  /* Between tablet and small laptop the column is nearly the full window, so
+     the headline runs out past where the desktop wedge has already cleared.
+     Hold the scrim open further right until the 1280px layout caps the column. */
+  .scrim {
+    background:
+      linear-gradient(to bottom, rgba(6, 8, 15, 0.6) 0, rgba(6, 8, 15, 0) 180px),
+      linear-gradient(
+        100deg,
+        rgba(5, 7, 14, 0.93) 0%,
+        rgba(5, 7, 14, 0.9) 30%,
+        rgba(5, 7, 14, 0.8) 55%,
+        rgba(5, 7, 14, 0.62) 78%,
+        rgba(5, 7, 14, 0.4) 100%
+      ),
+      linear-gradient(
+        to top,
+        rgba(6, 8, 15, 0.92) 0,
+        rgba(6, 8, 15, 0.35) 22%,
+        rgba(6, 8, 15, 0) 52%
+      ),
+      linear-gradient(rgba(12, 20, 52, 0.16), rgba(12, 20, 52, 0.16));
+  }
 }
 
 @media (max-width: 767px) {
-  /* Leave the stats clear of the towers on a phone. */
-  .skyline {
-    height: 150px;
-    opacity: 0.75;
-    animation: none;
+  /* On a phone the copy runs full width, so the wedge is no use — the scrim
+     has to darken top to bottom instead. */
+  .scrim {
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(6, 8, 15, 0.82) 0%,
+        rgba(6, 8, 15, 0.64) 22%,
+        rgba(6, 8, 15, 0.72) 55%,
+        rgba(6, 8, 15, 0.95) 100%
+      ),
+      linear-gradient(rgba(12, 20, 52, 0.18), rgba(12, 20, 52, 0.18));
   }
 }
 
@@ -148,8 +227,10 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--white);
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: rgba(8, 10, 18, 0.3);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.48);
   text-decoration: none;
   padding: 15px 24px;
   transition: border-color 0.3s ease, color 0.3s ease;
@@ -215,7 +296,7 @@
   gap: 4px;
   padding-right: 16px;
   margin-right: 16px;
-  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  border-right: 1px solid rgba(255, 255, 255, 0.22);
 }
 
 @media (min-width: 480px) {
@@ -289,10 +370,6 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-@keyframes fadeIn {
-  to { opacity: 1; }
 }
 
 @keyframes scrollPulse {

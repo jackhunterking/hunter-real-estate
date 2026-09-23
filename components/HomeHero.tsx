@@ -1,15 +1,60 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useT } from "@/lib/i18n/LanguageProvider";
-import TorontoSkyline from "./TorontoSkyline";
 import styles from "./HomeHero.module.css";
 
 const WA_URL = "https://wa.me/16473913311";
 
+/** Landscape cut for desktop, a centre crop of the same shot for phones. */
+const VIDEO_WIDE = "/hero/toronto-dusk.mp4";
+const VIDEO_PORTRAIT = "/hero/toronto-dusk-portrait.mp4";
+
 export default function HomeHero() {
   const t = useT();
   const h = t.home.hero;
+  const videoRef = useRef<HTMLVideoElement>(null);
+  /* The still carries the first paint; the clip is only requested after mount,
+     so it never competes with the page's own critical assets — and visitors on
+     reduced motion or a metered connection never pay for it at all. */
+  const [videoSrc, setVideoSrc] = useState<string | null>(null);
+  const [playing, setPlaying] = useState(false);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const conn = (
+      navigator as Navigator & {
+        connection?: { saveData?: boolean; effectiveType?: string };
+      }
+    ).connection;
+    if (conn?.saveData || /(^|-)2g$/.test(conn?.effectiveType ?? "")) return;
+
+    setVideoSrc(
+      window.matchMedia("(max-width: 767px)").matches
+        ? VIDEO_PORTRAIT
+        : VIDEO_WIDE,
+    );
+  }, []);
+
+  /* Stop decoding once the hero is scrolled away — it is a background, and
+     there is no reason to spend a laptop battery on frames nobody can see. */
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) void video.play().catch(() => {});
+        else video.pause();
+      },
+      { threshold: 0.05 },
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [videoSrc]);
+
   const STATS = [
     { value: h.stat1Value, label: h.stat1Label },
     { value: h.stat2Value, label: h.stat2Label },
@@ -17,7 +62,48 @@ export default function HomeHero() {
 
   return (
     <section className={styles.hero}>
-      <TorontoSkyline className={styles.skyline} />
+      {/* Background: Toronto at dusk, under a scrim heavy enough to keep the
+          headline readable against the sunset. Decorative — the copy below
+          carries the meaning. */}
+      <div className={styles.media} aria-hidden="true">
+        <picture>
+          <source
+            media="(max-width: 767px)"
+            type="image/avif"
+            srcSet="/hero/toronto-dusk-portrait.avif"
+          />
+          <source
+            media="(max-width: 767px)"
+            srcSet="/hero/toronto-dusk-portrait.jpg"
+          />
+          <source type="image/avif" srcSet="/hero/toronto-dusk.avif" />
+          <img
+            src="/hero/toronto-dusk.jpg"
+            alt=""
+            className={styles.still}
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
+
+        {videoSrc && (
+          <video
+            ref={videoRef}
+            src={videoSrc}
+            className={`${styles.video} ${playing ? styles.videoReady : ""}`}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            tabIndex={-1}
+            disablePictureInPicture
+            onPlaying={() => setPlaying(true)}
+          />
+        )}
+
+        <div className={styles.scrim} />
+      </div>
 
       {/* Hero content */}
       <div className={styles.content}>

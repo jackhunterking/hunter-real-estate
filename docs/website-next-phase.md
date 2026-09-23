@@ -30,7 +30,10 @@ website work so nothing is lost.
   (`components/LanguageMenu.tsx`, built on the shared `LOCALE_OPTIONS`).
 - Hero:
   - The photo collage is replaced by a line-drawn Toronto skyline
-    (`components/TorontoSkyline.tsx`).
+    (`components/TorontoSkyline.tsx`). Superseded 2026-09-23: the hero
+    background is now a Toronto dusk video, so the drawn skyline was
+    redundant and the component was deleted. Recover it from git history if
+    it is ever wanted as a brand mark elsewhere.
   - New professional headline and sub-heading in all four languages.
   - WhatsApp is the primary button; "Our Services" is the secondary button.
   - Numbers: $200M+ and 10+.
@@ -190,9 +193,10 @@ website work so nothing is lost.
   advisors domain.
 
 ### Unused, to remove
-- [ ] Components nothing imports: `HeroSection`, `MortgageTeaser`,
-  `CapitalTeaser`, `GuideCard` (unless the email step returns),
-  `lib/posthog-server.ts`, and 20 of the 23 files in `components/ui`.
+- [ ] Components nothing imports: `MortgageTeaser`, `CapitalTeaser`,
+  `GuideCard` (unless the email step returns), `lib/posthog-server.ts`, and
+  20 of the 23 files in `components/ui`. (`HeroSection` and its stylesheet
+  were deleted 2026-09-23.)
 - [ ] `InvestingBridge` and the pages at `/investing` and
   `/hunter-x-capital/**`. Middleware redirects those addresses first, so the
   pages never render.
