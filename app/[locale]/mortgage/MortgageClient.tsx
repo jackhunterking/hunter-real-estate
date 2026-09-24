@@ -1,14 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import AdvisorStrip from "@/components/mortgage/AdvisorStrip";
 import MortgageDisclosure from "@/components/mortgage/MortgageDisclosure";
-import { useLang, useT } from "@/lib/i18n/LanguageProvider";
-import { pick } from "@/lib/i18n/localize";
-import { LEGAL_DOCS, LEGAL_SLUGS } from "@/lib/mortgage/legal";
+import { useT } from "@/lib/i18n/LanguageProvider";
 import { waHref } from "@/lib/mortgage/wa";
 import styles from "./mortgage.module.css";
 
@@ -28,25 +25,10 @@ function CheckIcon() {
   );
 }
 
-function Arrow() {
-  return (
-    <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
-      <path d="M10 1l5 5-5 5M15 6H1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 export default function MortgageClient() {
   const t = useT();
-  const { lang } = useLang();
   const f = t.mortgage;
-  const legalDocs = pick(LEGAL_DOCS, lang);
-  const legalLinks = [
-    { href: `/${LEGAL_SLUGS.privacy}`, label: legalDocs.privacy.title },
-    { href: `/${LEGAL_SLUGS.terms}`, label: legalDocs.terms.title },
-    { href: `/${LEGAL_SLUGS.advertising}`, label: legalDocs.advertising.title },
-  ];
-
   const whatsapp = waHref(f.cta.whatsappText);
 
   return (
@@ -146,41 +128,6 @@ export default function MortgageClient() {
 
       {/* Advisor strip (real team + Equifax) */}
       <AdvisorStrip />
-
-      <section className={styles.hub}>
-        <div className="container">
-          <div className={styles.sectionHead}>
-            <span className={styles.sectionEyebrow}>{f.hub.eyebrow}</span>
-            <h2 className={styles.sectionTitle}>{f.hub.title}</h2>
-            <p className={styles.sectionSub}>{f.hub.sub}</p>
-          </div>
-          <div className={styles.hubGrid}>
-            <article className={styles.hubCard}>
-              <span className={styles.hubLabel}>{f.options.eyebrow}</span>
-              <h3 className={styles.hubTitle}>{f.hub.optionsTitle}</h3>
-              <p className={styles.hubText}>{f.hub.optionsText}</p>
-              <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.hubLink}>
-                {f.hub.optionsCta}
-                <Arrow />
-              </a>
-            </article>
-
-            <article className={styles.hubCard}>
-              <span className={styles.hubLabel}>{f.compliance.heading}</span>
-              <h3 className={styles.hubTitle}>{f.hub.legalTitle}</h3>
-              <p className={styles.hubText}>{f.hub.legalText}</p>
-              <div className={styles.legalList}>
-                {legalLinks.map((link) => (
-                  <Link key={link.href} href={link.href} className={styles.legalLink}>
-                    {link.label}
-                    <Arrow />
-                  </Link>
-                ))}
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
 
       {/* Persona row */}
       <section className={styles.personas}>
