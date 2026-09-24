@@ -16,10 +16,10 @@ This repository is now one deployable app at the repo root. It contains the real
 
 - `/` - homepage
 - `/rehber/alici` and `/rehber/satici` - buyer/seller guide funnels
-- `/rehber/ogren` - education hub
 - `/mortgage` - mortgage landing
 - `/mortgage/oranlar` - permanent redirect to `/mortgage` (legacy route)
 - `/mortgage/araclar` - redirects to `/mortgage`
+- `/rehber/ogren` - redirects to `/mortgage` (the Learn page was removed)
 - `/investing` - redirects to the Hunter & Hunter Investment Advisors homepage
 - `/hunter-advisory` - canonical Hunter & Hunter Investment Advisors public and portal experience
 - `/hunter-group-capital` and `/hunter-x-capital` - legacy redirects

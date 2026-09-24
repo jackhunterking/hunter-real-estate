@@ -17,7 +17,6 @@ const PUBLIC_PATHS: string[] = [
   "", // home
   "/rehber/alici",
   "/rehber/satici",
-  "/rehber/ogren",
   "/mortgage",
   "/mortgage/araclar",
   "/mortgage/oranlar",

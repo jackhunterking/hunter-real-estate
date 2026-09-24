@@ -112,9 +112,8 @@ website work so nothing is lost.
   - The advisor strip says "Jack, Tara & Asif"; confirm it.
   - "Same-day pre-approval" on the buy-a-home page: keep it only if it's
     always true.
-- [ ] **Learn page** (`/rehber/ogren`): it's mortgage content filed under
-  guides, and its three roadmap cards link nowhere. Move it into the mortgage
-  section and link each card to its topic page.
+- [x] **Learn page** (`/rehber/ogren`): removed 2026-09-23 at Jack's request.
+  The footer link is gone and the URL redirects to `/mortgage`.
 
 ### Guides (the PDFs)
 - [ ] There are two sets in use:
