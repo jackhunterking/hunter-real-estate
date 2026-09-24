@@ -278,7 +278,7 @@ export const tr = {
     sub: "Alım, satım veya yatırım, her sorunuz için doğrudan WhatsApp'tan yazın. Çoğunlukla birkaç dakika içinde dönüyoruz.",
     cta: "WhatsApp'tan Yazın",
     ctaAria: "WhatsApp ile iletişime geçin",
-    address: "170 Merton St, Toronto, ON M4S 1A1",
+    address: "1920 Yonge St #500, Toronto, ON M4S 3E2",
   },
 
   about: {
@@ -554,7 +554,7 @@ export const tr = {
 
   footer: {
     promise: "Toronto Merkezli Türk Emlak Grubu",
-    address: "170 Merton St, Toronto, ON M4S 1A1",
+    address: "1920 Yonge St #500, Toronto, ON M4S 3E2",
     copy: "Hunter Group Real Estate",
     instagramAria: "Instagram",
     facebookAria: "Facebook",
@@ -1243,7 +1243,7 @@ export const en: Dictionary = {
     sub: "Buying, selling, or investing, for any question, message us directly on WhatsApp. We usually reply within a few minutes.",
     cta: "Message on WhatsApp",
     ctaAria: "Contact via WhatsApp",
-    address: "170 Merton St, Toronto, ON M4S 1A1",
+    address: "1920 Yonge St #500, Toronto, ON M4S 3E2",
   },
 
   about: {
@@ -1519,7 +1519,7 @@ export const en: Dictionary = {
 
   footer: {
     promise: "Toronto-Based Turkish Real Estate Group",
-    address: "170 Merton St, Toronto, ON M4S 1A1",
+    address: "1920 Yonge St #500, Toronto, ON M4S 3E2",
     copy: "Hunter Group Real Estate",
     instagramAria: "Instagram",
     facebookAria: "Facebook",
@@ -2180,7 +2180,7 @@ export const fr: Dictionary = {
     sub: "Achat, vente ou investissement, pour toute question, écrivez-nous directement sur WhatsApp. Nous répondons généralement en quelques minutes.",
     cta: "Écrire sur WhatsApp",
     ctaAria: "Contacter par WhatsApp",
-    address: "170 Merton St, Toronto, ON M4S 1A1",
+    address: "1920 Yonge St #500, Toronto, ON M4S 3E2",
   },
 
   about: {
@@ -2456,7 +2456,7 @@ export const fr: Dictionary = {
 
   footer: {
     promise: "Groupe immobilier turc basé à Toronto",
-    address: "170 Merton St, Toronto, ON M4S 1A1",
+    address: "1920 Yonge St #500, Toronto, ON M4S 3E2",
     copy: "Hunter Group Real Estate",
     instagramAria: "Instagram",
     facebookAria: "Facebook",
@@ -3147,7 +3147,7 @@ export const es: Dictionary = {
     sub: "Compra, venta o inversión, para cualquier pregunta, escríbenos directamente por WhatsApp. Normalmente respondemos en unos minutos.",
     cta: "Escríbenos por WhatsApp",
     ctaAria: "Contactar por WhatsApp",
-    address: "170 Merton St, Toronto, ON M4S 1A1",
+    address: "1920 Yonge St #500, Toronto, ON M4S 3E2",
   },
 
   about: {
@@ -3423,7 +3423,7 @@ export const es: Dictionary = {
 
   footer: {
     promise: "Grupo inmobiliario turco con sede en Toronto",
-    address: "170 Merton St, Toronto, ON M4S 1A1",
+    address: "1920 Yonge St #500, Toronto, ON M4S 3E2",
     copy: "Hunter Group Real Estate",
     instagramAria: "Instagram",
     facebookAria: "Facebook",
