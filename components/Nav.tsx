@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useT } from "@/lib/i18n/LanguageProvider";
+import { PORTAL_URL } from "@/lib/portal-link";
 import LanguageMenu from "./LanguageMenu";
 import styles from "./Nav.module.css";
 
@@ -27,7 +28,7 @@ export default function Nav({ overlayHero = false }: NavProps) {
     { href: "/rehber/alici", label: t.nav.servicesMenu.buy },
     { href: "/rehber/satici", label: t.nav.servicesMenu.sell },
     { href: "/mortgage", label: t.nav.servicesMenu.mortgage },
-    { href: "/hunter-advisory", label: t.nav.servicesMenu.invest },
+    { href: PORTAL_URL, label: t.nav.servicesMenu.invest },
   ];
 
   useEffect(() => {

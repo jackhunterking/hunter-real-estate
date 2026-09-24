@@ -168,9 +168,9 @@ website work so nothing is lost.
 - [ ] Languages: French and Spanish are machine translations, and every copy
   change has to be made four times. Decide keep or drop for the public site.
   The legal pages exist only in Turkish and English.
-- [ ] Speed: every page downloads all four languages' text plus the investor
-  portal's (~178 KB, from the client-side `LanguageProvider` and the
-  next-intl provider). Split the dictionary into public and portal parts.
+- [ ] Speed: every page downloads all four languages' text (from the
+  client-side `LanguageProvider` and the next-intl provider). The investor
+  portal's share left with the portal on 2026-09-24.
 - [ ] Metadata:
   - Public pages likely inherit the home page's canonical and hreflang.
     Check each page.
@@ -180,62 +180,52 @@ website work so nothing is lost.
   settings.
 - [ ] Menu:
   - "Buying" and "Selling" go to guide download pages.
-  - "Investment" (and the footer's "Advisors") goes to Hunter & Hunter
-    Investment Advisors, while the services card now says Parvis Invest.
+  - "Investment" (and the footer's "Equity Market") goes out to
+    equitymarket.io, while the services card says Parvis Invest.
 - [ ] Footer:
   - Trim the eight links; four repeat the header.
   - Decide which social accounts to link.
 - [ ] Titles: RECO's permitted terms don't include "Real Estate Advisor"
   (Tara, Selin). Low priority, per Jack.
-- [ ] Sitemap: 8 of 68 entries are redirects (`/mortgage/araclar`,
-  `/mortgage/oranlar`), and 4 are `/hunter-advisory`, whose canonical is the
-  advisors domain.
+- [ ] Sitemap: 8 of 64 entries are redirects (`/mortgage/araclar`,
+  `/mortgage/oranlar`). The 4 `/hunter-advisory` entries were removed with the
+  portal on 2026-09-24.
 
 ### Unused, to remove
-- [ ] Components nothing imports: `MortgageTeaser`, `CapitalTeaser`,
-  `GuideCard` (unless the email step returns), `lib/posthog-server.ts`, and
-  20 of the 23 files in `components/ui`. (`HeroSection` and its stylesheet
-  were deleted 2026-09-23.)
-- [ ] `InvestingBridge` and the pages at `/investing` and
-  `/hunter-x-capital/**`. Middleware redirects those addresses first, so the
-  pages never render.
+- [ ] Components nothing imports: `MortgageTeaser`, `GuideCard` (unless the
+  email step returns; `TurnstileField` goes with it), `lib/posthog-server.ts`.
+  (`HeroSection` and its stylesheet were deleted 2026-09-23; `CapitalTeaser`
+  and `components/ui` on 2026-09-24.)
+- [x] `InvestingBridge` and the pages at `/investing` and
+  `/hunter-x-capital/**`. Removed with the portal on 2026-09-24.
 - [ ] Dictionary blocks nothing reads (all four languages):
-  - `capital` (the old "Hunter X Capital" pitch)
-  - `capitalTeaser`
   - `mortgage.teaser`
   - `home.services.sell`
   - `contact.address`
   - `footer.logoText`
   - `nav.guides`
   - `mortgage.advisor.names` and `.line`
+
+  (`capital`, `capitalTeaser` and `capitalApp` left with the portal on
+  2026-09-24.)
 - [ ] About 18 unused CSS classes: old rate-table and top-bar styles.
 - [ ] Files:
-  - `public/hunter-x-bg.png` (4 MB)
   - `app/fonts/Lora.woff2`
   - The four `HUNTER_PrimaryLogo_*` files (they still say "Jack Hunter") and
     the three unused `HUNTER_Brandmark_*` colour variants
   - `public/guides/README.md`: served publicly and out of date
   - `public/jack-photo.jpg` (5 MB) and `public/tara-photo.jpg` (11 MB) once
     the new team photos are merged
-  - Portal images at the public root (`lankin*`, `legacy*`): move them into
-    `public/capital/`
   - Eight empty " 2" folders and `components/LogoStrip 2.tsx` (iCloud
     copies)
 - [ ] Docs to archive:
   - `docs/CLAUDE.md`
-  - `docs/HANDOFF.md`
-  - `docs/HNC_LEGACY_DELETION_MANIFEST.md`
   - `docs/claude-code-phase1-prompt.md`
   - `docs/hunter-merged-site-build-spec.md`
 
   Also refresh the `docs/README.md` index.
-- [ ] Packages nothing uses:
-  - `@hookform/resolvers`
-  - `react-hook-form`
-  - `next-themes`
-  - `sonner`
-  - `posthog-node`
-  - 15 duplicate `@radix-ui/*` entries (the code imports `radix-ui`)
+- [ ] Packages nothing uses: `posthog-node`. (The rest of this list, and
+  every other package only the portal used, were removed on 2026-09-24.)
 - [ ] Branches that are merged or superseded:
   - Local: `backup/service-cards-clickable`, `redesign/capital-app-portal`,
     `yatirim-surface`.
@@ -244,8 +234,8 @@ website work so nothing is lost.
     `claude/gamified-asset-network-view-l3s567`,
     `claude/home-page-building-variation-11meju`,
     `claude/opportunity-invest-income-tqbo9r`, `social-post-kit`.
-  - Decide separately on the unmerged `rebrand/equity-market`, which moves
-    the investor portal into its own repo.
+  - `rebrand/equity-market` is superseded by the 2026-09-24 funds split,
+    which did the same removal against the current `main`.
 
 ### Hard to maintain: give each thing one home
 - [ ] One site-details file: the WhatsApp number (copied in six places),
@@ -253,8 +243,8 @@ website work so nothing is lost.
 - [ ] One team list: names, titles, photos, languages, awards. It would feed
   the team section, the mortgage strip and the sign-offs.
 - [ ] One shared WhatsApp icon instead of seven pasted copies.
-- [ ] Split `lib/i18n/dictionaries.ts` (3,800+ lines) into public and portal
-  parts.
+- [x] Split `lib/i18n/dictionaries.ts` into public and portal parts. The
+  portal part left with the portal on 2026-09-24 (3,800+ lines to ~1,900).
 - [ ] Use the locale-aware `Link` from `i18n/navigation`. Today every menu
   click goes through an extra redirect (`/mortgage` → `/en/mortgage`).
 - [ ] Move the checkout out of iCloud Drive. That's what causes the " 2"

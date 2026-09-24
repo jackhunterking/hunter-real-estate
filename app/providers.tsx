@@ -4,18 +4,6 @@ import { useEffect, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react";
-import { HUNTER_ADVISORY_HOSTS } from "@/lib/capital/advisory-domain";
-
-function isHunterAdvisoryRoute(pathname: string, hostname: string) {
-  // Paths are locale-prefixed (/en/hunter-advisory, /tr/hunter-advisory, ...);
-  // strip a leading locale segment before matching the advisory subtree.
-  const withoutLocale = pathname.replace(/^\/(tr|en|fr|es)(?=\/|$)/, "");
-  return (
-    HUNTER_ADVISORY_HOSTS.has(hostname.toLowerCase()) ||
-    withoutLocale === "/hunter-advisory" ||
-    withoutLocale.startsWith("/hunter-advisory/")
-  );
-}
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -25,10 +13,6 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       process.env.NEXT_PUBLIC_POSTHOG_KEY ??
       "phc_na55KbvucPk2mkBLzJhZLepgSNqF7bwTGTXXEhDTE972";
 
-    const sensitivePortal = isHunterAdvisoryRoute(
-      window.location.pathname,
-      window.location.hostname,
-    );
     posthog.init(key, {
       // Routed through the Next.js rewrite proxy (see next.config.mjs) so
       // ad-blockers don't drop analytics + session replay traffic.
@@ -39,13 +23,13 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       capture_pageview: false,
       capture_pageleave: false,
       // --- Session replay ---
-      disable_session_recording: sensitivePortal,
+      disable_session_recording: false,
       session_recording: {
         maskAllInputs: true,
         maskTextSelector: "[data-ph-mask]",
       },
       // --- Autocapture (clicks, form submits, etc.) ---
-      autocapture: !sensitivePortal,
+      autocapture: true,
       persistence: "localStorage+cookie",
     });
   }, []);
@@ -67,17 +51,11 @@ function PostHogPageView() {
 
   useEffect(() => {
     if (!pathname || !ph) return;
-    const sensitivePortal = isHunterAdvisoryRoute(pathname, window.location.hostname);
-    ph.set_config({
-      autocapture: !sensitivePortal,
-      disable_session_recording: sensitivePortal,
-    });
-    if (sensitivePortal) ph.stopSessionRecording();
-    else ph.startSessionRecording();
-
+    // The funds portal, which needed replay and autocapture suppressed per
+    // route, now lives in its own app; everything here is public marketing.
     let url = window.origin + pathname;
     const qs = searchParams?.toString();
-    if (qs && !sensitivePortal) url += "?" + qs;
+    if (qs) url += "?" + qs;
     ph.capture("$pageview", { $current_url: url });
   }, [pathname, searchParams, ph]);
 
