@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useT } from "@/lib/i18n/LanguageProvider";
+import { PORTAL_URL } from "@/lib/portal-link";
 import { RMA } from "@/lib/mortgage/identity";
 import { LEGAL_SLUGS } from "@/lib/mortgage/legal-slugs";
 import styles from "./Footer.module.css";
@@ -20,7 +21,7 @@ export default function Footer() {
     { href: "/#hizmetler", label: n.services },
     { href: "/mortgage", label: n.mortgage },
     { href: "/rehber/ogren", label: t.ogren.label },
-    { href: "/hunter-advisory", label: n.capital },
+    { href: PORTAL_URL, label: n.capital },
     { href: "/#kaynaklar", label: n.resources },
     { href: "/#iletisim", label: n.contact },
   ];

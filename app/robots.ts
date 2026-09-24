@@ -9,22 +9,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      // Keep API endpoints and the authenticated advisory workspace out of the
-      // index (the public advisory landing at /{locale}/hunter-advisory stays
-      // crawlable; its gated sub-routes do not).
-      disallow: [
-        "/api/",
-        "/*/hunter-advisory/dashboard",
-        "/*/hunter-advisory/portfolio",
-        "/*/hunter-advisory/investments",
-        "/*/hunter-advisory/products",
-        "/*/hunter-advisory/documents",
-        "/*/hunter-advisory/resources",
-        "/*/hunter-advisory/requests",
-        "/*/hunter-advisory/profile",
-        "/*/hunter-advisory/admin",
-        "/*/hunter-advisory/onboarding",
-      ],
+      // Keep API endpoints out of the index.
+      disallow: ["/api/"],
     },
     sitemap: `${BASE_URL}/sitemap.xml`,
   };

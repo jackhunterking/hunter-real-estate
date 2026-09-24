@@ -7,9 +7,7 @@ const BASE_URL = (
 ).replace(/\/$/, "");
 
 /**
- * Public, indexable routes (locale-agnostic, no leading locale). The gated
- * advisory portal `(portal)` routes are intentionally excluded — they live
- * behind auth. Each path below is emitted once per locale with a full hreflang
+ * Public, indexable routes (locale-agnostic, no leading locale). Each path below is emitted once per locale with a full hreflang
  * alternates cluster (every locale + `x-default` → the default locale) so search
  * engines index and cross-link all four language versions.
  */
@@ -25,7 +23,6 @@ const PUBLIC_PATHS: string[] = [
   "/gizlilik",
   "/kullanim-kosullari",
   "/reklam-aciklamasi",
-  "/hunter-advisory",
 ];
 
 function languagesFor(path: string): Record<string, string> {

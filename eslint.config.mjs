@@ -17,15 +17,6 @@ const config = [
     ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
-  {
-    files: [
-      "components/capital/map/**/*.ts",
-      "components/capital/map/**/*.tsx",
-    ],
-    rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-    },
-  },
 ];
 
 export default config;
