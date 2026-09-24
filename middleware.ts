@@ -17,6 +17,22 @@ const MAIN_SITE_HOSTS = new Set([
   "www.jackvetara.com",
 ]);
 const ADVISORY_PREFIX = "/hunter-advisory";
+
+// /mortgage is a single page. The six topic pages are now cards on it, and the
+// old tools and rates pages already pointed back to it, so old links, ads and
+// search results for any of them land on /mortgage.
+const RETIRED_MORTGAGE_PATHS = new Set(
+  [
+    "ev-almak",
+    "yenileme",
+    "tadilat",
+    "borc-toparlama",
+    "ev-degeri",
+    "heloc",
+    "araclar",
+    "oranlar",
+  ].map((slug) => `/mortgage/${slug}`),
+);
 const ADVISORY_HOME_URL = "https://hunterhunteradvisors.com/";
 
 // Owns locale negotiation (Accept-Language on first visit), prefix insertion,
@@ -53,6 +69,14 @@ export async function middleware(request: NextRequest) {
       ? `/${locale}${ADVISORY_PREFIX}`
       : ADVISORY_PREFIX;
     destination.search = "";
+    return NextResponse.redirect(destination, 301);
+  }
+
+  // Keeps the query string so ad click IDs and UTM tags survive the hop. Built
+  // from scratch rather than cloned so a trailing slash isn't carried over.
+  if (RETIRED_MORTGAGE_PATHS.has(rest.replace(/\/$/, ""))) {
+    const pathname = locale ? `/${locale}/mortgage` : "/mortgage";
+    const destination = new URL(`${pathname}${request.nextUrl.search}`, request.url);
     return NextResponse.redirect(destination, 301);
   }
 

@@ -101,20 +101,21 @@ website work so nothing is lost.
   - Their download button serves the **old 2020 English** PDFs, and the
     sign-off is still "Jack & Tara Hunter".
 - [ ] **Mortgage page:**
+  - Done 2026-09-23 (`claude/mortgage-single-page`): /mortgage is now the
+    only mortgage page. The six topic cards and the "Who we help" cards no
+    longer link anywhere; each topic card carries three key points from its
+    old page. The six topic pages are deleted, and their addresses (plus
+    `/araclar` and `/oranlar`) 301 to `/mortgage` from middleware. "Same-day
+    pre-approval" went with the buy-a-home page.
   - English, French and Spanish visitors read "made simple in Turkish".
-  - It repeats itself:
+  - It still repeats itself:
     - four WhatsApp buttons
-    - "Who we help" links to the same pages as the topic cards
-    - "What shapes your file" appears in the hero and again on all six
-      topic pages
     - the "Mortgage hub" block is mostly legal links
   - Trim it to: hero → topics → team → FAQ → one button.
   - The advisor strip says "Jack, Tara & Asif"; confirm it.
-  - "Same-day pre-approval" on the buy-a-home page: keep it only if it's
-    always true.
 - [ ] **Learn page** (`/rehber/ogren`): it's mortgage content filed under
   guides, and its three roadmap cards link nowhere. Move it into the mortgage
-  section and link each card to its topic page.
+  page (there are no topic pages to link to any more).
 
 ### Guides (the PDFs)
 - [ ] There are two sets in use:
@@ -188,9 +189,8 @@ website work so nothing is lost.
   - Decide which social accounts to link.
 - [ ] Titles: RECO's permitted terms don't include "Real Estate Advisor"
   (Tara, Selin). Low priority, per Jack.
-- [ ] Sitemap: 8 of 68 entries are redirects (`/mortgage/araclar`,
-  `/mortgage/oranlar`), and 4 are `/hunter-advisory`, whose canonical is the
-  advisors domain.
+- [ ] Sitemap: 4 entries are `/hunter-advisory`, whose canonical is the
+  advisors domain. (The mortgage redirect entries were removed 2026-09-23.)
 
 ### Unused, to remove
 - [ ] Components nothing imports: `MortgageTeaser`, `CapitalTeaser`,

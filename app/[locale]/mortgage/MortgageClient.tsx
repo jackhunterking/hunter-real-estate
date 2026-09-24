@@ -20,6 +20,14 @@ function WhatsAppIcon() {
   );
 }
 
+function CheckIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M3 8.5l3.2 3.2L13 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function Arrow() {
   return (
     <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
@@ -88,9 +96,7 @@ export default function MortgageClient() {
               <ul className={styles.trust}>
                 {f.trust.map((item) => (
                   <li key={item} className={styles.trustItem}>
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                      <path d="M3 8.5l3.2 3.2L13 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                    <CheckIcon />
                     {item}
                   </li>
                 ))}
@@ -121,17 +127,18 @@ export default function MortgageClient() {
           </div>
           <div className={styles.journeyGrid}>
             {f.journeys.items.map((item) => (
-              <Link
-                key={item.slug}
-                href={`/mortgage/${item.slug}`}
-                className={styles.journeyCard}
-              >
+              <article key={item.title} className={styles.journeyCard}>
                 <h3 className={styles.journeyTitle}>{item.title}</h3>
                 <p className={styles.journeyDesc}>{item.desc}</p>
-                <span className={styles.journeyArrow}>
-                  <Arrow />
-                </span>
-              </Link>
+                <ul className={styles.journeyPoints}>
+                  {item.points.map((point) => (
+                    <li key={point} className={styles.journeyPoint}>
+                      <CheckIcon />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </article>
             ))}
           </div>
         </div>
@@ -184,14 +191,10 @@ export default function MortgageClient() {
           </div>
           <div className={styles.personaGrid}>
             {f.personas.items.map((p) => (
-              <Link
-                key={p.title}
-                href={`/mortgage/${p.journey}`}
-                className={styles.personaCard}
-              >
+              <div key={p.title} className={styles.personaCard}>
                 <h3 className={styles.personaTitle}>{p.title}</h3>
                 <span className={styles.personaText}>{p.text}</span>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
