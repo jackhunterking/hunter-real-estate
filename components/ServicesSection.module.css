@@ -141,15 +141,19 @@
   margin-bottom: 14px;
 }
 
-.cardTag {
-  min-height: 30px;
-  font-family: var(--sans);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  line-height: 1.5;
-  text-transform: uppercase;
-  color: var(--gold);
+/* Every lockup is cropped to its ink, so one height lines up the titles.
+   Between 940px and 1023px the three columns share 720px and RMA (~205px) is
+   wider than its card; there it shrinks inside its box rather than widening
+   the grid, and the box keeps the height. */
+.cardLogo {
+  display: block;
+  align-self: flex-start;
+  height: 22px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+  margin-bottom: 20px;
 }
 
 .cardDesc {
