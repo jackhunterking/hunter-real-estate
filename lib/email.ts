@@ -80,6 +80,13 @@ export async function deliverEmailJob(jobId: string): Promise<DeliveryStatus> {
   const job = await loadEmailJob(jobId);
   if (!job) return "queued";
   const email = renderEmailJob(job);
+  if (!email) {
+    // A funds-portal job claimed from the shared queue. Requeue it for the
+    // portal's own worker, which renders it; sending it from here would put the
+    // wrong template and sender on it.
+    await markFailed(job.id, `not-rendered-here:${job.templateKey}`);
+    return "queued";
+  }
 
   try {
     const result = await client.emails.send(

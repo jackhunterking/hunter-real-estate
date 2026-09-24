@@ -21,9 +21,6 @@ const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://huntergroupremax.com";
 const appSender =
   process.env.RESEND_FROM_EMAIL ?? "Hunter Group <hello@updates.jackhunter.com>";
-const capitalSender =
-  process.env.RESEND_CAPITAL_FROM_EMAIL ??
-  "Hunter & Hunter Investment Advisors <advisors@noreply.hunterhunteradvisors.com>";
 const replyTo = process.env.RESEND_REPLY_TO ?? "hello@jackhunter.com";
 
 function escapeHtml(value: unknown) {
@@ -42,17 +39,9 @@ function shell(params: {
   body: string;
   actionLabel: string;
   actionUrl: string;
-  investmentBrand?: boolean;
 }) {
-  const investmentName = "Hunter & Hunter Investment Advisors";
-  const brandHeader = params.investmentBrand
-    ? `<div style="color:#fff;font-size:15px;font-weight:700">Hunter &amp; Hunter</div>
-       <div style="margin-top:5px;color:#d7b86b;font-size:9px;letter-spacing:.12em;text-transform:uppercase">Investment Advisors</div>
-       <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16);color:#9eabb3;font-size:8px;letter-spacing:.1em;text-transform:uppercase">Powered by <span style="margin-left:7px;color:#e7ecef;font-size:12px;font-weight:700;letter-spacing:.16em">PARVIS</span></div>`
-    : "Hunter Group";
-  const footer = params.investmentBrand
-    ? `${params.language === "tr" ? "Menkul kıymet hizmetleri Parvis Investment Services Inc. aracılığıyla sunulur" : "Securities services through Parvis Investment Services Inc."} · NRD #74000.<br>${investmentName} · ${params.language === "tr" ? "Parvis açıklamaları" : "Parvis disclosures"}`
-    : "Questions? Reply to this email or contact hello@jackhunter.com.";
+  const brandHeader = "Hunter Group";
+  const footer = "Questions? Reply to this email or contact hello@jackhunter.com.";
   const html = `<!doctype html>
 <html lang="${params.language}">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
@@ -73,11 +62,17 @@ function shell(params: {
     </td></tr>
   </table>
 </body></html>`;
-  const text = `${params.investmentBrand ? `${investmentName}\nPowered by Parvis\n\n` : ""}${params.eyebrow}\n\n${params.title}\n\n${params.body}\n\n${params.actionLabel}: ${params.actionUrl}${params.investmentBrand ? "\n\nSecurities services through Parvis Investment Services Inc. · NRD #74000.\nParvis disclosures" : ""}`;
+  const text = `${params.eyebrow}\n\n${params.title}\n\n${params.body}\n\n${params.actionLabel}: ${params.actionUrl}`;
   return { html, text };
 }
 
-export function renderEmailJob(job: EmailJobTemplate): RenderedEmail {
+/**
+ * Renders the emails this site owns, and only those. The job queue is shared
+ * with the funds portal (github.com/jackhunterking/equity-market), which renders
+ * its own templates; a job of another kind returns null so the caller can hand
+ * it back to the queue rather than send it under this site's name.
+ */
+export function renderEmailJob(job: EmailJobTemplate): RenderedEmail | null {
   const language = job.variables.language === "en" ? "en" : "tr";
   if (job.templateKey === "guide-delivery") {
     const guide = job.variables.guide === "satici" ? "satici" : "alici";
@@ -115,22 +110,5 @@ export function renderEmailJob(job: EmailJobTemplate): RenderedEmail {
     };
   }
 
-  const reference = `HNC-${job.relatedEntityId.replaceAll("-", "").slice(0, 6).toUpperCase()}`;
-  const isReadiness = job.templateKey === "readiness-alert";
-  const content = shell({
-    language: "en",
-    eyebrow: "Secure portal notification",
-    title: isReadiness ? "New investor-readiness submission" : "New capital intake",
-    body: `A new submission (${reference}) is ready for review. Sign in to the protected portal to view the details.`,
-    actionLabel: "Open lead inbox",
-    actionUrl: `${siteUrl}/hunter-advisory/admin/leads`,
-    investmentBrand: true,
-  });
-  return {
-    from: capitalSender,
-    replyTo,
-    to: job.recipient,
-    subject: `New Hunter & Hunter Investment Advisors intake · ${reference}`,
-    ...content,
-  };
+  return null;
 }

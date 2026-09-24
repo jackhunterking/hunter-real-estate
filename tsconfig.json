@@ -22,8 +22,6 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next-dev/types/**/*.ts"],
   "exclude": [
     "node_modules",
-    ".next/types/**/* 2.ts",
-    ".next/types/app/api/hnc-portal/**",
-    ".next/types/app/hunter-advisory/api/portal/**"
+    ".next/types/**/* 2.ts"
   ]
 }
