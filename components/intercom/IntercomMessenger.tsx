@@ -13,12 +13,11 @@ import {
 } from "@/lib/intercom/config";
 
 /**
- * One Intercom Messenger for the whole app — marketing site and advisory portal.
+ * One Intercom Messenger for the whole site.
  *
  * Both of Intercom's install modes run together rather than one being chosen:
- * every visitor gets an anonymous messenger (so someone reading
- * /hunter-advisory before signing up can still start a conversation), and once
- * a Supabase session exists the messenger re-boots authenticated, carrying the
+ * every visitor gets an anonymous messenger, and once a Supabase session
+ * exists (a sign-in left over from when the funds portal lived here) the messenger re-boots authenticated, carrying the
  * signed JWT from /api/intercom/identity.
  *
  * Identity is applied by shutdown + boot rather than `update`, because the JWT

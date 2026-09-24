@@ -9,10 +9,7 @@ type SubmissionResult = {
 };
 
 export async function persistPublicSubmission(
-  functionName:
-    | "submit_guide_request"
-    | "submit_capital_intake"
-    | "submit_investor_readiness",
+  functionName: "submit_guide_request",
   payload: Record<string, unknown>,
 ) {
   const supabase = createSupabaseAdminClient();

@@ -1,3 +1,0 @@
--- Intentionally empty.
--- Portal preview data lives in TypeScript fixtures; production data must be
--- created through verified users, firm onboarding, and admin workflows.

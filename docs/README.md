@@ -6,9 +6,11 @@ This is the documentation folder for the single Hunter Group app at the repo roo
 - **Historical merge notes and content-ops archives** live under `docs/archive/`.
 
 ## Guidance docs
-- [`HANDOFF.md`](./HANDOFF.md) — current repository state, setup steps, deployment blocker, and next production actions.
 - [`CLAUDE.md`](./CLAUDE.md) — context + guardrails for working on this site.
 - [`hunter-merged-site-build-spec.md`](./hunter-merged-site-build-spec.md) — full merge plan, route tree, port matrix, phased order.
 - [`claude-code-phase1-prompt.md`](./claude-code-phase1-prompt.md) — the original Phase 1 kickoff prompt.
+- [`website-next-phase.md`](./website-next-phase.md) — deferred work from the 2026-09 site refresh.
+
+The funds portal, and its docs, live in their own repo: github.com/jackhunterking/equity-market.
 
 Make site changes in the repo root app. Use this folder for implementation guidance and archived context.
