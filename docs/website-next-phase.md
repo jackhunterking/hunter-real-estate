@@ -101,17 +101,18 @@ website work so nothing is lost.
   - Their download button serves the **old 2020 English** PDFs, and the
     sign-off is still "Jack & Tara Hunter".
 - [ ] **Mortgage page:**
+  - Done 2026-09-23 (`claude/mortgage-single-page`): /mortgage is now the
+    only mortgage page. The six topic cards and the "Who we help" cards no
+    longer link anywhere; each topic card carries three key points from its
+    old page. The six topic pages are deleted, and their addresses (plus
+    `/araclar` and `/oranlar`) 301 to `/mortgage` from middleware. "Same-day
+    pre-approval" went with the buy-a-home page.
   - English, French and Spanish visitors read "made simple in Turkish".
-  - It repeats itself:
+  - It still repeats itself:
     - four WhatsApp buttons
-    - "Who we help" links to the same pages as the topic cards
-    - "What shapes your file" appears in the hero and again on all six
-      topic pages
     - the "Mortgage hub" block is mostly legal links
   - Trim it to: hero → topics → team → FAQ → one button.
   - The advisor strip says "Jack, Tara & Asif"; confirm it.
-  - "Same-day pre-approval" on the buy-a-home page: keep it only if it's
-    always true.
 - [x] **Learn page** (`/rehber/ogren`): removed 2026-09-23 at Jack's request.
   The footer link is gone and the URL redirects to `/mortgage`.
 
@@ -187,9 +188,8 @@ website work so nothing is lost.
   - Decide which social accounts to link.
 - [ ] Titles: RECO's permitted terms don't include "Real Estate Advisor"
   (Tara, Selin). Low priority, per Jack.
-- [ ] Sitemap: 8 of 64 entries are redirects (`/mortgage/araclar`,
-  `/mortgage/oranlar`). The 4 `/hunter-advisory` entries were removed with the
-  portal on 2026-09-24.
+- [x] Sitemap: the redirect entries are gone: the mortgage ones on
+  2026-09-23 and the 4 `/hunter-advisory` ones with the portal on 2026-09-24.
 
 ### Unused, to remove
 - [ ] Components nothing imports: `MortgageTeaser`, `GuideCard` (unless the

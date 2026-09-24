@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
-import { INTENTS } from "@/lib/mortgage/intents";
 
 const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://huntergroupremax.com"
@@ -16,9 +15,6 @@ const PUBLIC_PATHS: string[] = [
   "/rehber/alici",
   "/rehber/satici",
   "/mortgage",
-  "/mortgage/araclar",
-  "/mortgage/oranlar",
-  ...INTENTS.map((intent) => `/mortgage/${intent}`),
   "/gizlilik",
   "/kullanim-kosullari",
   "/reklam-aciklamasi",

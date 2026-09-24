@@ -324,22 +324,15 @@
   }
 }
 
+/* Informational cards: the page is the end of the journey, so no links. */
 .journeyCard {
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 30px 28px 58px;
+  padding: 30px 28px;
   background: var(--white);
   border: 1px solid var(--hairline-dark);
-  text-decoration: none;
-  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.journeyCard:hover {
-  border-color: var(--gold);
-  transform: translateY(-3px);
-  box-shadow: 0 14px 32px rgba(10, 37, 64, 0.1);
+  border-top: 2px solid var(--gold);
 }
 
 .journeyTitle {
@@ -357,17 +350,30 @@
   color: var(--muted-foreground);
 }
 
-.journeyArrow {
-  position: absolute;
-  left: 28px;
-  bottom: 26px;
-  color: var(--gold-deep);
-  transition: transform 0.25s ease, color 0.25s ease;
+.journeyPoints {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 8px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--hairline-dark);
 }
 
-.journeyCard:hover .journeyArrow {
-  transform: translateX(4px);
-  color: var(--navy);
+.journeyPoint {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.journeyPoint svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--gold-deep);
 }
 
 /* ── Hub ── */
@@ -480,13 +486,6 @@
   padding: 24px 20px;
   background: var(--white);
   border: 1px solid var(--hairline-dark);
-  text-decoration: none;
-  transition: border-color 0.25s ease, transform 0.25s ease;
-}
-
-.personaCard:hover {
-  border-color: var(--gold);
-  transform: translateY(-2px);
 }
 
 .personaTitle {

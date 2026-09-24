@@ -16,6 +16,22 @@ const PORTAL_PREFIXES = [
   "/investing",
 ];
 
+// /mortgage is a single page. The six topic pages are now cards on it, and the
+// old tools and rates pages already pointed back to it, so old links, ads and
+// search results for any of them land on /mortgage.
+const RETIRED_MORTGAGE_PATHS = new Set(
+  [
+    "ev-almak",
+    "yenileme",
+    "tadilat",
+    "borc-toparlama",
+    "ev-degeri",
+    "heloc",
+    "araclar",
+    "oranlar",
+  ].map((slug) => `/mortgage/${slug}`),
+);
+
 // Owns locale negotiation (Accept-Language on first visit), prefix insertion,
 // and the NEXT_LOCALE cookie for the whole site.
 const intlMiddleware = createIntlMiddleware(routing);
@@ -46,6 +62,14 @@ export function middleware(request: NextRequest) {
       new URL(`/${locale ?? routing.defaultLocale}${suffix}`, PORTAL_URL),
       301,
     );
+  }
+
+  // Keeps the query string so ad click IDs and UTM tags survive the hop. Built
+  // from scratch rather than cloned so a trailing slash isn't carried over.
+  if (RETIRED_MORTGAGE_PATHS.has(rest.replace(/\/$/, ""))) {
+    const pathname = locale ? `/${locale}/mortgage` : "/mortgage";
+    const destination = new URL(`${pathname}${request.nextUrl.search}`, request.url);
+    return NextResponse.redirect(destination, 301);
   }
 
   // Bare guide index used to bounce to the home resources anchor.
