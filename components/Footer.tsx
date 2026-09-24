@@ -20,7 +20,6 @@ export default function Footer() {
     { href: "/#hakkimizda", label: n.about },
     { href: "/#hizmetler", label: n.services },
     { href: "/mortgage", label: n.mortgage },
-    { href: "/rehber/ogren", label: t.ogren.label },
     { href: PORTAL_URL, label: n.capital },
     { href: "/#kaynaklar", label: n.resources },
     { href: "/#iletisim", label: n.contact },

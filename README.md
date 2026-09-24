@@ -18,10 +18,10 @@ The funds portal (Equity Market, formerly Hunter & Hunter Investment Advisors) i
 
 - `/` - homepage
 - `/rehber/alici` and `/rehber/satici` - buyer/seller guide funnels
-- `/rehber/ogren` - education hub
 - `/mortgage` - mortgage landing
 - `/mortgage/oranlar` - permanent redirect to `/mortgage` (legacy route)
 - `/mortgage/araclar` - redirects to `/mortgage`
+- `/rehber/ogren` - redirects to `/mortgage` (the Learn page was removed)
 - `/hunter-advisory`, `/investing`, `/hunter-group-capital`, `/hunter-x-capital` - 301 to the funds portal (`NEXT_PUBLIC_PORTAL_URL`), keeping the locale and sub-path
 - `hunterhunteradvisors.com` (any path) - 301 to the funds portal; the domain is still attached to this Vercel project
 - `/gizlilik`, `/kullanim-kosullari`, `/reklam-aciklamasi` - legal pages

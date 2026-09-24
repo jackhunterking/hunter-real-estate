@@ -57,6 +57,15 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(destination, 301);
   }
 
+  // The Learn page (a mortgage glossary) was removed; send old links to the
+  // mortgage page.
+  if (rest === "/rehber/ogren") {
+    const destination = request.nextUrl.clone();
+    destination.pathname = locale ? `/${locale}/mortgage` : "/mortgage";
+    destination.search = "";
+    return NextResponse.redirect(destination, 301);
+  }
+
   return intlMiddleware(request);
 }
 
