@@ -66,3 +66,7 @@ active.
 - Real estate brokerage identity remains separate from mortgage identity.
 - The email job queue is shared with the funds portal. This app sends only guide emails and requeues any other job for the portal's worker.
 - Historical consolidation notes and archived content-ops materials live under `docs/archive/`.
+
+## Private property workspace
+
+The Client Login button links to `https://app.huntergroupremax.com`, the intended custom domain for the separately deployed Hunter Property Workspace (the Hunter Capital deal canvas). See [structure and launch steps](docs/PROPERTY_WORKSPACE.md). This is separate from Equity Market.

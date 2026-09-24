@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useT } from "@/lib/i18n/LanguageProvider";
 import { PORTAL_URL } from "@/lib/portal-link";
+import { PROPERTY_WORKSPACE_URL } from "@/lib/property-workspace";
 import LanguageMenu from "./LanguageMenu";
 import styles from "./Nav.module.css";
 
@@ -125,6 +126,10 @@ export default function Nav({ overlayHero = false }: NavProps) {
           <Link href="/#iletisim" className={styles.link} onClick={close}>
             {t.nav.contact}
           </Link>
+
+          <a href={PROPERTY_WORKSPACE_URL} className={`${styles.link} ${styles.clientLogin}`} onClick={close}>
+            {t.nav.clientLogin}
+          </a>
 
           <div className={styles.langToggle}>
             <LanguageMenu />

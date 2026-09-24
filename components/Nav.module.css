@@ -377,3 +377,16 @@
     color: rgba(255, 255, 255, 0.7);
   }
 }
+
+/* The private property workspace is a distinct action on desktop and mobile. */
+.clientLogin {
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  padding: 9px 12px;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+}
+.clientLogin:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+@media (min-width: 920px) and (max-width: 1199px) {
+  .links { gap: 18px; }
+}

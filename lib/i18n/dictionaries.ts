@@ -12,6 +12,7 @@ export const tr = {
     siteName: "Hunter Group Real Estate",
   },
   nav: {
+    clientLogin: "Müşteri Girişi",
     home: "Anasayfa",
     about: "Hakkımızda",
     services: "Hizmetler",
@@ -385,6 +386,7 @@ export const en: Dictionary = {
     siteName: "Hunter Group Real Estate",
   },
   nav: {
+    clientLogin: "Client Login",
     home: "Home",
     about: "About",
     services: "Services",
@@ -760,6 +762,7 @@ export const fr: Dictionary = {
     siteName: "Hunter Group Real Estate",
   },
   nav: {
+    clientLogin: "Accès client",
     home: "Accueil",
     about: "À propos",
     services: "Services",
@@ -1135,6 +1138,7 @@ export const es: Dictionary = {
     siteName: "Hunter Group Real Estate",
   },
   nav: {
+    clientLogin: "Acceso de clientes",
     home: "Inicio",
     about: "Nosotros",
     services: "Servicios",
