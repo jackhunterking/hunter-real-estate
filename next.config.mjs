@@ -21,9 +21,6 @@ const createNextConfig = (phase) => ({
   images: {
     formats: ['image/avif', 'image/webp'],
   },
-  experimental: {
-    optimizePackageImports: ['resend'],
-  },
   // NOTE: locale-prefixed routing means the legacy portal paths on this site's
   // own hosts are intercepted by middleware.ts so it can preserve the
   // active/negotiated locale in the destination. See the legacy-redirect block
