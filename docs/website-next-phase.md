@@ -192,8 +192,9 @@ website work so nothing is lost.
   2026-09-23 and the 4 `/hunter-advisory` ones with the portal on 2026-09-24.
 
 ### Unused, to remove
-- [ ] Components nothing imports: `MortgageTeaser`, `GuideCard` (unless the
-  email step returns; `TurnstileField` goes with it), `lib/posthog-server.ts`.
+- [x] Components nothing imports: `MortgageTeaser`, `GuideCard`,
+  `TurnstileField` and `lib/posthog-server.ts`, removed 2026-10-30 with the
+  Intercom messenger and the hunterhunteradvisors.com redirect.
   (`HeroSection` and its stylesheet were deleted 2026-09-23; `CapitalTeaser`
   and `components/ui` on 2026-09-24.)
 - [x] `InvestingBridge` and the pages at `/investing` and

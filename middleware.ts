@@ -6,8 +6,7 @@ import { PORTAL_URL } from "@/lib/portal-link";
 /**
  * Paths the funds portal used to live under while it was a subtree of this
  * app. It is now a separate business with its own repo and domain, so each of
- * these leaves for that domain rather than resolving in-app. The portal's
- * former dedicated host is redirected wholesale in next.config.mjs.
+ * these leaves for that domain rather than resolving in-app.
  */
 const PORTAL_PREFIXES = [
   "/hunter-advisory",
