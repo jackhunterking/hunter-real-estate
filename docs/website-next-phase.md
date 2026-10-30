@@ -92,7 +92,9 @@ website work so nothing is lost.
   - Turn them into "Buying with us" and "Selling with us": what's inside the
     guide, your process, the team, reviews, then the download.
   - The English page shows the Turkish mockup.
-- [ ] **Thank-you pages** (`/rehber/*/tesekkur`):
+- [x] **Thank-you pages** (`/rehber/*/tesekkur`): removed 2026-10-30 with the
+  lead form, the email cron and the Resend webhook. ManyChat and ads are no
+  longer running.
   - Nothing on the site links to them. The email form (`GuideCard`) was
     replaced with Drive links in commit 361cb7b.
   - They say the guide was emailed, but no email is collected.
@@ -192,8 +194,9 @@ website work so nothing is lost.
   2026-09-23 and the 4 `/hunter-advisory` ones with the portal on 2026-09-24.
 
 ### Unused, to remove
-- [ ] Components nothing imports: `MortgageTeaser`, `GuideCard` (unless the
-  email step returns; `TurnstileField` goes with it), `lib/posthog-server.ts`.
+- [x] Components nothing imports: `MortgageTeaser`, `GuideCard`,
+  `TurnstileField` and `lib/posthog-server.ts`, removed 2026-10-30 with the
+  Intercom messenger and the hunterhunteradvisors.com redirect.
   (`HeroSection` and its stylesheet were deleted 2026-09-23; `CapitalTeaser`
   and `components/ui` on 2026-09-24.)
 - [x] `InvestingBridge` and the pages at `/investing` and

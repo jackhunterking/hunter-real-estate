@@ -21,23 +21,6 @@ const createNextConfig = (phase) => ({
   images: {
     formats: ['image/avif', 'image/webp'],
   },
-  experimental: {
-    optimizePackageImports: ['resend'],
-  },
-  // hunterhunteradvisors.com is still attached to this Vercel project but the
-  // portal it served has left this app. Config redirects run before middleware
-  // and before API routes and static files, so every path on that host —
-  // including /api and /robots.txt — leaves for the portal's domain.
-  async redirects() {
-    return [
-      {
-        source: '/:path*',
-        has: [{ type: 'host', value: '(?:www\\.)?hunterhunteradvisors\\.com' }],
-        destination: `${PORTAL_URL}/:path*`,
-        permanent: true,
-      },
-    ];
-  },
   // NOTE: locale-prefixed routing means the legacy portal paths on this site's
   // own hosts are intercepted by middleware.ts so it can preserve the
   // active/negotiated locale in the destination. See the legacy-redirect block
